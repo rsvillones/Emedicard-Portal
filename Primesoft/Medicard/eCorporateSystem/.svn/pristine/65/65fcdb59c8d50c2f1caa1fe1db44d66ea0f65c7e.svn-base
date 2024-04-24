@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Corelib.Models;
+using Corelib.Classes;
+
+namespace WebUI.Models
+{
+    public class ImportViewModel
+    {
+        public bool ShowAllError { get; set; }
+
+        public bool IsUpload { get; set; }
+
+        public UploadSummary UploadSummary { get; set; }
+
+        public ICollection<ApplicationVerification> ApplicationVerifications { get; set; }
+
+    }
+}

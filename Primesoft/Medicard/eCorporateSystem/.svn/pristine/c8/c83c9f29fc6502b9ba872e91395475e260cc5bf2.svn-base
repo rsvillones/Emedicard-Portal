@@ -1,0 +1,57 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib.Models;
+
+namespace WebUI.Controllers
+{
+    public class ItemsController : BaseDbController
+    {
+        #region -- Action Results --
+
+        public ActionResult GetMyAccounts(int? page)
+        {
+            var model = LegacyHelper.GetLegacyAccounts(db, legacyDb, User);
+
+            return PartialView("_MyLegacyAccounts", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+        
+        public ActionResult GetMyActionMemos(int? page, string accountCode, string username)
+        {
+            ViewBag.AccountCode = accountCode;
+            ViewBag.Username = username;
+
+            IEnumerable<IActionMemo> model;
+            if (!string.IsNullOrEmpty(username))
+            {
+                var member = db.Members.FirstOrDefault(t => t.UserName == username) ?? new Member();
+                model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, member.Code, null, null);
+            }
+            else if (!string.IsNullOrEmpty(accountCode))
+            {
+                model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, null, accountCode, null);
+            }
+            else
+            {
+                if (User.IsInRole("SysAd"))
+                {
+                    model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, null, null, null);
+                }
+                else
+                {
+                    model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, null, null, Helper.GetLegacyAccountCodes(db, legacyDb));
+                }
+            }
+
+            model = model.OrderByDescending(t => t.ActionMemoDate);
+
+            return PartialView("_MyLegacyActionMemos", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        #endregion
+    }
+}

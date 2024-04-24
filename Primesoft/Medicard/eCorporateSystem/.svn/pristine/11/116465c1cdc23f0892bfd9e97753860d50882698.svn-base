@@ -1,0 +1,107 @@
+@model Member
+@using HtmlHelpers.BeginCollectionItem
+@{
+    var genderList = new SelectList(ViewBag.Genders, Model.Gender);
+    var civilStatusList = new SelectList(ViewBag.CivilStatuses, Model.CivilStatus);
+    var appliedPlanList = new SelectList(ViewBag.PrincipalPlans, "Id", "LongDescription", Model.AppliedPlan);
+    var optionalPlanList = new SelectList(ViewBag.PrincipalPlans, "Id", "LongDescription");
+    var dependentAppliedPlanList = new SelectList(ViewBag.DependentPlans, "Id", "LongDescription", Model.DependentAppliedPlan);
+    var dependentOptionalPlanList = new SelectList(ViewBag.DependentPlans, "Id", "LongDescription");
+}
+<tr>
+    @using (Html.BeginCollectionItem("Members"))
+    {
+        <td class="vtop">
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Guid)
+            @Html.HiddenFor(model => model.CrById)
+            @Html.HiddenFor(model => model.EndorsementBatchId)
+            @Html.HiddenFor(model => model.Deleted, new { @class = "deleted" })
+            @Html.HiddenFor(model => model.Timestamp)
+            @Html.HiddenFor(model => model.AccountCode)
+            @Html.EditorFor(model => model.LastName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "table-error" })
+
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.MiddleName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.EmailAddress, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.EmployeeNumber, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.EmployeeNumber, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.Area, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.Area, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.CostCenter, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.CostCenter, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.Suffix, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.Suffix, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("Gender", (IEnumerable<SelectListItem>)genderList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.Gender, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.TextBoxFor(model => model.DateOfBirth, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.DateOfBirth, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("CivilStatus", (IEnumerable<SelectListItem>)civilStatusList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.CivilStatus, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.TextBoxFor(model => model.EffectivityDate, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.EffectivityDate, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.TextBoxFor(model => model.ValidityDate, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.ValidityDate, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.TextBoxFor(model => model.DateHired, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.DateHired, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("AppliedPlan", (IEnumerable<SelectListItem>)appliedPlanList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.AppliedPlan, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.HiddenFor(model => model.AllowedPlans)
+            @Html.DropDownList("OptionalPlanList", (IEnumerable<SelectListItem>)optionalPlanList, new { @class = ".optionalplan selectpicker span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + Model.AllowedPlans + "]" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.Dependent, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.Dependent, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("DependentAppliedPlan", (IEnumerable<SelectListItem>)dependentAppliedPlanList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.DependentAppliedPlan, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.HiddenFor(model => model.AllowedDependentPlans)
+            @Html.DropDownList("DependentOptionalPlanList", (IEnumerable<SelectListItem>)dependentOptionalPlanList, new { @class = ".optionalplan selectpicker span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + Model.AllowedDependentPlans + "]" })
+        </td>
+        if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+        {
+            <td class="vtop">
+                <a href="javascript:void(0);" onclick="deleteMember(this);" class="btn btn-danger">Delete</a>
+            </td>
+        }
+
+    }
+
+</tr>

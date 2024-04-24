@@ -1,0 +1,18 @@
+﻿@model MemberRequest
+@{
+    ViewBag.Title = "ID Replacement";
+}
+@using (Html.BeginForm("IdReplacement", "RequestManagement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.Partial("_IdReplacement", Model)
+
+    <div class="row space">
+        <div class="col-lg-12">
+            <div class="no-color pull-right">
+                <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                @Html.ActionLink("Cancel", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}

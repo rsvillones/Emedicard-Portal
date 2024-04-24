@@ -1,0 +1,7 @@
+
+@{
+    ViewBag.Title = "Documents";
+}
+
+<h2>Index</h2>
+

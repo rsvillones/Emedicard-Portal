@@ -1,0 +1,60 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-2">
+        <div id='side-cssmenu'>
+            <ul>
+
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountInformation"))
+                {
+                    <li><a href='~/CorporateAdministrator/AccountInformation/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-home"></i><span>Account Information</span></a></li>
+                }
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewBenefitsAndExclusions"))
+                {
+                    <li><a href='~/CorporateAdministrator/BenefitsAndExclusions/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Benefits and Exclusions</span></a></li>
+                }
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Utilization Reporting</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewActiveMembers"))
+                {
+                    <li><a href='~/CorporateAdministrator/ActiveMembers/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Active Members</span></a></li>
+                }
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Resigned Members</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Action Memos Members</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewMembershipEndorsements"))
+                {
+                    <li><a href='~/CorporateAdministrator/Endorsement/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Membership Endorsements</span></a></li>
+                }
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewEndorsementApprovals"))
+                {
+                    <li><a href='~/CorporateAdministrator/EndorsementApprovals/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Endorsement Approvals</span></a></li>
+                }
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>ECU Scheduling</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewApplicationManagement"))
+                {
+                    <li><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Application Management</span></a></li>
+                    <li class="side-submenu"><a href='~/CorporateAdministrator/AdditionalDependents/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Application for Additional Dependent</span></a></li>
+                    <li class="side-submenu"><a href='~/CorporateAdministrator/DependentCancellations/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Cancellation of Dependent Membership</span></a></li>
+                }
+                <li><a href='~/CorporateAdministrator/ActionMemos/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Action Memo Management</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Request Management</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewRequestManagement"))
+                {
+                    <li class="side-submenu"><a href='~/CorporateAdministrator/IdReplacements/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>ID Replacement</span></a></li>
+                }
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewRequestManagement"))
+                {
+                    <li class="side-submenu"><a href='~/CorporateAdministrator/Amendments/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Amendment</span></a></li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-10">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("scripts", required: false)
+}

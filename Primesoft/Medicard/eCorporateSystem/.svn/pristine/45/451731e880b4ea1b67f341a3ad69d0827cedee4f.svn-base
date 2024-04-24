@@ -1,0 +1,201 @@
+@{
+    ViewBag.Title = "Utilization Reporting";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@Html.Action("AccountInformation", "BaseAccount")
+
+@*<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Utilization Reporting</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Select Service</label>
+                                    <div class="col-md-4">
+                                        <select class="form-control">
+                                            <option>MEMBER UTILIZATION ALL SERVICE (PER MEMBER)</option>
+                                            <option>IN-PATIENT</option>
+                                            <option>OUT-PATIENT</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 checkbox-align">
+                                        <input type="checkbox" />
+                                        <label>Group by Diseases</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Member Code</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Last Name</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Date From</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Date To</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">&nbsp;</label>
+                                    <div class="col-md-5">
+                                        <input type="submit" value="Submit" class="btn btn-primary" />
+                                        <input type="submit" value="Export to Excel" class="btn btn-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ft_scroller">
+    <table id="fixed_hdr1">
+        <thead>
+            <tr>
+                <th>
+                    SNo
+                </th>
+                <th>
+                    Order Number
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    City
+                </th>
+                <th>
+                    Zip
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Order Date
+                </th>
+                <th>
+                    Company
+                </th>
+                <th>
+                    Comments
+                </th>
+            </tr>
+	</thead>
+        <tbody>
+            <tr>
+                <td>
+                    60
+                </td>
+                <td>
+                    996809
+                </td>
+                <td>
+                    Blaine Carpenter
+                </td>
+                <td>
+                    9943 Phasellus Avenue
+                </td>
+                <td>
+                    Basin
+                </td>
+                <td>
+                    72271
+                </td>
+                <td>
+                    (618) 306-1899
+                </td>
+                <td>
+                    05/20/11
+                </td>
+                <td>
+                    Cakewalk
+                </td>
+                <td>
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>*@
+
+<input type="datetime"  class="datepicker"/>
+@*<p class="search-container">
+                    @Html.TextBox("currentFilter",null, new{@class="input-search", placeholder="Find by name"})
+                    <select class="input-search">
+                      <option value="volvo">Volvo</option>
+                      <option value="saab">Saab</option>
+                      <option value="mercedes">Mercedes</option>
+                      <option value="audi">Audi</option>
+                    </select>
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                </p>*@
+<div class="row">
+
+    <div class="col-lg-12">    
+        <p>
+            <div class="btn-group">
+                <button class="input-search dropdown-toggle" type="button" data-toggle="dropdown">
+                    Small button <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </p>
+    </div>
+</div>
+
+        
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+   $(document).ready(function() {
+       $('.datepicker').datepicker()
+ 
+	$('#fixed_hdr1').fxdHdrCol({
+	fixedCols: 5,
+	width:     "100%",
+	height:    400,
+	colModal: [
+	   { width: 50, align: 'center' },
+	   { width: 110, align: 'center' },
+	   { width: 170, align: 'left' },
+	   { width: 250, align: 'left' },
+	   { width: 100, align: 'left' },
+	   { width: 70, align: 'left' },
+	   { width: 100, align: 'left' },
+	   { width: 100, align: 'center' },
+	   { width: 90, align: 'left' },
+	   { width: 400, align: 'left' }
+	]					
+});
+   });
+</script>}

@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewActiveMembers")]
+    public class ActiveMembersController : BaseAccountController
+    {        
+        public ActionResult ActivePrincipalMembers(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            return View();
+
+        }
+
+        public ActionResult ActiveDependentMembers(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public ActionResult MemberProfile(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (!guid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Members
+                .Include(t => t.Dependents)
+                .Include(t => t.MedicalHistories)
+                .Include(t => t.MedicalHistories.Select(mh => mh.Question))
+                .Include(t => t.MedicalHistories.Select(mh => mh.Question.QuestionGroup))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories.Select(mh => mh.Question)))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories.Select(mh => mh.Question.QuestionGroup)))
+                .FirstOrDefault(t => t.Guid == guid);
+
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (model.AccountCode != ViewBag.AccountCode) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Helper.IsMedicalHistoryComplete(db, model);
+            Helper.IsDependentMedicalHistoryComplete(db, model);
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == model.AccountCode) ?? new AccountSetting();
+            ViewBag.BypassMedicalHistory = accountSetting.BypassMedicalHistory;
+            
+            return View(model);
+        }
+    }
+}

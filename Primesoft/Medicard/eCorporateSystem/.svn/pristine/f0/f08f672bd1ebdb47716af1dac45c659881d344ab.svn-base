@@ -1,0 +1,59 @@
+﻿@model AdditionalDependentMedicalHistory
+<tr>
+    <td>
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.QuestionId)
+        @Html.HiddenFor(model => model.AdditionalDependentId)
+        @Html.HiddenFor(model => model.Timestamp)
+        @Model.Question.Description
+
+        @if (Model.Question.Type == Corelib.Enums.QuestionType.SingleSelect || Model.Question.Type == Corelib.Enums.QuestionType.MultipleSelect)
+        {
+            <br /><br />
+
+            <div style="margin-left: 50px;">
+                @{
+            var guid = Html.Id("Guid").ToString().Replace("DependentMedicalHistories_", "").Replace("__Guid", "");
+                }
+                @foreach (var option in Model.Question.Options.Split(new char[] { '|' }))
+                {
+                    if (Model.Question.Type == Corelib.Enums.QuestionType.SingleSelect)
+                    {
+                        @Html.RadioButton("SelectedOptions", option) @:&nbsp; @option<br />
+                    }
+                    else
+                    {
+                        <label><input type="checkbox" name="DependentMedicalHistories[@guid].SelectedOptionsList" value="@option" @(Model.SelectedOptionsList.Contains(option) ? "checked='checked'" : "") />  @option</label> <br />
+                    }
+                }
+            </div>
+        }
+    </td>
+    @if (ViewBag.ReadOnly)
+    {
+        <td>
+            @if (Model.Question.Type == Corelib.Enums.QuestionType.YesNo)
+            {@Html.RadioButtonFor(model => model.Answer, "true", new { @disabled = "disabled" })}
+        </td>
+        <td>
+            @if (Model.Question.Type == Corelib.Enums.QuestionType.YesNo)
+            {@Html.RadioButtonFor(model => model.Answer, "false", new { @disabled = "disabled" })}
+        </td>
+    }
+    else
+    {
+        <td>
+            @if (Model.Question.Type == Corelib.Enums.QuestionType.YesNo)
+            {@Html.RadioButtonFor(model => model.Answer, "true")}
+        </td>
+        <td>
+            @if (Model.Question.Type == Corelib.Enums.QuestionType.YesNo)
+            {@Html.RadioButtonFor(model => model.Answer, "false")}
+        </td>
+    }
+    <td>
+        @Html.EditorFor(model => model.Remarks, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+        @Html.ValidationMessageFor(model => model.Remarks)
+    </td>
+</tr>

@@ -1,0 +1,320 @@
+@model HomeIndexViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+    var isMember = false;
+}
+@if (Helper.IsCorporateAdmin())
+{
+
+    <div class="row">
+        <div class="col-lg-5">
+            <div id="panel-title">User Information</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="col-lg-4">
+                                            <label>Username:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Model.ApplicationUser.UserName</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Name:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Model.ApplicationUser.Name&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Email Address:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Model.ApplicationUser.Email&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Designation:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Model.ApplicationUser.Designation&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Phone Number:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Model.ApplicationUser.PhoneNumber&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Fax:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Model.ApplicationUser.Fax&nbsp;</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div id="panel-title">My Action Memos</div>
+            <div class="panel panel-default">
+                <div id="MyActionMemosAjaxContainer" class="panel-body">
+                    <div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="panel-title">My Accounts</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Action("GetMyAccounts", "Items", new { area = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    if (ViewBag.HasApprovals != null && ViewBag.HasApprovals)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="panel-title">My Approvals</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <br />
+                                <div class="row spacing">
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-12">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="active"><a href="#MyEndorsementApprovals" role="tab" data-toggle="tab">Endorsement</a></li>
+                                                <li><a href="#Amendments" role="tab" data-toggle="tab">Amendments</a></li>
+                                                <li><a href="#IDReplacement" role="tab" data-toggle="tab">ID Replacement</a></li>
+                                                <li><a href="#AdditionalDependents" role="tab" data-toggle="tab">Additional Dependents</a></li>
+                                                <li><a href="#CancellationOfDependents" role="tab" data-toggle="tab">Cancellation of Dependents</a></li>
+                                            </ul>
+                                            <div class="tab-content">
+
+                                                <div class="tab-pane active" id="MyEndorsementApprovals">
+                                                    @Html.Action("GetMyEndorsementApprovals", "Items", new { area = "" })
+                                                </div>
+                                                <div class="tab-pane" id="Amendments">
+                                                    @Html.Action("GetMyAmendmentApprovals", "Items", new { area = "" })
+                                                </div>
+                                                <div class="tab-pane" id="IDReplacement">
+                                                    @Html.Action("GetMyIdReplacementApprovals", "Items", new { area = "" })
+                                                </div>
+                                                <div class="tab-pane" id="AdditionalDependents">
+                                                    @Html.Action("GetMyAdditionalDependentApprovals", "Items", new { area = "" })
+                                                </div>
+                                                <div class="tab-pane" id="CancellationOfDependents">
+                                                    @Html.Action("GetMyDependentCancellationApprovals", "Items", new { area = "" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else if (Helper.IsMember())
+{
+    isMember = true;
+
+    <div class="row">
+        <div class="col-lg-5">
+            <div id="panel-title">Account Information</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="col-lg-4">
+                                            <label>Member Code:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.Member.Code)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Name:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.Member.FullName)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Email Address:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.Member.EmailAddress)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Area:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.Member.Area)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Effectivity Date:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.Member.EffectivityDate)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>Validity Date:</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.Member.ValidityDate)&nbsp;</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div id="panel-title">My Action Memos</div>
+            <div class="panel panel-default">
+                <div id="MyActionMemosAjaxContainer" class="panel-body">
+                    <div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="panel-title">Medical and Dental Availments</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Action("GetMyUtilization", "Items", new { area = "" })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div id="panel-title">Reimbursement Status</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Action("GetMyReimbursement", "Items", new { area = "" })
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    if (!Model.AccountSetting.DirectlySubmitToUrg)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="panel-title">My Requests</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <br />
+                                <div class="row spacing">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-12">
+                                                <ul class="nav nav-tabs" role="tablist">
+                                                    <li class="active"><a href="#Amendments" role="tab" data-toggle="tab">Amendments</a></li>
+                                                    <li><a href="#IDReplacement" role="tab" data-toggle="tab">ID Replacement</a></li>
+                                                    <li><a href="#AdditionalDependents" role="tab" data-toggle="tab">Additional Dependents</a></li>
+                                                    <li><a href="#CancellationOfDependents" role="tab" data-toggle="tab">Cancellation of Dependents</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="Amendments">
+                                                        @Html.Action("GetMyAmendments", "Items", new { area = "" })
+                                                    </div>
+                                                    <div class="tab-pane" id="IDReplacement">
+                                                        @Html.Action("GetMyIdReplacements", "Items", new { area = "" })
+                                                    </div>
+                                                    <div class="tab-pane" id="AdditionalDependents">
+                                                        @Html.Action("GetMyAdditionalDependents", "Items", new { area = "" })
+                                                    </div>
+                                                    <div class="tab-pane" id="CancellationOfDependents">
+                                                        @Html.Action("GetMyDependentCancellations", "Items", new { area = "" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Welcome to eMediCard System</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="home-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="content">
+                                        <img src="~/Content/images/home-img.png" alt="" />
+                                        @*<div class="transparent">
+                                                <p>MediCard is a Health Maintenance Organization that provides a comprehensive health care program for its members. This includes emergency care, hospital confinement, preventive health care, dental care and out-patient consultation services.</p>
+                                            </div>*@
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="content">
+                                        <div class="inner-content">
+                                            <h4>Our Vision</h4>
+                                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean  massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus</p>
+                                            <div style="height: 1.5em;"></div>
+                                            <h4>Our Mission</h4>
+                                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean  massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var options = {
+                type: 'GET',
+                url: '@Url.Action("GetMyEmedActionMemos", "Items", new { area = "", username = isMember ? User.Identity.Name : "" })',
+                dataType: 'html',
+                success: function (html) {
+                    $('#MyActionMemosAjaxContainer').html(html);
+                }
+            };
+
+            $.ajax(options);
+        });
+    </script>
+}

@@ -1,0 +1,85 @@
+﻿@model EndorsementBatch
+
+@{
+    ViewBag.Title = "Membership Endorsements - Member Cancellation";
+    var cancelledMember = new CancelledMember();
+}
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">@ViewBag.Title</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+
+                                            <table class="table table-custom">
+                                                <tr>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => cancelledMember.MemberCode)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => cancelledMember.LastName)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => cancelledMember.FirstName)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => cancelledMember.DateCancelled)
+                                                    </th>
+                                                </tr>
+
+                                                @foreach (var item in Model.CancelledMembers)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.MemberCode)
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.LastName)
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.FirstName)
+                                                        </td>
+                                                        <td style="text-align:left !important">
+                                                            @Html.DisplayFor(modelItem => item.DateCancelled)
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </table>
+
+                                            <div class="row space">
+                                                <div class="col-lg-12">
+                                                    <div class="no-color pull-right">
+                                                        @*@Html.ActionLink("Back to List", "Index", "MembershipEndorsements", new { area = "" }, new { @class = "btn btn-primary" })*@
+                                                        <input type="button" class="btn btn-primary" value="Back to List" onclick="history.go(-1);" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+}

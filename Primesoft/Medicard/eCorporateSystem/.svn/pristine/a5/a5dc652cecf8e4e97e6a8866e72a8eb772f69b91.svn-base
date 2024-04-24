@@ -1,0 +1,90 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using Corelib.Models;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    [PasswordExpired]
+    public class HomeController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public HomeController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public ActionResult Index(string message, string messageType)
+        {
+            var model = new HomeIndexViewModel();
+
+            if (Helper.IsCorporateAdmin())
+            {
+                model.ApplicationUser = db.User;
+                var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+                ViewBag.HasApprovals = db.AccountSettings.Any(t => accountCodes.Contains(t.AccountCode) && !t.DirectlySubmitToUrg);
+            }
+
+            if (Helper.IsMember())
+            {
+                model.Member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name) ?? new Member();
+                model.AccountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == model.Member.AccountCode) ?? new AccountSetting();
+            }
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            return View(model);
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+         
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                db = null;
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+   }
+}

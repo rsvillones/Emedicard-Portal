@@ -1,0 +1,42 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model UtilizationReportExceptionForPlan
+@{
+    var memberList = new SelectList(ViewBag.Members, "Code", "FullName", Model.MemberCode);
+    var planList = new SelectList(ViewBag.Plans, "Id", "LongDescription");
+}
+<tr>
+    @using (Html.BeginCollectionItem("UtilizationReportExceptionForPlans"))
+    {
+        <td>
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Guid)
+            @Html.HiddenFor(model => model.CrBy)
+            @Html.HiddenFor(model => model.CrById)
+            @Html.HiddenFor(model => model.CrDate)
+            @Html.HiddenFor(model => model.AccountCode)
+
+            @Html.DropDownList("MemberCode", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlDropDownAttributeForPlan as object)
+            @Html.ValidationMessageFor(model => model.MemberCode)
+        </td>
+        <td>
+            @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddUtilizationReportExceptionForPlan") || User.IsInRole("CanEditUtilizationReportExceptionForPlan"))))
+            {
+                @Html.HiddenFor(model => model.PlanIds)
+                @Html.DropDownList("PlanList", (IEnumerable<SelectListItem>)planList, new { @class = ".plans selectPickerPlan span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + Model.PlanIds + "]" })
+                @Html.ValidationMessageFor(model => model.PlanIds)
+            }
+            else
+            {
+                @Html.HiddenFor(model => model.PlanIds)
+                @Html.DropDownList("PlanList", (IEnumerable<SelectListItem>)planList, new { @class = ".plans selectPickerPlan span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + Model.PlanIds + "]", @disabled = true })
+                @Html.ValidationMessageFor(model => model.PlanIds)
+            }
+        </td>
+        <td>
+            @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddUtilizationReportExceptionForPlan") || User.IsInRole("CanDeleteUtilizationReportExceptionForPlan"))))
+            {
+                <a href="javascript:void(0);" onclick="deleteMember(this);" class="btn btn-danger">Delete</a>
+            }
+        </td>
+    }
+</tr>

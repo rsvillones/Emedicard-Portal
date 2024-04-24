@@ -1,0 +1,172 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Entity;
+
+namespace Tester
+{
+    public partial class Form1 : Form
+    {
+        private readonly string _windowsServiceUser = "eMedicardWindowsService";
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var endorsementBatchIds = new List<int>();
+
+            using (var db = new IdentityDataContext())
+            {
+                db.User = new ApplicationUser() { UserName = _windowsServiceUser, Id = Guid.NewGuid().ToString() };
+
+                var actionMemoProcessDate = db.ActionMemoProcessDates.OrderByDescending(t => t.Date).FirstOrDefault();
+                var dateTo = DateTime.Now;
+                IEnumerable<IActionMemo> legacyActionMemos;
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    legacyActionMemos = LegacyHelper.GetLegacyActionMemos(legacyDb, actionMemoProcessDate.Date, dateTo).ToList();
+                }
+
+                foreach (var legacyActionMemo in legacyActionMemos)
+                {
+                    Member member = null;
+                    Dependent dependent = null;
+                    if (legacyActionMemo.PrincipalOrDependent == "Dependent")
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == legacyActionMemo.PrinAppNum);
+                        dependent = db.Dependents.FirstOrDefault(t => t.DepAppNum == legacyActionMemo.DepAppNum.Value);
+                    }
+                    else
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == legacyActionMemo.PrinAppNum);
+                    }
+
+                    if (member != null)
+                    {
+                        var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.ReplyTo == legacyActionMemo.ControlNumber);
+                        if (endorsementBatch == null)
+                        {
+                            endorsementBatch = new EndorsementBatch()
+                            {
+                                Date = legacyActionMemo.ActionMemoDate.Value,
+                                Deadline = legacyActionMemo.ActionMemoDate.Value.AddDays(3),
+                                Status = EndorsementBatchStatus.New,
+                                EndorsementType = "Action Memo",
+                                EndorsementCount = 1,
+                                AccountCode = legacyActionMemo.AccountCode,
+                                //ReferenceNumber = Config.GenerateLegacyMapCode(db),
+                                ReplyTo = legacyActionMemo.ControlNumber
+                            };
+                        }
+                        else
+                        {
+                            endorsementBatch.EndorsementCount++;
+                        }
+
+                        var actionMemo = new ActionMemo()
+                        {
+                            DateIssued = legacyActionMemo.ActionMemoDate.Value,
+                            Type = legacyActionMemo.Type,
+                            MemberId = member.Id,
+                            DependentId = dependent != null ? (int?)dependent.Id : null,
+                            EndorsementBatch = endorsementBatch,
+                            EndorsementBatchId = endorsementBatch.Id,
+                            Details = legacyActionMemo.ActionMemoRemarks,
+                            IsNew = true
+                        };
+
+                        db.ActionMemos.Add(actionMemo);
+
+                        db.SaveChanges();
+
+                        if (!endorsementBatchIds.Contains(endorsementBatch.Id))
+                        {
+                            endorsementBatchIds.Add(endorsementBatch.Id);
+                        }
+                    }
+                }
+
+                db.ActionMemoProcessDates.Add(new ActionMemoProcessDate()
+                {
+                    Date = dateTo
+                });
+                db.SaveChanges();
+
+                foreach (var endorsementBatchId in endorsementBatchIds)
+                {
+                    var endorsementBatch = db.EndorsementBatches
+                        .Include(t => t.ActionMemos)
+                        .Include(t => t.ActionMemos.Select(am => am.Member))
+                        .Include(t => t.ActionMemos.Select(am => am.Dependent))
+                        .FirstOrDefault(t => t.Id == endorsementBatchId);
+                    //WebUI.Helper.UrgActionMemo(null, endorsementBatch);
+                }
+            }
+
+            MessageBox.Show("Done");
+        }
+
+        private void SetStatus(object entity, int? statCode, string code)
+        {
+            switch (statCode)
+            {
+                case 0:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    entity.GetType().GetProperty("Code").SetValue(entity, code);
+                    break;
+                case 1:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Disapproved);
+                    break;
+                case 2:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForEncoding);
+                    break;
+                case 3:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.MedicalEvaluation);
+                    break;
+                case 4:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.OnHold);
+                    break;
+                case 5:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForApproval);
+                    break;
+                case 9:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.PermanentResigned);
+                    break;
+                case 15:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Cancelled);
+                    break;
+                case 16:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.PendingeMedicard);
+                    break;
+                case 17:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Lapse);
+                    break;
+                case 18:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForReactivation);
+                    break;
+                case 20:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    break;
+                case 21:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    break;
+                case 22:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.VerifyMembership);
+                    break;
+            }
+        }
+    }
+}

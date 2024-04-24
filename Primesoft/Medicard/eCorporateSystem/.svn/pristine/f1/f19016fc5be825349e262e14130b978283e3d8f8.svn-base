@@ -1,0 +1,51 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="MemberAllService.aspx.cs" Inherits="WebUI.Reports.UtilizationReporting.MemberAllService" %>
+<%@ Register TagPrefix="rsweb" Namespace="Microsoft.Reporting.WebForms" Assembly="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" %>
+
+<!DOCTYPE html>
+
+<html>
+<head id="Head1" runat="server">
+    <link href="/Content/report.css" rel="stylesheet" />
+    <link href="/Content/bootstrap.css" rel="stylesheet" /> 
+    
+    <%--<script type="text/javascript">
+        $(document).ready(function() {
+            $('#<%=StartDateText.ClientID %>').datepicker();
+        })
+    </script>--%>
+</head>
+<body>
+    <form id="form1" runat="server" style="height: 100%">
+        <div class="row form-report">
+            <div class="col-lg-1">
+                <label class="label-report">Member:</label>
+            </div>
+            <div class="col-lg-2">
+                <asp:DropDownList ID="MemberCodeDropDown" Width="150px" runat="server" AppendDataBoundItems="True" OnSelectedIndexChanged="GenerateReport" AutoPostBack="True" CssClass="col-lg-12 form-control"></asp:DropDownList>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+                <rsweb:ReportViewer ID="UtilizationReportMemberAllServiceViewer" runat="server" Width="100%" Height="100%"></rsweb:ReportViewer>
+            </div>
+        </div>
+    </form>
+    <script language="javascript" type="text/javascript">
+        ResizeReport();
+        function ResizeReport() {
+            var viewer = document.getElementById("<%= UtilizationReportMemberAllServiceViewer.ClientID %>");
+            var fixedtable = document.getElementById("UtilizationReportMemberAllServiceViewer_fixedTable").getElementsByTagName('tbody')[0];;
+           var window = document.documentElement.clientHeight;
+           fixedtable.style.height = (window - 77) + "px";
+           viewer.style.height = (window - 45) + "px";
+       }
+       window.onresize = function resize() { ResizeReport(); };
+    </script>
+</body>
+</html>
+
+
+
+
+

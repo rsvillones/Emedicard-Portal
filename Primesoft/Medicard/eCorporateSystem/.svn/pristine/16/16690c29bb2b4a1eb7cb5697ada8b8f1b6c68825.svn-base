@@ -1,0 +1,58 @@
+﻿@model MemberRequest
+@{
+    ViewBag.Title = "Amendment";
+}
+@using (Html.BeginForm("Amendments", "RequestManagement", FormMethod.Post, new { accountCode = ViewBag.AccountCode, enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_Amendment", Model)
+
+    <div class="row space">
+        <div class="col-lg-12">
+            <div class="no-color pull-right">
+                <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+
+}
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#EffectivityDate').datepicker();
+        });
+        function dataTypeOnchange(input) {
+            var propertyName = input.val();
+            var option = {
+                url: '@Url.Action("GetPropertyValue")',
+                type: 'post',
+                data: {
+                    propertyName: propertyName,
+                    memberId: '@Model.MemberId'
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#ChangeDataFrom').val(data);
+            });
+
+            var option2 = {
+                url: '@Url.Action("IsPropertyDateTime")',
+                type: 'post',
+                data: {
+                    propertyName: propertyName,
+                    memberId: '@Model.MemberId'
+                }
+            };
+            $.ajax(option2).done(function (data) {
+
+                if (data == "True") {
+                    $('#ChangeDataTo').datepicker();
+                } else {
+                    $('#ChangeDataTo').datepicker("remove");
+                }
+            });
+        }
+    </script>
+}

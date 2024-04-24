@@ -1,0 +1,4 @@
+﻿@model Amendment
+
+@Html.Partial("_Amendments",Model)
+

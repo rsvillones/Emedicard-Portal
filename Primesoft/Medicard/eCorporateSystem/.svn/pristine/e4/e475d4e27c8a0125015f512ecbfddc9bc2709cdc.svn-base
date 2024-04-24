@@ -1,0 +1,330 @@
+@model EndorsementBatch
+
+@{
+    ViewBag.Title = "Batch Upload";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("BatchUpload", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.ReferenceNumber);
+    @Html.HiddenFor(model => model.Filename);
+    @Html.HiddenFor(model => model.GuidFilename);
+    @Html.HiddenFor(model => model.Timestamp);
+    @Html.HiddenFor(model => model.Status);
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Membership Endorsement (Add New Member)</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadNewApplication">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title" style="margin-bottom: 1em">Batch Upload for New Application</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Submission Deadline:</label>
+                                                        <div class="col-lg-8 editor-form-control">
+                                                            @Html.EditorFor(model => model.Deadline, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessage("DeadLineError", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Remarks:</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">&nbsp;</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <label class="inline">Allowed file extension: xlsm.</label>
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <input id="downloadNewApplicationTemplateButton" type="button" class="btn-download" value="Download Template" />
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <input type="file" id="uploadNewApplication" name="uploadNewApplication" style="background-color:blue" />
+                                                                    <input type="hidden" id="uploadStringNewApplication" name="uploadStringNewApplication" />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div id="ForCreatingUserAccountContainer"></div>
+                                                        <div id="RowsContainer">
+                                                            @if (ViewBag.ViewData != null && ViewBag.ViewData)
+                                                            {
+                                                                @Html.Action("GetMemberWrappers", new { accountCode = ViewBag.AccountCode, guid = Model.Guid, errorOnly = Model.HasEndorsementError })
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function deleteMember(button) {
+            var tr = $(button).parent().parent();
+            tr.remove();
+        }
+
+        $(document).ready(function () {
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+                // If Internet Explorer
+                $("#uploadNewApplication").uploadify({
+                    'swf': '@Url.Content("~/Content/uploadify/uploadify.swf")',
+                    'uploader': '@Url.Action("UploadExcel")',
+                    'formData': {
+                        'accountCode': '@ViewBag.AccountCode',
+                        'endorsementBatchId': '@Model.Id',
+                        'endorsementBatchGuid': '@Model.Guid'
+                    },
+                    'multi': false,
+                    'auto': true,
+                    'method': 'post',
+                    'buttonText': 'Select File',
+                    'onUploadError': function (file, data) {
+                        alert(file);
+                    },
+                    'onUploadProgress': function (file) {
+                        $('#RowsContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+                    },
+                    'onUploadSuccess': function (file, data) {
+                        $('#RowsContainer').html('');
+                        var json = $.parseJSON(data);
+                        if (json.Success) {
+                            $('#Filename').val(json.Filename);
+                            $('#GuidFilename').val(json.GuidFilename);
+                            uploadEndorsement(json.EndorsementGuid);
+                        }
+                        else {
+                            alert(json.ErrorMessage);
+                        }
+                    }
+                });
+            }
+            else {
+                // If another browser
+                $("#uploadNewApplication").uploadifive({
+                    'method': 'post',
+                    'formData': {
+                        'accountCode': '@ViewBag.AccountCode',
+                        'endorsementBatchId': '@Model.Id',
+                        'endorsementBatchGuid': '@Model.Guid'
+                    },
+                    'uploadScript': '/CorporateAdministrator/Endorsement/UploadExcel',
+                    'fileObjName': 'fileData',
+                    'buttonText': 'Select File',
+                    'multi': false,
+                    'auto': true,
+                    'height': 40,
+                    'width': 60,
+                    'removeCompleted': true,
+                    'onError': function (file, data) {
+                        $('#RowsContainer').html('');
+                        alert(file);
+                    },
+                    'onUpload': function (file) {
+                        $('#RowsContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+                    },
+                    'onUploadComplete': function (file, data) {
+                        $('#RowsContainer').html('');
+                        var json = $.parseJSON(data);
+
+                        if (json.Success) {
+                            $('#Filename').val(json.Filename);
+                            $('#GuidFilename').val(json.GuidFilename);
+                            uploadEndorsement(json.EndorsementGuid);
+                        }
+                        else {
+                            alert(json.ErrorMessage);
+                        }
+                    }
+                });
+            }
+
+            processUserAccount('@Model.Guid');            
+
+            $('#downloadNewApplicationTemplateButton').click(function (e) {
+                e.preventDefault();
+                window.location.href = '@(Url.Action("DownloadNewApplicationTemplate", new { @accountCode = ViewBag.AccountCode }))';
+            });
+
+            $('.selectpicker').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectpicker').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+
+            $('#ApplicationVerificationBody:contains("exists"),#ApplicationVerificationBody:contains("required")').each(function () {
+                $("#ApplicationVerificationBody").find("td").css({ "height": "64px" });
+            });
+
+            $('.sticky-col tbody tr input').remove();
+            $('.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists")').closest('tr').css("background-color", "#E84646");
+
+            $('#Deadline').datepicker();
+
+            $('#ShowOnlyError').click(function () {
+                GetExcelRows($(this).is(":checked"));
+            });
+        });
+
+        function AlertMessage(selector) {
+            if ($(selector).is(':checked')) {
+                var errorCount = $('.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists")').length;
+                if (errorCount <= 0) {
+                    alert('No error found.')
+                }
+            }
+        }
+
+        function OnMemberWrapperBegin() {
+            $('#RowsContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+        }
+
+        function GetExcelRows(errorOnly) {
+            var options = {
+                url: '@Url.Action("GetMemberWrappers")',
+                type: 'POST',
+                data: {
+                    accountCode: '@ViewBag.AccountCode',
+                    guid: '@Model.Guid',
+                    errorOnly: errorOnly
+                },
+                success: function (html) {
+                    $('#RowsContainer').html(html);
+                    setStickyHeader();
+                    $('#ShowOnlyError').click(function () {
+                        GetExcelRows($(this).is(":checked"));
+                    });
+                }
+            }
+
+            $.ajax(options);
+        }
+
+        function IsValidMemberWrappers(endorsementGuid) {
+            var options = {
+                url: '@Url.Action("IsValidMemberWrappers")',
+                type: 'POST',
+                data: {
+                    guid: endorsementGuid,
+                },
+                success: function (data) {
+                    GetExcelRows(data);
+                }
+            }
+            $.ajax(options);
+        }
+
+        function uploadEndorsement(endorsementGuid) {
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("GetEndorsementLog")',
+                        type: 'post',
+                        data: {
+                            guid: endorsementGuid
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (data) {
+                        isPaused = false;
+                        if (data.Success) {
+                            $('#RowsContainer').html('<div class="row"><div class="col-lg-12"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' + data.CurrentData + '" aria-valuemin="0" aria-valuemax="' + data.NumberOfData + '" style="width:' + parseFloat(Math.round((data.CurrentData / data.NumberOfData) * 100).toFixed(2)) + '%;"><span class="sr-only"></span></div></div></div><div class="col-lg-12"><div style="text-align:center;margin-top:-3em">' + data.Remark + '</div></div></div>');
+                            if (data.IsProcessed) {
+                                clearInterval(interval);
+                                IsValidMemberWrappers(endorsementGuid);
+                            }
+                        }
+                        else {
+                            clearInterval(interval);
+                            alert(data.ErrorMessage);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+        function processUserAccount(endorsementGuid) {
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("GetEndorsementLogForCreatingUserAccounts")',
+                        type: 'post',
+                        data: {
+                            guid: endorsementGuid
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (data) {
+                        isPaused = false;
+                        if (data.Success) {
+                            $('#ForCreatingUserAccountContainer').html('<div class="row"><div class="col-lg-12"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' + data.CurrentData + '" aria-valuemin="0" aria-valuemax="' + data.NumberOfData + '" style="width:' + parseFloat(Math.round((data.CurrentData / data.NumberOfData) * 100).toFixed(2)) + '%;"><span class="sr-only"></span></div></div></div><div class="col-lg-12"><div style="text-align:center;margin-top:-3em">' + data.Remark + '</div></div></div>');
+                            if (data.IsProcessed) {
+                                clearInterval(interval);
+                                $('#ForCreatingUserAccountContainer').empty();
+                            }
+                        }
+                        else {
+                            clearInterval(interval);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+    </script>
+}
+

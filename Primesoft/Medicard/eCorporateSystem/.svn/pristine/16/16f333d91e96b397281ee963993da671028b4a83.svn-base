@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace WebUI.Areas.Member.Models
+{
+    public class SubmitForApprovalViewModel : IValidatableObject
+    {
+        #region -- Properties --
+
+        public bool Accepted { get; set; }
+
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        public string MiddleName { get; set; }
+
+        [Display(Name = "Date of Birth")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        #endregion
+
+        #region -- IValidatableObject Members --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!this.Accepted)
+            {
+                yield return new ValidationResult("Please certify that the information that you are submitting are correct and true.", new List<string>() { "Accepted" });
+            }
+        }
+
+        #endregion
+    }
+}

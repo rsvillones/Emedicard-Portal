@@ -1,0 +1,1674 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ClaimsModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ClaimsModelStoreContainer" />
+        <Function Name="CP_CLMS_REP_UTILIZATION_ALL_EMED" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MEMCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="CP_CLMS_REP_UTILIZATION_ALL_EMED_BY_DATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MEMCODE" Type="varchar" Mode="In" />
+          <Parameter Name="date_fr" Type="date" Mode="In" />
+          <Parameter Name="date_to" Type="date" Mode="In" />
+        </Function>
+        <Function Name="CP_CLMS_REP_UTILIZATION_ALL_EMED_BY_DATE_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MEMCODE" Type="varchar" Mode="In" />
+          <Parameter Name="date_fr" Type="date" Mode="In" />
+          <Parameter Name="date_to" Type="date" Mode="In" />
+        </Function>
+        <Function Name="CP_CLMS_REP_UTILIZATION_ALL_EMED_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MEMCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMED_REIMBURSEMENT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ReimType" Type="varchar" Mode="In" />
+          <Parameter Name="memberCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMED_REIMBURSEMENT_BY_DATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="dateTo" Type="datetime" Mode="In" />
+          <Parameter Name="ReimType" Type="varchar" Mode="In" />
+          <Parameter Name="memberCode" Type="varchar" Mode="In" />
+          <Parameter Name="dateFr" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="SP_EMC_REIM_UTIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SERVICE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCT_CODE" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_EMED_REIM_UTIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SERVICE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCT_CODE" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_EMED_REIM_UTIL_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SERVICE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCT_CODE" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_CALLLOG" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_CALLLOG_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_DCR" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_DCR_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_DT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_DT_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_ER" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_ER_TEST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_ER_TEST_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_ER_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_IP_EMED" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_IP_EMED_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_IP_TEST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_OP" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_OP_TEST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_OP_TEST_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_Intra_ActiveAccount_Utilization_OP_v2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ComCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDaTe" Type="datetime" Mode="In" />
+          <Parameter Name="LastName" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ClaimsModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ClaimsEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="GetAvailments" ReturnType="Collection(ClaimsModel.Availments)">
+          <Parameter Name="MEMCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="getMemberReimbursement" ReturnType="Collection(ClaimsModel.MemberReimbursement)">
+            <Parameter Name="ReimType" Mode="In" Type="String" />
+            <Parameter Name="memberCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_ip" ReturnType="Collection(ClaimsModel.active_account_utilization_ip_result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_ip_grp" ReturnType="Collection(ClaimsModel.active_account_utilization_ip_grp_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_op_grp" ReturnType="Collection(ClaimsModel.SP_Intra_ActiveAccount_Utilization_OP_TEST_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_op" ReturnType="Collection(ClaimsModel.active_account_utilization_op_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_accounts_utilization_er" ReturnType="Collection(ClaimsModel.active_accounts_utilization_er_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_er_test" ReturnType="Collection(ClaimsModel.active_account_utilization_er_test_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_reim_util" ReturnType="Collection(ClaimsModel.emed_reim_util_Result)">
+            <Parameter Name="SERVICE" Mode="In" Type="String" />
+            <Parameter Name="ACCT_CODE" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_Intra_ActiveAccount_Utilization_DT" ReturnType="Collection(ClaimsModel.SP_Intra_ActiveAccount_Utilization_DT_Result)">
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_util_dcr" ReturnType="Collection(ClaimsModel.active_account_util_dcr_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_accounts_util_call_log" ReturnType="Collection(ClaimsModel.active_accounts_util_call_log_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_reimbusement_by_date" ReturnType="Collection(ClaimsModel.emed_reimbusement_by_date_Result)">
+            <Parameter Name="dateTo" Mode="In" Type="DateTime" />
+            <Parameter Name="ReimType" Mode="In" Type="String" />
+            <Parameter Name="memberCode" Mode="In" Type="String" />
+            <Parameter Name="dateFr" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="emed_utilization_all_by_date" ReturnType="Collection(ClaimsModel.emed_utilization_all_by_date_Result)">
+            <Parameter Name="MEMCODE" Mode="In" Type="String" />
+            <Parameter Name="date_fr" Mode="In" Type="DateTime" />
+            <Parameter Name="date_to" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetAvailments_v2" ReturnType="Collection(ClaimsModel.Availments)">
+            <Parameter Name="MEMCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_Intra_ActiveAccount_Utilization_DT_v2" ReturnType="Collection(ClaimsModel.SP_Intra_ActiveAccount_Utilization_DT_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_ip_grp_v2" ReturnType="Collection(ClaimsModel.active_account_utilization_ip_grp_Result)">
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_ip_v2" ReturnType="Collection(ClaimsModel.active_account_utilization_ip_result)">
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_op_v2" ReturnType="Collection(ClaimsModel.active_account_utilization_op_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_op_grp_v2" ReturnType="Collection(ClaimsModel.SP_Intra_ActiveAccount_Utilization_OP_TEST_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_utilization_all_by_date_v2" ReturnType="Collection(ClaimsModel.emed_utilization_all_by_date_Result)">
+            <Parameter Name="MEMCODE" Mode="In" Type="String" />
+            <Parameter Name="date_fr" Mode="In" Type="DateTime" />
+            <Parameter Name="date_to" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="active_accounts_utilization_er_v2" ReturnType="Collection(ClaimsModel.active_accounts_utilization_er_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_utilization_er_test_v2" ReturnType="Collection(ClaimsModel.active_account_utilization_er_test_Result)">
+            <Parameter Name="LastName" Mode="In" Type="String" />
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="emed_reim_util_v2" ReturnType="Collection(ClaimsModel.emed_reim_util_Result)">
+            <Parameter Name="SERVICE" Mode="In" Type="String" />
+            <Parameter Name="ACCT_CODE" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_account_util_dcr_v2" ReturnType="Collection(ClaimsModel.active_account_util_dcr_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="active_accounts_util_call_log_v2" ReturnType="Collection(ClaimsModel.active_accounts_util_call_log_Result)">
+            <Parameter Name="ComCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDaTe" Mode="In" Type="DateTime" />
+            <Parameter Name="LastName" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="Availments">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="DateTime" Name="AVAIL_FR" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DIAG_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="DX_REM" Nullable="true" />
+          <Property Type="String" Name="HOSPITAL_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="APPROVED" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="DISAPPROVED" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ADVANCES" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC" Nullable="true" Precision="19" />
+          <Property Type="String" Name="MEMCODE" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="REMARKS2" Nullable="true" MaxLength="255" />
+        </ComplexType>
+        <ComplexType Name="MemberReimbursement">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="DateTime" Name="DATE_RCVD" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DUE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="RELEASED_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="HOSPITAL_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAG_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="AMOUNT" Nullable="false" Precision="19" />
+          <Property Type="Decimal" Name="APPROVED" Nullable="false" Precision="19" />
+          <Property Type="DateTime" Name="PROCESSED_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACTION_MEMO" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ACTION_MEMO_REM" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="DISAPPROVED" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="DISAPPROVED_REM" Nullable="true" MaxLength="1000" />
+        </ComplexType>
+        <ComplexType Name="active_account_utilization_ip_result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DISCHARGE" Nullable="true" Precision="23" />
+          <Property Type="Double" Name="NO_OF_DAYS" Nullable="true" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="300" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="CLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="CLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DISCHARGE" Nullable="true" Precision="23" />
+          <Property Type="Double" Name="NO_OF_DAYS" Nullable="true" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="300" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="CLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="CLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+        </ComplexType>
+        <ComplexType Name="active_account_utilization_ip_grp_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DISCHARGE" Nullable="true" Precision="23" />
+          <Property Type="Double" Name="NO_OF_DAYS" Nullable="true" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="300" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="CLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="CLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+        </ComplexType>
+        <ComplexType Name="SP_Intra_ActiveAccount_Utilization_OP_TEST_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="BILL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="MST_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="CO_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="DA_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="AD_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC" Nullable="true" Precision="19" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DCLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="DCLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="Lab" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="XRay" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="DiagProc" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="Ultrasound" Nullable="true" Precision="19" />
+          <Property Type="String" Name="ARS_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="active_account_utilization_op_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="BILL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="MST_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="CO_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="DA_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="AD_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC" Nullable="true" Precision="19" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DCLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="DCLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="Lab" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="XRay" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="DiagProc" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="Ultrasound" Nullable="true" Precision="19" />
+          <Property Type="String" Name="ARS_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="active_accounts_utilization_er_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="BILL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="MST_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="CO_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="DA_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="AD_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC" Nullable="true" Precision="19" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DCLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="DCLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="Lab" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="XRay" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="DiagProc" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="Ultrasound" Nullable="true" Precision="19" />
+          <Property Type="String" Name="ARS_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="active_account_utilization_er_test_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="BILL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="TYPE" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="MST_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="CO_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="DA_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="AD_AMT" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC" Nullable="true" Precision="19" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ICD10_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ICD10_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DCLASS_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="DCLASS_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="Lab" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="XRay" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="DiagProc" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="Ultrasound" Nullable="true" Precision="19" />
+          <Property Type="String" Name="ARS_NO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="emed_reim_util_Result">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="DateTime" Name="DATE_RCVD" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DUE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="RELEASED_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="HOSPITAL_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAG_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="AMOUNT" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="PROCESSED_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACTION_MEMO" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACTION_MEMO_REM" Nullable="true" />
+          <Property Type="String" Name="DISAPPROVED" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="DISAPPROVED_REM" Nullable="true" />
+          <Property Type="String" Name="DNAME" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="COMPANY_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="Decimal" Name="TOTAL_APPROVED" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="SP_Intra_ActiveAccount_Utilization_DT_Result">
+          <Property Type="String" Name="CTLNO" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="51" />
+          <Property Type="DateTime" Name="REC_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DUE_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="25" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="120" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="true" Precision="19" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="PRO_BY" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="PRO_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="active_account_util_dcr_Result">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="false" MaxLength="3" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DISCHARGE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="400" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="false" Precision="19" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="6" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="active_accounts_util_call_log_Result">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="false" MaxLength="8" />
+          <Property Type="String" Name="HOSPITAL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="H_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="ACCOUNT_NO" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="VISIT_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DX_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="DIAGNOSIS" Nullable="true" MaxLength="400" />
+          <Property Type="Decimal" Name="UTIL_AMT" Nullable="false" Precision="19" />
+          <Property Type="String" Name="LAST_NAME" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FIRST_NAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="19" />
+          <Property Type="Int32" Name="CIVIL_STAT" Nullable="true" />
+          <Property Type="Int32" Name="SEX" Nullable="true" />
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="SERVICE" Nullable="false" MaxLength="8" />
+          <Property Type="Int32" Name="RM_CODE" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="AREA" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="emed_reimbusement_by_date_Result">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="DateTime" Name="DATE_RCVD" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DATE_DUE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="RELEASED_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="HOSPITAL_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DIAG_DESC" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="AMOUNT" Nullable="false" Precision="19" />
+          <Property Type="Decimal" Name="APPROVED" Nullable="false" Precision="19" />
+          <Property Type="DateTime" Name="PROCESSED_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACTION_MEMO" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ACTION_MEMO_REM" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="DISAPPROVED" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="DISAPPROVED_REM" Nullable="true" MaxLength="1000" />
+        </ComplexType>
+        <ComplexType Name="emed_utilization_all_by_date_Result">
+          <Property Type="String" Name="CONTROL_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="DateTime" Name="AVAIL_FR" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DIAG_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="DX_REM" Nullable="true" />
+          <Property Type="String" Name="HOSPITAL_NAME" Nullable="true" MaxLength="255" />
+          <Property Type="Decimal" Name="APPROVED" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="DISAPPROVED" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ADVANCES" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC" Nullable="true" Precision="19" />
+          <Property Type="String" Name="MEMCODE" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="REMARKS2" Nullable="true" MaxLength="255" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ClaimsModelStoreContainer" CdmEntityContainer="ClaimsEntities" >
+          <FunctionImportMapping FunctionImportName="GetAvailments" FunctionName="ClaimsModel.Store.CP_CLMS_REP_UTILIZATION_ALL_EMED">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.Availments">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="AVAIL_FR" ColumnName="AVAIL_FR" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="DX_REM" ColumnName="DX_REM" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="APPROVED" ColumnName="APPROVED" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="ADVANCES" ColumnName="ADVANCES" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="MEMCODE" ColumnName="MEMCODE" />
+                <ScalarProperty Name="REMARKS2" ColumnName="REMARKS2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="getMemberReimbursement" FunctionName="ClaimsModel.Store.EMED_REIMBURSEMENT">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.MemberReimbursement">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="DATE_RCVD" ColumnName="DATE_RCVD" />
+                <ScalarProperty Name="DATE_DUE" ColumnName="DATE_DUE" />
+                <ScalarProperty Name="RELEASED_DATE" ColumnName="RELEASED_DATE" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="AMOUNT" ColumnName="AMOUNT" />
+                <ScalarProperty Name="APPROVED" ColumnName="APPROVED" />
+                <ScalarProperty Name="PROCESSED_DATE" ColumnName="PROCESSED_DATE" />
+                <ScalarProperty Name="ACTION_MEMO" ColumnName="ACTION_MEMO" />
+                <ScalarProperty Name="ACTION_MEMO_REM" ColumnName="ACTION_MEMO_REM" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="DISAPPROVED_REM" ColumnName="DISAPPROVED_REM" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_ip" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_IP_EMED">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_ip_result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DATE_DISCHARGE" ColumnName="DATE_DISCHARGE" />
+                <ScalarProperty Name="NO_OF_DAYS" ColumnName="NO_OF_DAYS" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="CLASS_CODE" ColumnName="CLASS_CODE" />
+                <ScalarProperty Name="CLASS_DESC" ColumnName="CLASS_DESC" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_ip_grp" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp">
+          <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_ip_grp_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DATE_DISCHARGE" ColumnName="DATE_DISCHARGE" />
+                <ScalarProperty Name="NO_OF_DAYS" ColumnName="NO_OF_DAYS" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="CLASS_CODE" ColumnName="CLASS_CODE" />
+                <ScalarProperty Name="CLASS_DESC" ColumnName="CLASS_DESC" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_op_grp" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_OP_TEST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.SP_Intra_ActiveAccount_Utilization_OP_TEST_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_op" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_OP">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_op_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_accounts_utilization_er" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_ER">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_accounts_utilization_er_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_er_test" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_ER_TEST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_er_test_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_reim_util" FunctionName="ClaimsModel.Store.SP_EMED_REIM_UTIL">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.emed_reim_util_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="DATE_RCVD" ColumnName="DATE_RCVD" />
+                <ScalarProperty Name="DATE_DUE" ColumnName="DATE_DUE" />
+                <ScalarProperty Name="RELEASED_DATE" ColumnName="RELEASED_DATE" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="AMOUNT" ColumnName="AMOUNT" />
+                <ScalarProperty Name="PROCESSED_DATE" ColumnName="PROCESSED_DATE" />
+                <ScalarProperty Name="ACTION_MEMO" ColumnName="ACTION_MEMO" />
+                <ScalarProperty Name="ACTION_MEMO_REM" ColumnName="ACTION_MEMO_REM" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="DISAPPROVED_REM" ColumnName="DISAPPROVED_REM" />
+                <ScalarProperty Name="DNAME" ColumnName="DNAME" />
+                <ScalarProperty Name="COMPANY_CODE" ColumnName="COMPANY_CODE" />
+                <ScalarProperty Name="TOTAL_APPROVED" ColumnName="TOTAL_APPROVED" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_Intra_ActiveAccount_Utilization_DT" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_DT">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.SP_Intra_ActiveAccount_Utilization_DT_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_util_dcr" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_DCR">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_util_dcr_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DATE_DISCHARGE" ColumnName="DATE_DISCHARGE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_accounts_util_call_log" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_CALLLOG">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_accounts_util_call_log_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_reimbusement_by_date" FunctionName="ClaimsModel.Store.EMED_REIMBURSEMENT_BY_DATE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.emed_reimbusement_by_date_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="DATE_RCVD" ColumnName="DATE_RCVD" />
+                <ScalarProperty Name="DATE_DUE" ColumnName="DATE_DUE" />
+                <ScalarProperty Name="RELEASED_DATE" ColumnName="RELEASED_DATE" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="AMOUNT" ColumnName="AMOUNT" />
+                <ScalarProperty Name="APPROVED" ColumnName="APPROVED" />
+                <ScalarProperty Name="PROCESSED_DATE" ColumnName="PROCESSED_DATE" />
+                <ScalarProperty Name="ACTION_MEMO" ColumnName="ACTION_MEMO" />
+                <ScalarProperty Name="ACTION_MEMO_REM" ColumnName="ACTION_MEMO_REM" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="DISAPPROVED_REM" ColumnName="DISAPPROVED_REM" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_utilization_all_by_date" FunctionName="ClaimsModel.Store.CP_CLMS_REP_UTILIZATION_ALL_EMED_BY_DATE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.emed_utilization_all_by_date_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="AVAIL_FR" ColumnName="AVAIL_FR" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="DX_REM" ColumnName="DX_REM" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="APPROVED" ColumnName="APPROVED" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="ADVANCES" ColumnName="ADVANCES" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="MEMCODE" ColumnName="MEMCODE" />
+                <ScalarProperty Name="REMARKS2" ColumnName="REMARKS2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetAvailments_v2" FunctionName="ClaimsModel.Store.CP_CLMS_REP_UTILIZATION_ALL_EMED_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.Availments">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="AVAIL_FR" ColumnName="AVAIL_FR" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="DX_REM" ColumnName="DX_REM" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="APPROVED" ColumnName="APPROVED" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="ADVANCES" ColumnName="ADVANCES" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="MEMCODE" ColumnName="MEMCODE" />
+                <ScalarProperty Name="REMARKS2" ColumnName="REMARKS2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_Intra_ActiveAccount_Utilization_DT_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_DT_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.SP_Intra_ActiveAccount_Utilization_DT_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_ip_grp_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_ip_grp_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DATE_DISCHARGE" ColumnName="DATE_DISCHARGE" />
+                <ScalarProperty Name="NO_OF_DAYS" ColumnName="NO_OF_DAYS" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="CLASS_CODE" ColumnName="CLASS_CODE" />
+                <ScalarProperty Name="CLASS_DESC" ColumnName="CLASS_DESC" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_ip_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_IP_EMED_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_ip_result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DATE_DISCHARGE" ColumnName="DATE_DISCHARGE" />
+                <ScalarProperty Name="NO_OF_DAYS" ColumnName="NO_OF_DAYS" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="CLASS_CODE" ColumnName="CLASS_CODE" />
+                <ScalarProperty Name="CLASS_DESC" ColumnName="CLASS_DESC" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_op_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_OP_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_op_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_op_grp_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_OP_TEST_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.SP_Intra_ActiveAccount_Utilization_OP_TEST_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_utilization_all_by_date_v2" FunctionName="ClaimsModel.Store.CP_CLMS_REP_UTILIZATION_ALL_EMED_BY_DATE_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.emed_utilization_all_by_date_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="AVAIL_FR" ColumnName="AVAIL_FR" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="DX_REM" ColumnName="DX_REM" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="APPROVED" ColumnName="APPROVED" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="ADVANCES" ColumnName="ADVANCES" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="MEMCODE" ColumnName="MEMCODE" />
+                <ScalarProperty Name="REMARKS2" ColumnName="REMARKS2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_accounts_utilization_er_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_ER_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_accounts_utilization_er_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_utilization_er_test_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_ER_TEST_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_utilization_er_test_Result">
+                <ScalarProperty Name="CTLNO" ColumnName="CTLNO" />
+                <ScalarProperty Name="BILL_CODE" ColumnName="BILL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="REC_DATE" ColumnName="REC_DATE" />
+                <ScalarProperty Name="DUE_DATE" ColumnName="DUE_DATE" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_CODE" ColumnName="DX_CODE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="MST_AMT" ColumnName="MST_AMT" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="PRO_DATE" ColumnName="PRO_DATE" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="CO_CODE" ColumnName="CO_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="PRO_BY" ColumnName="PRO_BY" />
+                <ScalarProperty Name="DA_AMT" ColumnName="DA_AMT" />
+                <ScalarProperty Name="AD_AMT" ColumnName="AD_AMT" />
+                <ScalarProperty Name="ERC" ColumnName="ERC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="ICD10_CODE" ColumnName="ICD10_CODE" />
+                <ScalarProperty Name="ICD10_DESC" ColumnName="ICD10_DESC" />
+                <ScalarProperty Name="DCLASS_CODE" ColumnName="DCLASS_CODE" />
+                <ScalarProperty Name="DCLASS_DESC" ColumnName="DCLASS_DESC" />
+                <ScalarProperty Name="Lab" ColumnName="Lab" />
+                <ScalarProperty Name="XRay" ColumnName="XRay" />
+                <ScalarProperty Name="DiagProc" ColumnName="DiagProc" />
+                <ScalarProperty Name="Ultrasound" ColumnName="Ultrasound" />
+                <ScalarProperty Name="ARS_NO" ColumnName="ARS_NO" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_reim_util_v2" FunctionName="ClaimsModel.Store.SP_EMED_REIM_UTIL_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.emed_reim_util_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="DATE_RCVD" ColumnName="DATE_RCVD" />
+                <ScalarProperty Name="DATE_DUE" ColumnName="DATE_DUE" />
+                <ScalarProperty Name="RELEASED_DATE" ColumnName="RELEASED_DATE" />
+                <ScalarProperty Name="HOSPITAL_NAME" ColumnName="HOSPITAL_NAME" />
+                <ScalarProperty Name="DIAG_DESC" ColumnName="DIAG_DESC" />
+                <ScalarProperty Name="AMOUNT" ColumnName="AMOUNT" />
+                <ScalarProperty Name="PROCESSED_DATE" ColumnName="PROCESSED_DATE" />
+                <ScalarProperty Name="ACTION_MEMO" ColumnName="ACTION_MEMO" />
+                <ScalarProperty Name="ACTION_MEMO_REM" ColumnName="ACTION_MEMO_REM" />
+                <ScalarProperty Name="DISAPPROVED" ColumnName="DISAPPROVED" />
+                <ScalarProperty Name="DISAPPROVED_REM" ColumnName="DISAPPROVED_REM" />
+                <ScalarProperty Name="DNAME" ColumnName="DNAME" />
+                <ScalarProperty Name="COMPANY_CODE" ColumnName="COMPANY_CODE" />
+                <ScalarProperty Name="TOTAL_APPROVED" ColumnName="TOTAL_APPROVED" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_account_util_dcr_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_DCR_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_account_util_dcr_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DATE_DISCHARGE" ColumnName="DATE_DISCHARGE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="active_accounts_util_call_log_v2" FunctionName="ClaimsModel.Store.SP_Intra_ActiveAccount_Utilization_CALLLOG_v2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ClaimsModel.active_accounts_util_call_log_Result">
+                <ScalarProperty Name="CONTROL_CODE" ColumnName="CONTROL_CODE" />
+                <ScalarProperty Name="HOSPITAL_CODE" ColumnName="HOSPITAL_CODE" />
+                <ScalarProperty Name="H_NAME" ColumnName="H_NAME" />
+                <ScalarProperty Name="ACCOUNT_NO" ColumnName="ACCOUNT_NO" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VISIT_DATE" ColumnName="VISIT_DATE" />
+                <ScalarProperty Name="DX_DESC" ColumnName="DX_DESC" />
+                <ScalarProperty Name="DIAGNOSIS" ColumnName="DIAGNOSIS" />
+                <ScalarProperty Name="UTIL_AMT" ColumnName="UTIL_AMT" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MI" ColumnName="MI" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STAT" ColumnName="CIVIL_STAT" />
+                <ScalarProperty Name="SEX" ColumnName="SEX" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="SERVICE" ColumnName="SERVICE" />
+                <ScalarProperty Name="RM_CODE" ColumnName="RM_CODE" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="AREA" ColumnName="AREA" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Claims" />
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

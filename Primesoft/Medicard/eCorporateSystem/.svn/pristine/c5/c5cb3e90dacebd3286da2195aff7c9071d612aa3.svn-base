@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class ResignedMembersController : BaseAccountController
+    {
+        public ActionResult CancelledPrincipalMembers(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            return View();
+
+        }
+
+        public ActionResult CancelledDependentMembers(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            return View();
+        }
+    }
+}

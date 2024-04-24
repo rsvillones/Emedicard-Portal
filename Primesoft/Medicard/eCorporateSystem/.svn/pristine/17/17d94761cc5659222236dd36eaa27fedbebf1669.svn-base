@@ -1,0 +1,108 @@
+﻿@model Application
+@using (Html.BeginForm("Create", "MembershipEndorsement", FormMethod.Post, new { id = "createApplicationSerialize" }))
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <ul>
+                NOTE:
+                <li>Online submission of enrollee does not mean an automatic approval of membership. It is subject to the approval of MEDICard's Underwriting Department.</li>
+                <li>Membership Status of additional enrollees filed online is displayed below.</li>
+                <li>To submit support documents such as Birth/Marriage/Death Certificate and others, please go to Bacth Uploading Tab.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            @Html.HiddenFor(model => model.AccountCode)
+            @Html.LabelFor(model => model.AppliedPlan, "Applied Plan:")
+            @Html.EditorFor(model => model.AppliedPlan)
+            @Html.ValidationMessageFor(model => model.AppliedPlan)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            @Html.LabelFor(model => model.EmailAddress, "Email Address:")
+            @Html.EditorFor(model => model.EmailAddress)
+            @Html.ValidationMessageFor(model => model.EmailAddress)
+        </div>
+        <div class="col-lg-6">
+            @Html.LabelFor(model => model.EmployeeNumber, "Emaployee Number:")
+            @Html.EditorFor(model => model.EmployeeNumber)
+            @Html.ValidationMessageFor(model => model.EmployeeNumber)
+        </div>
+    </div>
+    <div class="row">        
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.Area, "Area:")
+            @Html.EditorFor(model => model.Area)
+            @Html.ValidationMessageFor(model => model.Area)
+        </div>
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.CostCenter, "Cost Center:")
+            @Html.EditorFor(model => model.CostCenter)
+            @Html.ValidationMessageFor(model => model.CostCenter)
+        </div>
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.Suffix, "Suffix:")
+            @Html.EditorFor(model => model.Suffix)
+            @Html.ValidationMessageFor(model => model.Suffix)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.LastName, "Last Name:")
+            @Html.EditorFor(model => model.LastName)
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.FirstName, "First Name:")
+            @Html.EditorFor(model => model.FirstName)
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.MiddleName, "Middle Name:")
+            @Html.EditorFor(model => model.MiddleName)
+            @Html.ValidationMessageFor(model => model.MiddleName)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            @Html.LabelFor(model => model.DateOfBirth, "Birth Date:")
+            @Html.EditorFor(model => model.DateOfBirth)
+            @Html.ValidationMessageFor(model => model.DateOfBirth)
+        </div>
+        <div class="col-lg-3">
+            @Html.LabelFor(model => model.Age, "Age:")
+            @Html.EditorFor(model => model.Age)
+            @Html.ValidationMessageFor(model => model.Age)
+        </div>
+        <div class="col-lg-3">
+            @Html.LabelFor(model => model.Gender, "Gender:")
+            @Html.EditorFor(model => model.Gender)
+            @Html.ValidationMessageFor(model => model.Gender)
+        </div>
+        <div class="col-lg-3">
+            @Html.LabelFor(model => model.CivilStatus, "Civil Status:")
+            @Html.EditorFor(model => model.CivilStatus)
+            @Html.ValidationMessageFor(model => model.CivilStatus)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.ValidityDate, "Validity Date:")
+            @Html.EditorFor(model => model.ValidityDate)
+            @Html.ValidationMessageFor(model => model.ValidityDate)
+        </div>
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.EffectivityDate, "Effectivity Date:")
+            @Html.EditorFor(model => model.EffectivityDate)
+            @Html.ValidationMessageFor(model => model.EffectivityDate)
+        </div>
+        <div class="col-lg-4">
+            @Html.LabelFor(model => model.DateHired, "Date Hired:")
+            @Html.EditorFor(model => model.DateHired)
+            @Html.ValidationMessageFor(model => model.DateHired)
+        </div>
+    </div>
+
+}

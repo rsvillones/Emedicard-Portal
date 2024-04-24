@@ -1,0 +1,238 @@
+@model PagedList.IPagedList<EndorsementBatch>
+
+@{
+    ViewBag.Title = "Membership Endorsements";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="title">Membership Endorsements</h2>
+    </div>
+    @using (Html.BeginForm("Index", "Endorsement", FormMethod.Get, new { accountCode = ViewBag.AccountCode }))
+    {
+        <div class="col-lg-4">
+            <div class="input-group input-group-search">
+                <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                <div class="input-group-btn">
+                    <button type="button" class="dropdown-toggle btn-dd btn-default search-dropdown" data-toggle="dropdown" tabindex="-1">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="rightMenu dropdown-menu">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Endorsement Type:</label>
+                                    <div class="col-lg-12">
+                                        @Html.DropDownList("endorsementType", (IEnumerable<SelectListItem>)ViewBag.EndorsementType, "-- Select --", new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">File Name:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.FileName" name="fileName" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Date:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.DateSting" name="dateCreated" onclick="return false;" class="form-control last-input" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-grp btn-search"
+                        tabindex="-1">
+                    Search
+                </button>
+            </div>
+
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddNewMemberships") || User.IsInRole("CanAddMembershipRenewals") || User.IsInRole("CanAddMembershipCancellations"))))
+    {
+        <div class="col-lg-6">
+            <div class="btn-group" style="float: right">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    Actions <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu right-dropdown" role="menu">
+                    @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddNewMemberships")))
+                    {
+                        <li>@Html.ActionLink("Single Endorsement", "SingleEndorsement", new { accountCode = ViewBag.AccountCode })</li>
+                        <li>@Html.ActionLink("Batch Upload", "BatchUpload", new { accountCode = ViewBag.AccountCode })</li>
+                    }
+                    @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddMembershipRenewals")))
+                    {
+                        <li>@Html.ActionLink("Renewal", "Renewal", new { accountCode = ViewBag.AccountCode })</li>
+                    }
+
+                    @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddMembershipCancellations")))
+                    {
+                        <li class="divider"></li>
+                        <li>@Html.ActionLink("Batch Cancellation", "BatchUploadCancellation", new { accountCode = ViewBag.AccountCode })</li>
+                        <li>@Html.ActionLink("Single Cancellation", "CancelledMember", new { accountCode = ViewBag.AccountCode })</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            Date
+        </th>
+        <th>
+            Filename
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Endorsement Type
+        </th>
+        <th>
+            Deadline
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Filename)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.EndorsementType)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Deadline)
+            </td>
+            <td>
+                @if (item.Status == Corelib.Enums.EndorsementBatchStatus.New)
+                {
+                    switch (item.EndorsementType)
+                    {
+                        case "New":
+                            switch (item.BatchType)
+                            {
+                                case "Single Endorsement":
+                                    if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddNewMemberships") || User.IsInRole("CanEditNewMemberships") || User.IsInRole("CanDeleteNewMemberships"))))
+                                    {
+                                        @Html.ActionLink("Process", "ProcessBatch", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    }
+                                    @Html.ActionLink("View Data", "SingleEndorsement", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                                case "Batch Upload":
+                                    if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddNewMemberships") || User.IsInRole("CanEditNewMemberships") || User.IsInRole("CanDeleteNewMemberships"))))
+                                    {
+                                        @Html.ActionLink("Process", "ProcessBatch", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    }
+                                    @Html.ActionLink("View Data", "BatchUpload", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                break;
+                            }
+                            break;
+                        case "Renewal":
+                                if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddMembershipRenewals") || User.IsInRole("CanEditMembershipRenewals") || User.IsInRole("CanDeleteMembershipRenewals"))))
+                                {
+                                    @Html.ActionLink("Process", "ProcessBatch", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                }
+                                @Html.ActionLink("View Data", "Renewal", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                            break;
+                        case "Cancel Membership":
+                            switch (item.BatchType)
+                            {
+                                case "Single Cancellation":
+                                    @Html.ActionLink("View Data", "CancelledMember", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                                case "Batch Upload":
+                                    @Html.ActionLink("View Data", "BatchUploadCancellation", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                            }
+                            break;
+
+                    }
+                    //@Html.ActionLink("Delete", "DeleteBatch", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-danger btn-xs btn-margin" })
+                }
+                else
+                {
+                    switch (item.EndorsementType)
+                    {
+                        case "New":
+                            switch (item.BatchType)
+                            {
+                                case "Single Endorsement":
+                                    @Html.ActionLink("View Data", "SingleEndorsement", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                                case "Batch Upload":
+                                    @Html.ActionLink("View Data", "BatchUpload", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                            }
+                            break;
+                        case "Renewal":
+                            @Html.ActionLink("View Data", "Renewal", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                            break;
+                        case "Cancel Membership":
+                            switch (item.BatchType)
+                            {
+                                case "Single Cancellation":
+                                    @Html.ActionLink("View Data", "CancelledMember", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                                case "Batch Upload":
+                                    @Html.ActionLink("View Data", "BatchUploadCancellation", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+            $('input[name="dateCreated"]').datepicker();
+            $(function () {
+                $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                    event.stopPropagation();
+                });
+            });
+            $(function () {
+                //$(".dropdown-toggle").dropdown('toggle'); // this works
+                $('#click').click(function (e) {
+                    e.stopPropagation();
+                    $(".search-dropdown").dropdown('toggle');// this doesn't
+                });
+            });
+        });
+    </script>
+}
+
+

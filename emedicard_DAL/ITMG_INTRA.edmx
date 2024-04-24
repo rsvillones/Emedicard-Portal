@@ -1,0 +1,639 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ITMG_INTRAModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ITMG_INTRAModelStoreContainer" />
+        <Function Name="emed_agent_active_account" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="agent_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_agent_active_account_by_status" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="agent_code" Type="varchar" Mode="In" />
+          <Parameter Name="type" Type="tinyint" Mode="In" />
+        </Function>
+        <Function Name="emed_GetAccountPlan" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_DEP" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_DEP_EMED" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_PRIN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_PRIN_EMED" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECT_Company_Others" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTDCS_SSRS_Others" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTECS_SSRS_Others" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTMFA_SSRS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTMFA_SSRS_OTHERS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTPEC" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TYPE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCOUTNCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTPEC_SSRS_Others" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTPHCS_SSRS_Other" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTRSP_SSRS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTRSP_SSRS_ECU_OTHERS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTRSP_SSRS_MAB_OTHERS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ITMG_INTRAModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ITMG_INTRAEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="sp_intra_payment_history_dep" ReturnType="Collection(ITMG_INTRAModel.sp_intra_payment_history_dep_Result)">
+          <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_intra_payment_history_prin" ReturnType="Collection(ITMG_INTRAModel.sp_intra_payment_history_prin_Result)">
+          <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_intra_payment_history_prin_emed" ReturnType="Collection(ITMG_INTRAModel.sp_intra_payment_history_prin_emed_Result)">
+          <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_intra_payment_history_dep_emed" ReturnType="Collection(ITMG_INTRAModel.sp_intra_payment_history_dep_emed_Result)">
+          <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_agent_active_accounts" ReturnType="Collection(ITMG_INTRAModel.emed_agent_active_accounts_Result)">
+          <Parameter Name="agent_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_GetAccountPlan" ReturnType="Collection(ITMG_INTRAModel.emed_GetAccountPlan_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectphcs_ssrs_ohter" ReturnType="Collection(ITMG_INTRAModel.sp_selectphcs_ssrs_ohter_Result)">
+            <Parameter Name="type" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_select_company_others" ReturnType="Collection(ITMG_INTRAModel.sp_select_company_others_Result)">
+            <Parameter Name="type" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectecs_ssrs_others" ReturnType="Collection(ITMG_INTRAModel.sp_selectecs_ssrs_others_Result)">
+            <Parameter Name="type" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectmfa_ssrs_others" ReturnType="Collection(ITMG_INTRAModel.sp_selectmfa_ssrs_others_Result)">
+            <Parameter Name="type" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectdcs_ssrs_others" ReturnType="Collection(ITMG_INTRAModel.sp_selectdcs_ssrs_others_Result)">
+            <Parameter Name="type" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectpec" ReturnType="Collection(ITMG_INTRAModel.sp_selectpec_Result)">
+            <Parameter Name="TYPE" Mode="In" Type="String" />
+            <Parameter Name="ACCOUTNCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectpec_ssrs_others" ReturnType="Collection(ITMG_INTRAModel.sp_selectpec_ssrs_others_Result)">
+            <Parameter Name="type" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectrsp_ssrs" ReturnType="Collection(ITMG_INTRAModel.sp_selectrsp_ssrs_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectrsp_ssrs_mab_others" ReturnType="Collection(ITMG_INTRAModel.sp_selectrsp_ssrs_mab_others_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectrsp_ssrs_ecu_others" ReturnType="Collection(ITMG_INTRAModel.sp_selectrsp_ssrs_ecu_others_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_agent_active_account_by_status" ReturnType="Collection(ITMG_INTRAModel.emed_agent_active_account_by_status_Result)">
+            <Parameter Name="agent_code" Mode="In" Type="String" />
+            <Parameter Name="type" Mode="In" Type="Byte" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="sp_intra_payment_history_dep_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="Int32" Name="PAYMENT_STATUS__CODE_" Nullable="true" />
+          <Property Type="String" Name="COVERED_FROM" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="COVERED_TO" Nullable="true" MaxLength="12" />
+          <Property Type="DateTime" Name="UPDATED_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="BILL_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="COVEREDTO" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="BILL_FOR_TYPE" Nullable="true" />
+          <Property Type="String" Name="DESCRIPTION" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="SORT" Nullable="false" />
+          <Property Type="String" Name="SA_NO" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="sp_intra_payment_history_prin_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="Int32" Name="PAYMENT_STATUS__CODE_" Nullable="true" />
+          <Property Type="String" Name="COVERED_FROM" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="COVERED_TO" Nullable="true" MaxLength="12" />
+          <Property Type="DateTime" Name="UPDATED_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="BILL_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="COVEREDTO" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="BILL_FOR_TYPE" Nullable="true" />
+          <Property Type="String" Name="DESCRIPTION" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="SORT" Nullable="false" />
+          <Property Type="String" Name="SA_NO" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="sp_intra_payment_history_prin_emed_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="Int32" Name="PAYMENT_STATUS__CODE_" Nullable="true" />
+          <Property Type="String" Name="COVERED_FROM" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="COVERED_TO" Nullable="true" MaxLength="12" />
+          <Property Type="DateTime" Name="UPDATED_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="BILL_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="COVEREDTO" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="BILL_FOR_TYPE" Nullable="true" />
+          <Property Type="String" Name="DESCRIPTION" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="SORT" Nullable="false" />
+          <Property Type="String" Name="SA_NO" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="sp_intra_payment_history_dep_emed_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="Int32" Name="PAYMENT_STATUS__CODE_" Nullable="true" />
+          <Property Type="String" Name="COVERED_FROM" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="COVERED_TO" Nullable="true" MaxLength="12" />
+          <Property Type="DateTime" Name="UPDATED_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="BILL_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="COVEREDTO" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="BILL_FOR_TYPE" Nullable="true" />
+          <Property Type="String" Name="DESCRIPTION" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="SORT" Nullable="false" />
+          <Property Type="String" Name="SA_NO" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="emed_agent_active_accounts_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="AccountCode" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="AccountCategory" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="emed_GetAccountPlan_Result">
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="RNB_FOR" Nullable="true" MaxLength="255" />
+          <Property Type="Int32" Name="RSPROOMRATE_ID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_selectphcs_ssrs_ohter_Result">
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="BENEFIT_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="RSOOTHERDTL_COL1" Nullable="true" MaxLength="800" />
+        </ComplexType>
+        <ComplexType Name="sp_select_company_others_Result">
+          <Property Type="String" Name="SERVICE_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="RSPOTHERDTL" Nullable="false" />
+          <Property Type="String" Name="BENEFIT_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="RSOOTHERDTL_COL1" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="RSOOTHERDTL_COL2" Nullable="true" MaxLength="400" />
+        </ComplexType>
+        <ComplexType Name="sp_selectecs_ssrs_others_Result">
+          <Property Type="String" Name="SERVICE_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="RSPOTHERDTL" Nullable="false" />
+          <Property Type="String" Name="BENEFIT_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="RSOOTHERDTL_COL1" Nullable="true" MaxLength="800" />
+          <Property Type="String" Name="RSOOTHERDTL_COL2" Nullable="true" MaxLength="400" />
+        </ComplexType>
+        <ComplexType Name="sp_selectmfa_ssrs_others_Result">
+          <Property Type="String" Name="SERVICE_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="RSPOTHERDTL" Nullable="false" />
+          <Property Type="String" Name="BENEFIT_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="RSOOTHERDTL_COL1" Nullable="true" MaxLength="800" />
+          <Property Type="String" Name="RSOOTHERDTL_COL2" Nullable="true" MaxLength="400" />
+        </ComplexType>
+        <ComplexType Name="sp_selectdcs_ssrs_others_Result">
+          <Property Type="String" Name="SERVICE_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="RSPOTHERDTL" Nullable="false" />
+          <Property Type="String" Name="BENEFIT_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="RSOOTHERDTL_COL1" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="RSOOTHERDTL_COL2" Nullable="true" MaxLength="400" />
+        </ComplexType>
+        <ComplexType Name="sp_selectpec_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="PECTYPE" Nullable="true" MaxLength="4" />
+          <Property Type="String" Name="PEC_NEW_ENROLL" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="PEC_EXISTING_ENROLL" Nullable="true" MaxLength="200" />
+          <Property Type="Boolean" Name="PEC_EXISTING_CONTEST" Nullable="true" />
+          <Property Type="Boolean" Name="PEC_EXISTING_MB" Nullable="true" />
+          <Property Type="Boolean" Name="PEC_NEW_CONTEST" Nullable="true" />
+          <Property Type="Boolean" Name="PEC_NEW_MB" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_selectpec_ssrs_others_Result">
+          <Property Type="String" Name="SERVICE_CODE" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="RSPOTHERDTL" Nullable="false" />
+          <Property Type="String" Name="BENEFIT_DESC" Nullable="true" MaxLength="400" />
+          <Property Type="String" Name="RSOOTHERDTL_COL1" Nullable="true" MaxLength="800" />
+          <Property Type="String" Name="RSOOTHERDTL_COL2" Nullable="true" MaxLength="400" />
+        </ComplexType>
+        <ComplexType Name="sp_selectrsp_ssrs_Result">
+          <Property Type="String" Name="NO_EMP" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="NO_EMP_DEP" Nullable="true" MaxLength="10" />
+          <Property Type="Boolean" Name="ELIG_STD" Nullable="true" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_SPOUSE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_CHILDREN" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_PARENTS" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_BROS_SIS" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_NOTE" Nullable="true" MaxLength="Max" />
+          <Property Type="Boolean" Name="MP_STD_ITG" Nullable="true" />
+          <Property Type="Boolean" Name="MP_EXCLUSIVE" Nullable="true" />
+          <Property Type="String" Name="MP_RM_BOARD" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="MP_AUTO" Nullable="true" />
+          <Property Type="String" Name="MAB_FOR" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="MAB_INC_PREMIUM" Nullable="true" />
+          <Property Type="String" Name="MAB_OPTIONAL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_OPT_PAYABLE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_NO_MARRIED_FML" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_NO_MARRIED_ML" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_NORM_DELIVERY" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_CAEAREAN" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_ABORT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_HOME_DELIVERY" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_ABNORMAL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MAB_OTHERS" Nullable="true" MaxLength="Max" />
+          <Property Type="Boolean" Name="ECU_OUT" Nullable="true" />
+          <Property Type="Boolean" Name="ECU_INCL" Nullable="true" />
+          <Property Type="String" Name="ECU_OPTIONAL" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="ECU_IN" Nullable="true" />
+          <Property Type="String" Name="ECU_FOR" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECU_AT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECU_BASIS" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECU_OTHERS" Nullable="true" MaxLength="Max" />
+          <Property Type="Boolean" Name="POS_OPT" Nullable="true" />
+          <Property Type="Boolean" Name="POS_OUT_PATIENT" Nullable="true" />
+          <Property Type="Boolean" Name="POS_IN_PATIENT" Nullable="true" />
+          <Property Type="String" Name="POS_CONSULT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="POS_PROF_FEE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="POS_LAB_EXAM" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="POS_HOSP_BILL_DEDUCT" Nullable="true" MaxLength="80" />
+          <Property Type="String" Name="ADD_AMBU_PRIC" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="POS_HOSP_BILL_CO_PAYMENT" Nullable="true" MaxLength="80" />
+          <Property Type="String" Name="ADD_AMBU_PER" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ADD_AMBU_BEN" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="PRE_EMP" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="PRE_EMP_PRICE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="PRE_EMP_EXP_REFUND" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="PRE_EMP_FAST_PER" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="PRE_EMP_FAST_PRICE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="AGENTS_NOTES" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="AGENT_OTHERS" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="MP_INCASE" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="RSP_CLAUSE" Nullable="true" />
+          <Property Type="Boolean" Name="MP_MEDICARE" Nullable="true" />
+          <Property Type="String" Name="POS_FOR" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="PRINCIPAL_TO" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_SPOUSE_TO" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_CHILDREN_TO" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_PARENTS_TO" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DEP_BROS_SIS_TO" Nullable="true" MaxLength="150" />
+          <Property Type="Int32" Name="DEP_CHILDREN_UNIT" Nullable="true" />
+          <Property Type="Int32" Name="DEP_CHILDREN_TO_UNIT" Nullable="true" />
+          <Property Type="Int32" Name="DEP_BROS_SIS_UNIT" Nullable="true" />
+          <Property Type="Int32" Name="DEP_BROS_SIS_TO_UNIT" Nullable="true" />
+          <Property Type="String" Name="ADD_RATES" Nullable="true" MaxLength="Max" />
+          <Property Type="Boolean" Name="MP_PHIL" Nullable="true" />
+          <Property Type="Boolean" Name="RSP_NO_NEW" Nullable="false" />
+          <Property Type="String" Name="PRE_EMP_EXP_PERCENT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_PREPOST_NATAL_PRN" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_PREPOST_NATAL_DEP" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_PREPOST_NATAL_EXT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MP_Others" Nullable="true" MaxLength="Max" />
+          <Property Type="Int32" Name="VATExempt" Nullable="true" />
+          <Property Type="Int32" Name="ZeroRated" Nullable="true" />
+          <Property Type="Int32" Name="PRE_CASHBASIS" Nullable="true" />
+          <Property Type="Int32" Name="PRE_FORBILLING" Nullable="true" />
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" />
+        </ComplexType>
+        <ComplexType Name="sp_selectrsp_ssrs_mab_others_Result">
+          <Property Type="String" Name="C_ID" Nullable="true" MaxLength="4000" />
+        </ComplexType>
+        <ComplexType Name="sp_selectrsp_ssrs_ecu_others_Result">
+          <Property Type="String" Name="C_ID" Nullable="true" MaxLength="4000" />
+        </ComplexType>
+        <ComplexType Name="emed_agent_active_account_by_status_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="AccountCategory" Nullable="true" MaxLength="15" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ITMG_INTRAModelStoreContainer" CdmEntityContainer="ITMG_INTRAEntities" >
+          <FunctionImportMapping FunctionImportName="sp_intra_payment_history_dep" FunctionName="ITMG_INTRAModel.Store.SP_INTRA_PAYMENT_HISTORY_DEP">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_intra_payment_history_dep_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PAYMENT_STATUS__CODE_" ColumnName="PAYMENT STATUS (CODE)" />
+                <ScalarProperty Name="COVERED_FROM" ColumnName="COVERED FROM" />
+                <ScalarProperty Name="COVERED_TO" ColumnName="COVERED TO" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="COVEREDTO" ColumnName="COVEREDTO" />
+                <ScalarProperty Name="BILL_FOR_TYPE" ColumnName="BILL_FOR_TYPE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="SORT" ColumnName="SORT" />
+                <ScalarProperty Name="SA_NO" ColumnName="SA_NO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_intra_payment_history_prin" FunctionName="ITMG_INTRAModel.Store.SP_INTRA_PAYMENT_HISTORY_PRIN">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_intra_payment_history_prin_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PAYMENT_STATUS__CODE_" ColumnName="PAYMENT STATUS (CODE)" />
+                <ScalarProperty Name="COVERED_FROM" ColumnName="COVERED FROM" />
+                <ScalarProperty Name="COVERED_TO" ColumnName="COVERED TO" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="COVEREDTO" ColumnName="COVEREDTO" />
+                <ScalarProperty Name="BILL_FOR_TYPE" ColumnName="BILL_FOR_TYPE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="SORT" ColumnName="SORT" />
+                <ScalarProperty Name="SA_NO" ColumnName="SA_NO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_intra_payment_history_prin_emed" FunctionName="ITMG_INTRAModel.Store.SP_INTRA_PAYMENT_HISTORY_PRIN_EMED">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_intra_payment_history_prin_emed_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PAYMENT_STATUS__CODE_" ColumnName="PAYMENT STATUS (CODE)" />
+                <ScalarProperty Name="COVERED_FROM" ColumnName="COVERED FROM" />
+                <ScalarProperty Name="COVERED_TO" ColumnName="COVERED TO" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="COVEREDTO" ColumnName="COVEREDTO" />
+                <ScalarProperty Name="BILL_FOR_TYPE" ColumnName="BILL_FOR_TYPE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="SORT" ColumnName="SORT" />
+                <ScalarProperty Name="SA_NO" ColumnName="SA_NO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_intra_payment_history_dep_emed" FunctionName="ITMG_INTRAModel.Store.SP_INTRA_PAYMENT_HISTORY_DEP_EMED">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_intra_payment_history_dep_emed_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PAYMENT_STATUS__CODE_" ColumnName="PAYMENT STATUS (CODE)" />
+                <ScalarProperty Name="COVERED_FROM" ColumnName="COVERED FROM" />
+                <ScalarProperty Name="COVERED_TO" ColumnName="COVERED TO" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="COVEREDTO" ColumnName="COVEREDTO" />
+                <ScalarProperty Name="BILL_FOR_TYPE" ColumnName="BILL_FOR_TYPE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="SORT" ColumnName="SORT" />
+                <ScalarProperty Name="SA_NO" ColumnName="SA_NO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_agent_active_accounts" FunctionName="ITMG_INTRAModel.Store.emed_agent_active_account">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.emed_agent_active_accounts_Result">
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_GetAccountPlan" FunctionName="ITMG_INTRAModel.Store.emed_GetAccountPlan">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.emed_GetAccountPlan_Result">
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="RNB_FOR" ColumnName="RNB_FOR" />
+                <ScalarProperty Name="RSPROOMRATE_ID" ColumnName="RSPROOMRATE_ID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectphcs_ssrs_ohter" FunctionName="ITMG_INTRAModel.Store.SP_SELECTPHCS_SSRS_Other">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectphcs_ssrs_ohter_Result">
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+                <ScalarProperty Name="BENEFIT_DESC" ColumnName="BENEFIT_DESC" />
+                <ScalarProperty Name="RSOOTHERDTL_COL1" ColumnName="RSOOTHERDTL_COL1" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_select_company_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECT_Company_Others">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_select_company_others_Result">
+                <ScalarProperty Name="SERVICE_CODE" ColumnName="SERVICE_CODE" />
+                <ScalarProperty Name="RSPOTHERDTL" ColumnName="RSPOTHERDTL" />
+                <ScalarProperty Name="BENEFIT_DESC" ColumnName="BENEFIT_DESC" />
+                <ScalarProperty Name="RSOOTHERDTL_COL1" ColumnName="RSOOTHERDTL_COL1" />
+                <ScalarProperty Name="RSOOTHERDTL_COL2" ColumnName="RSOOTHERDTL_COL2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectecs_ssrs_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECTECS_SSRS_Others">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectecs_ssrs_others_Result">
+                <ScalarProperty Name="SERVICE_CODE" ColumnName="SERVICE_CODE" />
+                <ScalarProperty Name="RSPOTHERDTL" ColumnName="RSPOTHERDTL" />
+                <ScalarProperty Name="BENEFIT_DESC" ColumnName="BENEFIT_DESC" />
+                <ScalarProperty Name="RSOOTHERDTL_COL1" ColumnName="RSOOTHERDTL_COL1" />
+                <ScalarProperty Name="RSOOTHERDTL_COL2" ColumnName="RSOOTHERDTL_COL2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectmfa_ssrs_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECTMFA_SSRS_OTHERS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectmfa_ssrs_others_Result">
+                <ScalarProperty Name="SERVICE_CODE" ColumnName="SERVICE_CODE" />
+                <ScalarProperty Name="RSPOTHERDTL" ColumnName="RSPOTHERDTL" />
+                <ScalarProperty Name="BENEFIT_DESC" ColumnName="BENEFIT_DESC" />
+                <ScalarProperty Name="RSOOTHERDTL_COL1" ColumnName="RSOOTHERDTL_COL1" />
+                <ScalarProperty Name="RSOOTHERDTL_COL2" ColumnName="RSOOTHERDTL_COL2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectdcs_ssrs_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECTDCS_SSRS_Others">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectdcs_ssrs_others_Result">
+                <ScalarProperty Name="SERVICE_CODE" ColumnName="SERVICE_CODE" />
+                <ScalarProperty Name="RSPOTHERDTL" ColumnName="RSPOTHERDTL" />
+                <ScalarProperty Name="BENEFIT_DESC" ColumnName="BENEFIT_DESC" />
+                <ScalarProperty Name="RSOOTHERDTL_COL1" ColumnName="RSOOTHERDTL_COL1" />
+                <ScalarProperty Name="RSOOTHERDTL_COL2" ColumnName="RSOOTHERDTL_COL2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectpec" FunctionName="ITMG_INTRAModel.Store.SP_SELECTPEC">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectpec_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PECTYPE" ColumnName="PECTYPE" />
+                <ScalarProperty Name="PEC_NEW_ENROLL" ColumnName="PEC_NEW_ENROLL" />
+                <ScalarProperty Name="PEC_EXISTING_ENROLL" ColumnName="PEC_EXISTING_ENROLL" />
+                <ScalarProperty Name="PEC_EXISTING_CONTEST" ColumnName="PEC_EXISTING_CONTEST" />
+                <ScalarProperty Name="PEC_EXISTING_MB" ColumnName="PEC_EXISTING_MB" />
+                <ScalarProperty Name="PEC_NEW_CONTEST" ColumnName="PEC_NEW_CONTEST" />
+                <ScalarProperty Name="PEC_NEW_MB" ColumnName="PEC_NEW_MB" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectpec_ssrs_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECTPEC_SSRS_Others">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectpec_ssrs_others_Result">
+                <ScalarProperty Name="SERVICE_CODE" ColumnName="SERVICE_CODE" />
+                <ScalarProperty Name="RSPOTHERDTL" ColumnName="RSPOTHERDTL" />
+                <ScalarProperty Name="BENEFIT_DESC" ColumnName="BENEFIT_DESC" />
+                <ScalarProperty Name="RSOOTHERDTL_COL1" ColumnName="RSOOTHERDTL_COL1" />
+                <ScalarProperty Name="RSOOTHERDTL_COL2" ColumnName="RSOOTHERDTL_COL2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectrsp_ssrs" FunctionName="ITMG_INTRAModel.Store.SP_SELECTRSP_SSRS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectrsp_ssrs_Result">
+                <ScalarProperty Name="NO_EMP" ColumnName="NO_EMP" />
+                <ScalarProperty Name="NO_EMP_DEP" ColumnName="NO_EMP_DEP" />
+                <ScalarProperty Name="ELIG_STD" ColumnName="ELIG_STD" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="DEP_SPOUSE" ColumnName="DEP_SPOUSE" />
+                <ScalarProperty Name="DEP_CHILDREN" ColumnName="DEP_CHILDREN" />
+                <ScalarProperty Name="DEP_PARENTS" ColumnName="DEP_PARENTS" />
+                <ScalarProperty Name="DEP_BROS_SIS" ColumnName="DEP_BROS_SIS" />
+                <ScalarProperty Name="DEP_NOTE" ColumnName="DEP_NOTE" />
+                <ScalarProperty Name="MP_STD_ITG" ColumnName="MP_STD_ITG" />
+                <ScalarProperty Name="MP_EXCLUSIVE" ColumnName="MP_EXCLUSIVE" />
+                <ScalarProperty Name="MP_RM_BOARD" ColumnName="MP_RM_BOARD" />
+                <ScalarProperty Name="MP_AUTO" ColumnName="MP_AUTO" />
+                <ScalarProperty Name="MAB_FOR" ColumnName="MAB_FOR" />
+                <ScalarProperty Name="MAB_INC_PREMIUM" ColumnName="MAB_INC_PREMIUM" />
+                <ScalarProperty Name="MAB_OPTIONAL" ColumnName="MAB_OPTIONAL" />
+                <ScalarProperty Name="MAB_OPT_PAYABLE" ColumnName="MAB_OPT_PAYABLE" />
+                <ScalarProperty Name="MAB_NO_MARRIED_FML" ColumnName="MAB_NO_MARRIED_FML" />
+                <ScalarProperty Name="MAB_NO_MARRIED_ML" ColumnName="MAB_NO_MARRIED_ML" />
+                <ScalarProperty Name="MAB_NORM_DELIVERY" ColumnName="MAB_NORM_DELIVERY" />
+                <ScalarProperty Name="MAB_CAEAREAN" ColumnName="MAB_CAEAREAN" />
+                <ScalarProperty Name="MAB_ABORT" ColumnName="MAB_ABORT" />
+                <ScalarProperty Name="MAB_HOME_DELIVERY" ColumnName="MAB_HOME_DELIVERY" />
+                <ScalarProperty Name="MAB_ABNORMAL" ColumnName="MAB_ABNORMAL" />
+                <ScalarProperty Name="MAB_OTHERS" ColumnName="MAB_OTHERS" />
+                <ScalarProperty Name="ECU_OUT" ColumnName="ECU_OUT" />
+                <ScalarProperty Name="ECU_INCL" ColumnName="ECU_INCL" />
+                <ScalarProperty Name="ECU_OPTIONAL" ColumnName="ECU_OPTIONAL" />
+                <ScalarProperty Name="ECU_IN" ColumnName="ECU_IN" />
+                <ScalarProperty Name="ECU_FOR" ColumnName="ECU_FOR" />
+                <ScalarProperty Name="ECU_AT" ColumnName="ECU_AT" />
+                <ScalarProperty Name="ECU_BASIS" ColumnName="ECU_BASIS" />
+                <ScalarProperty Name="ECU_OTHERS" ColumnName="ECU_OTHERS" />
+                <ScalarProperty Name="POS_OPT" ColumnName="POS_OPT" />
+                <ScalarProperty Name="POS_OUT_PATIENT" ColumnName="POS_OUT_PATIENT" />
+                <ScalarProperty Name="POS_IN_PATIENT" ColumnName="POS_IN_PATIENT" />
+                <ScalarProperty Name="POS_CONSULT" ColumnName="POS_CONSULT" />
+                <ScalarProperty Name="POS_PROF_FEE" ColumnName="POS_PROF_FEE" />
+                <ScalarProperty Name="POS_LAB_EXAM" ColumnName="POS_LAB_EXAM" />
+                <ScalarProperty Name="POS_HOSP_BILL_DEDUCT" ColumnName="POS_HOSP_BILL_DEDUCT" />
+                <ScalarProperty Name="ADD_AMBU_PRIC" ColumnName="ADD_AMBU_PRIC" />
+                <ScalarProperty Name="POS_HOSP_BILL_CO_PAYMENT" ColumnName="POS_HOSP_BILL_CO_PAYMENT" />
+                <ScalarProperty Name="ADD_AMBU_PER" ColumnName="ADD_AMBU_PER" />
+                <ScalarProperty Name="ADD_AMBU_BEN" ColumnName="ADD_AMBU_BEN" />
+                <ScalarProperty Name="PRE_EMP" ColumnName="PRE_EMP" />
+                <ScalarProperty Name="PRE_EMP_PRICE" ColumnName="PRE_EMP_PRICE" />
+                <ScalarProperty Name="PRE_EMP_EXP_REFUND" ColumnName="PRE_EMP_EXP_REFUND" />
+                <ScalarProperty Name="PRE_EMP_FAST_PER" ColumnName="PRE_EMP_FAST_PER" />
+                <ScalarProperty Name="PRE_EMP_FAST_PRICE" ColumnName="PRE_EMP_FAST_PRICE" />
+                <ScalarProperty Name="AGENTS_NOTES" ColumnName="AGENTS_NOTES" />
+                <ScalarProperty Name="AGENT_OTHERS" ColumnName="AGENT_OTHERS" />
+                <ScalarProperty Name="MP_INCASE" ColumnName="MP_INCASE" />
+                <ScalarProperty Name="RSP_CLAUSE" ColumnName="RSP_CLAUSE" />
+                <ScalarProperty Name="MP_MEDICARE" ColumnName="MP_MEDICARE" />
+                <ScalarProperty Name="POS_FOR" ColumnName="POS_FOR" />
+                <ScalarProperty Name="PRINCIPAL_TO" ColumnName="PRINCIPAL_TO" />
+                <ScalarProperty Name="DEP_SPOUSE_TO" ColumnName="DEP_SPOUSE_TO" />
+                <ScalarProperty Name="DEP_CHILDREN_TO" ColumnName="DEP_CHILDREN_TO" />
+                <ScalarProperty Name="DEP_PARENTS_TO" ColumnName="DEP_PARENTS_TO" />
+                <ScalarProperty Name="DEP_BROS_SIS_TO" ColumnName="DEP_BROS_SIS_TO" />
+                <ScalarProperty Name="DEP_CHILDREN_UNIT" ColumnName="DEP_CHILDREN_UNIT" />
+                <ScalarProperty Name="DEP_CHILDREN_TO_UNIT" ColumnName="DEP_CHILDREN_TO_UNIT" />
+                <ScalarProperty Name="DEP_BROS_SIS_UNIT" ColumnName="DEP_BROS_SIS_UNIT" />
+                <ScalarProperty Name="DEP_BROS_SIS_TO_UNIT" ColumnName="DEP_BROS_SIS_TO_UNIT" />
+                <ScalarProperty Name="ADD_RATES" ColumnName="ADD_RATES" />
+                <ScalarProperty Name="MP_PHIL" ColumnName="MP_PHIL" />
+                <ScalarProperty Name="RSP_NO_NEW" ColumnName="RSP_NO_NEW" />
+                <ScalarProperty Name="PRE_EMP_EXP_PERCENT" ColumnName="PRE_EMP_EXP_PERCENT" />
+                <ScalarProperty Name="OPCS_PREPOST_NATAL_PRN" ColumnName="OPCS_PREPOST_NATAL_PRN" />
+                <ScalarProperty Name="OPCS_PREPOST_NATAL_DEP" ColumnName="OPCS_PREPOST_NATAL_DEP" />
+                <ScalarProperty Name="OPCS_PREPOST_NATAL_EXT" ColumnName="OPCS_PREPOST_NATAL_EXT" />
+                <ScalarProperty Name="MP_Others" ColumnName="MP_Others" />
+                <ScalarProperty Name="VATExempt" ColumnName="VATExempt" />
+                <ScalarProperty Name="ZeroRated" ColumnName="ZeroRated" />
+                <ScalarProperty Name="PRE_CASHBASIS" ColumnName="PRE_CASHBASIS" />
+                <ScalarProperty Name="PRE_FORBILLING" ColumnName="PRE_FORBILLING" />
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectrsp_ssrs_mab_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECTRSP_SSRS_MAB_OTHERS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectrsp_ssrs_mab_others_Result">
+                <ScalarProperty Name="C_ID" ColumnName="_ID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectrsp_ssrs_ecu_others" FunctionName="ITMG_INTRAModel.Store.SP_SELECTRSP_SSRS_ECU_OTHERS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.sp_selectrsp_ssrs_ecu_others_Result">
+                <ScalarProperty Name="C_ID" ColumnName="_ID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_agent_active_account_by_status" FunctionName="ITMG_INTRAModel.Store.emed_agent_active_account_by_status">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ITMG_INTRAModel.emed_agent_active_account_by_status_Result">
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="ITMG_INTRA" >
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

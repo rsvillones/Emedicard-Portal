@@ -1,0 +1,42 @@
+
+@{
+    ViewBag.Title = "Your request is being processed";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@*<div class="jumbotron">
+    <h1>Processing</h1>
+    <p class="lead">Your request is now being processed. An email notification will be sent once the account/s have been created.</p>
+</div>*@
+
+<div class="processing-form">
+    <div class="container">
+        <div class="col-lg-4">
+            <img src="~/Content/images/company_logo2.png" alt="" />
+            <div id="fountainG" class="processing-gif">
+                <div id="fountainG_1" class="fountainG">
+                </div>
+                <div id="fountainG_2" class="fountainG">
+                </div>
+                <div id="fountainG_3" class="fountainG">
+                </div>
+                <div id="fountainG_4" class="fountainG">
+                </div>
+                <div id="fountainG_5" class="fountainG">
+                </div>
+                <div id="fountainG_6" class="fountainG">
+                </div>
+                <div id="fountainG_7" class="fountainG">
+                </div>
+                <div id="fountainG_8" class="fountainG">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <h2>Processing</h2>
+            <h4>Processing your request</h4>
+            <h5>
+                Your request is now being processed. An email notification will be sent once the account/s have been created.</h4>
+        </div>
+    </div>
+</div>

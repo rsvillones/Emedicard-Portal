@@ -1,0 +1,44 @@
+﻿@model LegacyPrincipalProcess
+
+@if (!string.IsNullOrEmpty(Model.IdRemarkOne))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkOne)&nbsp;</label>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.IdRemarkTwo))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkTwo)&nbsp;</label>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.IdRemarkThree))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkThree)&nbsp;</label>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.IdRemarkFour))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkFour)&nbsp;</label>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.IdRemarkFive))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkFive)&nbsp;</label>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.IdRemarkSix))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkSix)&nbsp;</label>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.IdRemarkSeven))
+{
+    <div class="col-lg-12">
+        <label>@Html.DisplayFor(model => model.IdRemarkSeven)&nbsp;</label>
+    </div>
+}

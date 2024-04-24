@@ -1,0 +1,267 @@
+@model ApplicationUserViewModel
+
+<div class="col-lg-5 form-group">
+    @if (HttpContext.Current.User.IsInRole("SysAd") || HttpContext.Current.User.IsInRole("CanCreateUserFromLegacySystem"))
+    {
+        @Html.LabelFor(model => model.AgentCode, htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.AgentCode, new { htmlAttributes = new { @class = "form-control" } })
+            <input type="button" class="btn btn-success" id="btnValidateCode" value="Validate Agent Code" />
+            @Html.ValidationMessageFor(model => model.AgentCode, "", new { @class = "text-danger" })
+        </div>
+    }
+    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @onchange = "OnDomainAccountChange();" } })
+        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+    </div>
+    <div class="col-md-4">&nbsp;</div>
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.UseActiveDirectory)
+        @Html.LabelFor(model => model.UseActiveDirectory)
+        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+    </div>
+
+</div>
+<div class="col-lg-7">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#Roles">Roles</a></li>
+        <li class=""><a data-toggle="tab" href="#AssociatedAccounts">Associated Accounts</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="Roles" class="tab-pane fade active in">
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table table-fixed">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.LabelFor(model => model.Groups)
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="scrollable-table" style="margin-top: -2px !important; height: 354px !important;margin-bottom: 0 !important">
+                        <table class="table table-fixed">
+                            <tbody>
+                                @foreach (Group group in ViewBag.Groups)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="GroupId" id="Group_@(group.Id)" value="@group.Id" @(Model.Groups != null && Model.Groups.Any(t => t.Id == group.Id) ? "checked='checked'" : "") /> <label for="Group_@(group.Id)">@group.Name</label>
+                                        </td>
+                                    </tr>
+                                }
+                                @Html.ValidationMessageFor(model => model.Groups, "", new { @class = "text-danger" })
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="AssociatedAccounts" class="tab-pane fade">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div id="LegacyAccountsContainer" class="col-lg-12">
+                            <table class="table table-fixed">
+                                <thead>
+                                    <tr>
+                                        <th style="width:55%">
+                                            <label>Associated Accounts</label>
+                                        </th>
+                                        <th style="width:13%">
+                                            <label>Readonly Access</label>
+                                        </th>
+                                        <th style="width:13%">
+                                            <label>Is Corporate Admin</label>
+                                        </th>
+                                        <th style="width:13%">
+                                            @if (User.IsInRole("SysAd"))
+                                            {
+                                                <label>Is Underwriter</label>
+                                            }
+                                        </th>
+                                        <th style="width:6%">
+                                            &nbsp;
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div id="AccountsTableContainer" class="scrollable-tables" style="margin-top: -2px !important;height: 300px !important;margin-bottom: 0 !important">
+                                <table id="AccountsTable" class="table table-fixed">
+                                    <tbody>
+                                        @if (Model.Accounts != null)
+                                        {
+                                            foreach (var account in Model.Accounts)
+                                            {
+                                                @Html.Partial("_Account", account);
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <table id="AddNewAccountTable" class="table table-fixed" style="margin-top: -3px !important;">
+                                <tfoot>
+                                    <tr>
+                                        @if (!Model.AgentCodeValidated)
+                                        {
+                                            @:<td class="table-button col-lg-12" onclick='AddNewAccount(this);'>
+                                        }
+                                        else
+                                        {
+                                            @:<td class="table-button col-lg-12">
+                                        }
+                                        Click here to add account</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal top">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <div class="col-md-3">&nbsp;</div>
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.IsActive)
+                        @Html.LabelFor(model => model.IsActive)
+                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeactivatedBy, htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-6">
+                        @Html.EditorFor(model => model.DeactivatedBy, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.DeactivatedBy, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeactivatedDate, htmlAttributes: new { @class = "control-label col-md-3" })
+                    <div class="col-md-6">
+                        @Html.EditorFor(model => model.DeactivatedDate, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.DeactivatedDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-lg-2 form-group">
+            @Html.EditorFor(model => model.IsActive)
+            @Html.LabelFor(model => model.IsActive)
+            @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-lg-5 form-group">
+            @Html.LabelFor(model => model.DeactivatedBy, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.DeactivatedBy, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.DeactivatedBy, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-lg-5 form-group">
+            @Html.LabelFor(model => model.DeactivatedDate, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.DeactivatedDate, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.DeactivatedDate, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+            
+    </div>
+</div>
+<script type="text/javascript">
+    function AddNewAccount(td) {
+        $(td).attr('disabled', 'disabled');
+        var settings = {
+            url: '@Url.Action("AddNewAccount")',
+            type: 'POST',
+            success: function (row) {
+                $('#AccountsTable tbody').append(row);
+                $(td).removeAttr('disabled');
+                $('#AccountsTableContainer').animate({ scrollTop: $('#AccountsTableContainer')[0].scrollHeight }, 1000);
+            },
+            error: function () {
+                $(td).removeAttr('disabled');
+            }
+        };
+
+        $.ajax(settings);
+    }
+
+    function scrollableTable() {
+        setTableBody();
+        $(window).resize(setTableBody);
+        $(".table-body").scroll(function () {
+
+            //$(".table-header").offset({ left: -1*this.scrollLeft });
+            //var position = $(".table-header").position();
+            $(".table-header").animate({
+                left: -1 * this.scrollLeft
+            }, 0)
+
+            //var position = $(".table-header").position();
+            //$(".table-header").offset({ left: -1*this.scrollLeft });
+
+            //var offsetpos = $(".table-header").offsetParent();
+            // $(".table-header").offset({ left: -1*this.scrollLeft });
+            //$(".table-header").html(
+            // offsetpos.offset({left: -1*this.scrollLeft }) );
+        });
+    }
+
+    function setTableBody() {
+        $(".table-body").height($(".inner-container").height() - $(".table-header").height());
+    }
+
+</script>

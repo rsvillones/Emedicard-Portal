@@ -1,0 +1,67 @@
+namespace Corelib.Migrations.IdentityDataContext
+{
+    using System;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
+    using Corelib.Models;
+
+    internal sealed class Configuration : DbMigrationsConfiguration<Corelib.IdentityDataContext>
+    {
+        #region -- Constructor --
+
+        public Configuration()
+        {
+            AutomaticMigrationsEnabled = true;
+            MigrationsDirectory = @"Migrations\IdentityDataContext";
+        }
+        
+        #endregion
+
+        #region -- Seed Method --
+
+        protected override void Seed(Corelib.IdentityDataContext context)
+        {
+            AddRole(context, "Administrators");
+            AddUser(context, "Administrator", "Administrators");
+        }
+        
+        #endregion
+
+        #region -- Functions --
+
+        private void AddRole(Corelib.IdentityDataContext context, string rolename) 
+        {
+            if (!context.Roles.Any(t => t.Name == rolename))
+            {
+                var store = new RoleStore<ApplicationRole>(context);
+                var manager = new RoleManager<ApplicationRole>(store);
+                var role = new ApplicationRole { Name = rolename };
+
+                manager.Create(role);
+            }
+        }
+
+        private void AddUser(Corelib.IdentityDataContext context, string username, params string[] roles)
+        {
+            if (!context.Users.Any(t => t.UserName == username))
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                var user = new ApplicationUser { UserName = username };
+
+                manager.Create(user, "P@ssw0rd");
+
+                foreach (var role in roles)
+                {
+                    AddRole(context, role);
+                    manager.AddToRole(username, role);
+                }
+            }
+        }
+
+        #endregion
+    }
+}

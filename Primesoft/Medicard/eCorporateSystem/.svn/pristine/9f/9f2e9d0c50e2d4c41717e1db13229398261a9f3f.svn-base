@@ -1,0 +1,110 @@
+﻿using Corelib.Enums;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    [Table("SYS_UWPROCESSING_PRIN_MTBL")]
+    public class LegacyPrincipalActionMemo : IActionMemo
+    {
+        #region -- Properties --
+
+        [Key]
+        [Column("PROCESS_ID")]
+        public string ProcessId { get; set; }
+
+        [Column("CONTROL_NO")]
+        public string ControlNumber { get; set; }
+
+        [Column("PRIN_APPNUM")]
+        public decimal PrinAppNum { get; set; }
+
+        [NotMapped]
+        public decimal? DepAppNum { get; set; }
+
+        [Column("PRIN_CODE")]
+        public string PrincipalCode { get; set; }
+
+        [NotMapped]
+        public string DependentCode{ get; set; }
+
+        [Column("ACCOUNT_CODE")]
+        public string AccountCode { get; set; }
+
+        [Column("MEM_LNAME")]
+        public string LastName { get; set; }
+
+        [Column("MEM_FNAME")]
+        public string FirstName { get; set; }
+
+        [Column("MEM_MI")]
+        public string MiddleName { get; set; }
+
+        [Column("MEM_BDAY")]
+        public DateTime? DateOfBirth { get; set; }
+
+        [Column("STAT_REM")]
+        public string StatusRemarks { get; set; }
+
+        [Column("OTHER_REM")]
+        public string OtherRemarks { get; set; }
+
+        [Column("MEM_OSTAT_CODE")]
+        public int? StatCode { get; set; }
+
+        [Column("DATE_AMEND")]
+        public DateTime? AmmendmentDate { get; set; }
+
+        [Column("DATE_RESGN")]
+        public DateTime? ResignedDate { get; set; }
+
+        [Column("POSTED")]
+        public int Posted { get; set; }
+
+        [Column("ACTMEM_REM")]
+        public string ActionMemoRemarks { get; set; }
+
+        [Column("ACTMEM_DATE")]
+        public DateTime? ActionMemoDate { get; set; }
+
+        [Column("DTACARD_PRINTED")]
+        public DateTime? DataCardPrintedDate { get; set; }
+
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                return String.Format("{0}, {1} {2}", this.LastName, this.FirstName, this.MiddleName);
+            }
+        }
+
+        [NotMapped]
+        public ActionMemoType Type
+        {
+            get
+            {
+                return LegacyHelper.GetActionMemoType(this);
+            }
+        }
+
+        [NotMapped]
+        public string PrincipalOrDependent
+        {
+            get
+            {
+                return "Principal";
+            }
+        }
+
+        [ForeignKey("PrinAppNum")]
+        public LegacyMember LegacyMember { get; set; }
+
+        #endregion
+    }
+}

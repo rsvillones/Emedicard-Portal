@@ -1,0 +1,45 @@
+﻿@model PermissionViewModel
+@{
+    var viewPermission = String.Format("CanView{0}", Model.Permission.Name);
+    var addPermission = String.Format("CanAdd{0}", Model.Permission.Name);
+    var editPermission = String.Format("CanEdit{0}", Model.Permission.Name);
+    var deletePermission = String.Format("CanDelete{0}", Model.Permission.Name);
+}
+
+@if (User.IsInRole("SysAd") || User.IsInRole(viewPermission) || User.IsInRole(addPermission) || User.IsInRole(editPermission) || User.IsInRole(deletePermission))
+{
+    <tr>
+        <td style="width: 48%; padding-left:@(Model.Permission.Indent * 10)px">
+            <label class="control-label col-lg-3">@Model.Permission.Display</label>
+        </td>
+        <td style="width: 10%">
+            @if ((User.IsInRole("SysAd") || User.IsInRole(viewPermission)) && Model.Permission.HasView)
+            {
+                <input type="checkbox" name="RoleId" id="@viewPermission" value="@viewPermission" @(Model.Group.Roles != null && Model.Group.Roles.Any(t => t.Name == viewPermission) ? "checked='checked'" : "") />
+            }
+            &nbsp;
+        </td>
+        <td style="width: 10%">
+            @if ((User.IsInRole("SysAd") || User.IsInRole(addPermission)) && Model.Permission.HasAdd)
+            {
+                <input type="checkbox" name="RoleId" id="@addPermission" value="@addPermission" @(Model.Group.Roles != null && Model.Group.Roles.Any(t => t.Name == addPermission) ? "checked='checked'" : "") />
+            }
+            &nbsp;
+        </td>
+        <td style="width: 10%">
+            @if ((User.IsInRole("SysAd") || User.IsInRole(editPermission)) && Model.Permission.HasEdit)
+            {
+                <input type="checkbox" name="RoleId" id="@editPermission" value="@editPermission" @(Model.Group.Roles != null && Model.Group.Roles.Any(t => t.Name == editPermission) ? "checked='checked'" : "") />
+            }
+            &nbsp;
+        </td>
+        <td style="width: 10%">
+            @if ((User.IsInRole("SysAd") || User.IsInRole(deletePermission)) && Model.Permission.HasDelete)
+            {
+                <input type="checkbox" name="RoleId" id="@deletePermission" value="@deletePermission" @(Model.Group.Roles != null && Model.Group.Roles.Any(t => t.Name == deletePermission) ? "checked='checked'" : "") />
+            }
+            &nbsp;
+        </td>
+        <td style="width: 2%">&nbsp;</td>
+    </tr>
+}

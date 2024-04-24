@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ActionMemo>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            Date Issued
+        </th>
+        <th>
+            Type
+        </th>
+        <th>
+            Issued To
+        </th>
+        <th>
+            Details
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.DateIssued)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Type)
+            </td>
+            <td>
+                @if (item.Dependent != null)
+                {
+                    @Html.DisplayFor(mode => item.Dependent.FullName)
+                }
+                else
+                {
+                    @Html.DisplayFor(mode => item.Member.FullName)
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Details)
+            </td>
+            <td>
+                @if (item.Type != Corelib.Enums.ActionMemoType.Disapproved)
+                {
+                    @Html.ActionLink("Reply", "Reply", "ActionMemos", new { area = "Member", guid = item.Guid }, new { @class = "btn btn-primary" })
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+

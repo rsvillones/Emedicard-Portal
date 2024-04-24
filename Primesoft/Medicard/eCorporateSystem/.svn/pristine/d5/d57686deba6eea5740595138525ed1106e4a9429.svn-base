@@ -1,0 +1,73 @@
+@model IdReplacement
+@{
+    var resonList = new SelectList(ViewBag.Reasons, "Id", "Description", Model.ReasonId);
+    var dependentList = new SelectList(ViewBag.Dependents, "Code", "FullName", Model.DependentCode);
+    var memberList = new SelectList(ViewBag.Members, "Code", "FullName", Model.MemberCode);
+    var documentList = new SelectList(ViewBag.DocumentTypes, "Id", "Name", Model.DocumentTypeId);
+}
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Guid)
+@Html.HiddenFor(model => model.CrBy)
+@Html.HiddenFor(model => model.CrById)
+@Html.HiddenFor(model => model.CrDate)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.RequestDate)
+@Html.HiddenFor(model => model.AccountCode)
+@Html.HiddenFor(model => model.Status)
+@Html.HiddenFor(model => model.DocumentFileName)
+@Html.HiddenFor(model => model.DocumentFile)
+@Html.HiddenFor(model => model.DocumentContentType)
+
+
+<h4 class="form-title">ID Replacement</h4>
+<div class="row">
+    <div class="col-lg-12" id="MemberContainer">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.Label("MemberCode", "Member Name:")</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("MemberCode", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlMemberAttributes as object)
+                @Html.ValidationMessageFor(model => model.MemberCode)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.RequestFor):</label>
+            <div class="col-lg-8">
+                @Html.EnumDropDownListFor(model => model.RequestFor, ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.RequestFor)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.ReasonId):</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("ReasonId", (IEnumerable<SelectListItem>)resonList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.ReasonId)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DependentCode):</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("DependentCode", (IEnumerable<SelectListItem>)dependentList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.DependentCode)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Remarks):</label>
+            <div class="col-lg-8">
+                @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                @Html.ValidationMessageFor(model => model.Remarks)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

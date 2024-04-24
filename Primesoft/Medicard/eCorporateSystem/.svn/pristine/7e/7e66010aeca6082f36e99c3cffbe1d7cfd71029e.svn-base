@@ -1,0 +1,23 @@
+﻿@model Document
+@using HtmlHelpers.BeginCollectionItem
+
+<tr>
+    @using (Html.BeginCollectionItem("Members"))
+    {
+        <td>
+            @Html.HiddenFor(t => t.GuidFilename)
+            @Html.HiddenFor(t => t.DocumentTypeId)
+            @Html.HiddenFor(t => t.Id)
+            @Html.HiddenFor(t => t.Guid)
+            @Html.HiddenFor(t => t.Timestamp)
+            @Html.DisplayFor(t => t.Filename)
+        </td>
+        <td>
+            @Html.DisplayFor(t => t.DocumentType.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(t => t.DateUploaded)
+        </td>
+        <td></td>
+    }
+</tr>

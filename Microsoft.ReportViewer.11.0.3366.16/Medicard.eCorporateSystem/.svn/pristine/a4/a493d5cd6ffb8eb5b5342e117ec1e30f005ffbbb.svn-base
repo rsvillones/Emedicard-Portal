@@ -1,0 +1,27 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model UtilizationReportException
+@{
+    var memberList = new SelectList(ViewBag.Members, "Code", "FullName", Model.MemberCode);
+}
+<tr>
+    @using (Html.BeginCollectionItem("UtilizationReportExceptions"))
+    {
+        <td>
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Guid)
+            @Html.HiddenFor(model => model.CrBy)
+            @Html.HiddenFor(model => model.CrById)
+            @Html.HiddenFor(model => model.CrDate)
+            @Html.HiddenFor(model => model.AccountCode)
+
+            @Html.DropDownList("MemberCode", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlDropDownAttribute as object)
+            @Html.ValidationMessageFor(model => model.MemberCode)
+        </td>
+        if (User.IsInRole("SysAd") || User.IsInRole("CanAddUtilizationReportException") || User.IsInRole("CanDeleteUtilizationReportException"))
+        {
+            <td>
+                <a href="javascript:void(0);" onclick="deleteMember(this);" class="btn btn-danger">Delete</a>
+            </td>
+        }
+    }
+</tr>

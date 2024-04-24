@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    public class ProfileController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        public override ActionResult Index()
+        {
+            //var returnValue = base.Index();
+            //if (returnValue != null) return returnValue;
+
+            return View();
+        }
+        
+        #endregion
+    }
+}

@@ -1,0 +1,102 @@
+﻿@model PagedList.IPagedList<IdReplacement>
+
+@{
+    ViewBag.Title = "ID Replacement";
+    var amendment = new IdReplacement();
+    IEnumerable<Dependent> dependents = ViewBag.Dependents;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="title">ID Replacements</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">
+        <p style="float: right">
+            @Html.ActionLink("Add ID Replacement", "IdReplacement", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+
+        </p>
+    </div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(modelItem => amendment.RequestDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(modelItem => amendment.RequestFor)
+        </th>
+        <th>
+            Request Reason
+        </th>
+        <th>
+            Dependent Name
+        </th>
+        <th>
+            Remarks
+        </th>
+        <th>
+            Request Status
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        var dependentName = item.DependentId != null ? dependents.FirstOrDefault(t => t.Id == item.DependentId).FullName : "";
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.RequestDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.RequestFor)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Reason.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(model => dependentName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Remarks)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Status)
+            </td>
+            <td>
+                @if (item.Status == Corelib.Enums.RequestStatus.Saved)
+                {
+                    @Html.ActionLink("Edit", "IdReplacement", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                    @Html.ActionLink("Delete", "Delete", new { guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+                }
+                @if (item.Status != Corelib.Enums.RequestStatus.Saved && item.Status != Corelib.Enums.RequestStatus.CancelledRequest
+                    && item.Status != Corelib.Enums.RequestStatus.HrDisapproved && item.Status != Corelib.Enums.RequestStatus.Disapproved)
+                {
+                    @Html.ActionLink("Cancel", "CancelIdReplacement", new { guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+}
+
+

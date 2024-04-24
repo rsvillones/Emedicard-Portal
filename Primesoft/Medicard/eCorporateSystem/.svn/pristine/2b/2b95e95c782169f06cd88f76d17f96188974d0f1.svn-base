@@ -1,0 +1,3 @@
+﻿@{
+    Layout = "~/Areas/MembershipEndorsement/Views/Shared/_Layout.cshtml";
+}

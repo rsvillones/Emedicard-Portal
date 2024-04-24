@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class AmendmentsController : BaseMemberController
+    {
+        // GET: Member/Amendments
+        [Authorize(Roles = "Member")]
+        public ActionResult Index(string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var amendments = db.Amendments.Where(t => !t.Deleted && t.MemberId == this.Member.Id).ToList();
+            var dependents = db.Dependents.Where(t => !t.Deleted && t.MemberId == this.Member.Id).ToList();
+            var model = new AmendmentViewModel()
+            {
+                Amendments = amendments,
+                Dependents = dependents
+            };
+
+            return View(model);
+        }
+    }
+}

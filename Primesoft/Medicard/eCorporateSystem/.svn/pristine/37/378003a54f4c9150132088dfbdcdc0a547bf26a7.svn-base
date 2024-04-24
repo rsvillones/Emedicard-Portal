@@ -1,0 +1,139 @@
+﻿@model Amendment
+
+@{
+    var resonList = new SelectList(ViewBag.Reasons, "Id", "Description", Model.ReasonId);
+    var dependentList = new SelectList(ViewBag.Dependents, "Id", "FullName", Model.DependentId);
+    var documentList = new SelectList(ViewBag.DocumentTypes, "Id", "Name", Model.DocumentTypeId);
+    var memberList = new SelectList(ViewBag.Members, "Id", "FullName", Model.MemberId);
+}
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Guid)
+@Html.HiddenFor(model => model.CrBy)
+@Html.HiddenFor(model => model.CrById)
+@Html.HiddenFor(model => model.CrDate)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.RequestDate)
+@Html.HiddenFor(model => model.Status)
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Amendment Detail</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.Label("MemberId","Member Name:")</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("MemberId", (IEnumerable<SelectListItem>)memberList, "-- Select --", new { @class = "form-control", @onChange = "onChangeMember($(this))" })
+                                                            @Html.ValidationMessageFor(model => model.MemberId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.EffectivityDate)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.EffectivityDate)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.RequestFor)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EnumDropDownListFor(model => model.RequestFor, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.RequestFor)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DataType)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EnumDropDownListFor(model => model.DataType, new { @class = "form-control", @onChange = "dataTypeOnchange($(this))" })
+                                                            @Html.ValidationMessageFor(model => model.DataType)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ChangeDataFrom)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EditorFor(model => model.ChangeDataFrom, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ChangeDataFrom)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ChangeDataTo)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EditorFor(model => model.ChangeDataTo, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ChangeDataTo)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ReasonId)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("ReasonId", (IEnumerable<SelectListItem>)resonList, "-- Select --", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.ReasonId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DependentId)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("DependentId", (IEnumerable<SelectListItem>)dependentList, "-- Select --", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.DependentId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DocumentTypeId)</label>
+                                                        <div class="col-lg-5">
+                                                            @Html.DropDownList("DocumentTypeId", (IEnumerable<SelectListItem>)documentList, "-- Select --", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.DocumentTypeId)
+                                                        </div>
+                                                        <div class="col-lg-5">
+                                                            @Html.TextBoxFor(model => model.FileWrapper, new { @Type = "file"})
+                                                            @Html.ValidationMessageFor(model => model.FileWrapper)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.Remarks)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Remarks)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,13 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Process Renewal By Corporate Admin Sent to Member</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+<p class="details">Your medicard account has been applied for renewal.</p>
+@if (Model.Member.Status == Corelib.Enums.MembershipStatus.New)
+{
+    <p class="details">Please login to http://emedicard/, complete your information submit your information for processing of the renewal your account.</p>
+}
+
+<br />

@@ -1,0 +1,87 @@
+﻿using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.UI.WebControls;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class ProfileController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Index(string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var principalPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, true);
+            var appliedPlans = principalPlans.Where(t => t.Id == this.Application.AppliedPlan);
+            var optionalPlansFilter = new List<int>();
+            if (!String.IsNullOrEmpty(this.Application.OptionalPlan))
+            {
+                foreach (var optionalPlan in this.Application.OptionalPlan.Split(','))
+                {
+                    optionalPlansFilter.Add(int.Parse(optionalPlan));
+                }
+            }
+
+            var optionalPlans = principalPlans.Where(t => t.Id != this.Application.AppliedPlan && optionalPlansFilter.Contains(t.Id));
+
+            ViewBag.AppliedPlanList = new SelectList(appliedPlans, "Id", "LongDescription", this.Application.AppliedPlan);
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", this.Application.AppliedPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, this.Application.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, this.Application.CivilStatus);
+            ViewBag.OptionalPlanCount = optionalPlans.Count(t => t.Id != this.Application.AppliedPlan);
+
+            return View(this.Application);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Index([Bind(Include = "Id, Guid, EmployeeNumber, LastName, FirstName, MiddleName, Suffix, DateOfBirth, Area, CostCenter, EffectivityDate, ValidityDate, DateHired, Gender, CivilStatus, EmailAddress, Dependent, AppliedPlan, OptionalPlan, Street, City, AreaCode, Province, Telephone, Mobile, HeightFeet, HeightInches, Weight, Position, Timestamp, UserId, UserName, AccountCode")] Application application)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                var currentApplication = db.Applications.Include(t => t.Batch).FirstOrDefault(t => t.Id == application.Id);
+                var currentBatch = currentApplication.Batch;
+                if (currentApplication == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                db.Entry(currentApplication).CurrentValues.SetValues(application);
+                currentApplication.Batch = currentBatch;
+                db.Entry(currentApplication).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index", new { @messageType = "Success", @message = "Successfully saved information." });
+            }
+
+            var principalPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, true);
+            var appliedPlans = principalPlans.Where(t => t.Id == this.Application.AppliedPlan);
+            var optionalPlans = principalPlans.Where(t => t.Id != this.Application.AppliedPlan);
+
+            var dependentPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, false);
+
+            ViewBag.AppliedPlanList = new SelectList(appliedPlans, "Id", "LongDescription", this.Application.AppliedPlan);
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", this.Application.AppliedPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, this.Application.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, this.Application.CivilStatus);
+            ViewBag.OptionalPlanCount = principalPlans.Count(t => t.Id != this.Application.AppliedPlan);
+
+            return View(application);
+        }
+
+        #endregion
+    }
+}

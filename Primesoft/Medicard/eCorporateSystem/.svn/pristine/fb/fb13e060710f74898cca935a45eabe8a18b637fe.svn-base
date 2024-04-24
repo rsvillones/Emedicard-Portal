@@ -1,0 +1,193 @@
+@model WebUI.Models.ActionMemoViewModel
+
+@{
+    ViewBag.Title = "Reply to Action Memo";
+    var actionMemo = ViewBag.ActionMemo as ActionMemo;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Reply to Action Memo</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="ActionMemoDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => actionMemo.DateIssued)</label>
+                                                            <div class="col-lg-4">
+                                                                @Html.EditorFor(model => actionMemo.DateIssued, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            </div>
+                                                            <label class="control-label col-lg-2">&nbsp;</label>
+                                                            <div class="col-lg-4">&nbsp;</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">Member Name</label>
+                                                            <div class="col-lg-4">
+                                                                @if (actionMemo.Dependent != null)
+                                                                {
+                                                                    @Html.EditorFor(model => actionMemo.Dependent.FullName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.EditorFor(model => actionMemo.Member.FullName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                                }
+                                                            </div>
+
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => actionMemo.MemberType)</label>
+                                                            <div class="col-lg-4">
+                                                                @Html.EditorFor(model => actionMemo.MemberType, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => actionMemo.MemberType)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => actionMemo.Details)</label>
+                                                            <div class="col-lg-10">
+                                                                @Html.TextAreaFor(model => actionMemo.Details, new { @class = "form-control white-readonly", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(model => actionMemo.Details)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.MemberReply)</label>
+                                                            <div class="col-lg-10">
+                                                                @Html.TextAreaFor(model => model.MemberReply, new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.MemberReply)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">Document Type</label>
+                                                            <div class="col-lg-4">
+                                                                @Html.DropDownList("DocumentTypeId", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, new { @class = "form-control" })
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <input type="file" id="DocumentUpload" style="background-color:blue" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">&nbsp;</label>
+                                                            <div class="col-lg-10">
+                                                                <table id="DocumentsTable" class="table table-white" style="margin-bottom: 0 !important;">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>
+                                                                                Filename
+                                                                            </th>
+                                                                            <th>
+                                                                                Document Type
+                                                                            </th>
+                                                                            <th>
+                                                                                Date Uploaded
+                                                                            </th>
+                                                                            <th>
+                                                                                &nbsp;
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var document in Model.Documents)
+                                                                        {
+                                                                            @Html.Partial("_Document", document)
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-actions no-color pull-right">
+                                                            <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                                                            <input type="submit" name="Submit" value="Reply" class="btn btn-primary" />
+                                                            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#DocumentUpload").uploadifive({
+                'method': 'post',
+                'formData': {
+                    'documentTypeId': $('#DocumentTypeId').val()
+                },
+                'uploadScript': '@Url.Action("UploadDocument")',
+                'fileObjName': 'fileData',
+                'buttonText': 'Add Document',
+                'multi': false,
+                'auto': true,
+                'height': 40,
+                'width': 60,
+                'removeCompleted': true,
+                'onUpload': function (file) {
+                    $('#DocumentUpload').data('uploadifive').settings.formData = {
+                        'documentTypeId': $('#DocumentTypeId').val()
+                    }
+                },
+                'onError': function (file, data) {
+                    alert('There was a problem uploading the file selected');
+                },
+                'onUploadComplete': function (file, data) {
+                    var json = $.parseJSON(data);
+                    $('#DocumentsTable tbody').append(json.TableRow);
+                }
+            });
+        });
+    </script>
+}
+
+

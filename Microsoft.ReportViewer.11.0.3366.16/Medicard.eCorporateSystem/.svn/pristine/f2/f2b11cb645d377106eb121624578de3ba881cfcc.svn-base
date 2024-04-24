@@ -1,0 +1,22 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+
+@*<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>*@
+
+<div class="error-form">
+	<div class="container">
+		<div class="col-lg-4">
+			<img src="~/Content/images/company_logo2.png" alt=""/>
+		</div>
+		<div class="col-lg-8">
+			<h2>Application Error</h2>
+			<h4>An error occured while processing your request</h4>
+			<h5>Please contact support if the problem continues <br />
+			We apologize for the incovenience</h4>
+		</div>
+	</div>
+</div>

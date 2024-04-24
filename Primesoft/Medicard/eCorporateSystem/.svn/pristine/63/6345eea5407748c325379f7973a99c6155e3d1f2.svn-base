@@ -1,0 +1,78 @@
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel;
+
+namespace Corelib.Enums
+{
+    public enum Gender
+    {
+        Male,
+        Female
+    }
+
+    public enum EndorsementBatchStatus
+    {
+        New,
+        ForEmployeeUpdating,
+        PartiallyForProcessing,
+        Processing,
+        Completed,
+        Cancelled
+    }
+
+    public enum MembershipStatus
+    {
+        New,
+        Saved,
+        SubmittedToCorporateAdmin,
+        CorporateAdminApproved,
+        CorporateAdminDisapproved,
+        ForProcessing,
+        Approved,
+        Cancelled,
+        WithActionMemo
+    }
+
+    public enum UrgSetting
+    {
+        All,
+        Partial,
+        Principal
+    }
+
+    public enum RequestFor
+    {
+        Account,
+        Applicant,
+        Dependent,
+        Principal
+    }
+
+    public enum AmendmentDataType
+    {
+        [Description("Last Name")]  
+        LastName,
+        [Description("First Name")]  
+        FirstName,
+        [Description("Middle Name")]  
+        MiddleName,
+        [Description("Civil Status")]  
+        CivilStatus,
+        [Description("Address (Street, City, Province, Area Code)")]        
+        Address,
+        Position,
+        [Description("Telephone Number")]  
+        TelephoneNumber,
+        [Description("Cost Centre")]  
+        CostCentre,
+        Area,
+        [Description("Hiring Date")]  
+        HiringDate,
+        [Description("Effectivity Date")]  
+        EffectivityDate
+    }
+}

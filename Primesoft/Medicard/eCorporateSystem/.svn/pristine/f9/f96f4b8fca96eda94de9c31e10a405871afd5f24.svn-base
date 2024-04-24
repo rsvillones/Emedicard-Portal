@@ -1,0 +1,126 @@
+﻿@model Corelib.Models.EndorsementBatch
+
+@{
+    ViewBag.Title = "Single Endorement";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("SingleEndorsement", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.ReferenceNumber);
+    @Html.HiddenFor(model => model.Filename);
+    @Html.HiddenFor(model => model.GuidFilename);
+    @Html.HiddenFor(model => model.Timestamp);
+    <input type="hidden" id="IsReadOnly" value="@ViewBag.DestroyPicker">
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Single Endorsement (Add New Member)</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadNewApplication" class="tab-pane fade active in">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title" style="margin-bottom: 1em">Batch Detail</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Submission Deadline:</label>
+                                                        <div class="col-lg-8 editor-form-control">
+                                                            @Html.EditorFor(model => model.Deadline, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessageFor(model => model.Deadline, null, new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Remarks:</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.Remarks, null, new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">&nbsp;</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    if (Model.Members.Any())
+    {
+        @Html.Partial("_SingleMember", Model.Members.FirstOrDefault())
+    }
+    else
+    {
+        @Html.Partial("_SingleMember", new Corelib.Models.Member() { AccountCode = ViewBag.AccountCode })
+    }
+
+    <div class="row space">
+        <div class="col-lg-12">
+            <div class="no-color pull-right">
+                @if (!ViewBag.ReadOnly)
+                {
+                    <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                }
+                @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var isReadOnly = $('#IsReadOnly').val();
+            if (isReadOnly == "True") {
+                alert('xxx');
+                $('input[name*="DateOfBirth"],input[name*="EffectivityDate"],input[name*="ValidityDate"],input[name*="DateHired"],input[name*="DateOfBirth"]').datepicker("remove");
+            } else {
+                alert('yyy');
+                $('input[name*="DateOfBirth"],input[name*="EffectivityDate"],input[name*="ValidityDate"],input[name*="DateHired"],input[name*="DateOfBirth"]').datepicker();
+            }
+
+            $('.selectpicker').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectpicker').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+        });
+        function OnDateOfBirthChange() {
+            var options = {
+                url: '@Url.Action("ComputeAge", "Utilities", new { area = "" })',
+                type: 'POST',
+                data: {
+                    dateOfBirth: $('input[name*="DateOfBirth"]').val()
+                },
+                success: function (age) {
+                    $('input[name*="Age"]').val(age);
+                }
+            };
+            $.ajax(options);
+        }
+    </script>
+}

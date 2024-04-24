@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Account>
+@{
+    Layout = "";
+}
+
+@foreach (var account in Model)
+{
+    @Html.Partial("_Account", account)
+}

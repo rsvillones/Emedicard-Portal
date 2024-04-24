@@ -1,0 +1,37 @@
+@model Member
+
+<div class="form-group">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#PersonalDetails">Personal Details</a></li>
+        <li class=""><a data-toggle="tab" href="#ContactDetails">Contact Details</a></li>
+        <li class=""><a data-toggle="tab" href="#OtherDetails">Other Details</a></li>
+        <li class=""><a data-toggle="tab" href="#MedicalHistory">Medical History</a></li>
+        @if (Model.Dependents != null && Model.Dependents.Count > 0)
+        {
+            <li class=""><a data-toggle="tab" href="#Dependents">Dependents</a></li>
+        }
+        <li class=""><a data-toggle="tab" href="#Documents">Documents</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="PersonalDetails" class="tab-pane fade active in">
+            @Html.Partial("_MemberPersonalDetails", Model)
+        </div>
+        <div id="ContactDetails" class="tab-pane fade">
+            @Html.Partial("_MemberContactDetails", Model)
+        </div>
+        <div id="OtherDetails" class="tab-pane fade">
+            @Html.Partial("_MemberOtherDetails", Model)
+        </div>
+        <div id="MedicalHistory" class="tab-pane fade">
+            @Html.Partial("_MemberMedicalHistory", Model)
+        </div>
+        @if (Model.Dependents != null && Model.Dependents.Count > 0)
+        {
+            <div id="Dependents" class="tab-pane fade">
+                @Html.Partial("_MemberDependents", Model)
+            </div>
+        }
+        <div id="Documents" class="tab-pane fade">
+        </div>
+    </div>
+</div>

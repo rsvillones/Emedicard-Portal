@@ -1,0 +1,76 @@
+﻿using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Areas.Member.Models;
+using System.Data.Entity;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles="Member")]
+    public class SubmitForApprovalController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        [HttpGet]
+        public ActionResult Index(string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = new SubmitForApprovalViewModel()
+            {
+                MemberGuid = this.Member.Guid,
+                LastName = this.Member.LastName,
+                FirstName = this.Member.FirstName,
+                MiddleName = this.Member.MiddleName,
+                DateOfBirth = this.Member.DateOfBirth
+            };
+
+            return View(model);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(SubmitForApprovalViewModel model)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                var currentMember = db.Members.FirstOrDefault(t => t.Id == this.Member.Id);
+                var accountSettings = db.AccountSettings.FirstOrDefault(t => t.AccountCode == currentMember.AccountCode) ?? new AccountSetting();
+                var eb = db.EndorsementBatches.Include(t => t.Members).FirstOrDefault(t => t.Id == currentMember.EndorsementBatchId);
+
+                var message = string.Empty;
+                if (accountSettings.BypassHRManagerApproval)
+                {
+                    currentMember.Status = MembershipStatus.CorporateAdminApproved;
+                    message = "Your membership information is now submitted for processing in Medicard.";
+                    Helper.UrgMemberProfileNotification(System.Web.HttpContext.Current, currentMember, currentMember.AccountCode);
+                }
+                else
+                {
+                    currentMember.Status = MembershipStatus.SubmittedToCorporateAdmin;
+                    message = "Your membership information is now submitted for the approval of your Corporate Administrator.";
+                    Helper.CorpAdminMemberProfileNotification(System.Web.HttpContext.Current, currentMember, currentMember.AccountCode);
+                }
+
+                db.SaveChanges();
+
+                return RedirectToAction("Index", new { @messageType = "Success", @message = message });
+            }
+
+            return View();
+        }
+
+        #endregion
+    }
+}

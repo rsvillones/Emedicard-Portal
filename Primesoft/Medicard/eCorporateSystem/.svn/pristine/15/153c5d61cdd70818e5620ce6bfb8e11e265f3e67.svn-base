@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class AdditionalDependent : Dependent
+    {
+        #region -- Constructor --
+
+        public AdditionalDependent()
+        {
+            this.DateOfBirth = DateTime.MinValue;
+        }
+
+        #endregion
+
+        #region -- Property --
+
+        public Corelib.Enums.RequestStatus ApplicationStatus { get; set; }
+
+        #endregion
+    }
+}

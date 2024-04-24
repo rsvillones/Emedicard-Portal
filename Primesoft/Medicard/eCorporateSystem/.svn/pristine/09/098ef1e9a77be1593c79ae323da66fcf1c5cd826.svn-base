@@ -1,0 +1,111 @@
+﻿@model AdditionalDependent
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(t => t.Id)
+    @Html.HiddenFor(t => t.Guid)
+    @Html.HiddenFor(t => t.Timestamp)
+    @Html.HiddenFor(t => t.Status)
+    @Html.HiddenFor(t => t.AccountCode)
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Dependent Personal Details</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="PersonalDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                @Html.Partial("_Dependent", Model)
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            <input type="submit" value="Save" class="btn btn-primary" />
+                                                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("#DateOfBirth").datepicker();
+        onChangeMember($("#MemberId"));
+    });
+    function OnDateOfBirthChange() {
+        var options = {
+            url: '@Url.Action("ComputeAge", "Utilities", new { area = "" })',
+            type: 'POST',
+            data: {
+                dateOfBirth: $('#DateOfBirth').val()
+            },
+            success: function (age) {
+                $('#Age').val(age);
+            }
+        };
+        $.ajax(options);
+    }
+    function onChangeMember(input) {
+        var optionAppliedPlan = {
+            url: '@Url.Action("GetDependentAppliedPlan")',
+            type: 'POST',
+            data: {
+                memberId: input.val()
+            }
+        };
+        $.ajax(optionAppliedPlan).done(function (data) {
+            $('#AppliedPlan').html(data);
+        });
+
+        var optionOptionalPlan = {
+            url: '@Url.Action("GetDependentOptionalPlan")',
+                type: 'POST',
+                data: {
+                    memberId: input.val()
+                }
+            };
+            $.ajax(optionOptionalPlan).done(function (data) {
+                $('#OptionalPlan').html(data);
+            });
+
+            var optionOptionalPlanCount = {
+                url: '@Url.Action("GetDependentOptionalPlanCount")',
+                type: 'POST',
+                data: {
+                    memberId: input.val()
+                }
+            };
+            $.ajax(optionOptionalPlan).done(function (data) {
+                if (data > 0) {
+                    $('#OptionalPlanCount').show();
+                } else {
+                    $('#OptionalPlanCount').hide();
+                }
+            });
+
+        }
+    </script>
+    @Html.Partial("_Message")
+}

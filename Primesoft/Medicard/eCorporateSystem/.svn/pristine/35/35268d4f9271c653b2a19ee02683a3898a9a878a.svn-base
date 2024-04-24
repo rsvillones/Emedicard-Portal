@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Models;
+
+namespace Emailer
+{
+    public class EmailViewModel
+    {
+        #region -- Properties --
+
+        public DateTime From { get; set; }
+
+        public DateTime To { get; set; }
+
+        public bool BypassCorporateAdminApproval { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
+
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        public Member Member { get; set; }
+
+        public ActionMemo ActionMemo { get; set; }
+
+        public IEnumerable<ActionMemo> ActionMemos { get; set; }
+
+        #endregion
+    }
+}

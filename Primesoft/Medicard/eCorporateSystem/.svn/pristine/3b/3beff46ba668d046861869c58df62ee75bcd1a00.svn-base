@@ -1,0 +1,112 @@
+﻿@model PagedList.IPagedList<Member>
+
+<div id="MyEndorsementApprovalsContainer">
+    @if (Model.PageCount > 1)
+    {
+        @Html.PagedListPager(Model, page => Url.Action("GetMyEndorsementApprovals", "Items", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.ClassicPlusFirstAndLast, new AjaxOptions() { UpdateTargetId = "MyEndorsementApprovalsContainer" }))
+        <br /><br /><br />
+    }
+
+    <table class="table table-fixed-left">
+        <thead>
+            <tr>
+                <th style="width:15%">
+                    Employee Number
+                </th>
+                <th style="width:15%">
+                    Last Name
+                </th>
+                <th style="width:15%">
+                    First Name
+                </th>
+                <th style="width:15%">
+                    Middle Name
+                </th>
+                <th style="width:25%">
+                    Applied Plan
+                </th>
+                <th style="width:10%">
+                    Enrolled Dependents
+                </th>
+                <th style="width:5%">
+                    &nbsp;
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+    <div class="scrollable-tables" style="margin-top: -3px !important;height: 230px !important;margin-bottom: 0 !important">
+        <table class="table table-custom">
+            <tbody>
+                @if (Model != null && Model.Count() > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="width:15%">
+                                @Html.DisplayFor(model => item.EmployeeNumber)
+                            </td>
+                            <td style="width:15%">
+                                @Html.DisplayFor(model => item.LastName)
+                            </td>
+                            <td style="width:15%">
+                                @Html.DisplayFor(model => item.FirstName)
+                            </td>
+                            <td style="width:15%">
+                                @Html.DisplayFor(model => item.MiddleName)
+                            </td>
+                            <td style="width:25%">
+                                @Html.DisplayFor(model => item.AppliedPlanDescription)
+                            </td>
+                            <td style="width:10%">
+                                @Html.DisplayFor(model => item.Dependents.Count)
+                            </td>
+                            <td style="width:5%">
+                                <a class="btn btn-primary btn-xs" href="javascript:void(0);" onclick="ApproveEndorsementApproval(this, '@item.AccountCode', '@item.Guid'); return false;">Approve</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    @Html.Partial("_NoData", 7)
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function ApproveEndorsementApproval(link, accountCode, guid) {
+        var tr = $(link).parent().parent();
+        var tbody = tr.parent();
+
+        $(link).attr('disabled', 'disabled');
+        $(link).addClass('disabled');
+
+
+        var options = {
+            url: '@Url.Action("ApproveEndorsementApprovals", "Items", new { area = "" })',
+            type: 'POST',
+            data: {
+                accountCode: accountCode,
+                guid: guid
+            },
+            success: function (data) {
+                var json = data;
+
+                if (json.Success) {
+                    tr.remove();
+
+                    if (tbody.children().length == 0) {
+                        tbody.html('@Html.Partial("_NoData", 7)');
+                    }
+                }
+
+                alert(json.Message);
+            }
+        };
+
+        $.ajax(options);
+    }
+</script>

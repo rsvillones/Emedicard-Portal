@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    [Table("SYS_ROOMRATE_MTBL")]
+    public class LegacyRoomRate
+    {
+        #region -- Properties --
+
+        [Column("RSPROOMRATE_ID")]
+        public int Id { get; set; }
+
+        [Column("PLAN_CODE")]
+        public string PlanCode { get; set; }
+
+        [Column("PLAN_SELECTED")]
+        public bool Selected { get; set; }
+
+        [Column("PREMIUM_PAYMENT_FOR")]
+        public string PaymentFor { get; set; }
+
+        [Column("DD_REG_LIMITS")]
+        public decimal Limit { get; set; }
+
+        [Column("RNB_FOR")]
+        public int For { get; set; }
+
+        [Column("ACCOUNT_CODE")]
+        public string AccountCode { get; set; }
+
+        [ForeignKey("ACCOUNT_CODE")]
+        public LegacyAccount LegacyAccount { get; set; }
+
+        [ForeignKey("PLAN_CODE")]
+        public LegacyPlan LegacyPlan { get; set; }
+
+        [ForeignKey("PREMIUM_PAYMENT_FOR")]
+        public LegacyPaymode LegacyPaymode { get; set; }
+
+        #endregion
+    }
+}

@@ -1,0 +1,40 @@
+@model IMedicalHistory
+<tr>
+    <td>
+        @Model.Question.Description
+
+        @if (Model.Question.Type == Corelib.Enums.QuestionType.SingleSelect || Model.Question.Type == Corelib.Enums.QuestionType.MultipleSelect)
+        {
+            <br /><br />
+
+            <div style="margin-left: 50px;">
+                @{
+            var guid = Html.Id("Guid").ToString().Replace("MedicalHistories_", "").Replace("__Guid", "");
+                }
+                @foreach (var option in Model.Question.Options.Split(new char[] { '|' }))
+                {
+                    if (Model.Question.Type == Corelib.Enums.QuestionType.SingleSelect)
+                    {
+                        @Html.RadioButton("SelectedOptions", option) @:&nbsp; @option<br />
+                    }
+                    else
+                    {
+                        <label><input type="checkbox" name="MedicalHistories[@guid].SelectedOptionsList" value="@option" @(Model.SelectedOptionsList.Contains(option) ? "checked='checked'" : "") />  @option</label> <br />
+                    }
+                }
+            </div>
+        }
+
+    </td>
+    <td>
+        @if (Model.Question.Type == Corelib.Enums.QuestionType.YesNo)
+        {@Html.RadioButtonFor(model => model.Answer, "true", new { @disabled = "disabled" })}
+    </td>
+    <td>
+        @if (Model.Question.Type == Corelib.Enums.QuestionType.YesNo)
+        {@Html.RadioButtonFor(model => model.Answer, "false", new { @disabled = "disabled" })}
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+</tr>

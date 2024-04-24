@@ -1,0 +1,9 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Application For Additional Dependent By Member Sent to URG</p>
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following has submitted their application for additional dependent for your approval:</p>
+<p class="details">Member Code: @Model.AdditionalDependent.MemberCode</p>
+<p class="details">Member Name: @Model.AdditionalDependent.MemberName</p>

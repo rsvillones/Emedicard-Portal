@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Models;
+
+namespace Emailer
+{
+    public class EmailViewModel
+    {
+        #region -- Properties --
+
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        public Member Member { get; set; }
+
+        #endregion
+    }
+}

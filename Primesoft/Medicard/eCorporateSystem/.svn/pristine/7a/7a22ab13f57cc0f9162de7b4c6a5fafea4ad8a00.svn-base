@@ -1,0 +1,308 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using Corelib.Models;
+using System.Data.Entity;
+
+namespace Corelib
+{
+    public static class Config
+    {
+        #region -- Properties --
+
+        public static string ConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings["Medicard.eCorporateSystem"].ConnectionString; }
+        }
+
+        public static string LegacyConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings["Medicard.LegacySystem"].ConnectionString; }
+        }
+
+        public static string UtilizationConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings["Medicard.UtilizationSystem"].ConnectionString; }
+        }
+
+        public static string CurrentUser
+        {
+            get
+            {
+                if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.User != null)
+                {
+                    return System.Web.HttpContext.Current.User.Identity.Name;
+                }
+                else
+                {
+                    return "anonymous";
+                }
+            }
+        }
+
+        public static int RecordCountPerPage
+        {
+            get
+            {
+                return Convert.ToInt32(ConfigurationManager.AppSettings["RecordCountPerPage"]);
+            }
+        }
+
+        public static int ItemsPerPage
+        {
+            get
+            {
+                return Convert.ToInt32(ConfigurationManager.AppSettings["ItemsPerPage"]);
+            }
+        }
+
+        public static string GetCurrentUser(HttpContextBase contextBase)
+        {
+            var context = contextBase != null ? contextBase.ApplicationInstance.Context : null;
+            if (context != null && context.User != null)
+            {
+                return System.Web.HttpContext.Current.User.Identity.Name;
+            }
+            else
+            {
+                return "anonymous";
+            }
+        }
+
+        public static string NotificationFromEmail
+        {
+            get { return ConfigurationManager.AppSettings["NotificationFromEmail"]; }
+        }
+
+        public static string Domain
+        {
+            get { return ConfigurationManager.AppSettings["Domain"]; }
+        }
+
+        public static string DomainPath
+        {
+            get { return ConfigurationManager.AppSettings["DomainPath"]; }
+        }
+
+        public static bool AutoLogin
+        {
+            get { return bool.Parse(ConfigurationManager.AppSettings["AutoLogin"]); }
+        }
+
+        public static string EmailDomain
+        {
+            get { return ConfigurationManager.AppSettings["EmailDomain"]; }
+        }
+
+        public static void MapProperties(object source, object destination, bool mapId = true, params string[] propertiesToExclude)
+        {
+            foreach (var pi in destination.GetType().GetProperties())
+            {
+                if (!pi.CanWrite || source.GetType().GetProperty(pi.Name) == null || (!mapId && pi.Name == "Id") || (propertiesToExclude != null && propertiesToExclude.Contains(pi.Name)))
+                    continue;
+
+                destination.GetType().GetProperty(pi.Name).SetValue(destination, source.GetType().GetProperty(pi.Name).GetValue(source));
+            }
+        }
+
+        public static string BenefitsAndExclusionsUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BenefitsAndExclusionsUrl"];
+            }
+        }
+
+        public static string BenefitsAndExclusionsBaseUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BenefitsAndExclusionsBaseUrl"];
+            }
+        }
+
+        public static string BenefitsAndExclusionsCssPath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BenefitsAndExclusionsCssPath"];
+            }
+        }
+
+        public static IEnumerable<LegacyMember> GetActiveMembers(IdentityDataContext db, LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeDb = false;
+            var disposeLegacyDb = false;
+
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = new List<LegacyMember>();
+            var members = db.Members.Include(t => t.Dependents).Where(t => t.AccountCode == accountCode);
+            var counter = 1;
+            foreach (var member in members)
+            {
+                var lm = new LegacyMember();
+                MapProperties(member, lm);
+                lm.Code = String.Format("MEM{0:00000}", counter);
+                //lm.Type = "Principal";
+                returnValue.Add(lm);
+                counter++;
+                var principalMemberCode = lm.Code;
+                foreach (var dependent in member.Dependents)
+                {
+                    lm = new LegacyMember();
+                    MapProperties(dependent, lm);
+                    lm.Code = String.Format("MEM{0:00000}", counter);
+                    //lm.Type = "Dependent";
+                    lm.PrincipalMemberCode = principalMemberCode;
+                    //lm.PrincipalLastName = member.LastName;
+                    //lm.PrincipalFirstName = member.FirstName;
+                    //lm.PrincipalMiddleName = member.MiddleName;
+                    lm.EmployeeNumber = member.EmployeeNumber;
+                    returnValue.Add(lm);
+                    counter++;
+                }
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyCancelledMember> GetCancelledMembers(IdentityDataContext db, LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeDb = false;
+            var disposeLegacyDb = false;
+
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = new List<LegacyCancelledMember>();
+            var cancelledMemberCodes = db.CancelledMembers.Where(t => !t.Deleted).Select(t => t.MemberCode).ToList();
+            var members = db.Members.Include(t => t.Dependents).Where(t => t.AccountCode == accountCode && cancelledMemberCodes.Contains(t.Code)).ToList();
+            
+            var cancelledMembers = db.CancelledMembers.Where(t => !t.Deleted).ToList();
+            var counter = 1;
+            foreach (var member in members)
+            {
+                var cancelledMember = cancelledMembers.FirstOrDefault(t => t.MemberCode == member.Code);
+                var lm = new LegacyCancelledMember();
+                MapProperties(member, lm);
+                //lm.Code = String.Format("MEM{0:00000}", counter);
+                lm.Code = member.Code;
+                lm.Type = "Principal";
+                lm.DateCancelled = cancelledMember.DateCancelled;
+                returnValue.Add(lm);
+                counter++;
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyCancelledMember> GetCancelledDependents(IdentityDataContext db, LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeDb = false;
+            var disposeLegacyDb = false;
+
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = new List<LegacyCancelledMember>();
+            var cancelledMemberCodes = db.CancelledMembers.Where(t => !t.Deleted).Select(t => t.MemberCode).ToList();
+            var dependents = db.Dependents.Include(t => t.Member).Where(t => t.Member.AccountCode == accountCode && cancelledMemberCodes.Contains(t.Code)).ToList();
+
+            var cancelledMembers = db.CancelledMembers.Where(t => !t.Deleted).ToList();
+            var members = db.Members.Where(t => t.AccountCode == accountCode).ToList();
+            var counter = 1;
+
+            foreach (var dependent in dependents)
+            {
+                var member = members.FirstOrDefault(t=>t.Id == dependent.Id);
+                var cancelledMember = cancelledMembers.FirstOrDefault(t => t.MemberCode == dependent.Code);
+                var lm = new LegacyCancelledMember();
+                MapProperties(dependent, lm);
+                //lm.Code = String.Format("MEM{0:00000}", counter);
+                lm.Code = dependent.Code;
+                lm.Type = "Dependent";
+                lm.PrincipalMemberCode = member.Code;
+                lm.PrincipalLastName = member.LastName;
+                lm.PrincipalFirstName = member.FirstName;
+                lm.PrincipalMiddleName = member.MiddleName;
+                lm.EmployeeNumber = member.EmployeeNumber;
+                lm.DateCancelled = cancelledMember.DateCancelled;
+                returnValue.Add(lm);
+                counter++;
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        #endregion
+    }
+}

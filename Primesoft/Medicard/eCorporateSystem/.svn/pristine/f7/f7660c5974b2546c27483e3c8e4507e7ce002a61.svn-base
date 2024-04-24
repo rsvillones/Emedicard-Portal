@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class ApplicationVerification : BaseModel
+    {
+        public string FileName { get; set; }
+
+        public bool IsError { get; set; }
+
+        public int Row { get; set; }
+
+        #region -- Properties --
+
+        public string EmailAddress { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public string Area { get; set; }
+
+        public string CostCenter { get; set; }
+
+        public string LastName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        public string Suffix { get; set; }
+
+        public string Gender { get; set; }
+
+        public DateTime DateOfBirth { get; set; }
+
+        public int Age { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        public DateTime EffectivityDate { get; set; }
+
+        public DateTime ValidityDate { get; set; }
+
+        public DateTime DateHired { get; set; }
+
+        public string AppliedPlan { get; set; }
+
+        public string OptionalPlan { get; set; }
+
+        public int Dependent { get; set; }
+
+        public string DependentAppliedPlan { get; set; }
+
+        public string DependentOptionalPlan { get; set; }
+
+        #endregion
+    }
+}

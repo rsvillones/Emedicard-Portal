@@ -1,0 +1,78 @@
+﻿@model PagedList.IPagedList<Corelib.Models.RenewalMemberWrapper>
+@{
+    Layout = "";
+}
+
+<div class="row">
+    <div class="col-lg-9">
+        @if (Model.PageCount > 1)
+        {
+            @Html.PagedListPager(Model, page => Url.Action("GetRenewalMemberWrappers", new { page, accountCode = ViewBag.AccountCode, guid = ViewBag.Guid, errorOnly = ViewBag.ErrorOnly }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.ClassicPlusFirstAndLast, new AjaxOptions() { UpdateTargetId = "RowsContainer", OnBegin = "OnMemberWrapperBegin()", OnComplete = "setStickyHeader(); $('#ShowOnlyError').click(function () { GetExcelRows($(this).is(':checked')); });" }))
+            <br /><br /><br />
+        }
+    </div>
+    <div class="col-lg-3">
+        <p class="show-errors">
+            @if (ViewBag.ErrorOnly != null && ViewBag.ErrorOnly)
+            {
+                <input type="checkbox" id="ShowOnlyError" checked="checked" />
+            }
+            else
+            {
+                <input type="checkbox" id="ShowOnlyError" />
+            }
+            <label for="ShowOnlyError">Show Only Error(s)</label>
+        </p>
+    </div>
+</div>
+<table class="sticky-table">
+    <thead>
+        <tr>
+            <th>Row # - Name</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Code</th>
+            <th>Email Address</th>
+            <th>Date of Birth</th>
+            <th>Area</th>
+            <th>Employee No.</th>
+            <th>Applied Plan</th>
+            <th>Optional Plan</th>
+            <th>Type</th>
+            <th>Principal Member Code</th>
+            <th>Relationship</th>
+            <th>Gender</th>
+            <th>Civil Status</th>
+            <th>Effectivity Date</th>
+            @*<th>Validity Date</th>*@
+            <th>Status</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody id="ApplicationVerificationBody">
+        @foreach (var wrapper in Model)
+        {
+            @Html.Partial("_RenewalMemberWrapperItemNew", wrapper)
+        }
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-actions no-color" style="text-align: right">
+            &nbsp;
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="no-color" style="text-align: right">
+            @if ((ViewBag.ReadOnly != null && !ViewBag.ReadOnly) && (ViewBag.HasError != null && !ViewBag.HasError))
+            {
+                <input type="submit" value="Save" name="submit" class="btn btn-primary" />
+                <input type="submit" value="Save and Process" name="submit" class="btn btn-primary" />
+            }
+            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>

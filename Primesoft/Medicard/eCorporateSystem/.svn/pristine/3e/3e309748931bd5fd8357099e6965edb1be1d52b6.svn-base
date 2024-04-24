@@ -1,0 +1,12 @@
+﻿@model ApplicationUser
+
+@if (Model != null)
+{
+    <div>
+        <label class="welcome">&nbsp</label>
+        <label class="EmployeeName">
+            @Html.ActionLink(@Model.Name, "Index", "Profile", null, new { area = "" })
+        </label>
+        <label class="UserID">@Model.Email</label>
+    </div>
+}

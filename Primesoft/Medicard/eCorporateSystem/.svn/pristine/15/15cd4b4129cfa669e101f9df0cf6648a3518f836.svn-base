@@ -1,0 +1,78 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-2">
+        <div id='side-cssmenu'>
+            <ul>
+                <li><a href='#'><i class="glyphicon glyphicon-home">&nbsp;</i><span>eCorporate</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-home">&nbsp;</i><span>Account Information</span></a></li>
+                <li><a href='~/CorporateAdministrator/BenefitsAndExclusions'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Benefits and Exclusions</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Utilization Reporting</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Active Members</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Resigned Members</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Action Memos Members</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Membership Endorsements</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>ECU Scheduling</span></a></li>
+                <li><a href='#'><i class="glyphicon glyphicon-eye-open">&nbsp;</i><span>Request for ID Replacement</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-10">
+        <div class="row">
+            <div class="col-lg-12">
+            <div id="panel-title">Account Information</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-2">
+                                                <label>Accout Code:</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label>022202000-00260</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>Company Name:</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label>PRIMESOFT PHILIPPINES, INC.</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>Account Officer/Broker</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label>ROBERTO CARINO</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>Effectivity Date</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label>03/22/2014</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>Validity Date</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label>03/21/2015</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @RenderBody()
+    </div>
+</div>
+
+
+@RenderSection("scripts", required: false)

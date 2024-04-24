@@ -1,0 +1,27 @@
+﻿@model MemberWrapper
+@using HtmlHelpers.BeginCollectionItem
+
+@using (Html.BeginCollectionItem("Members"))
+{
+    @Html.HiddenFor(model => model.EmailAddress)
+    @Html.HiddenFor(model => model.EmployeeNumber)
+    @Html.HiddenFor(model => model.Area)
+    @Html.HiddenFor(model => model.CostCenter)
+    @Html.HiddenFor(model => model.LastName)
+    @Html.HiddenFor(model => model.FirstName)
+    @Html.HiddenFor(model => model.MiddleName)
+    @Html.HiddenFor(model => model.Suffix)
+    @Html.HiddenFor(model => model.Gender)
+    @Html.HiddenFor(model => model.DateOfBirth)
+    @Html.HiddenFor(model => model.CivilStatus)
+    @Html.HiddenFor(model => model.EffectivityDate)
+    @Html.HiddenFor(model => model.ValidityDate)
+    @Html.HiddenFor(model => model.DateHired)
+    @Html.HiddenFor(model => model.AppliedPlan)
+    @Html.HiddenFor(model => model.AllowedPlans)
+    @Html.HiddenFor(model => model.Dependent)
+    @Html.HiddenFor(model => model.DependentAppliedPlan)
+    @Html.HiddenFor(model => model.AllowedDependentPlans)
+    @Html.HiddenFor(model => model.AccountCode)
+    @Html.HiddenFor(model => model.EndorsementBatchId)
+}

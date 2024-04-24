@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Models;
+namespace Corelib
+{
+    public static class ReportHelper
+    {
+        #region -- Active Members --
+
+        public static IEnumerable<emed_active_membersResult> ActivePrincipalMembers(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_active_members(accountCode).ToList();
+            }
+        }
+
+        public static IEnumerable<emed_active_member_dependentResult> ActiveDependentMembers(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_active_member_dependent(accountCode).ToList();
+            }
+        }
+
+        #endregion
+
+        #region -- Resigned Members --
+
+        public static IEnumerable<emed_resigned_members_principalResult> ResignedMembersPrincipal(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_resigned_members_principal(accountCode).ToList();
+            }
+        }
+
+        public static IEnumerable<emed_resigned_members_dependentResult> ResignedMembersDependent(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_resigned_members_dependent(accountCode).ToList();
+            }
+        }
+
+        #endregion
+
+    }
+}

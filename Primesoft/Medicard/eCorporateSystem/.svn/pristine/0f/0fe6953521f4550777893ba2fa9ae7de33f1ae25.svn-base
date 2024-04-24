@@ -1,0 +1,34 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+
+    string name = "";
+    string code = "";
+    if (Model.IdReplacement.RequestFor == Corelib.Enums.RequestFor.Dependent)
+    {
+        name = Model.IdReplacement.DependentName;
+        code = Model.IdReplacement.DependentCode;
+    }
+    else
+    {
+        name = Model.IdReplacement.MemberName;
+        code = Model.IdReplacement.MemberCode;
+    }
+}
+<p class="title">ID Replacement Request Declined</p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">ID Replacement application has been declined by MediCard.</p>
+<br />
+<p class="details">Request Date: @Model.IdReplacement.RequestDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Request For: @Model.IdReplacement.RequestFor</p>
+<p class="details">Name: @name</p>
+<p class="details">Member Code: @code</p>
+<p class="details">Reason: @Model.IdReplacement.Reason.Description</p>
+<p class="details">Remarks: @Model.IdReplacement.Remarks</p>
+<br />
+<p class="details">MediCard Remarks:</p>
+<p class="details">@Model.Remarks</p>
+<br />
+@*<p class="details">Disclaimer:</p>
+    <p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+    <br />*@

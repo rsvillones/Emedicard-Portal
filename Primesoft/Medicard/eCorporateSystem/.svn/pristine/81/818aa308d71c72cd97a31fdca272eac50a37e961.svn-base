@@ -1,0 +1,7 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model Corelib.Models.Amendment
+
+@using (Html.BeginCollectionItem("Amendments"))
+{
+    @Html.Partial("_Amendment", Model)
+}

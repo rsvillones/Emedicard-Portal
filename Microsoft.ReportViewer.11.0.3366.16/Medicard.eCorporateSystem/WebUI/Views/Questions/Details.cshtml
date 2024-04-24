@@ -1,0 +1,106 @@
+﻿@model Corelib.Models.Question
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Question</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DisplayOrder)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DisplayOrder)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Guid)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Guid)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CrById)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CrById)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CrBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CrBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CrDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CrDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ModBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ModBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ModById)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ModById)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ModDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ModDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Deleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Deleted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Timestamp)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Timestamp)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

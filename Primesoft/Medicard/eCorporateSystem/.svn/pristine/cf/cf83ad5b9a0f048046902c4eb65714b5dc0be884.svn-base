@@ -1,0 +1,9 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Approve New Member by Urg to Member</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">Your membership information is now approved by the URG.</p>

@@ -1,0 +1,8 @@
+﻿@model ApplicationUser
+
+<div>
+    <label class="welcome">&nbsp</label>
+    <label class="EmployeeName">@Model.Name</label>
+    <label class="UserID">@Model.Email</label>
+</div>
+

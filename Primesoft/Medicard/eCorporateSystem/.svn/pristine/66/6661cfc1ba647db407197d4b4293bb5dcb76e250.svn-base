@@ -1,0 +1,42 @@
+@model CancelledMember
+@using HtmlHelpers.BeginCollectionItem
+<tr>
+    @using (Html.BeginCollectionItem("CancelledMembers"))
+    {
+        <th class="vtop">
+            @Html.DisplayFor(model => model.FullName)
+        </th>
+        <td class="vtop">
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Guid)
+            @Html.HiddenFor(model => model.CrById)
+            @Html.HiddenFor(model => model.EndorsementBatchId)
+            @Html.HiddenFor(model => model.AccountCode)
+            @Html.HiddenFor(model => model.Timestamp)
+            @Html.EditorFor(model => model.LastName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.MiddleName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.MemberCode, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.MemberCode, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.DateCancelled, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.DateCancelled, null, new { @class = "table-error" })
+        </td>
+        if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+        {
+            <td class="vtop">
+                &nbsp;
+            </td>
+        }
+    }
+</tr>

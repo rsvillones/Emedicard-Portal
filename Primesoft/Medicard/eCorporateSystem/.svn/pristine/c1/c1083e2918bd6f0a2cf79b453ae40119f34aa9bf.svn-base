@@ -1,0 +1,122 @@
+﻿@model AccountSetting
+<td>
+    @Html.HiddenFor(model => model.Guid)
+    @Html.HiddenFor(model => model.AccountCode)
+    @Html.DisplayFor(model => model.AccountCode)
+</td>
+<td>
+    @using (Ajax.BeginForm("EditUseEmailAsLogin", "AccountSettings", null, new AjaxOptions()
+    {
+        Url = Url.Action("EditUseEmailAsLogin"),
+        HttpMethod = "get",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "AccountContainer"
+    }, new { @class = "AjaxUseEmailAsLogin" }))
+    {
+        @Html.HiddenFor(model => model.Guid);
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.Hidden("propertyValue")
+        @Html.CheckBoxFor(model => model.UseEmailAsLogin, new { @onClick = "useEmailAsLogin($(this))" })
+        <script type="text/javascript">
+            function useEmailAsLogin(input) {
+                input.siblings('#propertyValue').val("False");
+                if (input.is(':checked')) {
+                    input.siblings('#propertyValue').val("True");
+                }
+                input.parent('.AjaxUseEmailAsLogin').submit();
+            }
+        </script>
+    }
+</td>
+<td>
+    @using (Ajax.BeginForm("EditUseRandomGeneratedPassword", "AccountSettings", null, new AjaxOptions()
+    {
+        Url = Url.Action("EditUseRandomGeneratedPassword"),
+        HttpMethod = "get",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "AccountContainer"
+    }, new { @class = "AjaxUseRandomGeneratedPassword" }))
+    {
+        @Html.HiddenFor(model => model.Guid);
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.Hidden("propertyValue")
+        @Html.CheckBoxFor(model => model.UseRandomGeneratedPassword, new { @onChange = "useRandomGeneratedPassword($(this))" })
+        <script type="text/javascript">
+            function useRandomGeneratedPassword(input) {
+                input.siblings('#propertyValue').val("False");
+                if (input.is(':checked')) {
+                    input.siblings('#propertyValue').val("True");
+                }
+                input.parent('.AjaxUseRandomGeneratedPassword').submit();
+            }
+        </script>
+    }
+</td>
+<td>
+    @using (Ajax.BeginForm("EditBypassHRManagerApproval", "AccountSettings", null, new AjaxOptions()
+    {
+        Url = Url.Action("EditBypassHRManagerApproval"),
+        HttpMethod = "get",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "AccountContainer"
+    }, new { @class = "AjaxBypassHRManagerApproval" }))
+    {
+        @Html.HiddenFor(model => model.Guid);
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.Hidden("propertyValue")
+        @Html.CheckBoxFor(model => model.BypassHRManagerApproval, new { @onChange = "bypassHRManagerApproval($(this))" })
+        <script type="text/javascript">
+            function bypassHRManagerApproval(input) {
+                input.siblings('#propertyValue').val("False");
+                if (input.is(':checked')) {
+                    input.siblings('#propertyValue').val("True");
+                }
+                input.parent('.AjaxBypassHRManagerApproval').submit();
+            }
+        </script>
+    }
+</td>
+<td>
+    @using (Ajax.BeginForm("EditBypassMedicalHistory", "AccountSettings", null, new AjaxOptions()
+    {
+        Url = Url.Action("EditBypassMedicalHistory"),
+        HttpMethod = "get",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "AccountContainer"
+    }, new { @class = "AjaxBypassMedicalHistory" }))
+    {
+        @Html.HiddenFor(model => model.Guid);
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.Hidden("propertyValue")
+        @Html.CheckBoxFor(model => model.BypassMedicalHistory, new { @onChange = "bypassMedicalHistory($(this))" })
+        <script type="text/javascript">
+            function bypassMedicalHistory(input) {
+                input.siblings('#propertyValue').val("False");
+                if (input.is(':checked')) {
+                    input.siblings('#propertyValue').val("True");
+                }
+                input.parent('.AjaxBypassMedicalHistory').submit();
+            }
+        </script>
+    }
+</td>
+<td>
+    @using (Ajax.BeginForm("EditUrgSetting", "AccountSettings", null, new AjaxOptions()
+    {
+        Url = Url.Action("EditUrgSetting"),
+        HttpMethod = "get",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "AccountContainer"
+    }, new { @class = "AjaxUrgSetting" }))
+    {
+        @Html.HiddenFor(model => model.Guid);
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.DropDownListFor(model => model.UrgSetting, new SelectList(Enum.GetValues(typeof(Corelib.Enums.UrgSetting)), Model.UrgSetting), new { @onChange = "urgSetting($(this))", @class = "form-control",@Name = "propertyValue" })
+        <script type="text/javascript">
+            function urgSetting(input) {
+                input.parent('.AjaxUrgSetting').submit();
+            }
+        </script>
+    }    
+</td>
+<td></td>

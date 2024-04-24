@@ -1,0 +1,63 @@
+@model AccountSetting
+<tr @(ViewBag.Counter % 2 == 1 ? "class=altTR" : "")>
+    <td rowspan="3">
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.HiddenFor(model => model.AccountName)
+        @Html.DisplayFor(model => model.AccountCode)
+    </td>
+    <td rowspan="3">
+        @Html.DisplayFor(model => model.AccountName)
+    </td>
+
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.UseEmailAsLogin, ViewBag.HtmlAttributeEmailAsLogin as object)Use Email as Login
+    </td>
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.UseRandomGeneratedPassword, ViewBag.HtmlAttributeRandomGeneratedPassword as object )Use Random Generated Password
+    </td>
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.BypassHRManagerApproval, ViewBag.HtmlAttributeByPassCorAdminApproval as object)Bypass HR Approval
+    </td>
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.BypassMedicalHistory, ViewBag.HtmlAttributeByPassMedicalHistory as object)Bypass Medical History
+    </td>
+</tr>
+<tr @(ViewBag.Counter % 2 == 1 ? "class=altTR" : "")>
+    <td class="act-setting" colspan="2">
+        @Html.CheckBoxFor(model => model.DirectlySubmitToUrg, ViewBag.HtmlAttributeDirectlySubmitToUrg as object)Directly Submit Endorsements to URG
+    </td>
+    <td class="act-setting" colspan="2">
+        @Html.CheckBoxFor(model => model.ShowActionMemoDueDate, ViewBag.HtmlAttributeShowActionMemoDueDate as object)Show Action Memo Due Date
+    </td>
+</tr>
+<tr @(ViewBag.Counter % 2 == 1 ? "class=altTR" : "")>
+    <td>
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.HiddenFor(model => model.AccountName)
+        <label class="table-label">URG Setting</label>
+        @Html.DropDownListFor(model => model.UrgSetting, new SelectList(Enum.GetValues(typeof(Corelib.Enums.UrgSetting)), Model.UrgSetting), ViewBag.HtmlAttributeUrgSetting as object)
+    </td>
+    <td colspan="2">
+        <label class="table-label">Domain Email Address</label>
+        <div class="input-group" style="width: 100% !important">
+            @Html.TextBoxFor(model => model.DomainEmail, ViewBag.HtmlAttributeDomainEmail as object)
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-success UpdateAccountSettingDomainEmail" value="update" />
+            </span>
+        </div>
+    </td>
+    <td>
+        <label class="table-label">Action Memo Due Date Days</label>
+        <div class="input-group" style="width: 100% !important">
+            @Html.TextBoxFor(model => model.ActionMemoDueDateDays, ViewBag.HtmlAttributeActionMemoDueDateDays as object)
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-success UpdateAccountSettingActionMemoDueDateDays" value="update" />
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+

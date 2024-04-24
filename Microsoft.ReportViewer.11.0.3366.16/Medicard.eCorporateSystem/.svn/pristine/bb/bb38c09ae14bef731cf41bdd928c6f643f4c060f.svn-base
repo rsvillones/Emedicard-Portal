@@ -1,0 +1,120 @@
+@model IEnumerable<ActionMemo>
+@{
+    ViewBag.Title = "Action Memo Management";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="title">Action Memos</h2>
+    </div>
+    @using (Html.BeginForm("Index", "ActionMemos", FormMethod.Get, new { accountCode = ViewBag.AccountCode }))
+    {
+        <div class="col-lg-4">
+            <div class="input-group input-group-search">
+                <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                <div class="input-group-btn">
+                    <button type="button" class="dropdown-toggle btn-dd btn-default" data-toggle="dropdown" tabindex="-1">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="rightMenu dropdown-menu">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Date Issued:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.DateIssued" name="dateIssued" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Member Name:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.MemberName" name="memberName" onclick="return false;" class="form-control last-input" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-grp btn-search"
+                        tabindex="-1">
+                    Search
+                </button>
+            </div>
+
+        </div>
+    }
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.DateIssued)</th>
+        <th>@Html.DisplayNameFor(model => model.Type)</th>
+        <th>@Html.DisplayNameFor(model => model.Member.EmployeeNumber)</th>
+        <th>Member Name</th>
+        <th>@Html.DisplayNameFor(model => model.Details)</th>
+        <th>@Html.DisplayNameFor(model => model.MembershipStatus)</th>
+        <th>Action Memo</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.DateIssued)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Member.EmployeeNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Member.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Details)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.MembershipStatus)
+            </td>
+            <td>
+                @if (item.Status == Corelib.Enums.ActionMemoStatus.New)
+                {
+                    @Html.ActionLink("Reply", "Reply", "ActionMemos", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @if (item.Status == Corelib.Enums.ActionMemoStatus.ForCorporateAdminApproval)
+                {
+                    @Html.ActionLink("View Details", "Reply", "ActionMemos", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs" })
+                }
+                &nbsp;
+            </td>
+        </tr>
+    }
+</table>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[name="dateIssued"]').datepicker();
+        $(function () {
+            $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                event.stopPropagation();
+            });
+        });
+        $(function () {
+            //$(".dropdown-toggle").dropdown('toggle'); // this works
+            $('#click').click(function (e) {
+                e.stopPropagation();
+                $(".dropdown-toggle").dropdown('toggle');// this doesn't
+            });
+        });
+    });
+</script>
+
+}

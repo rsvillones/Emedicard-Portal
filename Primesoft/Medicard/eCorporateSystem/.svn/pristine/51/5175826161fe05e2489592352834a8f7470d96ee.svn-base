@@ -1,0 +1,98 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    public class BaseMemberController : Controller
+    {
+        #region -- Variable Declarations --
+
+        protected IdentityDataContext db = new IdentityDataContext();
+
+        protected LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Properties --
+
+        protected Corelib.Models.Member Member { get; set; }
+
+        #endregion
+
+        #region -- Action Result --
+
+        public ActionResult ValidateUser()
+        {
+            this.Member = db.Members.FirstOrDefault(t => t.UserName == HttpContext.User.Identity.Name);
+            if (this.Member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ViewBag.ReadOnly = (this.Member.Status != MembershipStatus.New) && (this.Member.Status != MembershipStatus.Saved);
+            ViewBag.MembershipStatus = this.Member.Status;
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            }
+            else
+            {
+                ViewBag.HtmlControlAttributes = new { @class = "form-control" };
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult AmendmentReadOnlyAttribute(Amendment model)
+        {
+            ViewBag.ReadOnly = (model.Status != Corelib.Enums.RequestStatus.Saved);
+
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlRequestForAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDataTypeAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDependentAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+                ViewBag.HtmlRequestForAttributes = new { @class = "form-control", @onChange = "onChangeRequestFor($(this))" };
+                ViewBag.HtmlDataTypeAttributes = new { @class = "form-control", @onChange = "dataTypeOnchange($(this))" };
+                ViewBag.HtmlDependentAttributes = new { @class = "form-control", @onChange = "onChangeDependent()" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

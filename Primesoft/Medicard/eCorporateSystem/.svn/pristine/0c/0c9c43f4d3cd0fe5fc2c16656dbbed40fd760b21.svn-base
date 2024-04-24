@@ -1,0 +1,15 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Request For Amendment By Member to Member</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+@if (Model.BypassCorporateAdminApproval)
+{
+    <p class="details">Your request for amendment is now submitted to the Medicard Underwriter for review.</p>
+}
+else
+{
+    <p class="details">Your request for amendment is now submitted to the your Corporate Administrator for approval.</p>
+}
+

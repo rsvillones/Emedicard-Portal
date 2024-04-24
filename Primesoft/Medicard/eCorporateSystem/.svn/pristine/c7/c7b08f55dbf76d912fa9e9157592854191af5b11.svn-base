@@ -1,0 +1,33 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+    string name = "";
+    string code = "";
+    if (Model.IdReplacement.RequestFor == Corelib.Enums.RequestFor.Dependent)
+    {
+        name = Model.IdReplacement.DependentName;
+        code = Model.IdReplacement.DependentCode;
+    }
+    else
+    {
+        name = Model.IdReplacement.MemberName;
+        code = Model.IdReplacement.MemberCode;
+    }
+}
+
+<p class="title">@Model.IdReplacement.EndorsementBatch.CompanyName - REQUEST FOR LOST ID</p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following request for Lost ID has been submitted for your approval:</p>
+<br />
+<p class="details">Reference Number: @Model.IdReplacement.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Request Date: @Model.IdReplacement.RequestDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Request For: @Model.IdReplacement.RequestFor</p>
+<p class="details">Name: @name</p>
+<p class="details">Member Code: @code</p>
+<p class="details">Reason: @Model.IdReplacement.Reason.Description</p>
+<p class="details">Remarks: @Model.IdReplacement.Remarks</p>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.IdReplacement.EndorsementBatch.ReferenceNumber)">here</a> to login and view the endorsement.
+</p>
+

@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class ReimbursementDisapproved
+    {
+        #region -- Properties --
+
+        [Column("memo_txt")]
+        public string Remark { get; set; }
+
+        [Column("denied_date")]
+        public string DeniedDate { get; set; }
+
+        [Column("memo_released_date")]
+        public string ReleasedDate { get; set; }
+
+        #endregion
+    }
+}

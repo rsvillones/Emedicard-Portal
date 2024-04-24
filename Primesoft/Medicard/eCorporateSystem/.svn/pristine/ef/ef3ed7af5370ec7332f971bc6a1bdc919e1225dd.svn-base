@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    public class DependentsController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Index()
+        {
+            var returnValue = base.ValidateRequest();
+            if (returnValue != null) return returnValue;
+
+            var dependents = db.Dependents.Where(t => !t.Deleted && t.ApplicationId == this.Application.Id).ToList();
+
+            var model = new DependentViewModel()
+            {
+                Dependents = dependents,
+                NumberOfAllowedDependents = this.Application.Dependent
+            };
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Create()
+        {
+            var model = new Dependent();
+            return View(model);
+        }
+        
+        #endregion
+    }
+}

@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "_Application";
+}
+
+<h2>_Application</h2>
+

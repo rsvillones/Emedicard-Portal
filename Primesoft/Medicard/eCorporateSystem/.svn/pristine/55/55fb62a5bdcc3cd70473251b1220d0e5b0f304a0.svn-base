@@ -1,0 +1,135 @@
+﻿@model PagedList.IPagedList<EndorsementBatch>
+@{
+    ViewBag.Title = "Membership Endorsements";
+    var model = new EndorsementBatch();
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="title">Membership Endorsements</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">&nbsp;</div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ControlNumberSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ControlNumber) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ReferenceNumberSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ReferenceNumber) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.CompanyNameSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.CompanyName) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DateReceivedSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.DateReceived) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DateForwardedSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.DateForwarded) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.EndorsementCountSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.EndorsementCount) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.EndorsementTypeSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.EndorsementType) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DateEndorsedSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.DateEndorsed) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DeadlineSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.Deadline) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.FilenameSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.Filename) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ControlNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReferenceNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateReceived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateForwarded)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndorsementCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndorsementType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateEndorsed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Deadline)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Filename)
+            </td>
+            <td>
+                @if (item.CanBeReceived)
+                {
+                    @Html.ActionLink("Receive", "ReceiveEndorsementBatch", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @if (item.EndorsementType == "New" || item.EndorsementType == "Renewal")
+                {
+                    @Html.ActionLink("Details", "Members", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @Html.ActionLink("Download", "DownloadNewApplication", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+    @Html.Partial("_Message")
+}

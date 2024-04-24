@@ -1,0 +1,45 @@
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Enums
+{
+    public enum Gender
+    {
+        Male,
+        Female
+    }
+
+    public enum EndorsementBatchStatus
+    {
+        New,
+        ForEmployeeUpdating,
+        PartiallyForProcessing,
+        Processing,
+        Completed,
+        Cancelled
+    }
+
+    public enum MembershipStatus
+    {
+        New,
+        Saved,
+        SubmittedToCorporateAdmin,
+        CorporateAdminApproved,
+        CorporateAdminDisapproved,
+        ForProcessing,
+        Approved,
+        Cancelled,
+        WithActionMemo
+    }
+
+    public enum UrgSetting
+    {
+        All,
+        Partial,
+        Principal
+    }
+}

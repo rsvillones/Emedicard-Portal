@@ -1,0 +1,112 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class RenewalMember : BaseModel, IValidatableObject
+    {
+        #region -- Properties --
+
+        public string Code { get; set; }
+
+        public string LastName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        [Display(Name = "Email Address")]
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime? DateOfBirth { get; set; }
+
+        public int? Age { get; set; }
+
+        public string Area { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public int AppliedPlan { get; set; }
+
+        public string AllowedPlans { get; set; }
+
+        public string Type { get; set; }
+
+        public string PrincipalMemberCode { get; set; }
+
+        public string Relationship { get; set; }
+
+        public string Gender { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        public string Waiver { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime? EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime? ValidityDate { get; set; }
+
+        public string Remarks { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        [Required]
+        [StringLength(25)]
+        public string AccountCode { get; set; }
+
+        [Index]
+        [StringLength(25)]
+        public string ControlNumber { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped Properties --
+
+        [NotMapped]
+        public string EndorsementType
+        {
+            get
+            {
+                return "Renewal";
+            }
+        }
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}.", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+
+        #endregion
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var activeMembers = LegacyHelper.GetActiveMembers(null, this.AccountCode);
+            if (!activeMembers.Any(t => t.Code == this.Code))
+            {
+                yield return new ValidationResult("Member does not have an active subscription", new Collection<string>() { "Code" });
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.MembershipEndorsement.Controllers
+{
+    [Authorize(Roles="SysAd, CanViewMembershipEndorsements")]
+    public class HomeController : BaseMembershipEndorsementController
+    {
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewMembershipEndorsements")]
+        public ActionResult Index()
+        {
+            var legacyAccounts = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var endorsementBatches = db.EndorsementBatches.Where(t => legacyAccounts.Contains(t.AccountCode));
+
+            return View(endorsementBatches);
+        }
+        
+        #endregion
+    }
+}

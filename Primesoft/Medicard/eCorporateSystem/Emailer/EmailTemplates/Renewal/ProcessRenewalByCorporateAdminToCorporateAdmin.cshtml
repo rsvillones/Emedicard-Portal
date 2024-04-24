@@ -1,0 +1,22 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">eMedicard: Members for Renewal</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">This is to confirm your instruction for Membership Renewal,</p>
+<p class="details">the details of which are as follows:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count: @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+
+<p class="details">
+    Please be advised that the processing of submitted endorsement will only commence once received by MediCard Underwriter. A separate email notification will be sent once endorsement is received.
+</p>
+<p class="details">
+    This is a system generated message, please do not reply to this email.
+</p>

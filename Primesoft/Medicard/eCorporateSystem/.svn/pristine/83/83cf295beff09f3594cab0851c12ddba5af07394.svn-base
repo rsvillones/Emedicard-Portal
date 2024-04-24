@@ -1,0 +1,119 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OfficeOpenXml;
+using Corelib.Models;
+using System.Linq.Expressions;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Mvc.Html;
+
+namespace Corelib.Classes
+{
+    public static class Extension
+    {
+        #region -- Excel Extensions --
+
+        public static string StringValue(this ExcelRange range)
+        {
+            return Convert.ToString(range.Value);
+        }
+
+        public static string IntegerValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string column)
+        {
+            if (range.Value == null)
+            {
+                error.ErrorMessage = "Input value cannot be null";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                model.IsError = true;
+                model.ErrorMessage = model.ErrorMessage == null ? string.Format("Input value in {0} cannot be null.", column) : string.Format("{0}, Input value in {1} cannot be null.", model.ErrorMessage, column);
+                return Convert.ToString(range.Value);
+            }
+            try
+            {
+                var returnValue = int.Parse(Convert.ToString(range.Value));
+                return Convert.ToString(returnValue);
+            }
+            catch (Exception)
+            {
+                error.ErrorMessage = "Input value is invalid";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                db.ExcelErrors.Add(error);
+                model.ErrorMessage = model.ErrorMessage == null ? string.Format("Input value in {0} is invalid.", column) : string.Format("{0}, Input value in {1} is invalid.", model.ErrorMessage, column);
+                model.IsError = true;
+                db.SaveChanges();
+                return Convert.ToString(range.Value);
+            }
+        }
+
+        public static string DecimalValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string column)
+        {
+            if (range.Value == null)
+            {
+                error.ErrorMessage = "Input value cannot be null";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                model.IsError = true;
+                model.ErrorMessage = model.ErrorMessage == null ? string.Format("Input value in {0} cannot be null.", column) : string.Format("{0}, Input value in {1} cannot be null.", model.ErrorMessage, column);
+                return Convert.ToString(range.Value);
+            }
+            try
+            {
+                var returnValue = decimal.Parse(Convert.ToString(range.Value));
+                return Convert.ToString(returnValue);
+            }
+            catch (Exception)
+            {
+                error.ErrorMessage = "Input value is invalid";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                model.IsError = true;
+                model.ErrorMessage = model.ErrorMessage == null ? string.Format("Input value in {0} is invalid.", column) : string.Format("{0}, Input value in {1} is invalid.", model.ErrorMessage, column);
+                return Convert.ToString(range.Value);
+            }
+        }
+
+        public static string DateValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string column)
+        {
+            if (range.Value == null)
+            {
+                error.ErrorMessage = "Input value cannot be null";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                model.IsError = true;
+                model.ErrorMessage = model.ErrorMessage == null ? string.Format("Input value in {0} cannot be null.", column) : string.Format("{0}, Input value in {1} cannot be null.", model.ErrorMessage, column);
+                return Convert.ToString(range.Value);
+            }
+            try
+            {
+                var returnValue = DateTime.Parse(Convert.ToString(range.Value));
+                return Convert.ToString(returnValue);
+            }
+            catch (Exception)
+            {
+                error.ErrorMessage = "Input value is invalid";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                model.IsError = true;
+                model.ErrorMessage = model.ErrorMessage == null ? string.Format("Input value in {0} is invalid.", column) : string.Format("{0}, Input value in {1} is invalid.", model.ErrorMessage, column);
+                return Convert.ToString(range.Value);
+            }
+        }
+
+        #endregion
+    }
+}

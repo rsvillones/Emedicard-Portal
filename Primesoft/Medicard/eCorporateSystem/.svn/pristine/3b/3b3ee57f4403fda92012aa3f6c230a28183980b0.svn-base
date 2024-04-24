@@ -1,0 +1,596 @@
+@{
+    ViewBag.Title = "Utilization Reporting";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@Html.Action("AccountInformation", "BaseAccount")
+
+@*<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Utilization Reporting</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Select Service</label>
+                                    <div class="col-md-4">
+                                        <select class="form-control">
+                                            <option>MEMBER UTILIZATION ALL SERVICE (PER MEMBER)</option>
+                                            <option>IN-PATIENT</option>
+                                            <option>OUT-PATIENT</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 checkbox-align">
+                                        <input type="checkbox" />
+                                        <label>Group by Diseases</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Member Code</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Last Name</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Date From</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Date To</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">&nbsp;</label>
+                                    <div class="col-md-5">
+                                        <input type="submit" value="Submit" class="btn btn-primary" />
+                                        <input type="submit" value="Export to Excel" class="btn btn-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+        
+        <div class="container_16">
+
+        	<div class="height400">
+        		<table class="fancyTable" id="myTable05" cellpadding="0" cellspacing="0">
+        		    <thead>
+        		        <tr>
+        		            <th>Browser</th>
+        		            <th>Visits</th>
+        		            <th>Pages/Visit</th>
+        		            <th>Avg. Time on Site</th>
+        		            <th>% New Visits</th>
+        		            <th>Bounce Rate</th>
+        		            <th>Avg. Time on Site</th>
+        		            <th>% New Visits</th>
+        		            <th>Bounce Rate</th>
+                            <th>Browser</th>
+        		            <th>Visits</th>
+        		            <th>Pages/Visit</th>
+        		            <th>Avg. Time on Site</th>
+        		            <th>% New Visits</th>
+        		            <th>Bounce Rate</th>
+        		            <th>Avg. Time on Site</th>
+        		            <th>% New Visits</th>
+        		            <th>Bounce Rate</th>
+        		        </tr>
+        		    </thead>
+        		    <tbody>
+        		        <tr>
+        		            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22 test test test</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00% test test test</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		        <tr>
+        		            <td>Firefox</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+                            <td>Firefox first</td>
+        		            <td class="numeric">1,990</td>
+        		            <td class="numeric">3.11</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		            <td class="numeric">00:04:22</td>
+        		            <td class="numeric">70.00%</td>
+        		            <td class="numeric">32.61%</td>
+        		        </tr>
+        		    </tbody>
+        		</table>
+        	</div>
+        	<div class="clear"></div>
+        </div>
+        
+        
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $('#myTable05').fixedHeaderTable({
+	altClass: 'odd',
+	footer: false,
+	fixedColumns: 1,
+});
+    </script>
+}
+

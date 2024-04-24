@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Corelib.Models;
+
+namespace WebUI.Models
+{
+    public class HomeIndexViewModel
+    {
+        public ApplicationUser ApplicationUser { get; set; }
+        public Member Member { get; set; }
+        public IEnumerable<ActionMemo> MyActionMemos { get; set; }
+        public AccountSetting AccountSetting { get; set; }
+    }
+}

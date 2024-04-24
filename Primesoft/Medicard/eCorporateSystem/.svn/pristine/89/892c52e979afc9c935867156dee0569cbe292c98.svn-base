@@ -1,0 +1,139 @@
+@model Corelib.Models.CancelledMember
+
+@{
+    ViewBag.Title = "Cancel Membership";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+
+    var memberList = new SelectList(ViewBag.MemberList, "Code", "FullName", Model.MemberCode);
+}
+
+@using (Html.BeginForm("CancelledMember", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.EndorsementBatchId);
+    @Html.HiddenFor(model => model.Status);
+    @Html.HiddenFor(model => model.AccountCode);
+    @Html.HiddenFor(model => model.Timestamp);
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Cancel Membership</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadNewApplication">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12" id="MemberContainer">
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-2">@Html.Label("MemberCode", "Member Name:")</label>
+                                                    <div class="col-lg-4">
+                                                        @*@Html.DropDownList("MemberCode", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)*@
+                                                        @Html.HiddenFor(t => t.MemberCode, ViewBag.HtmlDropDownAttributes as object)
+                                                        @Html.HiddenFor(t => t.FullName, ViewBag.HtmlDropDownAttributes as object)
+                                                        @Html.ValidationMessageFor(model => model.MemberCode, null, new { @style = "padding-top:15px" })
+                                                    </div>
+                                                    <label class="control-label col-lg-2">@Html.Label("DateCancelled", "Date Cancelled:")</label>
+                                                    <div class="col-lg-4">
+                                                        @Html.EditorFor(model => model.DateCancelled, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                        @Html.ValidationMessageFor(model => model.DateCancelled)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <div class="col-lg-8"></div>
+                                                    <div class="col-lg-4">
+                                                        <div class="no-color membership-button pull-right">
+                                                            @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                            {
+                                                                <input type="submit" value="Save" name="submit" class="btn btn-primary" />
+                                                                <input type="submit" value="Save and Process" name="submit" class="btn btn-primary" />
+                                                            }
+                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="MemberProfile">
+        @Html.Action("GetMemberProfile", new { memberCode = Model.MemberCode, accontCode = Model.AccountCode })
+        @*@Html.Partial("_CancelledMember", new LegacyMember(Model))*@
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+            {
+                <text>
+                    $('#DateCancelled').datepicker();
+                </text>
+            }
+            @if (Model.Id == 0)
+            {
+                <text>
+                    $('#MemberProfile').hide();
+                </text>
+            }
+
+            $('#@Html.IdFor(t => t.MemberCode)').select2({
+                placeholder: "Search for a Active Member",
+                minimumInputLength: 1,
+                ajax: {
+                    url: '@Url.Action("GetActiveMembers")',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            accountCode: '@Model.AccountCode',
+                            page_limit: 10
+                        };
+                    },
+                    results: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter remote JSON data
+                        return { results: data };
+                    }
+                }
+            });
+
+            $('#@Html.IdFor(t => t.MemberCode)').on('select2-selecting', function (e) {
+                $('#@Html.IdFor(t => t.FullName)').val(e.choice.text);
+            });
+
+            $("#@Html.IdFor(t => t.MemberCode)").select2('data', { id: '@Model.MemberCode', text: '@Model.FullName' });
+
+        });
+        function onChangeMember(input) {
+            var option = {
+                url: '@Url.Action("GetMemberProfile")',
+                type: 'post',
+                data: {
+                    memberCode: input.val(),
+                    accountCode: '@ViewBag.AccountCode'
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#MemberProfile').html(data);
+                $('#MemberProfile').show();
+            });
+        }
+    </script>
+}

@@ -1,0 +1,110 @@
+﻿@model Corelib.Models.Amendment
+
+@{
+    ViewBag.Title = "Amendment";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("Amendment", "RequestManagement", FormMethod.Post, new { accountCode = ViewBag.AccountCode, enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("_Amendment", Model)
+
+    <div class="row space">
+        <div class="col-lg-12">
+            <div class="no-color pull-right">
+                <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+
+                @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#EffectivityDate').datepicker();
+            dependentSelect($('#MemberId'));
+        });
+
+        function dataTypeOnchange(input) {
+            dataTypeSelect(input);
+        }
+
+        function onChangeMember(input) {
+            dependentSelect(input);
+            dataTypeSelect($('#DataType'));
+        }
+
+        function onChangeDependent() {
+            if ($('#RequestFor').val() == 2) {
+                $('#DataType').val(0);
+                $('#ChangeDataFrom').val('');
+                dataTypeSelect($('#DataType'));
+            }
+        }
+
+        function onChangeRequestFor() {
+            dataTypeSelect($('#DataType'));
+        }
+
+        function dependentSelect(input) {
+            var option = {
+                url: '@Url.Action("GetDependents")',
+                type: 'post',
+                data: {
+                    memberId: input.val(),
+                    amendmentId : '@Model.Id'
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#DependentId').html(data);
+            });
+        }
+
+        function dataTypeSelect(input) {
+            var propertyName = input.val();
+            var memberId = $('#MemberId').val();
+            var requestForId = $('#RequestFor').val();
+            var dependentId = $('#DependentId').val();
+            var option = {
+                url: '@Url.Action("GetPropertyValue")',
+                type: 'post',
+                data: {
+                    propertyName: propertyName,
+                    memberId: memberId,
+                    requestForId: requestForId,
+                    dependentId: dependentId
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#ChangeDataFrom').val(data);
+            });
+
+            var option2 = {
+                url: '@Url.Action("IsPropertyDateTime")',
+                type: 'post',
+                data: {
+                    propertyName: propertyName,
+                    memberId: memberId
+                }
+            };
+            $.ajax(option2).done(function (data) {
+
+                if (data == "True") {
+                    $('#ChangeDataTo').datepicker();
+                } else {
+                    $('#ChangeDataTo').datepicker("remove");
+                }
+            });
+        }
+    </script>
+}

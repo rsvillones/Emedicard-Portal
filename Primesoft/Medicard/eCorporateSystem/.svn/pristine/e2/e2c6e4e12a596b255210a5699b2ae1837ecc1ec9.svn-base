@@ -1,0 +1,6 @@
+﻿@model IEnumerable<Corelib.Models.MemberWrapper>
+
+@foreach (var mw in Model)
+{
+    Html.RenderPartial("_MemberWrapperItem", mw);
+}

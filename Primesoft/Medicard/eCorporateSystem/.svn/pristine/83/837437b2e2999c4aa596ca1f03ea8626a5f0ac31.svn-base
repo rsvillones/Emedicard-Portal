@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Models;
+
+namespace Corelib
+{
+    public class LegacyDataContext : DbContext
+    {
+        #region -- Constructor --
+
+        public LegacyDataContext() : base ("name=Medicard.LegacySystem")
+        {
+
+        }
+
+        #endregion
+
+        #region -- DbSets --
+
+        public DbSet<LegacyAgent> MyProperty { get; set; }
+
+        #endregion
+    }
+}

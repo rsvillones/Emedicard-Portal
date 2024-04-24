@@ -1,0 +1,54 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Members with Action Memo</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">Action Memo was issued with the following details:</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Control Number: @Model.EndorsementBatch.ReplyTo</p>
+<br />
+<table border="1" style="border-collapse:collapse;width:70%">
+    <thead>
+        <tr>
+            <th>Member Type</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Date of Birth</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Corelib.Models.ActionMemo am in Model.EndorsementBatch.ActionMemos)
+        {
+            if (am.Member == null) { continue; }
+            if (am.DependentId.HasValue)
+            {
+                <tr>
+                    <td>Dependent</td>
+                    <td>@am.Dependent.LastName</td>
+                    <td>@am.Dependent.FirstName</td>
+                    <td>@am.Dependent.MiddleName</td>
+                    <td>@am.Dependent.DateOfBirth.ToString("MM/dd/yyyy")</td>
+                </tr>
+            }
+            else if (am.MemberId.HasValue)
+            {
+                <tr>
+                    <td>Principal</td>
+                    <td>@am.Member.LastName</td>
+                    <td>@am.Member.FirstName</td>
+                    <td>@am.Member.MiddleName</td>
+                    <td>@am.Member.DateOfBirth.ToString("MM/dd/yyyy")</td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
+
+<br />
+<p class="details">Please refer to the attached Action Memo for more details.</p>
+<br />

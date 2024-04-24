@@ -1,0 +1,42 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+
+}
+
+<p class="title">CREATED USER ACCOUNTS</p>
+
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">User account(s) were created for the following member(s):</p>
+<br />
+<p class="details">Company Name: @Model.CompanyName</p>
+<br />
+<table border="1" style="border-collapse:collapse;width:70%">
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Date of Birth</th>
+            <th>Username</th>
+            <th>Password</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Corelib.Models.Member member in Model.Members)
+        {
+            
+            <tr>
+                <td>@member.LastName</td>
+                <td>@member.FirstName</td>
+                <td>@member.MiddleName</td>
+                <td>@member.DateOfBirth.ToString("MM/dd/yyyy")</td>
+                <td>@member.UserName</td>
+                <td>@member.Password</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<p class="details">Thank you for using eMedicard!</p>

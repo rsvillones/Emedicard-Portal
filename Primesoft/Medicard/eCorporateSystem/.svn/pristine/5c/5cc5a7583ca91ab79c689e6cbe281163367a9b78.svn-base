@@ -1,0 +1,190 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using WebUI.Models;
+using PagedList;
+using PagedList.Mvc;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewAccountOfficers, CanAddAccountOfficers, CanEditAccountOfficers, CanDeleteAccountOfficers")]
+    public class AccountOfficersController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+        private const string PASSWORD_DISPLAY = "###PASSWORD###";
+        
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewAccountOfficers")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var accountOfficers = from t in db.AccountOfficers where !t.Deleted select t;
+            if (!string.IsNullOrEmpty(currentFilter))
+            {
+                accountOfficers = accountOfficers.Where(t => 
+                    t.FirstName.Contains(currentFilter) ||
+                    t.LastName.Contains(currentFilter) ||
+                    t.MiddleInitial.Contains(currentFilter) ||
+                    t.Code.Contains(currentFilter) ||
+                    t.UserName.Contains(currentFilter) ||
+                    t.EmailAddress.Contains(currentFilter)
+                );
+            }
+
+            Helper.SetSortParameters<AccountOfficer>(this, ref accountOfficers, sortOrder, currentFilter, new SortParameter()
+            {
+                PropertyName = "Code"
+            }, new List<SortParameter>()
+            {
+                new SortParameter() { PropertyName = "UserName" },
+                new SortParameter() { PropertyName = "FirstName" },
+                new SortParameter() { PropertyName = "MiddleInitial" },
+                new SortParameter() { PropertyName = "LastName" },
+                new SortParameter() { PropertyName = "EmailAddress" }
+            });
+
+            return View(accountOfficers.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddAccountOfficers")]
+        public ActionResult Create()
+        {
+            var model = new AccountOfficerViewModel();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddAccountOfficers")]
+        public async Task<ActionResult> Create([Bind(Include = "Guid, Code, FirstName, MiddleInitial, LastName, EmailAddress, Phone, Validated, UserName, Password, ConfirmPassword")] AccountOfficerViewModel accountOfficer)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = Helper.AddUser(db, null, null, String.Format("{0} {1} {2}", accountOfficer.FirstName, accountOfficer.MiddleInitial, accountOfficer.LastName), accountOfficer.UserName, accountOfficer.Password, accountOfficer.EmailAddress, accountOfficer.Phone, false, true, false, "CanViewCorporateAdmins", "CanAddCorporateAdmins", "CanEditCorporateAdmins", "CanDeleteCorporateAdmins");
+
+                var entity = new AccountOfficer();
+                Helper.MapProperties(accountOfficer, entity);
+                entity.UserId = user.Id;
+                entity.UserName = user.UserName;
+                db.AccountOfficers.Add(entity);
+                await db.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(accountOfficer);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditAccountOfficers")]
+        public async Task<ActionResult> Edit(Guid guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            AccountOfficer accountOfficer = await db.AccountOfficers.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (accountOfficer == null) return HttpNotFound();
+
+            var model = new AccountOfficerViewModel();
+            Helper.MapProperties(accountOfficer, model);
+            model.Password = PASSWORD_DISPLAY;
+            model.ConfirmPassword = PASSWORD_DISPLAY;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditAccountOfficers")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Guid, Code, FirstName, MiddleInitial, LastName, EmailAddress, Phone, Validated, UserId, UserName, Password, ConfirmPassword")] AccountOfficerViewModel accountOfficer)
+        {
+            if (ModelState.IsValid)
+            {
+                if (accountOfficer.Password != PASSWORD_DISPLAY)
+                {
+                    await Helper.UpdateUserPasswordAsync(accountOfficer.UserId, accountOfficer.UserName, accountOfficer.Password);
+                }
+
+                var entity = db.AccountOfficers.FirstOrDefault(t => t.Guid == accountOfficer.Guid);
+                if (entity != null)
+                {
+                    if (entity.UserName != accountOfficer.UserName)
+                    {
+                        var applicationUser = db.Users.FirstOrDefault(t => t.Id == accountOfficer.UserId);
+                        applicationUser.UserName = accountOfficer.UserName;
+                        db.Entry(applicationUser).State = EntityState.Modified;
+                    };
+
+                    Helper.MapProperties(accountOfficer, entity);
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+
+            }
+            return View(accountOfficer);
+        }
+
+        [Authorize(Roles = "SysAd, CanDeleteAccountOfficers")]
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var accountOfficer = await db.AccountOfficers.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (accountOfficer == null) return HttpNotFound();
+
+            return View(accountOfficer);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanDeleteAccountOfficers")]
+        public async Task<ActionResult> DeleteConfirmed(Guid guid)
+        {
+            var accountOfficer = await db.AccountOfficers.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.AccountOfficers.Remove(accountOfficer);
+            var user = await db.Users.FirstOrDefaultAsync(t => t.Id == accountOfficer.UserId);
+            db.Users.Remove(user);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public async Task<JsonResult> ValidateAccountOfficerCode(string code)
+        {
+            var legacyAgent = await legacyDb.LegacyAgents.FirstOrDefaultAsync(t => t.Code == code);
+
+            return legacyAgent != null ? this.Json(legacyAgent, JsonRequestBehavior.AllowGet) : null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+        
+        #endregion
+    }
+}

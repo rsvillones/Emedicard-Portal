@@ -1,0 +1,260 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+using Corelib.Enums;
+using System.Web;
+using System.IO;
+
+namespace Corelib.Models
+{
+    public class AdditionalDependent : BaseModel, IValidatableObject
+    {
+        #region -- Constructor --
+
+        public AdditionalDependent()
+        {
+            this.DateOfBirth = DateTime.MinValue;
+            this.ApplicationDate = DateTime.Now;
+        }
+
+        #endregion
+
+        #region -- Property --
+
+        [StringLength(25)]
+        [Index]
+        public string ControlNumber { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        [StringLength(32)]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        [StringLength(32)]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        [StringLength(32)]
+        public string MiddleName { get; set; }
+
+        [StringLength(8)]
+        [Display(Name = "Suffix")]
+        public string Suffix { get; set; }
+          
+        [Required]
+        [Display(Name = "Date Of Birth")]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age")]
+        [NotMapped]
+        public int? Age
+        {
+            get
+            {
+                if (this.DateOfBirth == DateTime.MinValue) return null;
+
+                DateTime today = DateTime.Today;
+                int age = today.Year - this.DateOfBirth.Year;
+                if (this.DateOfBirth > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
+
+        [StringLength(32)]
+        [Display(Name = "Gender")]
+        [Required]
+        public string Gender { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Civil Status")]
+        [Required]
+        public string CivilStatus { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Telephone")]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Mobile")]
+        public string Mobile { get; set; }
+
+        [StringLength(64)]
+        [Display(Name = "Email Address")]
+        public string EmailAddress { get; set; }
+
+        [StringLength(64)]
+        [Display(Name = "Street")]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Province")]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [Display(Name = "Zip")]
+        public string Zip { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Occupation")]
+        public string Occupation { get; set; }
+
+        [Display(Name = "Weight")]
+        public int? Weight { get; set; }
+
+        [Display(Name = "Applied Plan")]
+        public int? AppliedPlan { get; set; }
+
+        [NotMapped]
+        public string AppliedPlanDescription
+        {
+            get
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var roomRate = legacyDb.LegacyRoomRates.Include(t => t.LegacyPlan).FirstOrDefault(t => t.Id == this.AppliedPlan) ?? new LegacyRoomRate() { LegacyPlan = new LegacyPlan() };
+                    return roomRate.LegacyPlan.Description;
+                }
+            }
+        }
+
+        [Display(Name = "Optional Plan")]
+        public int? OptionalPlan { get; set; }
+
+        [NotMapped]
+        public string OptionalPlanDescription
+        {
+            get
+            {
+                if (!this.OptionalPlan.HasValue) return null;
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var roomRate = legacyDb.LegacyRoomRates.Include(t => t.LegacyPlan).FirstOrDefault(t => t.Id == this.OptionalPlan.Value) ?? new LegacyRoomRate() { LegacyPlan = new LegacyPlan() };
+                    return roomRate.LegacyPlan.Description;
+                }
+            }
+        }
+
+        public string AccountCode { get; set; }
+
+        public Corelib.Enums.RequestStatus Status { get; set; }
+
+        [Required]
+        [Display(Name = "Member Name")]
+        [Index]
+        [StringLength(25)]
+        public string MemberCode { get; set; }
+        
+        [Display(Name = "Application Date")]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime ApplicationDate { get; set; }
+        
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        [Display(Name = "Relationship")]
+        [ForeignKey("Relationship")]
+        [Required]
+        public string RelationshipCode { get; set; }
+        public Relationship Relationship { get; set; }
+
+        public string Remarks { get; set; }
+
+        public byte[] DocumentFile { get; set; }
+
+        public string DocumentContentType { get; set; }
+
+        public string DocumentFileName { get; set; }
+
+        [NotMapped]
+        public HttpPostedFileBase FileWrapper { get; set; }
+
+        [Display(Name = "Member Type")]
+        public MemberType MemberType { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped --
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}.", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+
+        [NotMapped]
+        public string MemberName
+        {
+            get
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var member = LegacyHelper.GetActiveMember(legacyDb, this.AccountCode, this.MemberCode);
+                    return member != null ? member.FullName : "";
+                }
+            }
+        }
+        
+        #endregion
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (db.Dependents.Any(t => t.LastName == this.LastName && t.FirstName == this.FirstName && t.MiddleName == this.MiddleName && t.DateOfBirth == this.DateOfBirth))
+                {
+                    yield return new ValidationResult("Dependent already exists in the system.", new List<string>() { "LastName", "FirstName", "MiddleName", "DateOfBirth" });
+                }
+
+                if (db.AdditionalDependents.Any(t => t.LastName == this.LastName && t.FirstName == this.FirstName && t.MiddleName == this.MiddleName && t.DateOfBirth == this.DateOfBirth && t.Id != this.Id))
+                {
+                    yield return new ValidationResult("Duplicate Dependent found.", new List<string>() { "LastName", "FirstName", "MiddleName", "DateOfBirth" });
+                }
+            }
+
+            using (var legacyDb = new LegacyDataContext())
+            {
+                if (LegacyHelper.GetActiveDependents(legacyDb, this.AccountCode, this.MemberCode).Any(t => t.LastName == this.LastName && t.FirstName == this.FirstName && t.MiddleName == this.MiddleName && t.DateOfBirth == this.DateOfBirth))
+                {
+                    yield return new ValidationResult("Dependent is already active in the system.", new List<string>() { "LastName", "FirstName", "MiddleName", "DateOfBirth" });
+                }
+            }
+
+            if (this.FileWrapper != null)
+            {
+                var allowedExtensions = new[] { ".doc", ".jpeg", ".pdf", ".png", ".jpg" };
+                var extension = Path.GetExtension(this.FileWrapper.FileName);
+                if (!allowedExtensions.Contains(extension))
+                {
+                    yield return new ValidationResult("Invalid file extension.", new List<string>() { "FileWrapper" });
+                }
+            }
+        }
+    }
+}

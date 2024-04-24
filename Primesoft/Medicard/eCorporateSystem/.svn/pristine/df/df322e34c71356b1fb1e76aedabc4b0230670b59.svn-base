@@ -1,0 +1,153 @@
+﻿@{
+    ViewBag.Title = "Excel Import";
+}
+
+<div class="row">
+    <div class="col-lg-8 col-centered">
+        <fieldset class="form">
+            <legend>Data Import</legend>
+            <fieldset>
+                <legend>Upload New Application</legend>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label class="inline">Allowed file extension: xlsx.</label>
+                                <input type="file" id="uploadNewApplication" name="uploadNewApplication" style="background-color:blue"/>
+                                <input type="hidden" id="uploadStringNewApplication" name="uploadStringNewApplication" />
+                                <div id="ImportBodyNewApplication"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-4" >
+                            @Html.ActionLink("Back to List", "Index", null, new { @class = "" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+    $("#uploadNewApplication").uploadifive({
+        'method': 'post',
+        'uploadScript': '/Application/UploadExcel',
+        'fileObjName': 'fileData',
+        'buttonText': 'Select',
+        'multi': false,
+        'auto': true,
+        'height': 40,
+        'width': 40,
+        'removeCompleted': true,
+        'onUploadComplete': function (file, data) {
+            var uploadString = data;
+            $('#uploadStringNewApplication').val(uploadString);
+            startThreading(data);
+        }
+    });
+
+    function startThreading(path) {
+        var option = {
+            url: '@Url.Action("StartThreading")',
+            type: 'post',
+            data: {
+                filePath: path
+            }
+        };
+        $.ajax(option).done(function (htmlValue) {
+            $('#ImportBodyNewApplication').empty();
+            excelValidation(path);
+        });
+    }
+
+    function excelValidation(fileName) {
+        var status;
+        var isPaused = false;
+        var interval = setInterval(function () {
+            if (!isPaused) {
+                var option = {
+                    url: '@Url.Action("ExcelValidation")',
+                    type: 'post',
+                    data: {
+                        fileName: fileName
+                    }
+                };
+                isPaused = true;
+                $.ajax(option).done(function (htmlValue) {
+                    $('#ImportBodyNewApplication').empty();
+                    $('#ImportBodyNewApplication').append('<h5 class="subheader text-center">' + 'Validating Excel File ' + htmlValue.rowCompleted + ' out of ' + htmlValue.numberOfItems + ' items </h5>');
+                    status = htmlValue.status;
+                    isPaused = false;
+                    if (status == 1) {
+                        clearInterval(interval);
+                        importComfirmation(fileName);
+                    }
+                });
+            }
+        }, 2000);
+    }
+
+    function importComfirmation(path) {
+        var option = {
+            url: '@Url.Action("ImportComfirmation")',
+                type: 'post',
+                data: {
+                    filePath: path
+                }
+            };
+            $.ajax(option).done(function (htmlValue) {
+                $('#ImportBodyNewApplication').empty();
+                window.setTimeout(
+                    function () {
+                        $('#ImportBodyNewApplication').html(htmlValue); //happens 3 secs later\
+                        showAllErrors($('#ShowAllError'));
+                        $('#ShowAllError').click(function () {
+                            showAllErrors($(this));
+                        });
+                    },
+                    3000
+                );
+                $('#filePath').val(path);
+            });
+        }
+
+        function showAllErrors(selector) {
+            if (selector.is(':checked')) {
+                $('input[name*="IsError"]').each(function () {
+                    if ($(this).val() == 'False') {
+                        $(this).closest('tr').hide();
+                    }
+                });
+            } else {
+                $('input[name*="IsError"]').each(function () {
+                    $(this).closest('tr').show();
+                });
+            }
+        }
+
+        function saveApplication() {
+            var option = {
+                type: "POST",
+                url: '@Url.Action("UploadApplication")',
+                traditional:true,
+                data: $('#uploadApplication').serializeArray()
+            };
+            $.ajax(option).done(function (data) {
+                $('#MainContent').empty();
+                $('#MainContent').html(data);
+                showAllErrors($('#ShowAllError'));
+                $('#ShowAllError').click(function () {
+                    showAllErrors($(this));
+                });
+            });
+        }
+    </script>
+}

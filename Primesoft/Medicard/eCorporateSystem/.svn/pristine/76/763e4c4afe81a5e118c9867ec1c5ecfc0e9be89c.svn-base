@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib
+{
+    public static class Config
+    {
+        #region -- Properties --
+
+        public static string CurrentUser
+        {
+            get;
+            set;
+        }
+
+        public static int RecordCountPerPage
+        {
+            get
+            {
+                return Convert.ToInt32(ConfigurationManager.AppSettings["RecordCountPerPage"]);
+            }
+        }
+
+        #endregion
+    }
+}

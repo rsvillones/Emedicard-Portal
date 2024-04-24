@@ -1,0 +1,188 @@
+@model UtilizationReportExceptionViewModel
+
+@{
+    ViewBag.Title = "Utilization Report Exception";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+@Html.Action("AccountInformation", "BaseAccount")
+
+@using (Html.BeginForm("Index", "UtilizationReportExceptions", new { accountCode = ViewBag.AccountCode }, FormMethod.Post, new { @Id = "UtilizationReportExceptions" }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="panel-title">
+                Utilization Report Exception
+                @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser &&
+            (User.IsInRole("CanAddUtilizationReportExceptionForUser") || User.IsInRole("CanEditUtilizationReportExceptionForUser")
+            || User.IsInRole("CanDeleteUtilizationReportExceptionForUser")
+            || User.IsInRole("CanAddUtilizationReportExceptionForPlan") || User.IsInRole("CanEditUtilizationReportExceptionForPlan")
+            || User.IsInRole("CanDeleteUtilizationReportExceptionForPlan"))))
+                {
+                    <input type="button" class="btn btn-primary save btn-sm btn-margin" id="SaveException" value="Save All">
+                }
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <h4 class="sub-title">For Users</h4>
+                                </div>
+                                @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddUtilizationReportExceptionForUser")))
+                                {
+                                    <div class="col-lg-4">
+                                        <p style="float: right">
+                                            <input type="button" class="btn btn-primary" id="AddNewException" value="Add Exception For User">
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+
+                            @*-- Utilization Report Exception For Users --*@
+                            <table class="table table-fixed-function">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50%">
+                                            Member Name
+                                        </th>
+                                        <th style="width: 35%">
+                                            Users
+                                        </th>
+                                        <th style="width: 5%">&nbsp;</th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                            <div class="scrollable-table-utilization" style="margin-top: -3px !important;">
+                                <table class="table table-fixed-function">
+                                    <tbody id="ExceptionBody">
+                                        @if (Model.UtilizationReportExceptionForUsers != null && Model.UtilizationReportExceptionForUsers.Count > 0)
+                                        {
+                                            foreach (var item in Model.UtilizationReportExceptionForUsers)
+                                            {
+                                                @Html.Partial("_UtilizationReportException", item)
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <h4 class="sub-title">For Plans</h4>
+                                </div>
+                                @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddUtilizationReportExceptionForPlan")))
+                                {
+                                    <div class="col-lg-4">
+                                        <p style="float: right">
+                                            <input type="button" class="btn btn-primary" id="AddNewExceptionForPlans" value="Add Exception For Plans">
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+
+                            @*-- Utilization Report Exception For Plans --*@
+                            <table class="table table-fixed-function">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50%">
+                                            Member Name
+                                        </th>
+                                        <th style="width: 35%">
+                                            Plans
+                                        </th>
+                                        <th style="width: 5%">&nbsp;</th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                            <div class="scrollable-table-utilization" style="margin-top: -3px !important;">
+                                <table class="table table-fixed-function">
+                                    <tbody id="ExceptionPlansBody">
+                                        @if (Model.UtilizationReportExceptionForPlans != null && Model.UtilizationReportExceptionForPlans.Count > 0)
+                                        {
+                                            foreach (var item in Model.UtilizationReportExceptionForPlans)
+                                            {
+                                                @Html.Partial("_UtilizationReportExceptionForPlan", item)
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#AddNewException').click(function () {
+                var option = {
+                    url: '@Url.Action("NewUtilizationReportExceptionForUser")',
+                    type: 'post',
+                    data: {
+                        accountCode: '@ViewBag.AccountCode'
+                    }
+                };
+                $.ajax(option).done(function (data) {
+                    $('#ExceptionBody').prepend(data);
+                    var selectUser = $('#ExceptionBody').children('tr:first').children('td').children('.selectPickerUser');
+                    generateSingleSelectPicker(selectUser);
+                });
+            });
+            $('#AddNewExceptionForPlans').click(function () {
+                var option = {
+                    url: '@Url.Action("NewUtilizationReportExceptionForPlan")',
+                    type: 'post',
+                    data: {
+                        accountCode: '@ViewBag.AccountCode'
+                    }
+                };
+                $.ajax(option).done(function (data) {
+                    $('#ExceptionPlansBody').prepend(data);
+                    var selectPlan = $('#ExceptionPlansBody').children('tr:first').children('td').children('.selectPickerPlan');
+                    generateSingleSelectPicker(selectPlan);
+                });
+            });
+            $('#SaveException').click(function () {
+                $('#UtilizationReportExceptions').submit();
+            });
+            generateAllSelectPicker();
+        });
+        function deleteMember(button) {
+            var tr = $(button).closest('tr');
+            tr.remove();
+        }
+        function generateAllSelectPicker() {
+            $('.selectPickerPlan,.selectPickerUser').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectPickerPlan,.selectPickerUser').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+        }
+        function generateSingleSelectPicker(select) {
+            var value = select.attr('data-value');
+            select.selectpicker();
+            select.selectpicker('val', eval(value));
+
+            select.on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+        }
+
+    </script>
+}
+
+

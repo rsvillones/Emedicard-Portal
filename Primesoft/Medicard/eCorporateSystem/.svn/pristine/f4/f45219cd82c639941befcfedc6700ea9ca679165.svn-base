@@ -1,0 +1,9 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+Account Manager Layout
+
+@RenderBody()
+
+@RenderSection("scripts", required: false)

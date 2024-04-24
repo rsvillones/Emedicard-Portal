@@ -1,0 +1,52 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewAccountInformation")]
+    public class AccountInformationController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewAccountInformation")]
+        public ActionResult Index(string accountCode)
+        {
+            if (string.IsNullOrEmpty(accountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccounts = Helper.GetLegacyAccounts(null, legacyDb);
+            if (!legacyAccounts.Any(t => t.Code == accountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+            if (legacyAccount == null) return HttpNotFound();
+
+            ViewBag.LegacyAgent = legacyDb.LegacyAgents.FirstOrDefault(t => t.Code == legacyAccount.AgentCode);
+
+            return View(legacyAccount);
+        }
+        
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if(disposing)
+            {
+                legacyDb.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

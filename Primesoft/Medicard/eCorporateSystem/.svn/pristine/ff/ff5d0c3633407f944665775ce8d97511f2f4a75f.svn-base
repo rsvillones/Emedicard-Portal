@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Mvc.Mailer;
+using System.Net.Mail;
+using Corelib;
+using WebUI.Models;
+
+namespace WebUI.Mailers
+{
+    public class UserMailer : MailerBase, IUserMailer
+    {
+        public UserMailer()
+        {
+            MasterName = "_Layout";
+        }
+
+        public virtual MvcMailMessage SendMemberNotification(int applicationId,string userName,string password)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var application = db.Applications.FirstOrDefault(t => !t.Deleted && t.Id == applicationId);
+                var emailViewModel = new EmailViewModel()
+                {
+                    Application = application,
+                    Password = password,
+                    UserName = userName,
+                    Url = Helper.AbsoluteAction("Index", "MembershipEndorsement")
+                };
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "MembershipEmailNotification",
+                    From = new MailAddress("mmedidas@rbsysinc.com"),
+                    Subject = "Membership Email Notification for Application",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel)
+                };
+                return returnValue;
+            }
+        }
+    }
+}

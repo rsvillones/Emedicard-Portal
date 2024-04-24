@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class LegacyReimbursement
+    {
+        [Column("CONTROL_CODE")]
+        public string ControlCode { get; set; }
+
+        [Column("DATE_RCVD")]
+        public DateTime ReceivedDate { get; set; }
+
+        [Column("DATE_DUE")]
+        public DateTime DueDate { get; set; }
+
+        [Column("RELEASED_DATE")]
+        public DateTime ReleasedDate { get; set; }
+    }
+}

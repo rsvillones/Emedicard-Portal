@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class Account : BaseModel
+    {
+        #region -- Properties --
+
+        [Required]
+        [StringLength(25)]
+        [Index]
+        public string Code { get; set; }
+
+        [Display(Name="Use Email as Login")]
+        public bool UseEmailAsLogin { get; set; }
+
+        [Display(Name = "Use Random Generated Password")]
+        public bool UseRandomGeneratedPassword { get; set; }
+
+        [Display(Name = "Read Only Access")]
+        public bool IsReadOnly { get; set; }
+
+        [Display(Name = "Bypass HR Approval")]
+        public bool BypassHRManagerApproval { get; set; }
+
+        [Display(Name = "User serves as HR Manager")]
+        public bool IsHRManager { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
+
+        #endregion
+    }
+}

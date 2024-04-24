@@ -1,0 +1,283 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "CanViewMembershipEndorsements")]
+    public class EndorsementController : BaseAccountController
+    {
+        #region -- Variable Declarations --
+
+        private const int EMAIL_ADDRESS = 1;
+        private const int EMPLOYEE_NUMBER = EMAIL_ADDRESS + 1;
+        private const int AREA = EMPLOYEE_NUMBER + 1;
+        private const int COST_CENTER = AREA + 1;
+        private const int LAST_NAME = COST_CENTER + 1;
+        private const int FIRST_NAME = LAST_NAME + 1;
+        private const int MIDDLE_NAME = FIRST_NAME + 1;
+        private const int SUFFIX = MIDDLE_NAME + 1;
+        private const int GENDER = SUFFIX + 1;
+        private const int DATE_OF_BIRTH = GENDER + 1;
+        private const int AGE = DATE_OF_BIRTH + 1;
+        private const int CIVIL_STATUS = AGE + 1;
+        private const int EFFECTIVITY_DATE = CIVIL_STATUS + 1;
+        private const int VALIDITY_DATE = EFFECTIVITY_DATE + 1;
+        private const int DATE_HIRED = VALIDITY_DATE + 1;
+        private const int APPLIED_PLAN = DATE_HIRED + 1;
+        private const int OPTIONAL_PLAN = APPLIED_PLAN + 1;
+        private const int NUMBER_OF_ALLOWED_DEPENDENTS = OPTIONAL_PLAN + 1;
+        private const int DEPENDENT_APPLIED_PLAN = NUMBER_OF_ALLOWED_DEPENDENTS + 1;
+        private const int DEPENDENT_OPTIONAL_PLAN = DEPENDENT_APPLIED_PLAN + 1;
+
+        #endregion
+
+        #region -- Action Results --
+
+        public ActionResult Index(string accountCode, string sortOrder, string currentFilter, int? page)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = db.EndorsementBatches.Where(t => t.AccountCode == this.LegacyAccount.Code).OrderByDescending(t => t.Date);
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult BatchUpload(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            EndorsementBatch model;
+            if (guid != null && db.EndorsementBatches.Any(t => t.Guid == guid))
+            {
+                model = db.EndorsementBatches.Include(t => t.Members).FirstOrDefault(t => t.Guid == guid);
+                ViewBag.Genders = new List<string>() { "Male", "Female" };
+                ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Divorced", "Widowed" };
+                ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+                ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+                ViewBag.Validate = true;
+            }
+            else
+            {
+                model = new EndorsementBatch();
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult BatchUpload(EndorsementBatch endorsementBatch, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            endorsementBatch.Date = DateTime.Now;
+            endorsementBatch.EndorsementType = "Batch Upload";
+            endorsementBatch.AccountCode = accountCode;
+            endorsementBatch.Status = Corelib.Enums.EndorsementBatchStatus.New;
+
+            if (ModelState.IsValid)
+            {
+                if (endorsementBatch.Id == 0)
+                {
+                    db.EndorsementBatches.Add(endorsementBatch);
+                }
+                else
+                {
+                    var currentMemberIds = endorsementBatch.Members.Select(t => t.Id).Distinct();
+                    var membersToDelete = db.Members.Where(t => t.EndorsementBatchId == endorsementBatch.Id && !currentMemberIds.Contains(t.Id));
+                    db.Members.RemoveRange(membersToDelete);
+
+                    foreach (var member in endorsementBatch.Members)
+                    {
+                        if (member.Id == 0) db.Entry(member).State = EntityState.Added;
+                    }
+                    db.Entry(endorsementBatch).State = EntityState.Modified;
+                    if (endorsementBatch.Members != null && endorsementBatch.Members.Count > 0)
+                    {
+                        for (var index = endorsementBatch.Members.Count - 1; index >= 0; index--)
+                        {
+                            var member = endorsementBatch.Members.ElementAt(index);
+                            if(member.Id != 0) db.Entry(member).State = EntityState.Modified;
+                        }
+                    }
+                }
+                endorsementBatch.EndorsementCount = endorsementBatch.Members != null ? endorsementBatch.Members.Count(t => !t.Deleted) : 0;
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode });
+            }
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Divorced", "Widowed" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+
+            return View(endorsementBatch);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ValidateUploadedExcel(EndorsementBatch endorsementBatch, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Divorced", "Widowed" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+            if (endorsementBatch.Members != null)
+            {
+                foreach (var member in endorsementBatch.Members)
+                {
+                    member.EndorsementBatchId = endorsementBatch.Id;
+                }
+            }
+
+            return View("BatchUpload", endorsementBatch);
+        }
+
+        public JsonResult UploadExcel(HttpPostedFileBase fileData, string accountCode, int endorsementBatchId)
+        {
+            var fileExtension = fileData.FileName.Substring(fileData.FileName.LastIndexOf(".") + 1);
+            if (fileExtension != "xlsm") throw new Exception("File Not Valid");
+
+            var originalFilename = fileData.FileName;
+            var originalFilepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", originalFilename));
+
+            var filename = String.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
+            var filepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", filename));
+
+            fileData.SaveAs(filepath);
+
+            var dictionary = new Dictionary<string, object>();
+            dictionary.Add("Filename", originalFilename);
+            dictionary.Add("GuidFilename", filename);
+
+            dictionary.Add("TableData", RenderPartialViewToString("~/Areas/CorporateAdministrator/Views/Endorsement/_MemberWrapper.cshtml", ImportExcel(accountCode, endorsementBatchId, filepath)));
+
+            return this.Json(dictionary);
+        }
+
+        public FileResult DownloadNewApplicationTemplate(string accountCode)
+        {
+            return File(ExcelTools.NewApplicationExcelDownload(accountCode), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", String.Format("New Application ({0:MMddyyyyhhmmss}).xlsm", DateTime.Now));
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private string RenderPartialViewToString(string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName)) viewName = ControllerContext.RouteData.GetRequiredString("action");
+
+            ViewData.Model = model;
+
+            using (StringWriter sw = new StringWriter())
+            {
+                ViewEngineResult viewResult = ViewEngines.Engines.FindPartialView(ControllerContext, viewName);
+                ViewContext viewContext = new ViewContext(ControllerContext, viewResult.View, ViewData, TempData, sw);
+                viewResult.View.Render(viewContext, sw);
+
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+
+        private IEnumerable<MemberWrapper> ImportExcel(string accountCode, int endorsementBatchId, string path)
+        {
+            var returnValue = new List<MemberWrapper>();
+            using (var package = new ExcelPackage(new FileInfo(path)))
+            {
+                var wb = package.Workbook;
+                if (wb == null) throw new Exception("Error opening workbook.");
+                if (wb.Worksheets.Count <= 0) throw new Exception("No worksheet found.");
+
+                var ws = wb.Worksheets[1];
+                var startRow = 3;
+                var lastRow = 3;
+                while (true)
+                {
+                    var employeeNumber = Convert.ToString(ws.Cells[lastRow, EMPLOYEE_NUMBER].Value).Trim();
+                    if (string.IsNullOrEmpty(employeeNumber))
+                    {
+                        lastRow--;
+                        break;
+                    }
+                    lastRow++;
+                }
+
+                for (int currentRow = startRow; currentRow <= lastRow; currentRow++)
+                {
+
+                    returnValue.Add(new MemberWrapper()
+                    {
+                        EmailAddress = StringValue(ws.Cells[currentRow, EMAIL_ADDRESS]),
+                        EmployeeNumber = StringValue(ws.Cells[currentRow, EMPLOYEE_NUMBER]),
+                        Area = StringValue(ws.Cells[currentRow, AREA]),
+                        CostCenter = StringValue(ws.Cells[currentRow, COST_CENTER]),
+                        LastName = StringValue(ws.Cells[currentRow, LAST_NAME]),
+                        FirstName = StringValue(ws.Cells[currentRow, FIRST_NAME]),
+                        MiddleName = StringValue(ws.Cells[currentRow, MIDDLE_NAME]),
+                        Suffix = StringValue(ws.Cells[currentRow, SUFFIX]),
+                        Gender = StringValue(ws.Cells[currentRow, GENDER]),
+                        DateOfBirth = DateValue(ws.Cells[currentRow, DATE_OF_BIRTH]),
+                        CivilStatus = StringValue(ws.Cells[currentRow, CIVIL_STATUS]),
+                        EffectivityDate = DateValue(ws.Cells[currentRow, EFFECTIVITY_DATE]),
+                        ValidityDate = DateValue(ws.Cells[currentRow, VALIDITY_DATE]),
+                        DateHired = DateValue(ws.Cells[currentRow, DATE_HIRED]),
+                        AppliedPlanFromExcel = StringValue(ws.Cells[currentRow, APPLIED_PLAN]),
+                        AllowedPlansFromExcel = StringValue(ws.Cells[currentRow, OPTIONAL_PLAN]),
+                        Dependent = IntegerValue(ws.Cells[currentRow, NUMBER_OF_ALLOWED_DEPENDENTS]),
+                        DependentAppliedPlanFromExcel = StringValue(ws.Cells[currentRow, DEPENDENT_APPLIED_PLAN]),
+                        AllowedDependentPlansFromExcel = StringValue(ws.Cells[currentRow, DEPENDENT_OPTIONAL_PLAN]),
+                        AccountCode = accountCode,
+                        EndorsementBatchId = endorsementBatchId.ToString()
+                    });
+                }
+            }
+
+            return returnValue;
+        }
+
+        #endregion
+
+        #region -- Excel Extensions --
+
+        public string StringValue(ExcelRange range)
+        {
+            return Convert.ToString(range.Value).Trim();
+        }
+
+        public string IntegerValue(ExcelRange range)
+        {
+            int? returnValue = null;
+            int temp;
+            if (int.TryParse(StringValue(range), out temp)) returnValue = int.Parse(StringValue(range));
+            return returnValue.HasValue ? returnValue.Value.ToString() : null;
+        }
+
+        public string DateValue(ExcelRange range)
+        {
+            DateTime? returnValue = null;
+            DateTime temp;
+            if (DateTime.TryParse(StringValue(range), out temp)) returnValue = DateTime.Parse(StringValue(range));
+            return returnValue.HasValue ? returnValue.Value.ToString("MM/dd/yyyy") : null;
+        }
+
+        #endregion
+    }
+}

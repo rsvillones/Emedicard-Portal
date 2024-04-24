@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class Account : BaseModel
+    {
+        #region -- Properties --
+
+        [Required]
+        [StringLength(25)]
+        [Index]
+        public string Code { get; set; }
+
+        [Required]
+        [StringLength(150)]
+        public string Name { get; set; }
+
+        public bool UseEmailAsLogin { get; set; }
+
+        public bool UseRandomGeneratedPassword { get; set; }
+
+        public int CorporateAdminId { get; set; }
+        [ForeignKey("CorporateAdminId")]
+        public CorporateAdmin CorporateAdmin { get; set; }
+
+        #endregion
+    }
+}

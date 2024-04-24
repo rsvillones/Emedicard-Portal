@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "_Dependents";
+}
+
+<h2>_Dependents</h2>
+

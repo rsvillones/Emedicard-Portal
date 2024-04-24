@@ -1,0 +1,123 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Corelib.Models
+{
+    public class ApplicationVerification : BaseModel
+    {
+        #region -- Constructor --
+
+        public ApplicationVerification()
+        {
+
+        }
+
+        public ApplicationVerification(Application application)
+        {
+            EmailAddress = application.EmailAddress;
+            EmployeeNumber = application.EmployeeNumber;
+            Area = application.Area;
+            CostCenter = application.CostCenter;
+            LastName = application.LastName;
+            FirstName = application.FirstName;
+            MiddleName = application.MiddleName;
+            Suffix = application.Suffix;
+            Gender = application.Gender;
+            DateOfBirth = Convert.ToString(application.DateOfBirth);
+            Age = Convert.ToString(application.Age);
+            CivilStatus = application.CivilStatus;
+            EffectivityDate = Convert.ToString(application.EffectivityDate);
+            ValidityDate = Convert.ToString(application.ValidityDate);
+            DateHired = Convert.ToString(application.DateHired);
+            AppliedPlan = application.AppliedPlan;
+            OptionalPlan = application.OptionalPlan;
+            Dependent = Convert.ToString(application.Dependent);
+            DependentAppliedPlan = application.DependentAppliedPlan;
+            DependentOptionalPlan = application.DependentOptionalPlan;
+            MemberCode = application.MemberCode;
+            MembershipStatus = application.MembershipStatus;
+            MemberType = application.MemberType;
+            IsResigned = Convert.ToString(application.IsResigned);
+            AccountCode = application.AccountCode;
+            ResignationDate = Convert.ToString(application.ResignationDate); ;
+        }
+
+        #endregion
+
+        #region -- Properties --
+        
+        public string FileName { get; set; }
+
+        public int Row { get; set; }
+
+        public bool IsError { get; set; }
+
+        public string ErrorMessage { get; set; }
+               
+        #region -- Properties Applcation --
+
+        public string EmailAddress { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public string Area { get; set; }
+
+        public string CostCenter { get; set; }
+
+        public string LastName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        public string Suffix { get; set; }
+
+        public string Gender { get; set; }
+
+        public string DateOfBirth { get; set; }
+
+        public string Age { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        public string EffectivityDate { get; set; }
+
+        public string ValidityDate { get; set; }
+
+        public string DateHired { get; set; }
+
+        public string AppliedPlan { get; set; }
+
+        public string OptionalPlan { get; set; }
+
+        public string Dependent { get; set; }
+
+        public string DependentAppliedPlan { get; set; }
+
+        public string DependentOptionalPlan { get; set; }
+
+        public string MemberCode { get; set; }
+
+        public string MemberType { get; set; }
+
+        public string MembershipStatus { get; set; }
+
+        public string IsResigned { get; set; }
+
+        public string ResignationDate { get; set; }
+
+        public string AccountCode { get; set; }
+
+        #endregion        
+        
+        [NotMapped]
+        public int? BatchId { get; set; }
+                
+        #endregion
+    }
+}

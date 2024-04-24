@@ -1,0 +1,33 @@
+@model MedicalHistory
+<tr>
+    <td>
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.QuestionId)
+        @Html.HiddenFor(model => model.MemberId)
+        @Html.HiddenFor(model => model.Timestamp)
+        @Model.Question.Description
+    </td>
+    @if (ViewBag.ReadOnly)
+    {
+        <td>
+            @Html.RadioButtonFor(model => model.Answer, "true", new { @disabled = "disabled" })
+        </td>
+        <td>
+            @Html.RadioButtonFor(model => model.Answer, "false", new { @disabled = "disabled" })
+        </td>
+    }
+    else
+    {
+        <td>
+            @Html.RadioButtonFor(model => model.Answer, "true")
+        </td>
+        <td>
+            @Html.RadioButtonFor(model => model.Answer, "false")
+        </td>
+    }
+    <td>
+        @Html.EditorFor(model => model.Remarks, new { htmlAttributes = ViewBag.HtmlControlAttributes })
+        @Html.ValidationMessageFor(model => model.Remarks)
+    </td>
+</tr>

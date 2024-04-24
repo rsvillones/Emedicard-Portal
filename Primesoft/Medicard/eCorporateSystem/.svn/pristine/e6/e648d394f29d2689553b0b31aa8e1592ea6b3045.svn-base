@@ -1,0 +1,33 @@
+﻿using Corelib.Enums;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class CancelledMember : BaseModel
+    {
+        #region -- Properties --
+
+        [StringLength(25)]
+        [Index]
+        [Required]
+        public string MemberCode { get; set; }
+
+        public CancelledMembershipStatus Status { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        [NotMapped]
+        public LegacyMember LegacyMember { get; set; }
+
+        #endregion
+    }
+}

@@ -1,0 +1,149 @@
+﻿using Corelib.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+
+namespace Corelib
+{
+    public class IdentityDataContext : IdentityDbContext<ApplicationUser>
+    {
+        #region -- Variable Declarations --
+
+        private ApplicationUser _user;
+
+        #endregion
+
+        #region -- Constructor --
+
+        public IdentityDataContext()
+            : base("Medicard.eCorporateSystem", throwIfV1Schema: false)
+        {
+        }
+
+        public IdentityDataContext(ApplicationUser user)
+            : base("Medicard.eCorporateSystem", throwIfV1Schema: false)
+        {
+            _user = user;
+        }
+        
+        #endregion
+
+        #region -- Properties --
+
+        public ApplicationUser User
+        {
+            set { _user = value; }
+        }
+
+        #endregion
+
+        #region -- DbSets --
+
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<UploadLog> UploadLogs { get; set; }
+
+        public DbSet<Application> Applications { get; set; }
+
+        public DbSet<ApplicationVerification> ApplicationVerifications { get; set; }
+
+        public DbSet<ExcelError> ExcelErrors { get; set; }
+
+        public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<Batch> Batches { get; set; }
+
+        public DbSet<Question> Questions { get; set; }
+
+        public DbSet<MedicalHistory> MedicalHistories { get; set; }
+
+        #endregion
+
+        #region -- Overrides --
+
+        public override int SaveChanges()
+        {
+            ProcessChanges();
+
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public override Task<int> SaveChangesAsync()
+        {
+            ProcessChanges();
+
+            try
+            {
+                return base.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public static IdentityDataContext Create()
+        {
+            return new IdentityDataContext();
+        }
+
+        private void ProcessChanges()
+        {
+            if (_user == null) _user = new ApplicationUser() { UserName = "Anonymous" };
+            foreach (var entry in this.ChangeTracker.Entries().Where(t => t.Entity is BaseModel && (t.State == EntityState.Added || t.State == EntityState.Modified || t.State == EntityState.Deleted)))
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        if (_user != null)
+                        {
+                            ((BaseModel)entry.Entity).CrById = _user.Id;
+                        }
+                        ((BaseModel)entry.Entity).CrBy = _user.UserName;
+                        ((BaseModel)entry.Entity).CrDate = DateTime.Now;
+                        break;
+                    case EntityState.Modified:
+                        if (_user != null)
+                        {
+                            ((BaseModel)entry.Entity).ModById = _user.Id;
+                        }
+                        ((BaseModel)entry.Entity).ModBy = _user.UserName;
+                        ((BaseModel)entry.Entity).ModDate = DateTime.Now;
+                        break;
+                    case EntityState.Deleted:
+                        if(!(entry.Entity is Account))
+                        {
+                            entry.State = EntityState.Modified;
+                            ((BaseModel)entry.Entity).Deleted = true;
+                            if (_user != null)
+                            {
+                                ((BaseModel)entry.Entity).ModById = _user.Id;
+                            }
+                            ((BaseModel)entry.Entity).ModBy = _user.UserName;
+                            ((BaseModel)entry.Entity).ModDate = DateTime.Now;
+                        }
+                        break;
+                }
+            }
+        }
+
+        #endregion
+    }
+}

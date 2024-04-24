@@ -1,0 +1,76 @@
+﻿@model PagedList.IPagedList<Corelib.Models.DocumentType>
+
+@{
+    ViewBag.Title = "Document Types";
+}
+
+<div class="row">
+    <div class="col-lg-6">
+        <h2 class="title">Document Types</h2>
+    </div>
+    <div class="col-lg-6">
+        @using (Html.BeginForm("Index", "DocumentTypes", FormMethod.Get))
+        {
+            <p style="float: right">
+                @Html.TextBox("currentFilter", null, new { @class = "input-search", placeholder = "Find by name" })
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </p>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">
+        <p style="float: right">
+            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+        </p>
+    </div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })">
+                Name &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DisplayOrderSortParam, currentFilter = ViewBag.CurrentFilter })">
+                Display Order &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayOrder)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                @Html.ActionLink("Delete", "DeleteConfirmed", new { guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if(window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+}

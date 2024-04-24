@@ -1,0 +1,117 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class Dependent : BaseModel
+    {
+        #region -- Properties --
+
+        [Required]
+        [Display(Name = "Last Name")]
+        [StringLength(32)]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        [StringLength(32)]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        [StringLength(32)]
+        public string MiddleName { get; set; }
+
+        [StringLength(8)]
+        public string Suffix { get; set; }
+
+        [StringLength(32)]
+        public string Relationship { get; set; }
+
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        public int Age { get; set; }
+
+        [StringLength(32)]
+        public string Gender { get; set; }
+
+        [StringLength(32)]
+        public string CivilStatus { get; set; }
+
+        [StringLength(32)]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        public string Mobile { get; set; }
+
+        [StringLength(64)]
+        public string EmailAddress { get; set; }
+
+        [StringLength(64)]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        public string City { get; set; }
+
+        public string Zip { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        [StringLength(32)]
+        public string Occupation { get; set; }
+
+
+        public int? OptionalPlan { get; set; }
+
+        public int ApplicationId { get; set; }
+        [ForeignKey("ApplicationId")]
+        public Application Application { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped --
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}.", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+
+        #endregion
+
+        #region -- IValidatableObject --
+
+        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        //{
+        //    using (var db = new IdentityDataContext())
+        //    {
+        //        if (db.de.Any(t => (t.DateOfBirth == DateOfBirth && t.LastName == LastName && t.FirstName == FirstName && t.MiddleName == MiddleName && t.Id != Id) && !t.Deleted))
+        //        {
+        //            yield return new ValidationResult("Application already exist in database.");
+        //        }
+
+        //    }
+        //}
+
+        #endregion
+    }
+}

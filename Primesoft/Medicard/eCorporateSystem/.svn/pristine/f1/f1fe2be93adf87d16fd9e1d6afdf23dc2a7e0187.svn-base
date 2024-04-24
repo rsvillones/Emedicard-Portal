@@ -1,0 +1,23 @@
+﻿using Corelib.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib
+{
+    public class IdentityDataContext : IdentityDbContext<ApplicationUser>
+    {
+        public IdentityDataContext() : base("Medicard.eCorporateSystem", throwIfV1Schema: false)
+        {
+        }
+
+        public static IdentityDataContext Create()
+        {
+            return new IdentityDataContext();
+        }
+    }
+}

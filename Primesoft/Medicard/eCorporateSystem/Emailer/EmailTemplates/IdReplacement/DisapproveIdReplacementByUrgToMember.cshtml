@@ -1,0 +1,29 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+    string name = "";
+    string code = "";
+    if (Model.IdReplacement.RequestFor == Corelib.Enums.RequestFor.Dependent)
+    {
+        name = Model.IdReplacement.DependentName;
+        code = Model.IdReplacement.DependentCode;
+    }
+    else
+    {
+        name = Model.IdReplacement.MemberName;
+        code = Model.IdReplacement.MemberCode;
+    }
+}
+
+<p class="title">ID Replacement Request Declined</p>
+<p class="greetings">Dear Sir/Ma'am,</p>
+<p class="details">Your ID Replacement request has been declined by Medicard.</p>
+<br />
+<p class="details">Request Date: @Model.IdReplacement.RequestDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Request For: @Model.IdReplacement.RequestFor</p>
+<p class="details">Name: @name</p>
+<p class="details">Member Code: @code</p>
+<p class="details">Reason: @Model.IdReplacement.Reason.Description</p>
+<p class="details">Remarks: @Model.IdReplacement.Remarks</p>
+<br />
+<p class="details">MediCard Remarks:</p>
+<p class="details">@Model.Remarks</p>

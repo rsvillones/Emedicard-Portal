@@ -1,0 +1,102 @@
+@{
+    ViewBag.Title = "Benefits and Exclusions";
+}
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Account Information</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row spacing">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="col-lg-2">
+                                        <label>Accout Code:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>022202000-00260</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Company Name:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>PRIMESOFT PHILIPPINES, INC.</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Account Officer/Broker</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>ROBERTO CARINO</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Effectivity Date</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>03/22/2014</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Validity Date</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>03/21/2015</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Benefits</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row spacing">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="col-lg-12">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#HOPS" role="tab" data-toggle="tab">Hozpitalization and Out-Patient Services</a></li>
+                                            <li><a href="#PHS" role="tab" data-toggle="tab">Preventive Healthcare Services</a></li>
+                                            <li><a href="#ECS" role="tab" data-toggle="tab">Emergency Care Services</a></li>
+                                            <li><a href="#MFA" role="tab" data-toggle="tab">Member Financial Assistance</a></li>
+                                            <li><a href="#DCS" role="tab" data-toggle="tab">Dental Care Services</a></li>
+                                            <li><a href="#PEC" role="tab" data-toggle="tab">Pre-Existing Condition</a></li>
+                                            <li><a href="#POS" role="tab" data-toggle="tab">Point of Service</a></li>
+                                            <li><a href="#MAT" role="tab" data-toggle="tab">Maternity</a></li>
+                                            <li><a href="#ECU" role="tab" data-toggle="tab">Executive Check Up</a></li>
+                                            <li><a href="#EXC" role="tab" data-toggle="tab">Exclusions</a></li>
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="HOPS">Hozpitalization and Out-Patient Services</div>
+                                            <div class="tab-pane" id="PHS">Preventive Healthcare Services</div>
+                                            <div class="tab-pane" id="ECS">Emergency Care Services</div>
+                                            <div class="tab-pane" id="MFA">Member Financial Assistance</div>
+                                            <div class="tab-pane" id="DCS">Dental Care Services</div>
+                                            <div class="tab-pane" id="PEC">Pre-Existing Condition</div>
+                                            <div class="tab-pane" id="POS">Point of Service</div>
+                                            <div class="tab-pane" id="MAT">Maternity</div>
+                                            <div class="tab-pane" id="ECU">Executive Check Up</div>
+                                            <div class="tab-pane" id="EXC">Exclusions</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

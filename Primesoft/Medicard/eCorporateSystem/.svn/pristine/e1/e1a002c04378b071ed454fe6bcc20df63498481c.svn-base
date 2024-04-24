@@ -1,0 +1,52 @@
+﻿@model LegacyAccount
+
+<div class="row">
+    <div class="col-lg-12">
+        <div id="panel-title">Account Information</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="col-lg-2">
+                                        <label>Accout Code:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>@Model.Code&nbsp;</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Company Name:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>@Model.Name&nbsp;</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Account Officer/Broker:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>@(ViewBag.LegacyAgent != null ? String.Format("{0} {1} {2}", ViewBag.LegacyAgent.FirstName, ViewBag.LegacyAgent.MiddleInitial, ViewBag.LegacyAgent.LastName) : "")&nbsp;</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Effectivity Date:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>@Model.EffectivityDate&nbsp;</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Validity Date:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>@Model.ValidityDate&nbsp;</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

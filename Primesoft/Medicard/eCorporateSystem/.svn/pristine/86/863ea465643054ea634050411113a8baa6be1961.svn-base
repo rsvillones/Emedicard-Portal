@@ -1,0 +1,81 @@
+@using HtmlHelpers.BeginCollectionItem
+@using Corelib.Classes;
+@model Corelib.Models.ApplicationVerification
+@{
+    var option = new List<string>(ViewBag.Options);
+    ViewBag.AppliedPlan = new SelectList(option.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.AppliedPlan);
+    ViewBag.DependentAppliedPlan = new SelectList(option.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.DependentAppliedPlan);
+
+    var secondOptions = new List<string>(ViewBag.SecondOptions);
+    ViewBag.Gender = new SelectList(secondOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.Gender);
+
+    var nextOption = new List<string>(ViewBag.NextOption);
+    ViewBag.CivilStatus = new SelectList(nextOption.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.CivilStatus);
+        
+    var dateOfBirth = ExcelTools.GetDateFormat(Model.DateOfBirth);
+    var effectivityDate = ExcelTools.GetDateFormat(Model.EffectivityDate);
+    var validityDate = ExcelTools.GetDateFormat(Model.ValidityDate);
+    var dateHired = ExcelTools.GetDateFormat(Model.DateHired);
+}
+@using (Html.BeginCollectionItem("ApplicationVerifications"))
+{
+    <td class="body-cell col">
+        @Html.HiddenFor(model => model.FileName)
+        @Html.HiddenFor(model => model.Row)
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.EditorFor(model => model.EmailAddress)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.EmployeeNumber)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Area)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.CostCenter)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.LastName)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.FirstName)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.MiddleName)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Suffix)
+    </td>
+    <td class="body-cell col3">
+        @*@Html.EditorFor(model => model.Gender)*@
+        @Html.DropDownList("Gender", "--Select--")
+    </td>
+    <td class="body-cell col"> 
+        @Html.TextBoxFor(model => dateOfBirth)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Age)
+    </td>
+    <td class="body-cell col4">
+        @*@Html.EditorFor(model => model.CivilStatus)*@
+        @Html.DropDownList("CivilStatus", "-- Select --")
+    </td>
+    <td class="body-cell col">
+        @Html.TextBoxFor(model => effectivityDate)
+    </td>
+    <td class="body-cell col">
+        @Html.TextBoxFor(model => validityDate) 
+    </td>
+    <td class="body-cell col">        
+        @Html.TextBoxFor(model => dateHired)
+    </td>
+    <td class="body-cell col2">
+        @Html.DropDownList("AppliedPlan","--Select--")
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Dependent)
+    </td>
+    <td class="body-cell col2">
+        @Html.DropDownList("DependentAppliedPlan", "-- Select --")
+    </td>
+}

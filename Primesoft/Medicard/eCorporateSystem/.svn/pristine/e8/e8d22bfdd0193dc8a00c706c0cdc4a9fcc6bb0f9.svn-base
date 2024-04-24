@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "SingleEndorsement";
+}
+
+<h2>SingleEndorsement</h2>
+

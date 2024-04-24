@@ -1,0 +1,79 @@
+﻿@model WebUI.Areas.Member.Models.AdditionalDependentMedicalHistoryViewModel
+@using HtmlHelpers.BeginCollectionItem
+
+@{
+    ViewBag.Title = "Medical History";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("MedicalHistory", "AdditionalDependents", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Fill up Medical History</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            @foreach (var questionGroup in Model.AdditionalDependentMedicalHistories.Select(t => t.Question.QuestionGroup).Distinct())
+                            {
+                                <div class="row form-padding">
+                                    <div class="col-lg-12">
+                                        <label>@questionGroup.Question</label>
+                                        <table class="table" style="margin-bottom: 0 !important;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        &nbsp;
+                                                    </th>
+                                                    <th style="width: 5%">
+                                                        Yes
+                                                    </th>
+                                                    <th style="width: 5%">
+                                                        No
+                                                    </th>
+                                                    <th style="width: 50%">
+                                                        Remarks
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var medicalHistory in Model.AdditionalDependentMedicalHistories.Where(t => t.Question.QuestionGroupId == questionGroup.Id).OrderBy(t => t.Question.DisplayOrder).ThenBy(t => t.Question.Description))
+                                                {
+                                                    using (Html.BeginCollectionItem("AdditionalDependentMedicalHistories"))
+                                                    {
+                                                        Html.RenderPartial("_Questions", medicalHistory);
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="row form-padding">
+                                <div class="col-lg-12">
+                                    <div class="no-color pull-right">
+                                        @if (!(bool)ViewBag.IsReadOnlyUser && !ViewBag.ReadOnly)
+                                        {
+                                            <input type="submit" value="Save" class="btn btn-primary" />
+                                            <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                                        }
+                                        @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

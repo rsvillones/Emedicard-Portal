@@ -1,0 +1,131 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewQuestionGroups, CanAddQuestionGroups, CanEditQuestionGroups, CanDeleteQuestionGroups")]
+    public class QuestionGroupsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+
+        #endregion
+        
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewQuestionGroups")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var questionGroups = from t in db.QuestionGroups select t;
+            if (!string.IsNullOrEmpty(currentFilter))
+            {
+                questionGroups = questionGroups.Where(t => t.Question.Contains(currentFilter));
+            }
+
+            Helper.SetSortParameters<QuestionGroup>(this, ref questionGroups, sortOrder, currentFilter, new SortParameter() { PropertyName = "DisplayOrder" }, new List<SortParameter>() { new SortParameter() { PropertyName = "Question" } });
+            
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            return View(questionGroups.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddQuestionGroups")]
+        public ActionResult Create()
+        {
+            var model = new QuestionGroup();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddQuestionGroups")]
+        public async Task<ActionResult> Create([Bind(Include = "Id, Question, DisplayOrder, Guid")] QuestionGroup questionGroup)
+        {
+            if (ModelState.IsValid)
+            {
+                db.QuestionGroups.Add(questionGroup);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            return View(questionGroup);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditQuestionGroups")]
+        public async Task<ActionResult> Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var question = await db.QuestionGroups.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (question == null) return HttpNotFound();
+
+            return View(question);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditQuestionGroups")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Question, DisplayOrder, Guid, CrById, Timestamp")] QuestionGroup questionGroup)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(questionGroup).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(questionGroup);
+        }
+
+        // GET: Questions/Delete/5
+        [Authorize(Roles = "SysAd, CanDeleteQuestionGroups")]
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var questionGroup = await db.QuestionGroups.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (questionGroup == null) return HttpNotFound();
+
+            return View(questionGroup);
+        }
+
+        // POST: Questions/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanDeleteQuestionGroups")]
+        public async Task<ActionResult> DeleteConfirmed(Guid guid)
+        {
+            var questionGroup = await db.QuestionGroups.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.QuestionGroups.Remove(questionGroup);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index", new { messageType = "Success", message = "Question group successfully deleted." });
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

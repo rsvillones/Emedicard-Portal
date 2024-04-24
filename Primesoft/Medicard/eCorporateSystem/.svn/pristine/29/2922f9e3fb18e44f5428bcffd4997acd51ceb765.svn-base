@@ -1,0 +1,72 @@
+﻿@model PagedList.IPagedList<LegacyAccount>
+
+<div id="MyAccountsContainer">
+    <div class="row">
+        <div class="col-lg-7 pager-spacing">
+            @if (Model.PageCount > 1)
+            {
+                @Html.PagedListPager(Model, page => Url.Action("GetMyAccounts", "Items", new { page, searchAccount = ViewBag.SearchValue }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.ClassicPlusFirstAndLast, new AjaxOptions() { UpdateTargetId = "MyAccountsContainer" }))
+            }
+            &nbsp;
+        </div>
+        @using (Html.BeginForm("Index", "AccountManager", new { area = "CorporateAdministrator" }, FormMethod.Get, new { }))
+        {
+            <div class="col-lg-5">
+                <p style="float: right">
+                    <input type="text" value="@ViewBag.SearchValue" class="input-search" style="width:300px" name="searchAccount" placeholder="Search by Code or Name">
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                </p>
+            </div>
+        }
+    </div>
+    <table class="table table-fixed-left">
+        <thead>
+            <tr>
+                <th style="width:50%">
+                    Account Name
+                </th>
+                <th style="width:40%">
+                    Account Code
+                </th>
+                <th style="width:10%">
+                    &nbsp;
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="scrollable-tables" style="margin-top: -3px !important;height: 230px !important;margin-bottom: 0 !important">
+        <table class="table table-custom">
+            <tbody>
+                @foreach (var legacyAccount in Model)
+                {
+                    <tr>
+                        <td style="width:51%">
+                            @legacyAccount.Name
+                        </td>
+                        <td style="width:39%">
+                            @legacyAccount.Code
+                        </td>
+                        <td style="width:10%">
+                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountInformation")
+                                || User.IsInRole("CanViewBenefitsAndExclusions")
+                                || User.IsInRole("CanViewUtilizationReporting")
+                                || User.IsInRole("CanViewUtilizationReportExceptionForUser")
+                                || User.IsInRole("CanViewUtilizationReportExceptionForPlan")
+                                || User.IsInRole("CanViewActiveMembers")
+                                || User.IsInRole("CanViewResignedMembers")
+                                || User.IsInRole("CanViewMembershipEndorsements")
+                                || User.IsInRole("CanViewEndorsementApprovals")
+                                || User.IsInRole("CanViewEndorsementListings")
+                                || User.IsInRole("CanViewEndorsementHistories")
+                                || User.IsInRole("CanViewApplicationManagement")
+                                || User.IsInRole("CanViewRequestManagement"))
+                            {
+                                <a href="@(Url.Action("Index", "AccountInformation", new { area = "CorporateAdministrator", accountCode = legacyAccount.Code }))" class="btn btn-primary btn-xs">Manage Account</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

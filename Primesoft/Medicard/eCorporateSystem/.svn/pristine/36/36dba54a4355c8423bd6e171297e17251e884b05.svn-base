@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class MedicalHistoryController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        public override ActionResult Index()
+        {
+            var returnValue = base.Index();
+            if (returnValue != null) return returnValue;
+
+            Helper.IsMedicalHistoryComplete(db, this.Application.Id);
+
+            return View(db.MedicalHistories.Where(t => t.ApplicationId == this.Application.Id).ToList());
+        }
+
+        public async Task<ActionResult> SaveMedicalHistory(Guid guid, bool answer, string remarks)
+        {
+            var returnValue = base.Index();
+            if (returnValue != null) return returnValue;
+
+            var medicalHistory = db.MedicalHistories.FirstOrDefault(t => t.Guid == guid);
+            if (medicalHistory == null || medicalHistory.ApplicationId != this.Application.Id) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var result = new Dictionary<string, object>();
+            medicalHistory.Answer = answer;
+            medicalHistory.Remarks = remarks;
+            try
+            {
+                await db.SaveChangesAsync();
+                result.Add("success", true);
+            }
+            catch (Exception ex)
+            {
+                result.Add("success", false);
+                result.Add("message", ex.Message);
+            }
+
+            return this.Json(result);
+
+        }
+
+        #endregion
+    }
+}

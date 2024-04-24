@@ -1,0 +1,12 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Amendment Request for Evaluation</p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<br />
+<p class="details">Amendment Request has been submitted for your evaluation, details of which are as follows:</p>
+<p class="details">Company Name: @Model.CompanyName</p>
+<p class="details">Member Code: @Model.Amendment.MemberCode</p>
+<p class="details">Member Name: @Model.Amendment.MemberName</p>

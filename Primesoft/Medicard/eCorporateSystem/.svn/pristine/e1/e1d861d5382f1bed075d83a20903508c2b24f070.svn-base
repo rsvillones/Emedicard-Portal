@@ -1,0 +1,21 @@
+﻿@model Corelib.Models.Application
+<td>@Html.EditorFor(model => model.EmailAddress)</td>
+<td>@Html.EditorFor(model => model.EmployeeNumber)</td>
+<td>@Html.EditorFor(model => model.Area)</td>
+<td>@Html.EditorFor(model => model.CostCenter)</td>
+<td>@Html.EditorFor(model => model.LastName)</td>
+<td>@Html.EditorFor(model => model.FirstName)</td>
+<td>@Html.EditorFor(model => model.MiddleName)</td>
+<td>@Html.EditorFor(model => model.Suffix)</td>
+<td>@Html.EditorFor(model => model.Gender)</td>
+<td>@Html.EditorFor(model => model.DateOfBirth)</td>
+<td>@Html.EditorFor(model => model.Age)</td>
+<td>@Html.EditorFor(model => model.CivilStatus)</td>
+<td>@Html.EditorFor(model => model.EffectivityDate)</td>
+<td>@Html.EditorFor(model => model.ValidityDate)</td>
+<td>@Html.EditorFor(model => model.DateHired)</td>
+<td>@Html.EditorFor(model => model.AppliedPlan)</td>
+<td>@Html.EditorFor(model => model.OptionalPlan)</td>
+<td>@Html.EditorFor(model => model.Dependent)</td>
+<td>@Html.EditorFor(model => model.DependentAppliedPlan)</td>
+<td>@Html.EditorFor(model => model.DependentOptionalPlan)</td>

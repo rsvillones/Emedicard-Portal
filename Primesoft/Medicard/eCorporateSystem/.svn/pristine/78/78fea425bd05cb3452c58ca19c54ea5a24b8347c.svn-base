@@ -1,0 +1,51 @@
+﻿@model ReimbursementWaitingForHospitalBill
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <div class="col-lg-12">
+                @Html.TextAreaFor(model => model.BoxTwoRemark, new { @class = "form-control white-readonly", @readonly = "readonly" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.HospitalName, htmlAttributes: new { @class = "control-label col-lg-5" })
+            <div class="col-lg-7">
+                @Html.DisplayFor(model => model.HospitalName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.LoaNumber, htmlAttributes: new { @class = "control-label col-lg-5" })
+            <div class="col-lg-7">
+                @Html.DisplayFor(model => model.LoaNumber, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.LackingDate, htmlAttributes: new { @class = "control-label col-lg-5" })
+            <div class="col-lg-7">
+                @Html.DisplayFor(model => model.LackingDate, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReleasedDate, htmlAttributes: new { @class = "control-label col-lg-5" })
+            <div class="col-lg-7">
+                @Html.DisplayFor(model => model.ReleasedDate, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model UtilizationReportExceptionForUser
+@{
+    var memberList = new SelectList(ViewBag.Members, "Code", "FullName", Model.MemberCode);
+    var userList = new SelectList(ViewBag.Users, "Id", "Name");
+}
+<tr>
+    @using (Html.BeginCollectionItem("UtilizationReportExceptionForUsers"))
+    {
+        <td style="width: 50%">
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Guid)
+            @Html.HiddenFor(model => model.CrBy)
+            @Html.HiddenFor(model => model.CrById)
+            @Html.HiddenFor(model => model.CrDate)
+            @Html.HiddenFor(model => model.AccountCode)
+
+            @Html.DropDownList("MemberCode", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlDropDownAttributeForUser as object)
+            @Html.ValidationMessageFor(model => model.MemberCode, null, new { @class = "table-error" })
+        </td>
+    <td style="width: 45%">
+        @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddUtilizationReportExceptionForUser") || User.IsInRole("CanEditUtilizationReportExceptionForUser"))))
+        {
+            @Html.HiddenFor(model => model.UserIds)
+            @Html.DropDownList("UserList", (IEnumerable<SelectListItem>)userList, new { @class = ".users selectPickerUser span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + Model.UserIdsForSelectPicker + "]" })
+            @Html.ValidationMessageFor(model => model.UserIds, null, new { @class = "table-error" })
+        }
+        else
+        {
+            @Html.HiddenFor(model => model.UserIds)
+            @Html.DropDownList("UserList", (IEnumerable<SelectListItem>)userList, new { @class = ".users selectPickerUser span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + Model.UserIdsForSelectPicker + "]", @disabled = true })
+            @Html.ValidationMessageFor(model => model.UserIds, null, new { @class = "table-error" })
+        }
+    </td>
+    <td style="width: 5%">
+        @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddUtilizationReportExceptionForUser") || User.IsInRole("CanDeleteUtilizationReportExceptionForUser"))))
+        {
+            <a href="javascript:void(0);" onclick="deleteMember(this);" class="btn btn-danger">Delete</a>
+        }
+    </td>
+    }
+</tr>

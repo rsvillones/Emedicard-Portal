@@ -1,0 +1,67 @@
+@model Account
+<tr>
+    @using (Html.BeginCollectionItem("Accounts"))
+    {
+        <td style="width:55%">
+            @Html.HiddenFor(t => t.Id)
+            @Html.HiddenFor(t => t.Guid)
+            @Html.HiddenFor(t => t.Timestamp)
+            @Html.HiddenFor(t => t.Code, new { @class = "form-control" })
+            @Html.HiddenFor(t => t.Name, new { @class = "form-control" })
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#@Html.IdFor(t => t.Code)').select2({
+                        placeholder: "Search for a Account",
+                        minimumInputLength: 1,
+                        ajax: {
+                            url: '@Url.Action("GetLegacyAccounts")',
+                            dataType: 'json',
+                            data: function (term, page) {
+                                return {
+                                    q: term, // search term
+                                    page_limit: 10
+                                };
+                            },
+                            results: function (data, page) { // parse the results into the format expected by Select2.
+                                // since we are using custom formatting functions we do not need to alter remote JSON data
+                                return { results: data };
+                            }
+                        }
+                    });
+                    $('#@Html.IdFor(t => t.Code)').on('select2-selecting', function (e) {
+                        $('#@Html.IdFor(t => t.Name)').val(e.choice.text);
+                    });
+
+                    $("#@Html.IdFor(t => t.Code)").select2('data', { id: '@Model.Code', text: '@Model.Name' });
+
+                    @if (ViewBag.DisableDropdown != null && ViewBag.DisableDropdown)
+                    {
+                        @:$("#@Html.IdFor(t => t.Code)").select2('readonly', true);
+                                        }
+                });
+            </script>
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsReadOnly)
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsCorporateAdmin)
+        </td>
+        <td style="width:13%;text-align: center !important;">
+            @if (User.IsInRole("SysAd"))
+            {
+                @Html.EditorFor(t => t.IsUnderWriter)
+            }
+            else
+            {
+                @Html.HiddenFor(t => t.IsUnderWriter)
+            }
+        </td>
+        <td style="width:6%">
+            @if (ViewBag.DisableDropdown == null || !ViewBag.DisableDropdown)
+            {
+                @Html.ActionLink("Delete", "Delete", null, new { @class = "btn btn-danger btn-xs", @onclick = "$(this).parent().parent().remove(); return false;" })
+            }
+        </td>
+    }
+</tr>

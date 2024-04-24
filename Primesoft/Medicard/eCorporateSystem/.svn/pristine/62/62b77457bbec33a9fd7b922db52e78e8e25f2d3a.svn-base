@@ -1,0 +1,36 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">MEMBER FOR DELETION</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">Endorsement cancellation was submitted with the following details:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count: @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<table>
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Resign Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cancelledMember in Model.EndorsementBatch.CancelledMembers)
+        {
+            <tr>
+                <td>@cancelledMember.LastName</td>
+                <td>@cancelledMember.FirstName</td>
+                <td>@cancelledMember.MiddleName</td>
+                <td>@cancelledMember.DateCancelled.ToString("MM/dd/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

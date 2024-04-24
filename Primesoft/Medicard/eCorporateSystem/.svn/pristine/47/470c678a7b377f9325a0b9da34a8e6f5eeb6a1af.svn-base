@@ -1,0 +1,57 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    public class BaseMemberController : Controller
+    {
+        #region -- Variable Declarations --
+
+        protected IdentityDataContext db = new IdentityDataContext();
+
+        #endregion
+
+        #region -- Properties --
+
+        protected Corelib.Models.Member Member { get; set; }
+
+        #endregion
+
+        #region -- Action Result --
+
+        public ActionResult ValidateUser()
+        {
+            this.Member = db.Members.FirstOrDefault(t => t.UserName == HttpContext.User.Identity.Name);
+            if (this.Member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ViewBag.ReadOnly = (this.Member.Status != MembershipStatus.New) && (this.Member.Status != MembershipStatus.Saved);
+            ViewBag.MembershipStatus = this.Member.Status;
+
+            return null;
+        }
+        
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

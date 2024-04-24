@@ -1,0 +1,98 @@
+﻿
+using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel;
+
+namespace Corelib.Enums
+{
+    public enum Gender
+    {
+        Male,
+        Female
+    }
+
+    public enum EndorsementBatchStatus
+    {
+        New,
+        ForEmployeeUpdating,
+        PartiallyForProcessing,
+        Processing,
+        Completed,
+        Cancelled
+    }
+
+    public enum MembershipStatus
+    {
+        New,
+        Saved,
+        SubmittedToCorporateAdmin,
+        CorporateAdminApproved,
+        CorporateAdminDisapproved,
+        ForProcessing,
+        Approved,
+        Cancelled,
+        WithActionMemo
+    }
+
+    public enum UrgSetting
+    {
+        All,
+        Partial,
+        Principal
+    }
+
+    public enum RequestFor
+    {
+        Account,
+        Applicant,
+        Dependent,
+        Principal
+    }
+
+    public enum RequestDataType
+    {
+        [Display(Name = "Last Name")]
+        LastName,
+        [Display(Name = "First Name")]
+        FirstName,
+        [Display(Name = "Middle Name")]
+        MiddleName,
+        [Display(Name = "Civil Status")]
+        CivilStatus,
+        [Display(Name = "Address (Street, City, Province, Area Code)")]
+        Address,
+        Position,
+        [Display(Name = "Telephone Number")]
+        Telephone,
+        [Display(Name = "Cost Centre")]
+        CostCenter,
+        Area,
+        [Display(Name = "Hiring Date")]
+        DateHired,
+        [Display(Name = "Effectivity Date")]
+        EffectivityDate
+    }
+
+    public enum RequestType
+    {
+        Amendment,
+        IdReplacement
+    }
+
+    public enum RequestStatus
+    {
+        Saved,
+        Submitted,
+        ForProcessing,
+        HrApproved,
+        HrDisapproved,
+        HrForProcessing,
+        Approved,
+        Disapproved,
+        Cancelled
+    }
+}

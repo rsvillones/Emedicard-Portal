@@ -1,0 +1,75 @@
+@{
+    ViewBag.Title = "Membership Endorsements";
+}
+
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Benefits</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="col-lg-12">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#SE" role="tab" data-toggle="tab">Single Endorsement</a></li>
+                                            <li><a href="#BU" role="tab" data-toggle="tab">Batch Uploading</a></li>
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="SE">Single Endorsement</div>
+                                            <div class="tab-pane" id="BU">
+                                                <form class="form-horizontal">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <div class="col-lg-2">
+                                                                    <label>Accout Code:</label>
+                                                                </div>
+                                                                <div class="col-lg-10">
+                                                                    <label>022202000-00260</label>
+                                                                </div>
+                                                                <div class="col-lg-2">
+                                                                    <label>Company Name:</label>
+                                                                </div>
+                                                                <div class="col-lg-10">
+                                                                    <label>PRIMESOFT PHILIPPINES, INC.</label>
+                                                                </div>
+                                                                <div class="col-lg-2">
+                                                                    <label>Account Officer/Broker</label>
+                                                                </div>
+                                                                <div class="col-lg-10">
+                                                                    <label>ROBERTO CARINO</label>
+                                                                </div>
+                                                                <div class="col-lg-2">
+                                                                    <label>Effectivity Date</label>
+                                                                </div>
+                                                                <div class="col-lg-10">
+                                                                    <label>03/22/2014</label>
+                                                                </div>
+                                                                <div class="col-lg-2">
+                                                                    <label>Validity Date</label>
+                                                                </div>
+                                                                <div class="col-lg-10">
+                                                                    <label>03/21/2015</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

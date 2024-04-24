@@ -1,0 +1,2035 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using System.Threading;
+using System.Security.Principal;
+using Corelib.Enums;
+using System.Diagnostics;
+using System.Text;
+using OfficeOpenXml.DataValidation;
+using System.Drawing;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewMembershipEndorsements, CanViewMembershipCancellations, CanViewMembershipRenewals, CanViewNewMemberships, CanAddMembershipCancellations, CanEditMembershipCancellations, CanDeleteMembershipCancellations, CanAddMembershipRenewals, CanEditMembershipRenewals, CanDeleteMembershipRenewals, CanAddNewMemberships, CanEditNewMemberships, CanDeleteNewMemberships")]
+    public class EndorsementController : BaseAccountController
+    {
+        #region -- Variable Declarations --
+
+        private struct ProcessBatchParameter
+        {
+            public EndorsementBatch EndorsementBatch { get; set; }
+            public string AccountCode { get; set; }
+            public IPrincipal User { get; set; }
+        }
+
+        private struct EndorsementLogParameter
+        {
+            public string AccountCode { get; set; }
+            public Guid EndorsementBatchGuid { get; set; }
+            public int EndorsementBatchId { get; set; }
+            public string Path { get; set; }
+        }
+
+        private struct RenewalDownloadParameter
+        {
+            public string AccountCode { get; set; }
+            public bool IsIncludeActiveMembers { get; set; }
+            public Guid EndorsementBatchGuid { get; set; }
+        }
+
+        private const int NEW_EMAIL_ADDRESS = 1;
+        private const int NEW_EMPLOYEE_NUMBER = NEW_EMAIL_ADDRESS + 1;
+        private const int NEW_AREA = NEW_EMPLOYEE_NUMBER + 1;
+        private const int NEW_COST_CENTER = NEW_AREA + 1;
+        private const int NEW_LAST_NAME = NEW_COST_CENTER + 1;
+        private const int NEW_FIRST_NAME = NEW_LAST_NAME + 1;
+        private const int NEW_MIDDLE_NAME = NEW_FIRST_NAME + 1;
+        private const int NEW_DESIGNATION = NEW_MIDDLE_NAME + 1;
+        private const int NEW_LEVEL = NEW_DESIGNATION + 1;
+        private const int NEW_SUFFIX = NEW_LEVEL + 1;
+        private const int NEW_GENDER = NEW_SUFFIX + 1;
+        private const int NEW_DATE_OF_BIRTH = NEW_GENDER + 1;
+        private const int NEW_AGE = NEW_DATE_OF_BIRTH + 1;
+        private const int NEW_CIVIL_STATUS = NEW_AGE + 1;
+        private const int NEW_EFFECTIVITY_DATE = NEW_CIVIL_STATUS + 1;
+        //private const int NEW_VALIDITY_DATE = NEW_EFFECTIVITY_DATE + 1;
+        private const int NEW_DATE_HIRED = NEW_EFFECTIVITY_DATE + 1;
+        private const int NEW_APPLIED_PLAN = NEW_DATE_HIRED + 1;
+        private const int NEW_OPTIONAL_PLAN = NEW_APPLIED_PLAN + 1;
+        private const int NEW_NUMBER_OF_ALLOWED_DEPENDENTS = NEW_OPTIONAL_PLAN + 1;
+        private const int NEW_DEPENDENT_APPLIED_PLAN = NEW_NUMBER_OF_ALLOWED_DEPENDENTS + 1;
+        private const int NEW_DEPENDENT_OPTIONAL_PLAN = NEW_DEPENDENT_APPLIED_PLAN + 1;
+
+        private const int RENEWAL_MEMBER_CODE = 1;
+        private const int RENEWAL_LAST_NAME = RENEWAL_MEMBER_CODE + 1;
+        private const int RENEWAL_FIRST_NAME = RENEWAL_LAST_NAME + 1;
+        private const int RENEWAL_MIDDLE_NAME = RENEWAL_FIRST_NAME + 1;
+        private const int RENEWAL_EMAIL = RENEWAL_MIDDLE_NAME + 1;
+        private const int RENEWAL_DATE_OF_BIRTH = RENEWAL_EMAIL + 1;
+        private const int RENEWAL_AGE = RENEWAL_DATE_OF_BIRTH + 1;
+        private const int RENEWAL_AREA = RENEWAL_AGE + 1;
+        private const int RENEWAL_EMPLOYEE_NUMBER = RENEWAL_AREA + 1;
+        private const int RENEWAL_APPLIED_PLAN = RENEWAL_EMPLOYEE_NUMBER + 1;
+        private const int RENEWAL_ALLOWED_PLANS = RENEWAL_APPLIED_PLAN + 1;
+        private const int RENEWAL_TYPE = RENEWAL_ALLOWED_PLANS + 1;
+        private const int RENEWAL_PRINCIPAL_MEMBER_CODE = RENEWAL_TYPE + 1;
+        private const int RENEWAL_RELATIONSHIP = RENEWAL_PRINCIPAL_MEMBER_CODE + 1;
+        private const int RENEWAL_GENDER = RENEWAL_RELATIONSHIP + 1;
+        private const int RENEWAL_CIVIL_STATUS = RENEWAL_GENDER + 1;
+        private const int RENEWAL_WAIVER = RENEWAL_CIVIL_STATUS + 1;
+        private const int RENEWAL_EFFECTIVITY_DATE = RENEWAL_WAIVER + 1;
+        private const int RENEWAL_VALIDITY_DATE = RENEWAL_EFFECTIVITY_DATE + 1;
+        private const int RENEWAL_STATUS = RENEWAL_VALIDITY_DATE + 1;
+        private const int RENEWAL_REMARKS = RENEWAL_STATUS + 1;
+
+        private const int CANCELLATION_MEMBER_CODE = 1;
+        private const int CANCELLATION_LAST_NAME = CANCELLATION_MEMBER_CODE + 1;
+        private const int CANCELLATION_FIRST_NAME = CANCELLATION_LAST_NAME + 1;
+        private const int CANCELLATION_DATE_CANCELLED = CANCELLATION_FIRST_NAME + 1;
+
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewMembershipEndorsements, CanViewMembershipCancellations, CanViewMembershipRenewals, CanViewNewMemberships")]
+        public ActionResult Index(string accountCode, int? page, string messageType, string message, string endorsementType, string fileName, DateTime? dateCreated)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.EndorsementBatches.Where(t => t.AccountCode == this.LegacyAccount.Code && t.Status != EndorsementBatchStatus.Cancelled && !t.Deleted &&
+                (
+                    t.EndorsementType == Constants.NEW_ENDORSEMENT_TYPE
+                    || t.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE
+                    || t.EndorsementType == Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE
+                )).OrderByDescending(t => t.Date).ToList();
+
+            model = GetEndorsementBatches(model);
+
+            if (!string.IsNullOrEmpty(endorsementType)) model = model.Where(t => t.EndorsementType.Contains(endorsementType)).ToList();
+            if (!string.IsNullOrEmpty(fileName)) model = model.Where(t => t.Filename.Contains(fileName)).ToList();
+            var dateSting = "";
+            if (dateCreated != null)
+            {
+                model = model.Where(t => t.Date.Date == dateCreated.Value.Date).ToList();
+                dateSting = dateCreated.Value.ToString("MM/dd/yyyy");
+            }
+
+            ViewBag.EndorsementType = endorsementType;
+            ViewBag.FileName = fileName;
+            ViewBag.DateSting = dateSting;
+
+            ViewBag.EndorsementType = new SelectList(new List<string>() { Constants.NEW_ENDORSEMENT_TYPE, Constants.RENEWAL_ENDORSEMENT_TYPE, Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE }, endorsementType);
+            ViewBag.SearchValue = String.Format("{0} {1} {2}", endorsementType, fileName, dateSting).Trim();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddNewMemberships, CanEditNewMemberships, CanDeleteNewMemberships")]
+        public ActionResult BatchUpload(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            EndorsementBatch model;
+            if (guid != null && db.EndorsementBatches.Any(t => t.Guid == guid))
+            {
+                model = db.EndorsementBatches.Include(t => t.Members).FirstOrDefault(t => t.Guid == guid);
+                ViewBag.Genders = new List<string>() { "Male", "Female" };
+                ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+                ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+                ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+                ViewBag.ViewData = true;
+
+                db.Database.ExecuteSqlCommand("SpCore_ViewEndorsementBatch @EndorsementBatchGuid=@p0", model.Guid);
+            }
+            else
+            {
+                model = new EndorsementBatch()
+                {
+                    Status = Corelib.Enums.EndorsementBatchStatus.New
+                };
+            }
+
+            base.ReadOnlyAttribute(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddNewMemberships, CanEditNewMemberships, CanDeleteNewMemberships")]
+        public ActionResult BatchUpload(EndorsementBatch endorsementBatch, string accountCode, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            endorsementBatch.Date = DateTime.Now;
+            endorsementBatch.EndorsementType = Constants.NEW_ENDORSEMENT_TYPE;
+            endorsementBatch.BatchType = "Batch Upload";
+            endorsementBatch.AccountCode = accountCode;
+
+            if (ModelState.IsValid)
+            {
+                if (endorsementBatch.Id == 0)
+                {
+                    db.EndorsementBatches.Add(endorsementBatch);
+                }
+                else
+                {
+                    db.Entry(endorsementBatch).State = EntityState.Modified;
+                }
+
+                endorsementBatch.EndorsementCount = endorsementBatch.Members != null ? endorsementBatch.Members.Count(t => !t.Deleted) : 0;
+                db.SaveChanges();
+
+                db.Database.ExecuteSqlCommand("SpCore_SaveUploadedEndorsementBatch @EndorsementBatchGuid=@p0", endorsementBatch.Guid);
+
+                if (submit == "Save")
+                {
+                    return RedirectToAction("Index", new { accountCode = accountCode });
+                }
+                else
+                {
+                    return RedirectToAction("ProcessBatch", new { guid = endorsementBatch.Guid, accountCode = accountCode });
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+            ViewBag.ViewData = true;
+
+            return View(endorsementBatch);
+        }
+
+        [Authorize(Roles = "SysAd, CanAddMembershipRenewals, CanEditMembershipRenewals, CanDeleteMembershipRenewals")]
+        public ActionResult Renewal(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            EndorsementBatch model;
+            if (guid != null && db.EndorsementBatches.Any(t => t.Guid == guid))
+            {
+                model = db.EndorsementBatches
+                    .Include(t => t.RenewalMembers)
+                    .FirstOrDefault(t => t.Guid == guid);
+                ViewBag.Genders = new List<string>() { "Male", "Female" };
+                ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+                ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+                ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+                ViewBag.ViewData = true;
+
+                db.Database.ExecuteSqlCommand("SpCore_ViewRenewalEndorsementBatch @EndorsementBatchGuid=@p0", model.Guid);
+            }
+            else
+            {
+                model = new EndorsementBatch()
+                {
+                    //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber()
+                };
+            }
+
+            base.ReadOnlyAttribute(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddMembershipRenewals, CanEditMembershipRenewals, CanDeleteMembershipRenewals")]
+        public ActionResult Renewal(EndorsementBatch endorsementBatch, string accountCode, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            endorsementBatch.Date = DateTime.Now;
+            endorsementBatch.EndorsementType = Constants.RENEWAL_ENDORSEMENT_TYPE;
+            endorsementBatch.BatchType = "Batch Upload";
+            endorsementBatch.AccountCode = accountCode;
+            endorsementBatch.Status = Corelib.Enums.EndorsementBatchStatus.New;
+
+            if (ModelState.IsValid)
+            {
+                if (endorsementBatch.Id == 0)
+                {
+                    db.EndorsementBatches.Add(endorsementBatch);
+                }
+                else
+                {
+                    db.Entry(endorsementBatch).State = EntityState.Modified;
+                }
+                endorsementBatch.EndorsementCount = endorsementBatch.RenewalMembers != null ? endorsementBatch.RenewalMembers.Count(t => !t.Deleted) : 0;
+                db.SaveChanges();
+
+                db.Database.ExecuteSqlCommand("SpCore_SaveUploadedRenewalEndorsementBatch @EndorsementBatchGuid=@p0", endorsementBatch.Guid);
+
+                if (submit == "Save")
+                {
+                    return RedirectToAction("Index", new { accountCode = accountCode });
+                }
+                else
+                {
+                    return RedirectToAction("ProcessBatch", new { guid = endorsementBatch.Guid, accountCode = accountCode });
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+            ViewBag.ViewData = true;
+
+            return View(endorsementBatch);
+        }
+
+        [Authorize(Roles = "SysAd, CanAddNewMemberships, CanEditNewMemberships, CanDeleteNewMemberships")]
+        public ActionResult CancelEndorsementBatch(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Include(t => t.RenewalMembers)
+                .Include(t => t.CancelledMembers)
+                .FirstOrDefault(t => t.Guid == guid);
+            if (endorsementBatch == null || endorsementBatch.AccountCode != accountCode || (endorsementBatch.Status != EndorsementBatchStatus.New && endorsementBatch.Status != EndorsementBatchStatus.ForEmployeeUpdating)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var userIds = endorsementBatch.Members.Select(t => t.UserId).Where(t => !string.IsNullOrEmpty(t)).ToList();
+
+            endorsementBatch.Status = EndorsementBatchStatus.Cancelled;
+            foreach (var member in endorsementBatch.Members)
+            {
+                member.Status = MembershipStatus.Cancelled;
+            }
+            foreach (var cancelledMember in endorsementBatch.CancelledMembers)
+            {
+                cancelledMember.Status = CancelledMembershipStatus.Cancelled;
+            }
+            //db.Members.RemoveRange(endorsementBatch.Members);
+            //db.RenewalMembers.RemoveRange(endorsementBatch.RenewalMembers);
+            //db.CancelledMembers.RemoveRange(endorsementBatch.CancelledMembers);
+            foreach (var userId in userIds)
+            {
+                var user = db.Users.FirstOrDefault(t => t.Id == userId);
+                if (user != null)
+                {
+                    db.Users.Remove(user);
+                }
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index", new { accountCode = accountCode });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ValidateUploadedExcel(EndorsementBatch endorsementBatch, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid) { }
+
+            var principalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = principalPlans;
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+            if (endorsementBatch.Members != null)
+            {
+                foreach (var member in endorsementBatch.Members)
+                {
+                    member.EndorsementBatchId = endorsementBatch.Id;
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            return View("BatchUpload", endorsementBatch);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ValidateUploadedRenewalExcel(EndorsementBatch endorsementBatch, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+            if (endorsementBatch.Members != null)
+            {
+                foreach (var member in endorsementBatch.Members)
+                {
+                    member.EndorsementBatchId = endorsementBatch.Id;
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            return View(Constants.RENEWAL_ENDORSEMENT_TYPE, endorsementBatch);
+        }
+
+        public JsonResult UploadExcel(HttpPostedFileBase fileData, string accountCode, int endorsementBatchId, Guid endorsementBatchGuid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var fileExtension = fileData.FileName.Substring(fileData.FileName.LastIndexOf(".") + 1);
+            if (fileExtension != "xlsm")
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", "You have uploaded an invalid file. Please download the template, fill up the information, and try uploading again.");
+
+                return this.Json(dictionary);
+            }
+
+            var originalFilename = fileData.FileName;
+            var originalFilepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", originalFilename));
+
+            var filename = String.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
+            var filepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", filename));
+
+            fileData.SaveAs(filepath);
+
+            string errorMessage;
+            if (!CompareExcelFile(filepath, "New Application.xlsm", out errorMessage))
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", errorMessage);
+
+                return this.Json(dictionary);
+            }
+
+            if (!CheckExcelFile(filepath, out errorMessage, Constants.NEW_ENDORSEMENT_TYPE))
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", errorMessage);
+
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Filename", originalFilename);
+            dictionary.Add("GuidFilename", filename);
+            dictionary.Add("EndorsementGuid", endorsementBatchGuid);
+
+            //dictionary.Add("TableData", RenderPartialViewToString("~/Areas/CorporateAdministrator/Views/Endorsement/_MemberWrapper.cshtml", memberWrappers));
+
+            Thread thread = new Thread(new ParameterizedThreadStart(ImportNewExcel));
+            thread.Start(new EndorsementLogParameter()
+            {
+                EndorsementBatchGuid = endorsementBatchGuid,
+                AccountCode = accountCode,
+                EndorsementBatchId = endorsementBatchId,
+                Path = filepath
+            });
+
+            return this.Json(dictionary);
+        }
+
+        public JsonResult UploadRenewalExcel(HttpPostedFileBase fileData, string accountCode, int endorsementBatchId, Guid endorsementBatchGuid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var fileExtension = fileData.FileName.Substring(fileData.FileName.LastIndexOf(".") + 1);
+            if (fileExtension != "xlsm")
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", "You have uploaded an invalid file. Please download the template, fill up the information, and try uploading again.");
+
+                return this.Json(dictionary);
+            }
+
+            var originalFilename = fileData.FileName;
+            var originalFilepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", originalFilename));
+
+            var filename = String.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
+            var filepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", filename));
+
+            fileData.SaveAs(filepath);
+
+            string errorMessage;
+            if (!CompareExcelFile(filepath, "Renewal.xlsm", out errorMessage))
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", errorMessage);
+
+                return this.Json(dictionary);
+            }
+
+            if (!CheckExcelFile(filepath, out errorMessage, Constants.RENEWAL_ENDORSEMENT_TYPE))
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", errorMessage);
+
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Filename", originalFilename);
+            dictionary.Add("GuidFilename", filename);
+            dictionary.Add("EndorsementGuid", endorsementBatchGuid);
+
+            //dictionary.Add("TableData", RenderPartialViewToString("~/Areas/CorporateAdministrator/Views/Endorsement/_RenewalMemberWrapper.cshtml", ImportRenewalExcel(accountCode, endorsementBatchId, filepath)));
+
+            Thread thread = new Thread(new ParameterizedThreadStart(ImportRenewalExcel));
+            thread.Start(new EndorsementLogParameter()
+            {
+                EndorsementBatchGuid = endorsementBatchGuid,
+                AccountCode = accountCode,
+                EndorsementBatchId = endorsementBatchId,
+                Path = filepath
+            });
+
+            return this.Json(dictionary);
+        }
+
+        public FileResult DownloadNewApplicationTemplate(string accountCode)
+        {
+            return File(ExcelTools.NewApplicationExcelDownload(accountCode), "application/vnd.ms-excel.sheet.macroEnabled.12", String.Format("New Application ({0:MMddyyyyhhmmss}).xlsm", DateTime.Now));
+        }
+
+        public JsonResult DownloadRenewalTemplate(string accountCode, bool includeActiveMembers, Guid guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null)
+            {
+                return null;
+            }
+
+            var dictionary = new Dictionary<string, object>();
+
+            Thread thread = new Thread(new ParameterizedThreadStart(RenewalExcelDownload));
+            thread.Start(new RenewalDownloadParameter()
+            {
+                AccountCode = accountCode,
+                IsIncludeActiveMembers = includeActiveMembers,
+                EndorsementBatchGuid = guid
+            });
+
+            dictionary.Add("Success", true);
+            dictionary.Add("EndorsementGuid", guid);
+
+            return this.Json(dictionary);
+        }
+
+        public FileResult DownloadCancellationTemplate(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null)
+            {
+                return null;
+            }
+
+            var account = legacyDb.LegacyAccounts
+                .Include(t => t.LegacyRoomRates)
+                .Include(t => t.LegacyRoomRates.Select(lr => lr.LegacyPaymode))
+                .Include(t => t.LegacyRoomRates.Select(rr => rr.LegacyPlan))
+                .FirstOrDefault(t => t.Code == accountCode);
+
+            var activeMembers = LegacyHelper.GetActiveMembers(legacyDb, accountCode);
+
+            byte[] fileBuffer;
+            var templatePath = Server.MapPath("~/ExcelTemplates/Cancel Member.xlsm");
+            var targetPath = String.Format(@"{0}\{1}.xlsm", Server.MapPath("~/Uploads"), Guid.NewGuid());
+            System.IO.File.Copy(templatePath, targetPath);
+
+            using (var package = new ExcelPackage(new FileInfo(targetPath)))
+            {
+                fileBuffer = package.GetAsByteArray();
+            }
+
+            System.IO.File.Delete(targetPath);
+
+            return File(fileBuffer, "application/vnd.ms-excel.sheet.macroEnabled.12", String.Format("For Cancellation ({0:MMddyyyyhhmmss}).xlsm", DateTime.Now));
+        }
+
+        public ActionResult ProcessBatch(Guid guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var batch = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Include(t => t.RenewalMembers)
+                .Include(t => t.CancelledMembers)
+                .FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+
+            if (batch == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (batch.EndorsementType == Constants.NEW_ENDORSEMENT_TYPE || batch.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE)
+            {
+                Thread thread = new Thread(new ParameterizedThreadStart(ProcessBatch));
+                thread.Start(new ProcessBatchParameter()
+                {
+                    EndorsementBatch = batch,
+                    AccountCode = accountCode,
+                    User = User
+                });
+
+                if (((AccountSetting)ViewBag.AccountSetting).DirectlySubmitToUrg)
+                {
+                    batch.Status = Corelib.Enums.EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                    returnValue = RedirectToAction("Index", new { accountCode = accountCode, messageType = "Submit To MediCard", message = "Endorsement will now be submitted to MediCard for review and processing." });
+                }
+                else
+                {
+                    if (batch.EndorsementType == Constants.NEW_ENDORSEMENT_TYPE)
+                    {
+                        batch.Status = Corelib.Enums.EndorsementBatchStatus.ForEmployeeUpdating;
+                    }
+                    else if (batch.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE && batch.RenewalMembers.All(t => string.IsNullOrEmpty(t.AllowedPlans)))
+                    {
+                        batch.Status = Corelib.Enums.EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                        //Emailer.Emailer.SendProcessRenewalCorporateAdminToUrgEmailInstant(batch);
+                    }
+                    else if (batch.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE && batch.RenewalMembers.Any(t => !string.IsNullOrEmpty(t.AllowedPlans)))
+                    {
+                        batch.Status = Corelib.Enums.EndorsementBatchStatus.ForEmployeeUpdating;
+                    }
+                    returnValue = RedirectToAction("Index", new { accountCode = accountCode, messageType = "Generating.....", message = "User information for your members are now being generated. You and your members will receive an email notification once the process is complete." });
+                }
+
+                db.Entry(batch).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return returnValue;
+            }
+            else if (batch.EndorsementType == Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE)
+            {
+                foreach (var cancelledMember in batch.CancelledMembers)
+                {
+                    cancelledMember.Status = CancelledMembershipStatus.CorporateAdminApproved;
+                    db.Entry(cancelledMember).State = EntityState.Modified;
+                }
+                batch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                db.SaveChanges();
+
+                Emailer.Emailer.SendProcessCancelledMemberInstant(batch);
+                return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Submit To MediCard", message = "Request for Membership Cancellation accepted for review and processing." });
+            }
+
+            return null;
+        }
+
+        public ActionResult DeleteBatch(Guid guid, string accountCode)
+        {
+            var batch = db.EndorsementBatches.Include(t => t.Members).FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (batch == null) throw new Exception("Batch Not Found!.");
+
+            var cancelledMember = db.CancelledMembers.FirstOrDefault(t => t.EndorsementBatchId == batch.Id);
+            if (cancelledMember != null) db.CancelledMembers.Remove(cancelledMember);
+
+            db.EndorsementBatches.Remove(batch);
+            db.SaveChanges();
+            return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Success!", message = "Delete successful." });
+        }
+
+        public ActionResult GetMemberWrappers(Guid guid, string accountCode, int? page, bool errorOnly = false)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = db.MemberWrappers.Where(t => t.EndorsementBatchGuid == guid);
+            if (errorOnly)
+            {
+                model = model.Where(t => !t.IsValid);
+            }
+            model = model.OrderBy(t => t.Row);
+
+
+            ViewBag.HasError = db.MemberWrappers.Any(t => t.EndorsementBatchGuid == guid && !t.IsValid);
+            ViewBag.ErrorOnly = errorOnly;
+            ViewBag.Guid = guid;
+
+            var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Guid == guid) ?? new EndorsementBatch();
+
+            this.ReadOnlyAttribute(endorsementBatch);
+
+            return View("_MemberWrappers", model.ToPagedList(page ?? 1, 10));
+        }
+
+        public ActionResult GetRenewalMemberWrappers(Guid guid, string accountCode, int? page, bool errorOnly = false)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = db.RenewalMemberWrappers.Where(t => t.EndorsementBatchGuid == guid);
+            if (errorOnly)
+            {
+                model = model.Where(t => !t.IsValid);
+            }
+            model = model.OrderBy(t => t.Row);
+
+            ViewBag.HasError = db.RenewalMemberWrappers.Any(t => t.EndorsementBatchGuid == guid && !t.IsValid);
+            ViewBag.ErrorOnly = errorOnly;
+            ViewBag.Guid = guid;
+
+            var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Guid == guid) ?? new EndorsementBatch();
+
+            this.ReadOnlyAttribute(endorsementBatch);
+
+            return View("_RenewalMemberWrappers", model.ToPagedList(page ?? 1, 10));
+        }
+
+        public JsonResult GetEndorsementLog(Guid? guid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var endorsementLog = db.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == guid && t.Type == LogType.ForUpload) ?? new EndorsementLog();
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Remark", endorsementLog.Remark);
+            dictionary.Add("IsProcessed", endorsementLog.IsProcessed);
+            dictionary.Add("NumberOfData", endorsementLog.NumberOfData);
+            dictionary.Add("CurrentData", endorsementLog.CurrentData);
+
+            return this.Json(dictionary);
+        }
+
+        public JsonResult GetEndorsementLogForProcessing(Guid? guid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var endorsementLog = db.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == guid && t.Type == LogType.ForProcessing);
+            if (endorsementLog == null)
+            {
+                dictionary.Add("Success", false);
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Remark", endorsementLog.Remark);
+            dictionary.Add("IsProcessed", endorsementLog.IsProcessed);
+            dictionary.Add("NumberOfData", endorsementLog.NumberOfData);
+            dictionary.Add("CurrentData", endorsementLog.CurrentData);
+
+            return this.Json(dictionary);
+        }
+
+        public JsonResult GetEndorsementLogForCreatingUserAccounts(Guid? guid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var endorsementLog = db.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == guid && t.Type == LogType.ForCreatingUserAccount);
+            if (endorsementLog == null)
+            {
+                dictionary.Add("Success", false);
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Remark", endorsementLog.Remark);
+            dictionary.Add("IsProcessed", endorsementLog.IsProcessed);
+            dictionary.Add("NumberOfData", endorsementLog.NumberOfData);
+            dictionary.Add("CurrentData", endorsementLog.CurrentData);
+
+            return this.Json(dictionary);
+        }
+
+        public JsonResult GetEndorsementLogForIndex(Guid? guid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var endorsementLog = db.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == guid && !t.IsProcessed && t.Type != LogType.ForDownload);
+            if (endorsementLog == null)
+            {
+                dictionary.Add("Success", false);
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Remark", endorsementLog.Remark);
+            dictionary.Add("IsProcessed", endorsementLog.IsProcessed);
+            return this.Json(dictionary);
+        }
+
+        public JsonResult GetEndorsementLogForDownload(Guid? guid)
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            var endorsementLog = db.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == guid && t.Type == LogType.ForDownload);
+
+            if (endorsementLog == null)
+            {
+                dictionary.Add("Success", false);
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Remark", endorsementLog.Remark);
+            dictionary.Add("IsProcessed", endorsementLog.IsProcessed);
+            dictionary.Add("NumberOfData", endorsementLog.NumberOfData);
+            dictionary.Add("CurrentData", endorsementLog.CurrentData);
+            return this.Json(dictionary);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private void RenewalExcelDownload(object parameter)
+        {
+            var accountCode = ((RenewalDownloadParameter)parameter).AccountCode;
+            var includeActiveMembers = ((RenewalDownloadParameter)parameter).IsIncludeActiveMembers;
+            var endorsementGuid = ((RenewalDownloadParameter)parameter).EndorsementBatchGuid;
+
+            Guid targetPathGuid = Guid.NewGuid();
+            byte[] fileBuffer;
+            var templatePath = Server.MapPath("~/ExcelTemplates/Renewal.xlsm");
+            var targetPath = String.Format(@"{0}\{1}.xlsm", Server.MapPath("~/Uploads"), targetPathGuid);
+            System.IO.File.Copy(templatePath, targetPath);
+
+            using (var idb = new IdentityDataContext())
+            {
+                idb.EndorsementLogs.RemoveRange(idb.EndorsementLogs.Where(t => t.EndorsementGuid == endorsementGuid && t.Type == LogType.ForDownload));
+
+                var endorsementLog = new EndorsementLog()
+                {
+                    EndorsementGuid = endorsementGuid,
+                    Type = LogType.ForDownload,
+                    Remark = "Downloading Renewal Batch..",
+                    FileGuid = targetPathGuid
+                };
+                idb.EndorsementLogs.Add(endorsementLog);
+                idb.SaveChanges();
+
+                var newEndorsementLog = idb.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == endorsementGuid && !t.IsProcessed && t.Type == LogType.ForDownload);
+
+                using (var package = new ExcelPackage(new FileInfo(targetPath)))
+                {
+                    using (var ilegacyDb = new LegacyDataContext())
+                    {
+                        var account = ilegacyDb.LegacyAccounts
+                            .Include(t => t.LegacyRoomRates)
+                            .Include(t => t.LegacyRoomRates.Select(lr => lr.LegacyPaymode))
+                            .Include(t => t.LegacyRoomRates.Select(rr => rr.LegacyPlan))
+                            .FirstOrDefault(t => t.Code == accountCode);
+
+                        var activeMembers = LegacyHelper.GetActiveMembers(legacyDb, accountCode);
+
+                        var wb = package.Workbook;
+                        if (wb == null) throw new Exception("Invalid WorkBook.");
+                        if (wb.Worksheets.Count <= 0) throw new Exception("Worksheet doesn't exist.");
+                        var ws = wb.Worksheets[1];
+
+                        ws.Protection.AllowDeleteColumns = false;
+                        ws.Protection.IsProtected = true;
+                        ws.Protection.SetPassword("P@ssw0rd");
+
+                        var columnUnLocked = new List<int>() { RENEWAL_EMAIL, RENEWAL_AREA, RENEWAL_EMPLOYEE_NUMBER, RENEWAL_APPLIED_PLAN, RENEWAL_ALLOWED_PLANS, RENEWAL_STATUS, RENEWAL_REMARKS };
+
+                        foreach (var col in columnUnLocked)
+                        {
+                            ws.Column(col).Style.Locked = false;
+                        }
+
+                        var principalPlanCount = 0;
+                        var availablePlansWS = wb.Worksheets["AvailablePlansForPrincipal"];
+                        var row = 1;
+                        var principalRoomRates = account.LegacyRoomRates.Where(t => t.Selected && (t.PaymentFor == 0 || t.PaymentFor == 5 || t.PaymentFor == 8)).ToList();
+                        foreach (var legacyRoomRate in principalRoomRates)
+                        {
+                            availablePlansWS.Cells[row, 1].Value = string.Format("PRINCIPAL - {0}", legacyRoomRate.DescriptionForExcel);
+                            row++;
+                            principalPlanCount++;
+                        }
+
+                        var dependentRoomRates = account.LegacyRoomRates.Where(t => t.Selected && (t.PaymentFor == 1 || t.PaymentFor == 2 || t.PaymentFor == 5 || t.PaymentFor == 8 || t.PaymentFor == 9)).ToList();
+                        foreach (var legacyRoomRate in dependentRoomRates)
+                        {
+                            availablePlansWS.Cells[row, 1].Value = string.Format("DEPENDENT - {0}", legacyRoomRate.DescriptionForExcel);
+                            row++;
+                            principalPlanCount++;
+                        }
+
+                        var appliedPlanValidation = ws.DataValidations.AddListValidation("J3:J1048576");
+                        appliedPlanValidation.Formula.ExcelFormula = String.Format("'AvailablePlansForPrincipal'!$A$1:$A${0}", principalPlanCount);
+
+                        appliedPlanValidation.ShowErrorMessage = true;
+                        appliedPlanValidation.AllowBlank = false;
+                        appliedPlanValidation.ErrorTitle = "An invalid item was selected";
+                        appliedPlanValidation.Error = "Selected item must be in the list";
+
+                        var allowedPlansValidation = ws.DataValidations.AddListValidation("K3:K1048576");
+                        allowedPlansValidation.Formula.ExcelFormula = String.Format("'AvailablePlansForPrincipal'!$A$1:$A${0}", principalPlanCount);
+
+                        allowedPlansValidation.ShowErrorMessage = true;
+                        allowedPlansValidation.AllowBlank = true;
+                        allowedPlansValidation.ErrorTitle = "An invalid item was selected";
+                        allowedPlansValidation.Error = "Selected item must be in the list";
+
+                        var statusOption = new List<string>();
+                        statusOption.Add("For Renewal");
+                        statusOption.Add("Not for Renewal");
+                        ExcelTools.CellDropDownValidation(ws, "T3:T1048576", statusOption);
+
+                        #region -- Cell Validations --
+
+                        var relationshipWS = wb.Worksheets["RelationshipSheet"];
+                        row = 1;
+                        var relationships = idb.Relationships.OrderBy(t => t.Description).ToList();
+                        foreach (var relationship in relationships)
+                        {
+                            relationshipWS.Cells[row, 1].Value = string.Format("{0}|{1}", relationship.Description, relationship.Code);
+                            row++;
+                        }
+
+                        var relationshipValidation = ws.DataValidations.AddListValidation("N3:N1048576");
+                        relationshipValidation.Formula.ExcelFormula = String.Format("'RelationshipSheet'!$A$1:$A${0}", row - 1);
+
+                        relationshipValidation.ShowErrorMessage = true;
+                        relationshipValidation.AllowBlank = true;
+                        relationshipValidation.ErrorTitle = "An invalid item was selected";
+                        relationshipValidation.Error = "Selected item must be in the list";
+
+                        var areaWS = wb.Worksheets["AreaSheet"];
+                        row = 1;
+                        var areas = LegacyHelper.GetLegacyArea(accountCode);
+                        foreach (var area in areas)
+                        {
+                            areaWS.Cells[row, 1].Value = string.Format("{0}|{1}", area.Description, area.AreaCode);
+                            row++;
+                        }
+
+                        if (areas != null && areas.ToList().Count() > 0)
+                        {
+                            var areaValidation = ws.DataValidations.AddListValidation("H3:H1048576");
+                            areaValidation.Formula.ExcelFormula = String.Format("'AreaSheet'!$A$1:$A${0}", row - 1);
+
+                            areaValidation.ShowErrorMessage = true;
+                            areaValidation.AllowBlank = true;
+                            areaValidation.ErrorTitle = "An invalid item was selected";
+                            areaValidation.Error = "Selected item must be in the list";
+                        }
+                        else
+                        {
+                            ws.Column(RENEWAL_AREA).Style.Locked = true;
+                            ws.Column(RENEWAL_AREA).Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            ws.Column(RENEWAL_AREA).Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                        }
+
+                        ExcelTools.CellDateValidation(ws, "F3:F1048576", DateTime.UtcNow.AddYears(-1000));
+                        ExcelTools.CellDateValidation(ws, "R3:R1048576", DateTime.UtcNow.AddYears(-1000));
+
+                        var secondOptions = new List<string>();
+                        secondOptions.Add("Male");
+                        secondOptions.Add("Female");
+                        ExcelTools.CellDropDownValidation(ws, "O3:O1048576", secondOptions);
+
+                        var thirdOptions = new List<string>();
+                        thirdOptions.Add("Principal");
+                        thirdOptions.Add("Dependent");
+                        ExcelTools.CellDropDownValidation(ws, "L3:L1048576", thirdOptions);
+
+                        var nextOption = new List<string>();
+                        nextOption.Add("Single");
+                        nextOption.Add("Married");
+                        nextOption.Add("Widower");
+                        nextOption.Add("Separated");
+                        nextOption.Add("Single Parent");
+                        ExcelTools.CellDropDownValidation(ws, "P3:P1048576", nextOption);
+
+                        #endregion
+
+                        if (includeActiveMembers)
+                        {
+                            newEndorsementLog.NumberOfData = activeMembers.ToList().Count();
+
+                            var currentRow = 3;
+                            foreach (var member in activeMembers)
+                            {
+                                ws.Cells[currentRow, RENEWAL_MEMBER_CODE].Value = member.Code;
+                                ws.Cells[currentRow, RENEWAL_LAST_NAME].Value = member.LastName;
+                                ws.Cells[currentRow, RENEWAL_FIRST_NAME].Value = member.FirstName;
+                                ws.Cells[currentRow, RENEWAL_MIDDLE_NAME].Value = member.MiddleName;
+                                ws.Cells[currentRow, RENEWAL_EMAIL].Value = member.EmailAddress;
+                                ws.Cells[currentRow, RENEWAL_DATE_OF_BIRTH].Value = member.DateOfBirth;
+                                ws.Cells[currentRow, RENEWAL_AREA].Value = !string.IsNullOrEmpty(member.AreaCode) ? string.Format("{0}|{1}", member.Area, member.AreaCode) : "";
+                                ws.Cells[currentRow, RENEWAL_EMPLOYEE_NUMBER].Value = member.EmployeeNumber;
+                                ws.Cells[currentRow, RENEWAL_TYPE].Value = member.Type;
+                                ws.Cells[currentRow, RENEWAL_PRINCIPAL_MEMBER_CODE].Value = member.PrincipalMemberCode;
+                                ws.Cells[currentRow, RENEWAL_GENDER].Value = member.Gender;
+                                ws.Cells[currentRow, RENEWAL_RELATIONSHIP].Value = !string.IsNullOrEmpty(member.Relationship) ? string.Format("{0}|{1}", member.RelationshipDescription, member.Relationship) : "";
+                                ws.Cells[currentRow, RENEWAL_CIVIL_STATUS].Value = member.CivilStatus;
+                                ws.Cells[currentRow, RENEWAL_WAIVER].Value = "";
+                                ws.Cells[currentRow, RENEWAL_EFFECTIVITY_DATE].Value = member.EffectivityDate;
+                                ws.Cells[currentRow, RENEWAL_VALIDITY_DATE].Value = member.ValidityDate;
+                                ws.Cells[currentRow, RENEWAL_STATUS].Value = "";
+                                ws.Cells[currentRow, RENEWAL_REMARKS].Value = "";
+
+                                if (member.Type == "Dependent")
+                                {
+                                    ws.Cells[currentRow, RENEWAL_APPLIED_PLAN].Value = dependentRoomRates.FirstOrDefault(t => t.Id == member.AppliedPlan) != null ? string.Format("DEPENDENT - {0}", dependentRoomRates.FirstOrDefault(t => t.Id == member.AppliedPlan).DescriptionForExcel) : "";
+                                }
+                                else
+                                {
+                                    ws.Cells[currentRow, RENEWAL_APPLIED_PLAN].Value = principalRoomRates.FirstOrDefault(t => t.Id == member.AppliedPlan) != null ? string.Format("PRINCIPAL - {0}", principalRoomRates.FirstOrDefault(t => t.Id == member.AppliedPlan).DescriptionForExcel) : "";
+                                }
+
+                                currentRow++;
+                                newEndorsementLog.CurrentData = newEndorsementLog.CurrentData + 1;
+                                newEndorsementLog.Remark = string.Format("Renewal Batch is currently downloading. {0} out of {1}.", newEndorsementLog.CurrentData, newEndorsementLog.NumberOfData);
+                                idb.Entry(newEndorsementLog).State = EntityState.Modified;
+
+                                idb.SaveChanges();
+                            }
+                        }
+                    }
+
+                    fileBuffer = package.GetAsByteArray();
+                    newEndorsementLog.Remark = string.Format("Renewal Batch Download Completed. {0} out of {1}.", newEndorsementLog.CurrentData, newEndorsementLog.NumberOfData);
+                    newEndorsementLog.IsProcessed = true;
+                    newEndorsementLog.FileByte = fileBuffer;
+                    idb.Entry(newEndorsementLog).State = EntityState.Modified;
+                    idb.SaveChanges();
+                }
+                System.IO.File.Delete(targetPath);
+            }
+        }
+
+        private void ProcessBatch(object parameter)
+        {
+            string accountCode = ((ProcessBatchParameter)parameter).AccountCode;
+            var user = ((ProcessBatchParameter)parameter).User;
+
+            using (var idb = new IdentityDataContext())
+            {
+                var batch = idb.EndorsementBatches.Include(t => t.Members).FirstOrDefault(t => t.Id == ((ProcessBatchParameter)parameter).EndorsementBatch.Id);
+                var accountSetting = idb.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+
+                idb.User = idb.Users.FirstOrDefault(t => t.UserName == user.Identity.Name);
+
+                if (batch.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE)
+                {
+                    Helper.CreateMembersForRenewalBatch(idb, batch.Id);
+                    var renewalMembers = idb.RenewalMembers.Where(t => !t.Deleted && t.EndorsementBatchId == batch.Id).ToList();
+                }
+
+                //var members = idb.Members.Where(t => !t.Deleted && t.EndorsementBatchId == batch.Id).ToList();
+                //batch.Members = members;
+
+                if (!accountSetting.DirectlySubmitToUrg)
+                {
+                    Helper.CreateUserForBatch(user, batch.Id);
+                    if (batch.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE)
+                    {
+                        Emailer.Emailer.SendProcessRenewalEmailInstant(batch);
+                    }
+                    else
+                    {
+                        Emailer.Emailer.SendProcessNewEmailInstant(batch);
+                    }
+                }
+                else
+                {
+                    if (batch.EndorsementType == Constants.RENEWAL_ENDORSEMENT_TYPE)
+                    {
+                        Emailer.Emailer.SendProcessRenewalEmailInstant(batch);
+                    }
+                    else
+                    {
+                        foreach (var member in batch.Members)
+                        {
+                            member.Status = MembershipStatus.CorporateAdminApproved;
+                        }
+
+                        Emailer.Emailer.SendProcessNewEmailInstant(batch);
+                    }
+                    idb.SaveChanges();
+                }
+            }
+        }
+
+        private string RenderPartialViewToString(string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName)) viewName = ControllerContext.RouteData.GetRequiredString("action");
+
+            ViewData.Model = model;
+
+            using (StringWriter sw = new StringWriter())
+            {
+                ViewEngineResult viewResult = ViewEngines.Engines.FindPartialView(ControllerContext, viewName);
+                ViewContext viewContext = new ViewContext(ControllerContext, viewResult.View, ViewData, TempData, sw);
+                viewResult.View.Render(viewContext, sw);
+
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+
+        private void ImportNewExcel(object parameter)
+        {
+            string accountCode = ((EndorsementLogParameter)parameter).AccountCode;
+            var endorsementBatchGuid = ((EndorsementLogParameter)parameter).EndorsementBatchGuid;
+            var endorsementBatchId = ((EndorsementLogParameter)parameter).EndorsementBatchId;
+            var path = ((EndorsementLogParameter)parameter).Path;
+
+            using (var idb = new IdentityDataContext())
+            {
+                idb.EndorsementLogs.RemoveRange(idb.EndorsementLogs.Where(t => t.EndorsementGuid == endorsementBatchGuid && t.Type == LogType.ForUpload));
+                idb.MemberWrappers.RemoveRange(idb.MemberWrappers.Where(t => t.EndorsementBatchGuid == endorsementBatchGuid));
+
+                var principalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+
+                var returnValue = new List<MemberWrapper>();
+                using (var package = new ExcelPackage(new FileInfo(path)))
+                {
+                    var wb = package.Workbook;
+                    if (wb == null) throw new Exception("Error opening workbook.");
+                    if (wb.Worksheets.Count <= 0) throw new Exception("No worksheet found.");
+
+                    var ws = wb.Worksheets[1];
+                    var startRow = 3;
+                    var lastRow = 3;
+                    var blankCount = 1;
+                    var blankThreshold = 10;
+                    var rowChanges = 0;
+                    var lastData = 1;
+
+                    var endorsementLog = new EndorsementLog()
+                    {
+                        EndorsementGuid = endorsementBatchGuid,
+                        Type = LogType.ForUpload
+                    };
+
+                    while (true)
+                    {
+                        var lastName = Convert.ToString(ws.Cells[lastRow, NEW_LAST_NAME].Value).Trim();
+                        if (string.IsNullOrEmpty(lastName) && blankCount++ >= blankThreshold)
+                        {
+                            lastRow -= blankThreshold;
+                            lastData -= blankThreshold;
+                            break;
+                        }
+                        else if (!string.IsNullOrEmpty(lastName))
+                        {
+                            blankCount = 1;
+                        }
+                        lastRow++;
+                        lastData++;
+                    }
+
+                    endorsementLog.NumberOfData = lastData;
+                    endorsementLog.Remark = "Uploading New Endorsement Batch..";
+                    idb.EndorsementLogs.Add(endorsementLog);
+                    idb.SaveChanges();
+
+                    var newEndorsementLog = idb.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == endorsementBatchGuid && !t.IsProcessed && t.Type == LogType.ForUpload);
+
+                    for (int currentRow = startRow; currentRow <= lastRow; currentRow++)
+                    {
+                        var memberWrapper = new MemberWrapper()
+                        {
+                            EmailAddress = StringValue(ws.Cells[currentRow, NEW_EMAIL_ADDRESS]),
+                            EmployeeNumber = StringValue(ws.Cells[currentRow, NEW_EMPLOYEE_NUMBER]),
+                            AreaExcel = StringValue(ws.Cells[currentRow, NEW_AREA]),
+                            CostCenter = StringValue(ws.Cells[currentRow, NEW_COST_CENTER]),
+                            LastName = StringValue(ws.Cells[currentRow, NEW_LAST_NAME]),
+                            FirstName = StringValue(ws.Cells[currentRow, NEW_FIRST_NAME]),
+                            MiddleName = StringValue(ws.Cells[currentRow, NEW_MIDDLE_NAME]),
+                            Designation = StringValue(ws.Cells[currentRow, NEW_DESIGNATION]),
+                            Level = StringValue(ws.Cells[currentRow, NEW_LEVEL]),
+                            Suffix = StringValue(ws.Cells[currentRow, NEW_SUFFIX]),
+                            Gender = StringValue(ws.Cells[currentRow, NEW_GENDER]),
+                            DateOfBirth = DateValue(ws.Cells[currentRow, NEW_DATE_OF_BIRTH]),
+                            CivilStatus = StringValue(ws.Cells[currentRow, NEW_CIVIL_STATUS]),
+                            EffectivityDate = DateValue(ws.Cells[currentRow, NEW_EFFECTIVITY_DATE]),
+                            //ValidityDate = DateValue(ws.Cells[currentRow, NEW_VALIDITY_DATE]),
+                            DateHired = DateValue(ws.Cells[currentRow, NEW_DATE_HIRED]),
+                            AppliedPlanFromExcel = StringValue(ws.Cells[currentRow, NEW_APPLIED_PLAN]),
+                            AllowedPlansFromExcel = StringValue(ws.Cells[currentRow, NEW_OPTIONAL_PLAN]),
+                            DependentStringValue = StringValue(ws.Cells[currentRow, NEW_NUMBER_OF_ALLOWED_DEPENDENTS]),
+                            //Dependent = String.IsNullOrEmpty(IntegerValue(ws.Cells[currentRow, NEW_NUMBER_OF_ALLOWED_DEPENDENTS])) ? "0" : IntegerValue(ws.Cells[currentRow, NEW_NUMBER_OF_ALLOWED_DEPENDENTS]),
+                            DependentAppliedPlanFromExcel = StringValue(ws.Cells[currentRow, NEW_DEPENDENT_APPLIED_PLAN]),
+                            AllowedDependentPlansFromExcel = StringValue(ws.Cells[currentRow, NEW_DEPENDENT_OPTIONAL_PLAN]),
+                            AccountCode = accountCode,
+                            EndorsementBatchId = endorsementBatchId.ToString(),
+                            EndorsementType = Constants.NEW_ENDORSEMENT_TYPE,
+                            Code = Helper.GenerateMemberCode()
+                        };
+
+                        int temp;
+                        if (!String.IsNullOrEmpty(memberWrapper.AppliedPlan) && (!int.TryParse(memberWrapper.AppliedPlan, out temp) || !principalPlans.Any(t => t.Id == temp)))
+                        {
+                            memberWrapper.AppliedPlan = "";
+                        }
+
+                        memberWrapper.Row = currentRow;
+                        memberWrapper.EndorsementBatchGuid = endorsementBatchGuid;
+                        memberWrapper.EndorsementType = Constants.NEW_ENDORSEMENT_TYPE;
+                        ValidateNewExcelRow(memberWrapper);
+                        //idb.MemberWrappers.Add(memberWrapper);
+
+                        returnValue.Add(memberWrapper);
+
+                        rowChanges++;
+                        newEndorsementLog.CurrentData = newEndorsementLog.CurrentData + 1;
+                        newEndorsementLog.Remark = string.Format("New Endorsement Batch is currently uploading. {0} out of {1}.", newEndorsementLog.CurrentData, newEndorsementLog.NumberOfData);
+                        idb.Entry(newEndorsementLog).State = EntityState.Modified;
+
+                        if (rowChanges == 20)
+                        {
+                            idb.SaveChanges();
+                            rowChanges = 0;
+                        }
+                    }
+                    idb.MemberWrappers.AddRange(returnValue);
+                    newEndorsementLog.Remark = string.Format("New Endorsement Batch Upload Completed. {0} out of {1}.", newEndorsementLog.CurrentData, newEndorsementLog.NumberOfData);
+                    newEndorsementLog.IsProcessed = true;
+                    idb.Entry(newEndorsementLog).State = EntityState.Modified;
+                }
+
+                idb.SaveChanges();
+            }
+        }
+
+        private void ImportRenewalExcel(object parameter)
+        {
+            string accountCode = ((EndorsementLogParameter)parameter).AccountCode;
+            var endorsementBatchGuid = ((EndorsementLogParameter)parameter).EndorsementBatchGuid;
+            var endorsementBatchId = ((EndorsementLogParameter)parameter).EndorsementBatchId;
+            var path = ((EndorsementLogParameter)parameter).Path;
+
+            using (var idb = new IdentityDataContext())
+            {
+                idb.EndorsementLogs.RemoveRange(idb.EndorsementLogs.Where(t => t.EndorsementGuid == endorsementBatchGuid && t.Type == LogType.ForUpload));
+                idb.RenewalMemberWrappers.RemoveRange(idb.RenewalMemberWrappers.Where(t => t.EndorsementBatchGuid == endorsementBatchGuid));
+
+                using (var package = new ExcelPackage(new FileInfo(path)))
+                {
+                    var wb = package.Workbook;
+                    if (wb == null) throw new Exception("Error opening workbook.");
+                    if (wb.Worksheets.Count <= 0) throw new Exception("No worksheet found.");
+
+                    var ws = wb.Worksheets[1];
+                    var startRow = 3;
+                    var lastRow = 3;
+                    var blankCount = 1;
+                    var blankThreshold = 10;
+                    var rowChanges = 0;
+                    var lastData = 1;
+
+                    var endorsementLog = new EndorsementLog()
+                    {
+                        EndorsementGuid = endorsementBatchGuid,
+                        Type = LogType.ForUpload
+                    };
+
+                    while (true)
+                    {
+                        var lastName = Convert.ToString(ws.Cells[lastRow, RENEWAL_LAST_NAME].Value).Trim();
+                        if (string.IsNullOrEmpty(lastName) && blankCount++ >= blankThreshold)
+                        {
+                            lastRow -= blankThreshold;
+                            lastData -= blankThreshold;
+                            break;
+                        }
+                        else if (!string.IsNullOrEmpty(lastName))
+                        {
+                            blankCount = 1;
+                        }
+                        lastRow++;
+                        lastData++;
+                    }
+
+                    endorsementLog.NumberOfData = lastData;
+                    endorsementLog.Remark = "Uploading Renewal Batch..";
+                    idb.EndorsementLogs.Add(endorsementLog);
+                    idb.SaveChanges();
+
+                    var newEndorsementLog = idb.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == endorsementBatchGuid && !t.IsProcessed && t.Type == LogType.ForUpload);
+
+                    var principalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+                    var dependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+                    var legacyRoomRates = Helper.GetAllLegacyRoomRates(accountCode);
+                    var activePrincipals = LegacyHelper.GetLegacyActivePrincipals(null, accountCode);
+                    var activeDependents = LegacyHelper.GetLegacyActiveDependents(null, accountCode);
+
+                    var renewalWrappers = new List<RenewalMemberWrapper>();
+
+                    for (int currentRow = startRow; currentRow <= lastRow; currentRow++)
+                    {
+                        var renewalMemberWrapper = new RenewalMemberWrapper()
+                        {
+                            Code = StringValue(ws.Cells[currentRow, RENEWAL_MEMBER_CODE]),
+                            LastName = StringValue(ws.Cells[currentRow, RENEWAL_LAST_NAME]),
+                            FirstName = StringValue(ws.Cells[currentRow, RENEWAL_FIRST_NAME]),
+                            MiddleName = StringValue(ws.Cells[currentRow, RENEWAL_MIDDLE_NAME]),
+                            EmailAddress = StringValue(ws.Cells[currentRow, RENEWAL_EMAIL]),
+                            DateOfBirth = DateValue(ws.Cells[currentRow, RENEWAL_DATE_OF_BIRTH]),
+                            AreaExcel = StringValue(ws.Cells[currentRow, RENEWAL_AREA]),
+                            EmployeeNumber = StringValue(ws.Cells[currentRow, RENEWAL_EMPLOYEE_NUMBER]),
+                            AppliedPlanFromExcel = StringValue(ws.Cells[currentRow, RENEWAL_APPLIED_PLAN]),
+                            AllowedPlansFromExcel = StringValue(ws.Cells[currentRow, RENEWAL_ALLOWED_PLANS]),
+                            Type = StringValue(ws.Cells[currentRow, RENEWAL_TYPE]),
+                            PrincipalMemberCode = StringValue(ws.Cells[currentRow, RENEWAL_PRINCIPAL_MEMBER_CODE]),
+                            RelationshipExcel = StringValue(ws.Cells[currentRow, RENEWAL_RELATIONSHIP]),
+                            Gender = StringValue(ws.Cells[currentRow, RENEWAL_GENDER]),
+                            CivilStatus = StringValue(ws.Cells[currentRow, RENEWAL_CIVIL_STATUS]),
+                            Waiver = StringValue(ws.Cells[currentRow, RENEWAL_WAIVER]),
+                            EffectivityDate = DateValue(ws.Cells[currentRow, RENEWAL_EFFECTIVITY_DATE]),
+                            ValidityDate = DateValue(ws.Cells[currentRow, RENEWAL_VALIDITY_DATE]),
+                            RenewalStatus = StringValue(ws.Cells[currentRow, RENEWAL_STATUS]) == "Not for Renewal" ? "1" : "0",
+                            Remarks = StringValue(ws.Cells[currentRow, RENEWAL_REMARKS]),
+                            AccountCode = accountCode,
+                            EndorsementBatchId = endorsementBatchId.ToString()
+                        };
+
+                        int temp;
+                        if (renewalMemberWrapper.Type == "Principal")
+                        {
+                            if (!String.IsNullOrEmpty(renewalMemberWrapper.AppliedPlan) && (!int.TryParse(renewalMemberWrapper.AppliedPlan, out temp) || !principalPlans.Any(t => t.Id == temp)))
+                            {
+                                renewalMemberWrapper.AppliedPlan = "";
+                            }
+                        }
+                        else
+                        {
+                            if (!String.IsNullOrEmpty(renewalMemberWrapper.AppliedPlan) && (!int.TryParse(renewalMemberWrapper.AppliedPlan, out temp) || !dependentPlans.Any(t => t.Id == temp)))
+                            {
+                                renewalMemberWrapper.AppliedPlan = "";
+                            }
+                        }
+
+                        renewalMemberWrapper.Row = currentRow;
+                        renewalMemberWrapper.EndorsementBatchGuid = endorsementBatchGuid;
+                        renewalMemberWrapper.EndorsementType = Constants.RENEWAL_ENDORSEMENT_TYPE;
+                        ValidateRenewalExcelRow(renewalMemberWrapper, legacyRoomRates, activePrincipals, activeDependents);
+                        renewalWrappers.Add(renewalMemberWrapper);
+
+                        rowChanges++;
+                        newEndorsementLog.CurrentData = newEndorsementLog.CurrentData + 1;
+                        newEndorsementLog.Remark = string.Format("Renewal Batch is currently uploading. {0} out of {1}.", newEndorsementLog.CurrentData, newEndorsementLog.NumberOfData);
+                        idb.Entry(newEndorsementLog).State = EntityState.Modified;
+
+                        if (rowChanges == 40)
+                        {
+                            idb.SaveChanges();
+                            rowChanges = 0;
+                        }
+                    }
+
+                    idb.RenewalMemberWrappers.AddRange(renewalWrappers);
+                    newEndorsementLog.Remark = string.Format("Renewal Batch Upload Completed. {0} out of {1}.", newEndorsementLog.CurrentData, newEndorsementLog.NumberOfData);
+                    newEndorsementLog.IsProcessed = true;
+                    idb.Entry(newEndorsementLog).State = EntityState.Modified;
+                }
+
+                idb.SaveChanges();
+            }
+        }
+
+        private IEnumerable<CancelledMemberWrapper> ImportCancellationExcel(string accountCode, int endorsementBatchId, string path)
+        {
+            var returnValue = new List<CancelledMemberWrapper>();
+            using (var package = new ExcelPackage(new FileInfo(path)))
+            {
+                var wb = package.Workbook;
+                if (wb == null) throw new Exception("Error opening workbook.");
+                if (wb.Worksheets.Count <= 0) throw new Exception("No worksheet found.");
+
+                var ws = wb.Worksheets[1];
+                var startRow = 3;
+                var lastRow = 3;
+                var blankCount = 1;
+                var blankThreshold = 10;
+                while (true)
+                {
+                    var lastName = Convert.ToString(ws.Cells[lastRow, CANCELLATION_MEMBER_CODE].Value).Trim();
+                    if (string.IsNullOrEmpty(lastName) && blankCount++ >= blankThreshold)
+                    {
+                        lastRow -= blankThreshold;
+                        break;
+                    }
+                    else if (!string.IsNullOrEmpty(lastName))
+                    {
+                        blankCount = 1;
+                    }
+                    lastRow++;
+                }
+
+                for (int currentRow = startRow; currentRow <= lastRow; currentRow++)
+                {
+                    returnValue.Add(new CancelledMemberWrapper()
+                    {
+                        MemberCode = StringValue(ws.Cells[currentRow, CANCELLATION_MEMBER_CODE]),
+                        LastName = StringValue(ws.Cells[currentRow, CANCELLATION_LAST_NAME]),
+                        FirstName = StringValue(ws.Cells[currentRow, CANCELLATION_FIRST_NAME]),
+                        EndorsementBatchId = endorsementBatchId.ToString(),
+                        DateCancelled = DateValue(ws.Cells[currentRow, CANCELLATION_DATE_CANCELLED]),
+                        AccountCode = accountCode
+                    });
+                }
+            }
+
+            return returnValue;
+        }
+
+        private bool CompareExcelFile(string uploadPath, string templateFilename, out string errorMessage)
+        {
+            errorMessage = "";
+            var templatePath = Server.MapPath(String.Format("~/ExcelTemplates/{0}", templateFilename));
+            var targetPath = String.Format(@"{0}\{1}.xlsm", Server.MapPath("~/Uploads"), Guid.NewGuid());
+            System.IO.File.Copy(templatePath, targetPath);
+
+            var headerRow = 2;
+            var currentColumn = 1;
+            var returnValue = true;
+
+            using (var packageTemplate = new ExcelPackage(new FileInfo(targetPath)))
+            {
+                var wbTemplate = packageTemplate.Workbook;
+                var wsTemplate = wbTemplate.Worksheets[1];
+
+                try
+                {
+                    using (var packageUpload = new ExcelPackage(new FileInfo(uploadPath)))
+                    {
+                        var wbUpload = packageUpload.Workbook;
+                        var wsUpload = wbUpload.Worksheets[1];
+
+                        while (!string.IsNullOrEmpty(StringValue(wsTemplate.Cells[headerRow, currentColumn])))
+                        {
+                            if (StringValue(wsTemplate.Cells[headerRow, currentColumn]) != StringValue(wsUpload.Cells[headerRow, currentColumn]))
+                            {
+                                throw new Exception();
+                            }
+                            currentColumn++;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorMessage = "You have uploaded an invalid file. Please download the template, fill up the information, and try uploading again.";
+                    returnValue = false;
+                }
+            }
+
+            System.IO.File.Delete(targetPath);
+
+            return returnValue;
+        }
+
+        private bool CheckExcelFile(string uploadPath, out string errorMessage, string endorsementType)
+        {
+            errorMessage = "";
+            var startRow = 3;
+            var lastRow = 3;
+            var blankCount = 0;
+            var blankThreshold = 10;
+            var returnValue = true;
+
+            using (var packageTemplate = new ExcelPackage(new FileInfo(uploadPath)))
+            {
+                var wb = packageTemplate.Workbook;
+                var ws = wb.Worksheets[1];
+
+                int column = 0;
+                switch (endorsementType)
+                {
+                    case Constants.NEW_ENDORSEMENT_TYPE:
+                        column = NEW_LAST_NAME;
+                        break;
+                    case Constants.RENEWAL_ENDORSEMENT_TYPE:
+                        column = RENEWAL_LAST_NAME;
+                        break;
+                    case Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE:
+                        column = CANCELLATION_MEMBER_CODE;
+                        break;
+                }
+
+                while (true)
+                {
+                    var lastName = Convert.ToString(ws.Cells[lastRow, column].Value).Trim();
+                    if (string.IsNullOrEmpty(lastName) && blankCount++ >= blankThreshold)
+                    {
+                        lastRow -= blankThreshold;
+                        break;
+                    }
+                    lastRow++;
+                }
+
+                if (startRow == lastRow)
+                {
+                    errorMessage = "You have uploaded an empty file. Please fill up the information, and try uploading again.";
+                    returnValue = false;
+                }
+            }
+
+            return returnValue;
+        }
+
+        private List<EndorsementBatch> GetEndorsementBatches(List<EndorsementBatch> endorsementBatches)
+        {
+            var model = endorsementBatches;
+
+            if (!User.IsInRole("CanViewMembershipCancellations") && !User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => t.EndorsementType != Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE).ToList();
+            }
+
+            if (!User.IsInRole("CanViewMembershipRenewals") && !User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => t.EndorsementType != Constants.RENEWAL_ENDORSEMENT_TYPE).ToList();
+            }
+
+            if (!User.IsInRole("CanViewNewMemberships") && !User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => t.EndorsementType != Constants.NEW_ENDORSEMENT_TYPE).ToList();
+            }
+
+            return model;
+        }
+
+        private void ValidateNewExcelRow(MemberWrapper memberWrapper)
+        {
+            ModelState.Clear();
+            var member = new Corelib.Models.Member();
+            memberWrapper.IsValid = TryUpdateModel(member, memberWrapper);
+            if (!memberWrapper.IsValid)
+            {
+                memberWrapper.ErrorMessage = GetValidationError();
+            }
+        }
+
+        private void ValidateRenewalExcelRow(RenewalMemberWrapper renewalMemberWrapper, IEnumerable<LegacyRoomRate> legacyRoomRates, IEnumerable<LegacyPrincipalProcess> legacyPrincipalProcesses, IEnumerable<LegacyDependentProcess> legacyDependentProcesses)
+        {
+            ModelState.Clear();
+            var renewalMember = new Corelib.Models.RenewalMember()
+            {
+                LegacyRoomRates = legacyRoomRates,
+                LegacyDependentProcesses = legacyDependentProcesses,
+                LegacyPrincipalProcesses = legacyPrincipalProcesses
+            };
+            renewalMemberWrapper.IsValid = TryUpdateModel(renewalMember, renewalMemberWrapper);
+            if (!renewalMemberWrapper.IsValid)
+            {
+                renewalMemberWrapper.ErrorMessage = GetValidationError();
+            }
+        }
+
+        private string GetValidationError()
+        {
+            var returnValue = new StringBuilder();
+
+            foreach (var state in ModelState.Values)
+            {
+                foreach (var error in state.Errors)
+                {
+                    if (returnValue.Length > 0) returnValue.Append(", ");
+                    returnValue.Append(error.ErrorMessage);
+                }
+            }
+
+            return returnValue.ToString();
+        }
+
+        public FileResult FileDownload(string fileName, string guidFileName)
+        {
+            var targetPath = String.Format(@"{0}\{1}", Server.MapPath("~/Uploads"), guidFileName);
+            var fileByte = System.IO.File.ReadAllBytes(targetPath);
+            return File(fileByte, "application/vnd.ms-excel.sheet.macroEnabled.12", fileName); ;
+        }
+
+        public bool IsValidMemberWrappers(Guid? guid)
+        {
+            return db.MemberWrappers.Any(t => t.EndorsementBatchGuid == guid && !t.IsValid);
+        }
+
+        public bool IsValidRenewalMemberWrappers(Guid? guid)
+        {
+            return db.RenewalMemberWrappers.Any(t => t.EndorsementBatchGuid == guid && !t.IsValid);
+        }
+
+        public FileResult RenewalFileDownload(Guid guid)
+        {
+            var endorsementLog = db.EndorsementLogs.FirstOrDefault(t => t.EndorsementGuid == guid && t.Type == LogType.ForDownload && t.IsProcessed);
+            //var targetPath = String.Format(@"{0}\{1}.xlsm", Server.MapPath("~/Uploads"), endorsementLog.FileGuid);
+            //var fileByte = System.IO.File.ReadAllBytes(targetPath);
+            return File(endorsementLog.FileByte, "application/vnd.ms-excel.sheet.macroEnabled.12", String.Format("Renewal ({0:MMddyyyyhhmmss}).xlsm", DateTime.Now));
+        }
+
+        #endregion
+
+        #region -- Excel Extensions --
+
+        public string StringValue(ExcelRange range)
+        {
+            var returnValue = range.Value != null ? Convert.ToString(range.Value).Trim() : null;
+            return returnValue;
+        }
+
+        public string IntegerValue(ExcelRange range)
+        {
+            int? returnValue = null;
+            int temp;
+            if (int.TryParse(StringValue(range), out temp)) returnValue = int.Parse(StringValue(range));
+            return returnValue.HasValue ? returnValue.Value.ToString() : null;
+        }
+
+        public string DateValue(ExcelRange range)
+        {
+            DateTime? returnValue = null;
+            DateTime temp;
+            if (DateTime.TryParse(StringValue(range), out temp)) returnValue = DateTime.Parse(StringValue(range));
+            return returnValue.HasValue ? returnValue.Value.ToString("MM/dd/yyyy") : null;
+        }
+
+        public string DependentValue(ExcelRange range)
+        {
+            var value = Convert.ToString(range.Value).Trim();
+            if (String.IsNullOrEmpty(value))
+            {
+                value = "0";
+            }
+            else if (value.ToUpper() == "ALL ELIGIBLE")
+            {
+                value = "-1";
+            }
+            else
+            {
+                value = IntegerValue(range);
+                if (value == null)
+                {
+                    value = "0";
+                }
+            }
+
+            return value;
+        }
+
+        #endregion
+
+        #region -- Single Endorsement --
+
+        [Authorize(Roles = "SysAd, CanAddNewMemberships, CanEditNewMemberships, CanDeleteNewMemberships")]
+        public ActionResult SingleEndorsement(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            EndorsementBatch model;
+            if (guid != null && db.EndorsementBatches.Any(t => t.Guid == guid))
+            {
+                model = db.EndorsementBatches.Include(t => t.Members).FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                model = new EndorsementBatch()
+                {
+                    //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber()
+                };
+            }
+
+            base.ReadOnlyAttribute(model);
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Areas = LegacyHelper.GetLegacyArea(accountCode);
+            ViewBag.AreaCount = LegacyHelper.GetLegacyArea(accountCode).ToList().Count();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddNewMemberships, CanEditNewMemberships, CanDeleteNewMemberships")]
+        public ActionResult SingleEndorsement(EndorsementBatch endorsementBatch, string accountCode, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            endorsementBatch.Date = DateTime.Now;
+            endorsementBatch.EndorsementType = Constants.NEW_ENDORSEMENT_TYPE;
+            endorsementBatch.BatchType = "Single";
+            endorsementBatch.AccountCode = accountCode;
+            endorsementBatch.Status = Corelib.Enums.EndorsementBatchStatus.New;
+            endorsementBatch.EndorsementCount = 1;
+
+            if (ModelState.IsValid)
+            {
+                if (endorsementBatch.Id == 0)
+                {
+                    db.EndorsementBatches.Add(endorsementBatch);
+                    if (endorsementBatch.Members != null)
+                    {
+                        var member = endorsementBatch.Members.FirstOrDefault();
+                        member.EndorsementBatchId = endorsementBatch.Id;
+                        db.Members.Add(member);
+                    }
+                }
+                else
+                {
+                    db.Entry(endorsementBatch).State = EntityState.Modified;
+                    if (endorsementBatch.Members != null)
+                    {
+                        var member = endorsementBatch.Members.FirstOrDefault();
+                        var currentMember = db.Members.FirstOrDefault(t => t.Id == member.Id && !t.Deleted);
+                        db.Entry(currentMember).CurrentValues.SetValues(member);
+                        currentMember.EndorsementBatchId = endorsementBatch.Id;
+                        db.Entry(currentMember).State = EntityState.Modified;
+                    }
+                }
+                db.SaveChanges();
+                if (submit == "Save")
+                {
+                    return RedirectToAction("Index", new { accountCode = accountCode });
+                }
+                else
+                {
+                    return RedirectToAction("ProcessBatch", new { guid = endorsementBatch.Guid, accountCode = accountCode });
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Areas = LegacyHelper.GetLegacyArea(accountCode);
+
+            return View(endorsementBatch);
+        }
+
+        #endregion
+
+        #region -- Cancelled Membership --
+
+        [Authorize(Roles = "SysAd, CanAddMembershipCancellations, CanEditMembershipCancellations, CanDeleteMembershipCancellations")]
+        public ActionResult CancelledMember(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var activeMembers = LegacyHelper.GetActiveMembers(legacyDb, accountCode).Where(t => t.Type == "Principal");
+
+            CancelledMember model;
+            if (guid != null && db.EndorsementBatches.Any(t => t.Guid == guid))
+            {
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+                if (endorsement == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                model = db.CancelledMembers.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.EndorsementBatchId == endorsement.Id && !t.Deleted);
+                if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                base.CancelledMemberReadOnlyAttribute(this.IsReadOnlyUser || model.Status != CancelledMembershipStatus.New);
+            }
+            else
+            {
+                model = new CancelledMember()
+                {
+                    AccountCode = accountCode,
+                    Status = Corelib.Enums.CancelledMembershipStatus.New
+                };
+                base.CancelledMemberReadOnlyAttribute(this.IsReadOnlyUser || false);
+            }
+
+            ViewBag.MemberList = activeMembers;
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddMembershipCancellations, CanEditMembershipCancellations, CanDeleteMembershipCancellations")]
+        public ActionResult CancelledMember(CancelledMember model, string accountCode, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                if (model.Id == 0)
+                {
+                    var endorsementBatch = new EndorsementBatch()
+                    {
+                        Deadline = DateTime.Now,
+                        //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                        Date = DateTime.Now,
+                        EndorsementType = Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE,
+                        BatchType = "Single",
+                        EndorsementCount = 1,
+                        AccountCode = accountCode,
+                        Status = (submit != "Save" ? Corelib.Enums.EndorsementBatchStatus.ApprovedByCorporateAdmin : Corelib.Enums.EndorsementBatchStatus.New)
+                    };
+                    db.EndorsementBatches.Add(endorsementBatch);
+                    model.EndorsementBatch = endorsementBatch;
+                    model.Status = (submit != "Save" ? Corelib.Enums.CancelledMembershipStatus.CorporateAdminApproved : Corelib.Enums.CancelledMembershipStatus.New);
+                    db.CancelledMembers.Add(model);
+                }
+                else
+                {
+                    model.Status = (submit != "Save" ? Corelib.Enums.CancelledMembershipStatus.CorporateAdminApproved : Corelib.Enums.CancelledMembershipStatus.New);
+                    db.Entry(model).State = EntityState.Modified;
+                    var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId && !t.Deleted);
+                    model.EndorsementBatch = endorsementBatch;
+                }
+                db.SaveChanges();
+
+                //var cancellmembers = new List<CancelledMember>();
+                //cancellmembers.Add(model);
+                //Helper.CorpAdminMembershipCancellationBatchSummary(System.Web.HttpContext.Current, cancellmembers, accountCode);
+                //Helper.MembershipCancellation(System.Web.HttpContext.Current, cancellmembers);
+
+                if (submit == "Save")
+                {
+                    return RedirectToAction("Index", new { accountCode = accountCode });
+                }
+                else
+                {
+                    return RedirectToAction("ProcessBatch", new { guid = model.EndorsementBatch.Guid, accountCode = accountCode });
+                }
+            }
+
+            base.CancelledMemberReadOnlyAttribute(this.IsReadOnlyUser || false);
+
+            var activeMembers = LegacyHelper.GetActiveMembers(legacyDb, accountCode).Where(t => t.Type == "Principal");
+            ViewBag.MemberList = activeMembers;
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+
+            return View(model);
+        }
+
+        public ActionResult GetMemberProfile(string memberCode, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var activeMember = LegacyHelper.GetLegacyActivePrincipals(legacyDb, accountCode).FirstOrDefault(t => t.PrincipalCode == memberCode);
+
+            base.CancelledMemberReadOnlyAttribute(false);
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            if (activeMember == null)
+            {
+                return null;
+            }
+            var model = db.CancelledMembers.FirstOrDefault(t => t.MemberCode == memberCode && t.Status != CancelledMembershipStatus.Cancelled) ?? new CancelledMember();
+            base.CancelledMemberReadOnlyAttribute(this.IsReadOnlyUser || model.Status != CancelledMembershipStatus.New);
+            ViewBag.IsInValid = model.Status != CancelledMembershipStatus.New;
+            return PartialView("_CancelledMember", activeMember);
+        }
+
+        [Authorize(Roles = "SysAd, CanAddMembershipCancellations, CanEditMembershipCancellations, CanDeleteMembershipCancellations")]
+        public ActionResult BatchUploadCancellation(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            EndorsementBatch model;
+            if (guid != null && db.EndorsementBatches.Any(t => t.Guid == guid))
+            {
+                model = db.EndorsementBatches
+                    .Include(t => t.CancelledMembers)
+                    .FirstOrDefault(t => t.Guid == guid);
+                ViewBag.Validate = true;
+            }
+            else
+            {
+                model = new EndorsementBatch()
+                {
+                    Date = DateTime.Now,
+                    EndorsementType = Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE,
+                    BatchType = "Batch Upload",
+                    AccountCode = accountCode
+                };
+            }
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+
+            base.ReadOnlyAttribute(model);
+
+            return View(model);
+        }
+
+        public JsonResult UploadCancellationExcel(HttpPostedFileBase fileData, string accountCode, int endorsementBatchId)
+        {
+            var dictionary = new Dictionary<string, object>();
+            var fileExtension = fileData.FileName.Substring(fileData.FileName.LastIndexOf(".") + 1);
+            if (fileExtension != "xlsm")
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", "You have uploaded an invalid file. Please download the template, fill up the information, and try uploading again.");
+
+                return this.Json(dictionary);
+            }
+
+            var originalFilename = fileData.FileName;
+            var originalFilepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", originalFilename));
+
+            var filename = String.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
+            var filepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", filename));
+
+            fileData.SaveAs(filepath);
+
+            string errorMessage;
+            if (!CompareExcelFile(filepath, "Cancel Member.xlsm", out errorMessage))
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", errorMessage);
+
+                return this.Json(dictionary);
+            }
+
+            if (!CheckExcelFile(filepath, out errorMessage, Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE))
+            {
+                dictionary.Add("Success", false);
+                dictionary.Add("ErrorMessage", errorMessage);
+
+                return this.Json(dictionary);
+            }
+
+            dictionary.Add("Success", true);
+            dictionary.Add("Filename", originalFilename);
+            dictionary.Add("GuidFilename", filename);
+
+            dictionary.Add("TableData", RenderPartialViewToString("~/Areas/CorporateAdministrator/Views/Endorsement/_CancelledMemberWrapper.cshtml", ImportCancellationExcel(accountCode, endorsementBatchId, filepath)));
+
+            return this.Json(dictionary);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ValidateUploadedCancellationExcel(EndorsementBatch endorsementBatch, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+            if (endorsementBatch.CancelledMembers != null)
+            {
+                foreach (var member in endorsementBatch.CancelledMembers)
+                {
+                    member.EndorsementBatchId = endorsementBatch.Id;
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            return View("BatchUploadCancellation", endorsementBatch);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddMembershipCancellations, CanEditMembershipCancellations, CanDeleteMembershipCancellations")]
+        public ActionResult BatchUploadCancellation(EndorsementBatch endorsementBatch, string accountCode, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+
+            if (ModelState.IsValid)
+            {
+                endorsementBatch.Status = (submit != "Save" ? Corelib.Enums.EndorsementBatchStatus.ApprovedByCorporateAdmin : Corelib.Enums.EndorsementBatchStatus.New);
+
+                if (endorsementBatch.Id == 0)
+                {
+                    foreach (var cancelledMember in endorsementBatch.CancelledMembers)
+                    {
+                        if (cancelledMember.Id == 0)
+                        {
+                            cancelledMember.Status = (submit != "Save" ? Corelib.Enums.CancelledMembershipStatus.CorporateAdminApproved : Corelib.Enums.CancelledMembershipStatus.New);
+                            db.Entry(cancelledMember).State = EntityState.Added;
+                        }
+                    }
+                    db.EndorsementBatches.Add(endorsementBatch);
+                }
+                else
+                {
+                    var currentCancelMemberIds = endorsementBatch.CancelledMembers.Select(t => t.Id).Distinct();
+                    var cancelMembersToDelete = db.CancelledMembers.Where(t => t.EndorsementBatchId == endorsementBatch.Id && !currentCancelMemberIds.Contains(t.Id));
+                    db.CancelledMembers.RemoveRange(cancelMembersToDelete);
+
+                    foreach (var cancelledMember in endorsementBatch.CancelledMembers)
+                    {
+                        if (cancelledMember.Id == 0)
+                        {
+                            cancelledMember.Status = (submit != "Save" ? Corelib.Enums.CancelledMembershipStatus.CorporateAdminApproved : Corelib.Enums.CancelledMembershipStatus.New);
+                            db.Entry(cancelledMember).State = EntityState.Added;
+                        }
+                    }
+                    db.Entry(endorsementBatch).State = EntityState.Modified;
+                    if (endorsementBatch.CancelledMembers != null && endorsementBatch.CancelledMembers.Count > 0)
+                    {
+                        for (var index = endorsementBatch.CancelledMembers.Count - 1; index >= 0; index--)
+                        {
+                            var cancelledMember = endorsementBatch.CancelledMembers.ElementAt(index);
+                            if (cancelledMember.Id != 0)
+                            {
+                                cancelledMember.Status = (submit != "Save" ? Corelib.Enums.CancelledMembershipStatus.CorporateAdminApproved : Corelib.Enums.CancelledMembershipStatus.New);
+                                db.Entry(cancelledMember).State = EntityState.Modified;
+                            }
+                        }
+                    }
+                }
+
+                endorsementBatch.EndorsementCount = endorsementBatch.CancelledMembers != null ? endorsementBatch.CancelledMembers.Count(t => !t.Deleted) : 0;
+                db.SaveChanges();
+
+                if (submit == "Save")
+                {
+                    return RedirectToAction("Index", new { accountCode = accountCode });
+                }
+                else
+                {
+                    return RedirectToAction("ProcessBatch", new { guid = endorsementBatch.Guid, accountCode = accountCode });
+                }
+            }
+
+            base.ReadOnlyAttribute(endorsementBatch);
+
+            ViewBag.Genders = new List<string>() { "Male", "Female" };
+            ViewBag.CivilStatuses = new List<string>() { "Single", "Married", "Widower", "Separated", "Single Parent" };
+            ViewBag.PrincipalPlans = Helper.GetLegacyRoomRates(accountCode, true);
+            ViewBag.DependentPlans = Helper.GetLegacyRoomRates(accountCode, false);
+            ViewBag.Validate = true;
+
+            return View(endorsementBatch);
+        }
+
+        #endregion
+    }
+}

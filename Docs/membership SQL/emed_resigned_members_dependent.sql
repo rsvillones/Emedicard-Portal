@@ -1,0 +1,35 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Allan Albacete
+-- Create date: 04/08/2013
+-- Description:	Resigned Members
+-- =============================================
+CREATE PROCEDURE emed_resigned_members_dependent
+	-- Add the parameters for the stored procedure here
+	@AccountCode as varchar(25)
+AS
+BEGIN
+SELECT E.AREA_DESC, (F.MEM_LNAME+', '+F.MEM_FNAME) AS [PRINCIPAL], A.DEP_CODE, A.MEM_LNAME, A.MEM_FNAME, A.MEM_MI, A.MEM_BDAY, A.MEM_AGE, J.SEX_DESC, I.MEMCSTAT_DESC, A.EFF_DATE,	A.VAL_DATE,	D.PLAN_DESC, G.DEP_DESCRIPTION, A.DATE_RESGN,isnull(F.PRIN_COMPID,'') AS PRIN_COMPID 
+						FROM SYS_UWPRINCIPAL_ACTIVE_MTBL F 
+							INNER JOIN SYS_UWDEPENDENT_ACTIVE_MTBL A ON A.PRIN_APPNUM=F.PRIN_APPNUM 
+							INNER JOIN SYS_ACCOUNT_MTBL B ON A.ACCOUNT_CODE=B.ACCOUNT_CODE 
+							LEFT JOIN SYS_ROOMRATE_MTBL C ON A.RSPROOMRATE_ID=C.RSPROOMRATE_ID 
+							LEFT JOIN SYS_PLAN_LTBL D ON C.PLAN_CODE=D.PLAN_CODE 
+							LEFT JOIN SYS_AREA_LTBL E ON F.AREA_CODE=E.AREA_CODE 
+							LEFT JOIN SYS_RELATIONS_LTBL G ON A.DEP_RELCODE=G.DEPENDENT_CODE 
+							LEFT JOIN sys_mem_type_ltbl h on a.mem_type=h.mem_type 
+							LEFT JOIN SYS_UWMEMBER_CSTATUS_LTBL I ON A.MEM_CIVILSTAT=I.MEMCSTAT_ID 
+							LEFT JOIN SYS_MEM_S_LTBL J ON A.MEM_SEX=J.SEXID 
+							INNER JOIN SYS_UWMEMBER_OSTATUS_LTBL N ON A.MEM_OSTAT_CODE = N.MEMOSTAT_ID 
+						WHERE 
+							a.account_code in (@AccountCode)  
+							and 
+							A.MEM_OSTAT_CODE in (9) and 
+							a.val_date  >= GETDATE()
+					
+						ORDER BY B.ACCOUNT_NAME, E.area_desc, A.MEM_LNAME, A.MEM_FNAME, A.MEM_MI
+END
+GO

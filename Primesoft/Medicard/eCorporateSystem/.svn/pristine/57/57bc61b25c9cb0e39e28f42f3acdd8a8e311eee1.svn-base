@@ -1,0 +1,77 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OfficeOpenXml;
+using Corelib.Models;
+using Corelib.Models;
+
+namespace Corelib.Classes
+{
+    public static class Extension
+    {
+        #region -- Excel Extensions --
+
+        public static string StringValue(this ExcelRange range)
+        {
+            return Convert.ToString(range.Value);
+        }
+
+        public static int IntegerValue(this ExcelRange range, IdentityDataContext db, ExcelError error, string column, ApplicationVerification applicationVerification)
+        {
+            try
+            {
+                return int.Parse(Convert.ToString(range.Value));
+            }
+            catch (Exception)
+            {
+                error.ErrorMessage = "Input value is invalid";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                applicationVerification.IsError = true;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                return 0;
+            }
+        }
+
+        public static decimal DecimalValue(this ExcelRange range, IdentityDataContext db, ExcelError error, string column, ApplicationVerification applicationVerification)
+        {
+            try
+            {
+                return decimal.Parse(Convert.ToString(range.Value));
+            }
+            catch (Exception)
+            {
+                error.ErrorMessage = "Input value is invalid";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                applicationVerification.IsError = true;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                return 0m;
+            }
+        }
+
+        public static DateTime DateValue(this ExcelRange range, IdentityDataContext db, ExcelError error, string column, ApplicationVerification applicationVerification)
+        {
+            try
+            {
+                return DateTime.Parse(Convert.ToString(range.Value));
+            }
+            catch (Exception)
+            {
+                error.ErrorMessage = "Input value is invalid";
+                error.Value = Convert.ToString(range.Value);
+                error.Column = column;
+                applicationVerification.IsError = true;
+                db.ExcelErrors.Add(error);
+                db.SaveChanges();
+                return DateTime.Now;
+            }
+        }
+
+        #endregion
+    }
+}

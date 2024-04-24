@@ -1,0 +1,31 @@
+using Mvc.Mailer;
+using System.Net.Mail;
+using Corelib.Classes;
+
+namespace Corelib.Mailers
+{ 
+    public class UserMailer : MailerBase, IUserMailer 	
+	{
+		public UserMailer()
+		{
+			MasterName="_Layout";
+		}
+
+        public virtual MvcMailMessage SendEmail()
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel();
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "ReportSheetEmailNotification",
+                    From = new MailAddress("mmedidas@rbsystems.com"),
+                    Subject = "Report Email Notification for Approval",
+                    IsBodyHtml = true,
+                    Body = EmailTools.SetEmailTemplate(emailViewModel)
+                };
+                return returnValue;
+            }
+        }
+ 	}
+}

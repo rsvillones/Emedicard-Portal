@@ -1,0 +1,24 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+
+namespace WebUI.Controllers
+{
+    public class ItemsController : BaseDbController
+    {
+        #region -- Action Results --
+
+        public ActionResult GetMyAccounts(int? page)
+        {
+            var model = LegacyHelper.GetLegacyAccounts(db, legacyDb, User);
+
+            return PartialView("_MyLegacyAccounts", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+        
+        #endregion
+    }
+}

@@ -1,0 +1,2074 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="emedicardModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="emedicardModelStoreContainer">
+          <EntitySet Name="emed_agent_users" EntityType="emedicardModel.Store.emed_agent_users" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_ape_requests" EntityType="emedicardModel.Store.emed_ape_requests" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_book_dates" EntityType="emedicardModel.Store.emed_book_dates" store:Type="Tables" store:Schema="dbo" store:Name="emed_book_dates">
+            <DefiningQuery>SELECT 
+      [emed_book_dates].[id] AS [id], 
+      [emed_book_dates].[BookedDates] AS [BookedDates], 
+      [emed_book_dates].[Special] AS [Special]
+      FROM [dbo].[emed_book_dates] AS [emed_book_dates]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="emed_consultation" EntityType="emedicardModel.Store.emed_consultation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_consultation_details" EntityType="emedicardModel.Store.emed_consultation_details" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_corporate_accounts" EntityType="emedicardModel.Store.emed_corporate_accounts" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_corporate_id_request" EntityType="emedicardModel.Store.emed_corporate_id_request" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_corporate_users" EntityType="emedicardModel.Store.emed_corporate_users" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_corporate_users_requests" EntityType="emedicardModel.Store.emed_corporate_users_requests" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_doctors_user" EntityType="emedicardModel.Store.emed_doctors_user" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_eaccount_users_account" EntityType="emedicardModel.Store.emed_eaccount_users_account" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_ecu_requests" EntityType="emedicardModel.Store.emed_ecu_requests" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_email_settings" EntityType="emedicardModel.Store.emed_email_settings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_emember_users" EntityType="emedicardModel.Store.emed_emember_users" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_endorsement_dependent" EntityType="emedicardModel.Store.emed_endorsement_dependent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_endorsement_principal" EntityType="emedicardModel.Store.emed_endorsement_principal" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_enrolled_dependent" EntityType="emedicardModel.Store.emed_enrolled_dependent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_members_to_cancel" EntityType="emedicardModel.Store.emed_members_to_cancel" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="emed_requested_utilization" EntityType="emedicardModel.Store.emed_requested_utilization" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="emed_agent_users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Pword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="BrokerName" Type="varchar" MaxLength="255" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="255" />
+          <Property Name="AgentCode" Type="varchar" MaxLength="50" />
+          <Property Name="AccessLevel" Type="numeric" Nullable="false" />
+          <Property Name="MainUserID" Type="numeric" Nullable="false" />
+          <Property Name="Access_APE" Type="numeric" Nullable="false" />
+          <Property Name="Access_Utilization" Type="numeric" Nullable="false" />
+          <Property Name="Access_Endorsement" Type="numeric" Nullable="false" />
+          <Property Name="Access_Benefits" Type="numeric" Nullable="false" />
+          <Property Name="Access_ID" Type="numeric" Nullable="false" />
+          <Property Name="Access_ECU" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActiveMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ResignedMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActionMemos" Type="numeric" Nullable="false" />
+          <Property Name="DateRegistered" Type="datetime" />
+          <Property Name="DateUserActivated" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="ProfilePicture" Type="image" />
+          <Property Name="Access_Reimbursements" Type="numeric" Nullable="false" />
+          <Property Name="Access_ClinicResults" Type="numeric" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_ape_requests">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="HeadCount" Type="numeric" Nullable="false" />
+          <Property Name="Address" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="CityCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="ProvinceCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Region" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="ReasonDisapproved" Type="text" />
+          <Property Name="StatusBy" Type="varchar" MaxLength="50" />
+          <Property Name="StatusDate" Type="datetime" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'emed_11072019.dbo.emed_book_dates' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="emed_book_dates">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="BookedDates" />
+            <PropertyRef Name="Special" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="BookedDates" Type="datetime" Nullable="false" />
+          <Property Name="Special" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_consultation">
+          <Key>
+            <PropertyRef Name="ConsultationID" />
+          </Key>
+          <Property Name="ConsultationID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ConsultationTitle" Type="varchar" Nullable="false" MaxLength="150" />
+          <Property Name="Consultation" Type="text" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="IP" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="DoctorID" Type="int" />
+        </EntityType>
+        <EntityType Name="emed_consultation_details">
+          <Key>
+            <PropertyRef Name="ConsultationDetailsID" />
+          </Key>
+          <Property Name="ConsultationDetailsID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ConsultationID" Type="bigint" />
+          <Property Name="ConsultationText" Type="text" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="Notified" Type="bit" />
+          <Property Name="isRead" Type="bit" />
+          <Property Name="isDoctor" Type="bit" />
+        </EntityType>
+        <EntityType Name="emed_corporate_accounts">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="AccountCategory" Type="varchar" MaxLength="50" />
+          <Property Name="MotherCode" Type="varchar" MaxLength="50" />
+          <Property Name="Plans" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="allow_upload" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_corporate_id_request">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="PaymentMode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserID" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="emed_corporate_users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Pword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" MaxLength="255" />
+          <Property Name="Designation" Type="varchar" MaxLength="150" />
+          <Property Name="CompanyAddress" Type="varchar" MaxLength="255" />
+          <Property Name="TelNo" Type="varchar" MaxLength="50" />
+          <Property Name="FaxNo" Type="varchar" MaxLength="50" />
+          <Property Name="MobileNo" Type="varchar" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="255" />
+          <Property Name="RegAccountCode" Type="varchar" MaxLength="50" />
+          <Property Name="RegMotherCode" Type="varchar" MaxLength="50" />
+          <Property Name="RegAcctCategory" Type="varchar" MaxLength="50" />
+          <Property Name="AccessLevel" Type="numeric" Nullable="false" />
+          <Property Name="MainUserID" Type="numeric" Nullable="false" />
+          <Property Name="Access_APE" Type="numeric" Nullable="false" />
+          <Property Name="Access_Utilization" Type="numeric" Nullable="false" />
+          <Property Name="Access_Endorsement" Type="numeric" Nullable="false" />
+          <Property Name="Access_Benefits" Type="numeric" Nullable="false" />
+          <Property Name="Access_ID" Type="numeric" Nullable="false" />
+          <Property Name="Access_ECU" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActiveMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ResignedMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActionMemos" Type="numeric" Nullable="false" />
+          <Property Name="DateRegistered" Type="datetime" />
+          <Property Name="DateUserActivation" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="ProfilePicture" Type="image" />
+          <Property Name="Access_Reimbursements" Type="numeric" Nullable="false" />
+          <Property Name="Access_ClinicResults" Type="numeric" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_corporate_users_requests">
+          <Key>
+            <PropertyRef Name="rec_id" />
+          </Key>
+          <Property Name="rec_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="remarks" Type="varchar" MaxLength="1000" />
+          <Property Name="file_path" Type="varchar" MaxLength="250" />
+          <Property Name="uploaded_by" Type="varchar" MaxLength="50" />
+          <Property Name="uploaded_date" Type="datetime" />
+          <Property Name="processed_by" Type="varchar" MaxLength="50" />
+          <Property Name="processed_date" Type="datetime" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="account_code" Type="varchar" MaxLength="25" />
+          <Property Name="subject" Type="varchar" MaxLength="100" />
+          <Property Name="is_mother" Type="bit" />
+          <Property Name="mother_id" Type="int" />
+          <Property Name="is_read_corp" Type="bit" />
+          <Property Name="is_read_agent" Type="bit" />
+          <Property Name="is_read_urg" Type="bit" />
+          <Property Name="grp_type" Type="tinyint" />
+          <Property Name="is_closed" Type="bit" />
+          <Property Name="uploaded_by_name" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="emed_doctors_user">
+          <Key>
+            <PropertyRef Name="DoctorID" />
+          </Key>
+          <Property Name="DoctorID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="Firstname" Type="varchar" MaxLength="50" />
+          <Property Name="Lastname" Type="varchar" MaxLength="50" />
+          <Property Name="Specialization" Type="varchar" MaxLength="50" />
+          <Property Name="ContactNo" Type="varchar" MaxLength="20" />
+          <Property Name="LicenseNo" Type="varchar" MaxLength="50" />
+          <Property Name="status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_eaccount_users_account">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountCategory" Type="varchar" MaxLength="50" />
+          <Property Name="MotherCode" Type="varchar" MaxLength="50" />
+          <Property Name="Plans" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_ecu_requests">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="MemberCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberLName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberFName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberMInitial" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberDesignation" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="PreferredDate" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="HospitalCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="HospitalName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="StatusBy" Type="varchar" MaxLength="50" />
+          <Property Name="ReasonDisapproved" Type="text" />
+          <Property Name="StatusDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="emed_email_settings">
+          <Key>
+            <PropertyRef Name="rec_id" />
+          </Key>
+          <Property Name="rec_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="app_type" Type="varchar" MaxLength="50" />
+          <Property Name="mail_description" Type="varchar" MaxLength="100" />
+          <Property Name="send_to_tag" Type="varchar" MaxLength="50" />
+          <Property Name="send_to_email" Type="varchar" MaxLength="500" />
+          <Property Name="cc" Type="varchar" MaxLength="500" />
+          <Property Name="bcc" Type="varchar" MaxLength="500" />
+          <Property Name="include_self" Type="bit" />
+        </EntityType>
+        <EntityType Name="emed_emember_users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Pword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Firstname" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Lastname" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="HomeAddress" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="TelNo" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MobileNo" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="AccessLevel" Type="numeric" Nullable="false" />
+          <Property Name="DateRegistered" Type="datetime" Nullable="false" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="DateActivationConfirmation" Type="datetime" />
+          <Property Name="ProfilePicture" Type="image" />
+        </EntityType>
+        <EntityType Name="emed_endorsement_dependent">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AppNum" Type="decimal" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MiddleInitial" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="Gender" Type="int" Nullable="false" />
+          <Property Name="CivilStatus" Type="int" Nullable="false" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="MemberType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="PlanCode" Type="int" />
+          <Property Name="PlanDetails" Type="varchar" MaxLength="255" />
+          <Property Name="PlanRNBFor" Type="varchar" MaxLength="255" />
+          <Property Name="RelationshipCode" Type="varchar" MaxLength="50" />
+          <Property Name="RelationShipDetail" Type="varchar" MaxLength="50" />
+          <Property Name="Prin_ID" Type="numeric" />
+          <Property Name="Prin_AppNum" Type="int" />
+          <Property Name="Prin_MemCode" Type="varchar" MaxLength="50" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EndorsedTo" Type="varchar" MaxLength="50" />
+          <Property Name="DateEndorsed" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="50" />
+          <Property Name="Updated_Date" Type="datetime" />
+          <Property Name="Eff_Date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="emed_endorsement_principal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AppNum" Type="decimal" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MiddleInitial" Type="varchar" Nullable="false" MaxLength="3" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="Gender" Type="int" Nullable="false" />
+          <Property Name="CivilStatus" Type="int" Nullable="false" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Prin_CompID" Type="varchar" MaxLength="50" />
+          <Property Name="MemberType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="PlanCode" Type="int" />
+          <Property Name="PlanDetails" Type="varchar" MaxLength="255" />
+          <Property Name="PlanRNBFor" Type="varchar" MaxLength="255" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EndorsedTo" Type="varchar" MaxLength="50" />
+          <Property Name="DateEndorsed" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="50" />
+          <Property Name="Updated_Date" Type="datetime" />
+          <Property Name="Email_Address" Type="varchar" MaxLength="50" />
+          <Property Name="Eff_Date" Type="datetime" />
+          <Property Name="AreaCode" Type="varchar" MaxLength="20" />
+          <Property Name="AreaDescription" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="emed_enrolled_dependent">
+          <Key>
+            <PropertyRef Name="DepID" />
+          </Key>
+          <Property Name="DepID" Type="int" Nullable="false" />
+          <Property Name="MemberCode" Type="varchar" MaxLength="50" />
+          <Property Name="Firstname" Type="varchar" MaxLength="50" />
+          <Property Name="Lastname" Type="varchar" MaxLength="50" />
+          <Property Name="Middlename" Type="varchar" MaxLength="50" />
+          <Property Name="Address" Type="varchar" MaxLength="250" />
+          <Property Name="City" Type="varchar" MaxLength="50" />
+          <Property Name="Province" Type="varchar" MaxLength="50" />
+          <Property Name="PhoneNo" Type="varchar" MaxLength="20" />
+          <Property Name="MobileNo" Type="varchar" MaxLength="50" />
+          <Property Name="Relationship" Type="varchar" MaxLength="50" />
+          <Property Name="Birthday" Type="smalldatetime" />
+          <Property Name="Sex" Type="varchar" MaxLength="7" />
+          <Property Name="CivilStatus" Type="varchar" MaxLength="50" />
+          <Property Name="Height" Type="varchar" MaxLength="10" />
+          <Property Name="Weight" Type="varchar" MaxLength="10" />
+          <Property Name="Occupation" Type="varchar" MaxLength="50" />
+          <Property Name="GSIS" Type="varchar" MaxLength="50" />
+          <Property Name="SSS" Type="varchar" MaxLength="50" />
+          <Property Name="MedicalReferences" Type="text" />
+          <Property Name="TransactionStatus" Type="varchar" MaxLength="50" />
+          <Property Name="DateOfApplication" Type="date" />
+        </EntityType>
+        <EntityType Name="emed_members_to_cancel">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="MemberCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AppNum" Type="varchar" MaxLength="50" />
+          <Property Name="MemberType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="EffectivityDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="MotherCode" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="emed_requested_utilization">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="text" Nullable="false" />
+          <Property Name="Remarks" Type="text" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedDate" Type="datetime" />
+        </EntityType>
+        <Function Name="EMC_CANCEL_MEMBERSHIP_LIST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="numeric" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMC_MEMBERSHIP_CANCEL_CONFIRMATION_LIST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMC_NEW_MEMBERSHIP_LIST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="numeric" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_consultation_list" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="user_id" Type="bigint" Mode="In" />
+          <Parameter Name="isDoctor" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="emed_corporate_account_listing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+          <Parameter Name="user_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_corporate_request_list" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+          <Parameter Name="grp_type" Type="tinyint" Mode="In" />
+          <Parameter Name="type" Type="tinyint" Mode="In" />
+        </Function>
+        <Function Name="emed_corporate_users_request_list" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+          <Parameter Name="grp_type" Type="tinyint" Mode="In" />
+        </Function>
+        <Function Name="emed_ecu_schedule_list" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_enrolled_dependent_select" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="memberCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_get_ape_request" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="user_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_get_id_request" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="user_id" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_get_user_assigned_accounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="agentCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_get_user_assigned_accounts_by_status" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="agentCode" Type="varchar" Mode="In" />
+          <Parameter Name="type" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_get_ecorpuser_by_userid_accounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_get_ecorpaccounts_by_userid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_get_user_fullname" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="varchar" Mode="In" />
+          <Parameter Name="usertype" Type="tinyint" Mode="In" />
+        </Function>
+        <Function Name="emed_getbooking_dates" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="bkyear" Type="int" Mode="In" />
+          <Parameter Name="bkmnth" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_list_of_doctor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="emed_mark_conversation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="consultationID" Type="int" Mode="In" />
+          <Parameter Name="isDoctor" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="EMED_NEW_MEMBERSHIP_LIST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="numeric" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMED_NEW_MEMBERSHIP_LIST_PENDING_STATUS_DEPENDENT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="numeric" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMED_NEW_MEMBERSHIP_LIST_PENDING_STATUS_PRINCIPAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="numeric" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMED_NEW_MEMBERSHIP_LIST_WITH_STATUS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="numeric" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+          <Parameter Name="status" Type="numeric" Mode="In" />
+        </Function>
+        <Function Name="emed_update_request_views" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="rec_id" Type="int" Mode="In" />
+          <Parameter Name="type" Type="tinyint" Mode="In" />
+        </Function>
+        <Function Name="EMEDICARD_MEMDETAILS_V2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_EMED_COMPANYCODE_BY_AGENT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="mode" Type="varchar" Mode="In" />
+          <Parameter Name="varParam1" Type="varchar" Mode="In" />
+          <Parameter Name="varAgentCode" Type="varchar" Mode="In" />
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="MainuserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="usp_emedicard_check_member_login" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="varchar" Mode="In" />
+          <Parameter Name="Password" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="emedicardModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="emedicardEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EnrolledDependents" EntityType="emedicardModel.EnrolledDependent" />
+          <FunctionImport Name="GetEnrolledDependent" ReturnType="Collection(emedicardModel.EnrolledDependents)">
+          <Parameter Name="memberCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="emed_consultation" EntityType="emedicardModel.emed_consultation" />
+          <EntitySet Name="emed_consultation_details" EntityType="emedicardModel.emed_consultation_details" />
+          <EntitySet Name="emed_doctors_user" EntityType="emedicardModel.emed_doctors_user" />
+          <FunctionImport Name="emed_list_of_doctor" ReturnType="Collection(emedicardModel.emed_list_of_doctor_Result)" />
+          <FunctionImport Name="emed_consultation_list" ReturnType="Collection(emedicardModel.emed_consultation_list_Result)">
+            <Parameter Name="user_id" Mode="In" Type="Int64" />
+            <Parameter Name="isDoctor" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="emed_mark_coversation">
+            <Parameter Name="consultationID" Mode="In" Type="Int32" />
+            <Parameter Name="isDoctor" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <EntitySet Name="emed_corporate_users" EntityType="emedicardModel.emed_corporate_users" />
+          <EntitySet Name="emed_book_dates" EntityType="emedicardModel.emed_book_dates" />
+          <FunctionImport Name="emed_getbooking_dates" ReturnType="Collection(emedicardModel.emed_getbooking_dates_Result)">
+            <Parameter Name="bkyear" Mode="In" Type="Int32" />
+            <Parameter Name="bkmnth" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="emed_ape_requests" EntityType="emedicardModel.emed_ape_requests" />
+          <FunctionImport Name="emed_get_ape_request" ReturnType="Collection(emedicardModel.emed_get_ape_request_Result)">
+          <Parameter Name="user_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="emed_get_id_request" ReturnType="Collection(emedicardModel.emed_get_id_request_Result)">
+          <Parameter Name="user_id" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="emed_corporate_id_request" EntityType="emedicardModel.emed_corporate_id_request" />
+          <EntitySet Name="emed_eaccount_users_account" EntityType="emedicardModel.emed_eaccount_users_account" />
+          <FunctionImport Name="sp_emed_companycode_by_agent" ReturnType="Collection(emedicardModel.sp_emed_companycode_by_agent_Result)">
+            <Parameter Name="mode" Mode="In" Type="String" />
+            <Parameter Name="varParam1" Mode="In" Type="String" />
+            <Parameter Name="varAgentCode" Mode="In" Type="String" />
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="MainuserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="emed_ecu_requests" EntityType="emedicardModel.emed_ecu_requests" />
+          <FunctionImport Name="emed_ecu_schedule_list" ReturnType="Collection(emedicardModel.emed_ecu_schedule_list_Result)">
+          <Parameter Name="AccountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetEndorsementListingByStatus" ReturnType="Collection(emedicardModel.EndorsementListing)">
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Decimal" />
+            <Parameter Name="AccountCode" Mode="In" Type="String" />
+            <Parameter Name="status" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="GetEndorsementList" ReturnType="Collection(emedicardModel.EndorsementListAll)">
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Decimal" />
+            <Parameter Name="AccountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="emed_requested_utilization" EntityType="emedicardModel.emed_requested_utilization" />
+          <FunctionImport Name="corp_account_listing" ReturnType="Collection(emedicardModel.corp_account_listing_Result)">
+            <Parameter Name="account_code" Mode="In" Type="String" />
+            <Parameter Name="user_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="emed_members_to_cancel" EntityType="emedicardModel.emed_members_to_cancel" />
+          <FunctionImport Name="emc_cancel_membership_list" ReturnType="Collection(emedicardModel.emc_cancel_membership_list_Result)">
+            <Parameter Name="UserID" Mode="In" Type="Decimal" />
+            <Parameter Name="AccountCode" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emc_membership_cancel_confiramation_list" ReturnType="Collection(emedicardModel.emc_membership_cancel_confiramation_list_Result)">
+          <Parameter Name="AccountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="EndorsementPrincipal" EntityType="emedicardModel.EndorsementPrincipal" />
+          <EntitySet Name="EndorsementDependents" EntityType="emedicardModel.EndorsementDependent" />
+          <FunctionImport Name="emed_get_user_assigned_accounts" ReturnType="Collection(emedicardModel.emed_get_user_assigned_accounts_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="agentCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="emedicard_emember_users" EntityType="emedicardModel.emedicard_emember_users" />
+          <EntitySet Name="emed_agent_users" EntityType="emedicardModel.emed_agent_users" />
+          <FunctionImport Name="emed_user_accounts_bystatus" ReturnType="Collection(emedicardModel.emed_user_accounts_bystatus_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="agentCode" Mode="In" Type="String" />
+            <Parameter Name="type" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="emed_corporate_users_request_list" ReturnType="Collection(emedicardModel.emed_corporate_users_request_list_Result)">
+            <Parameter Name="account_code" Mode="In" Type="String" />
+            <Parameter Name="grp_type" Mode="In" Type="Byte" />
+          </FunctionImport>
+          <EntitySet Name="emed_corporate_accounts" EntityType="emedicardModel.emed_corporate_accounts" />
+          <EntitySet Name="emed_corporate_users_requests" EntityType="emedicardModel.emed_corporate_users_requests" />
+          <FunctionImport Name="emed_corporate_request_list" ReturnType="Collection(emedicardModel.emed_corporate_request_list_Result)">
+            <Parameter Name="account_code" Mode="In" Type="String" />
+            <Parameter Name="grp_type" Mode="In" Type="Byte" />
+            <Parameter Name="type" Mode="In" Type="Byte" />
+          </FunctionImport>
+          <FunctionImport Name="emed_get_user_fullname" ReturnType="Collection(String)">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="usertype" Mode="In" Type="Byte" />
+          </FunctionImport>
+          <FunctionImport Name="emed_update_request_views">
+            <Parameter Name="rec_id" Mode="In" Type="Int32" />
+            <Parameter Name="type" Mode="In" Type="Byte" />
+          </FunctionImport>
+          <EntitySet Name="emed_email_settings" EntityType="emedicardModel.emed_email_settings" />
+          <FunctionImport Name="emed_ecorpuser_by_userid_accounts" ReturnType="Collection(emedicardModel.emed_get_ecorpuser_by_userid_accounts_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="emed_ecorpaccounts_by_userid" ReturnType="Collection(emedicardModel.emed_get_ecorpaccounts_by_userid_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          
+        </EntityContainer>
+        <EntityType Name="EnrolledDependent">
+          <Key>
+            <PropertyRef Name="DepID" />
+          </Key>
+          <Property Type="Int32" Name="DepID" Nullable="false" />
+          <Property Type="String" Name="MemberCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Firstname" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Lastname" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Middlename" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Address" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="City" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Province" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PhoneNo" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MobileNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Relationship" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Birthday" />
+          <Property Type="String" Name="Sex" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CivilStatus" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Height" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Weight" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Occupation" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="GSIS" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SSS" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MedicalReferences" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TransactionStatus" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateOfApplication" />
+        </EntityType>
+        <ComplexType Name="EnrolledDependents">
+          <Property Type="String" Name="dependent" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="Relationship" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TransactionStatus" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="DateOfApplication" Nullable="true" />
+          <Property Type="Int32" Name="DepID" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="emed_consultation">
+          <Key>
+            <PropertyRef Name="ConsultationID" />
+          </Key>
+          <Property Type="Int64" Name="ConsultationID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="ConsultationTitle" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Consultation" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="String" Name="IP" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Int32" Name="DoctorID" />
+        </EntityType>
+        <EntityType Name="emed_consultation_details">
+          <Key>
+            <PropertyRef Name="ConsultationDetailsID" />
+          </Key>
+          <Property Type="Int64" Name="ConsultationDetailsID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="ConsultationID" />
+          <Property Type="String" Name="ConsultationText" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="Boolean" Name="Notified" DefaultValue="False" />
+          <Property Type="Boolean" Name="isRead" DefaultValue="False" />
+          <Property Type="Boolean" Name="isDoctor" DefaultValue="False" />
+        </EntityType>
+        <EntityType Name="emed_doctors_user">
+          <Key>
+            <PropertyRef Name="DoctorID" />
+          </Key>
+          <Property Type="Int32" Name="DoctorID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Password" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Firstname" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Lastname" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Specialization" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactNo" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LicenseNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="status" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="emed_list_of_doctor_Result">
+          <Property Type="Int32" Name="DoctorID" Nullable="false" />
+          <Property Type="String" Name="docname" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="Specialization" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="emed_consultation_list_Result">
+          <Property Type="Int64" Name="ConsultationID" Nullable="false" />
+          <Property Type="String" Name="consultationTitle" Nullable="false" MaxLength="150" />
+          <Property Type="DateTime" Name="createdDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="new_msg" Nullable="true" />
+          <Property Type="String" Name="doctor_name" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="member_name" Nullable="true" MaxLength="101" />
+        </ComplexType>
+        <EntityType Name="emed_corporate_users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Pword" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Designation" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyAddress" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TelNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FaxNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MobileNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EmailAddress" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RegAccountCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RegMotherCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RegAcctCategory" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="AccessLevel" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="MainUserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_APE" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_Utilization" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_Endorsement" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_Benefits" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ECU" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ActiveMembers" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ResignedMembers" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ActionMemos" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="DateTime" Name="DateRegistered" />
+          <Property Type="DateTime" Name="DateUserActivation" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="Binary" Name="ProfilePicture" MaxLength="Max" FixedLength="false" />
+          <Property Type="Decimal" Name="Access_Reimbursements" Nullable="false" />
+          <Property Type="Decimal" Name="Access_ClinicResults" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_book_dates">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="BookedDates" />
+            <PropertyRef Name="Special" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="BookedDates" Nullable="false" />
+          <Property Type="Byte" Name="Special" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="emed_getbooking_dates_Result">
+          <Property Type="Int32" Name="id" Nullable="false" />
+          <Property Type="DateTime" Name="BookedDates" Nullable="false" Precision="23" />
+          <Property Type="Byte" Name="Special" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="emed_ape_requests">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="Decimal" Name="HeadCount" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="Address" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CityCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ProvinceCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Region" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+          <Property Type="String" Name="CreatedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ReasonDisapproved" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="StatusBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="StatusDate" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="emed_get_ape_request_Result">
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" Precision="23" />
+          <Property Type="Decimal" Name="HeadCount" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="Address" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="CITY_NAME" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="PROVINCE_NAME" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CreatedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="id" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="emed_get_id_request_Result">
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="104" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+        </ComplexType>
+        <EntityType Name="emed_corporate_id_request">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PaymentMode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserID" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UpdatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UpdatedDate" />
+        </EntityType>
+        <EntityType Name="emed_eaccount_users_account">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" DefaultValue="Active" />
+          <Property Type="String" Name="AccountCategory" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MotherCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Plans" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" DefaultValue="ALL" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="sp_emed_companycode_by_agent_Result">
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MOTHER_NAME" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="ACCT_CATEGORY" Nullable="true" MaxLength="15" />
+          <Property Type="Boolean" Name="SOB_APPROVED" Nullable="false" />
+          <Property Type="Boolean" Name="WITH_DETAILEDSOB" Nullable="false" />
+          <Property Type="Boolean" Name="MOTHER_SOB_APPROVED" Nullable="false" />
+          <Property Type="Boolean" Name="MOTHER_WITH_DSOB" Nullable="false" />
+          <Property Type="Int32" Name="SIS_SOB_COUNT" Nullable="true" />
+          <Property Type="Int32" Name="MOTHER_SOB_COUNT" Nullable="true" />
+          <Property Type="Int32" Name="MAIN_SOB_COUNT" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="emed_ecu_requests">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int64" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberLName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberFName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberMInitial" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberDesignation" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PreferredDate" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="HospitalCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="HospitalName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Remarks" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="StatusBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ReasonDisapproved" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="StatusDate" />
+        </EntityType>
+        <ComplexType Name="emed_ecu_schedule_list_Result">
+          <Property Type="Int64" Name="id" Nullable="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MemberLName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MemberFName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MemberMInitial" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MemberDesignation" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="PreferredDate" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="HospitalName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ReasonDisapproved" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="153" />
+        </ComplexType>
+        <ComplexType Name="EndorsementListing">
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="3" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="Gender" Nullable="false" />
+          <Property Type="Int32" Name="CivilStatus" Nullable="false" />
+          <Property Type="String" Name="PlanDetails" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PlanRNBFor" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PrinName" Nullable="false" MaxLength="106" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Prin_CompID" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="Eff_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AreaDescription" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="Max" />
+          <Property Type="Decimal" Name="AppNum" Nullable="true" Precision="18" Scale="0" />
+        </ComplexType>
+        <ComplexType Name="EndorsementList">
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="appnum" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="3" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="Gender" Nullable="false" />
+          <Property Type="Int32" Name="CivilStatus" Nullable="false" />
+          <Property Type="String" Name="PlanDetails" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PlanRNBFor" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PrinName" Nullable="false" MaxLength="106" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Prin_CompID" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="Max" />
+          <Property Type="DateTime" Name="Eff_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AreaDescription" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="DepName" Nullable="false" MaxLength="1" />
+        </ComplexType>
+        <ComplexType Name="EndorsementList_Result">
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="appnum" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="3" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Gender" Nullable="false" MaxLength="6" />
+          <Property Type="String" Name="CivilStatus" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="PlanDetails" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PlanRNBFor" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DepName" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="PrinName" Nullable="false" MaxLength="106" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Prin_CompID" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="Max" />
+          <Property Type="DateTime" Name="Eff_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AreaDescription" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="GetEndorsementList">
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="appnum" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="3" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Gender" Nullable="false" MaxLength="6" />
+          <Property Type="String" Name="CivilStatus" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="PlanDetails" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PlanRNBFor" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DepName" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="PrinName" Nullable="false" MaxLength="106" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Prin_CompID" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="Max" />
+          <Property Type="DateTime" Name="Eff_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AreaDescription" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="EndorsementListAll">
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="appnum" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="3" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Gender" Nullable="false" MaxLength="6" />
+          <Property Type="String" Name="CivilStatus" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="PlanDetails" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="PlanRNBFor" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="DepName" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="PrinName" Nullable="false" MaxLength="106" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Prin_CompID" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="Max" />
+          <Property Type="DateTime" Name="Eff_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AreaDescription" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <EntityType Name="emed_requested_utilization">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Remarks" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UpdatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UpdatedDate" />
+        </EntityType>
+        <ComplexType Name="corp_account_listing_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" />
+        </ComplexType>
+        <EntityType Name="emed_members_to_cancel">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int64" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AppNum" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Remarks" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="EffectivityDate" Nullable="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UpdatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UpdatedDate" />
+          <Property Type="String" Name="MotherCode" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="emc_cancel_membership_list_Result">
+          <Property Type="Int64" Name="id" Nullable="false" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MemberType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="EffectivityDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="mem_name" Nullable="false" MaxLength="101" />
+        </ComplexType>
+        <ComplexType Name="emc_membership_cancel_confiramation_list_Result">
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" />
+          <Property Type="DateTime" Name="EffectivityDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="102" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="MemberType" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="EmailAddress" Nullable="true" MaxLength="255" />
+        </ComplexType>
+        <EntityType Name="EndorsementPrincipal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="AppNum" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" />
+          <Property Type="Int32" Name="Gender" Nullable="false" />
+          <Property Type="Int32" Name="CivilStatus" Nullable="false" />
+          <Property Type="String" Name="Remarks" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Prin_CompID" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="PlanCode" />
+          <Property Type="String" Name="PlanDetails" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PlanRNBFor" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="Status" Nullable="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EndorsedTo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateEndorsed" />
+          <Property Type="String" Name="Updated_By" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Updated_Date" />
+          <Property Type="String" Name="Email_Address" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Eff_Date" />
+          <Property Type="String" Name="AreaCode" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AreaDescription" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="EndorsementDependent">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="AppNum" Precision="18" Scale="0" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MiddleInitial" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" />
+          <Property Type="Int32" Name="Gender" Nullable="false" />
+          <Property Type="Int32" Name="CivilStatus" Nullable="false" />
+          <Property Type="String" Name="Remarks" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="PlanCode" />
+          <Property Type="String" Name="PlanDetails" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PlanRNBFor" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RelationshipCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RelationShipDetail" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="Prin_ID" Precision="18" Scale="0" />
+          <Property Type="Int32" Name="Prin_AppNum" />
+          <Property Type="String" Name="Prin_MemCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="Status" Nullable="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EndorsedTo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateEndorsed" />
+          <Property Type="String" Name="Updated_By" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Updated_Date" />
+          <Property Type="DateTime" Name="Eff_Date" />
+        </EntityType>
+        <ComplexType Name="emed_get_user_assigned_accounts_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="AccountCategory" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+        </ComplexType>
+        <EntityType Name="emedicard_emember_users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Pword" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Firstname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Lastname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Birthday" Nullable="false" />
+          <Property Type="String" Name="HomeAddress" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TelNo" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MobileNo" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EmailAddress" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="AccessLevel" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="DateTime" Name="DateRegistered" Nullable="false" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="DateTime" Name="DateActivationConfirmation" />
+          <Property Type="Binary" Name="ProfilePicture" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="emed_agent_users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Pword" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="BrokerName" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Type" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EmailAddress" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AgentCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="AccessLevel" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="MainUserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_APE" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_Utilization" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_Endorsement" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_Benefits" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ECU" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ActiveMembers" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ResignedMembers" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ActionMemos" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="DateTime" Name="DateRegistered" />
+          <Property Type="DateTime" Name="DateUserActivated" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="Binary" Name="ProfilePicture" MaxLength="Max" FixedLength="false" />
+          <Property Type="Decimal" Name="Access_Reimbursements" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Access_ClinicResults" Nullable="false" Precision="18" Scale="0" />
+        </EntityType>
+        <ComplexType Name="emed_get_user_assigned_accounts_by_status_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="AccountCategory" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+        </ComplexType>
+        <ComplexType Name="emed_get_ecorpuser_by_userid_accounts_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FullName" Nullable="false" MaxLength="500" />
+          <Property Type="String" Name="EmailAddress" Nullable="false" MaxLength="500" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+        </ComplexType>
+        <ComplexType Name="emed_get_ecorpaccounts_by_userid_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="emed_get_user_accounts_bystatus_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="AccountCategory" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+        </ComplexType>
+        <ComplexType Name="emed_user_accounts_bystatus_Result">
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="AccountCategory" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" />
+        </ComplexType>
+        <ComplexType Name="emed_corporate_users_request_list_Result">
+          <Property Type="Int32" Name="rec_id" Nullable="false" />
+          <Property Type="String" Name="remarks" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="file_path" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="uploaded_by" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="uploaded_date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="req_status" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="subject" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="emed_corporate_accounts">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" MaxLength="50" FixedLength="false" Unicode="false" DefaultValue="Active" />
+          <Property Type="String" Name="AccountCategory" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MotherCode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Plans" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+          <Property Type="Boolean" Name="allow_upload" Nullable="false" />
+        </EntityType>
+        <EntityType Name="emed_corporate_users_requests">
+          <Key>
+            <PropertyRef Name="rec_id" />
+          </Key>
+          <Property Type="Int32" Name="rec_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="remarks" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="file_path" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="uploaded_by" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="uploaded_date" />
+          <Property Type="String" Name="processed_by" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="processed_date" />
+          <Property Type="Boolean" Name="is_deleted" />
+          <Property Type="String" Name="account_code" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="subject" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="is_mother" />
+          <Property Type="Int32" Name="mother_id" />
+          <Property Type="Boolean" Name="is_read_corp" />
+          <Property Type="Boolean" Name="is_read_agent" />
+          <Property Type="Boolean" Name="is_read_urg" />
+          <Property Type="Byte" Name="grp_type" />
+          <Property Type="Boolean" Name="is_closed" />
+          <Property Type="String" Name="uploaded_by_name" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="emed_corporate_request_list_Result">
+          <Property Type="Int32" Name="rec_id" Nullable="false" />
+          <Property Type="String" Name="remarks" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="file_path" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="uploaded_by" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="uploaded_date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="req_status" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="subject" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="new_msg" Nullable="true" />
+          <Property Type="String" Name="status_description" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="status_date" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="emed_get_user_fullname_Result">
+          <Property Type="String" Name="FirstName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="LastName" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <EntityType Name="emed_email_settings">
+          <Key>
+            <PropertyRef Name="rec_id" />
+          </Key>
+          <Property Type="Int32" Name="rec_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="app_type" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="mail_description" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="send_to_tag" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="send_to_email" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="cc" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="bcc" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="include_self" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="emedicardModelStoreContainer" CdmEntityContainer="emedicardEntities">
+          <EntitySetMapping Name="EnrolledDependents">
+            <EntityTypeMapping TypeName="emedicardModel.EnrolledDependent">
+              <MappingFragment StoreEntitySet="emed_enrolled_dependent">
+                <ScalarProperty Name="DateOfApplication" ColumnName="DateOfApplication" />
+                <ScalarProperty Name="TransactionStatus" ColumnName="TransactionStatus" />
+                <ScalarProperty Name="MedicalReferences" ColumnName="MedicalReferences" />
+                <ScalarProperty Name="SSS" ColumnName="SSS" />
+                <ScalarProperty Name="GSIS" ColumnName="GSIS" />
+                <ScalarProperty Name="Occupation" ColumnName="Occupation" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="Sex" ColumnName="Sex" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Relationship" ColumnName="Relationship" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Middlename" ColumnName="Middlename" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="DepID" ColumnName="DepID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetEnrolledDependent" FunctionName="emedicardModel.Store.emed_enrolled_dependent_select">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.EnrolledDependents">
+                <ScalarProperty Name="dependent" ColumnName="dependent" />
+                <ScalarProperty Name="Relationship" ColumnName="Relationship" />
+                <ScalarProperty Name="TransactionStatus" ColumnName="TransactionStatus" />
+                <ScalarProperty Name="DateOfApplication" ColumnName="DateOfApplication" />
+                <ScalarProperty Name="DepID" ColumnName="DepID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_consultation">
+            <EntityTypeMapping TypeName="emedicardModel.emed_consultation">
+              <MappingFragment StoreEntitySet="emed_consultation">
+                <ScalarProperty Name="DoctorID" ColumnName="DoctorID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="IP" ColumnName="IP" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Consultation" ColumnName="Consultation" />
+                <ScalarProperty Name="ConsultationTitle" ColumnName="ConsultationTitle" />
+                <ScalarProperty Name="ConsultationID" ColumnName="ConsultationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="emed_consultation_details">
+            <EntityTypeMapping TypeName="emedicardModel.emed_consultation_details">
+              <MappingFragment StoreEntitySet="emed_consultation_details">
+                <ScalarProperty Name="isDoctor" ColumnName="isDoctor" />
+                <ScalarProperty Name="isRead" ColumnName="isRead" />
+                <ScalarProperty Name="Notified" ColumnName="Notified" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ConsultationText" ColumnName="ConsultationText" />
+                <ScalarProperty Name="ConsultationID" ColumnName="ConsultationID" />
+                <ScalarProperty Name="ConsultationDetailsID" ColumnName="ConsultationDetailsID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="emed_doctors_user">
+            <EntityTypeMapping TypeName="emedicardModel.emed_doctors_user">
+              <MappingFragment StoreEntitySet="emed_doctors_user">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="LicenseNo" ColumnName="LicenseNo" />
+                <ScalarProperty Name="ContactNo" ColumnName="ContactNo" />
+                <ScalarProperty Name="Specialization" ColumnName="Specialization" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="DoctorID" ColumnName="DoctorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_list_of_doctor" FunctionName="emedicardModel.Store.emed_list_of_doctor">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_list_of_doctor_Result">
+                <ScalarProperty Name="DoctorID" ColumnName="DoctorID" />
+                <ScalarProperty Name="docname" ColumnName="docname" />
+                <ScalarProperty Name="Specialization" ColumnName="Specialization" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_consultation_list" FunctionName="emedicardModel.Store.emed_consultation_list">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_consultation_list_Result">
+                <ScalarProperty Name="ConsultationID" ColumnName="ConsultationID" />
+                <ScalarProperty Name="consultationTitle" ColumnName="consultationTitle" />
+                <ScalarProperty Name="createdDate" ColumnName="createdDate" />
+                <ScalarProperty Name="new_msg" ColumnName="new_msg" />
+                <ScalarProperty Name="doctor_name" ColumnName="doctor_name" />
+                <ScalarProperty Name="member_name" ColumnName="member_name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_mark_coversation" FunctionName="emedicardModel.Store.emed_mark_conversation" />
+          <EntitySetMapping Name="emed_corporate_users">
+            <EntityTypeMapping TypeName="emedicardModel.emed_corporate_users">
+              <MappingFragment StoreEntitySet="emed_corporate_users">
+                <ScalarProperty Name="Access_Reimbursements" ColumnName="Access_Reimbursements" />
+                <ScalarProperty Name="Access_ClinicResults" ColumnName="Access_ClinicResults" />
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DateUserActivation" ColumnName="DateUserActivation" />
+                <ScalarProperty Name="DateRegistered" ColumnName="DateRegistered" />
+                <ScalarProperty Name="Access_ActionMemos" ColumnName="Access_ActionMemos" />
+                <ScalarProperty Name="Access_ResignedMembers" ColumnName="Access_ResignedMembers" />
+                <ScalarProperty Name="Access_ActiveMembers" ColumnName="Access_ActiveMembers" />
+                <ScalarProperty Name="Access_ECU" ColumnName="Access_ECU" />
+                <ScalarProperty Name="Access_ID" ColumnName="Access_ID" />
+                <ScalarProperty Name="Access_Benefits" ColumnName="Access_Benefits" />
+                <ScalarProperty Name="Access_Endorsement" ColumnName="Access_Endorsement" />
+                <ScalarProperty Name="Access_Utilization" ColumnName="Access_Utilization" />
+                <ScalarProperty Name="Access_APE" ColumnName="Access_APE" />
+                <ScalarProperty Name="MainUserID" ColumnName="MainUserID" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+                <ScalarProperty Name="RegAcctCategory" ColumnName="RegAcctCategory" />
+                <ScalarProperty Name="RegMotherCode" ColumnName="RegMotherCode" />
+                <ScalarProperty Name="RegAccountCode" ColumnName="RegAccountCode" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="FaxNo" ColumnName="FaxNo" />
+                <ScalarProperty Name="TelNo" ColumnName="TelNo" />
+                <ScalarProperty Name="CompanyAddress" ColumnName="CompanyAddress" />
+                <ScalarProperty Name="Designation" ColumnName="Designation" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Pword" ColumnName="Pword" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="emed_book_dates">
+            <EntityTypeMapping TypeName="emedicardModel.emed_book_dates">
+              <MappingFragment StoreEntitySet="emed_book_dates">
+                <ScalarProperty Name="Special" ColumnName="Special" />
+                <ScalarProperty Name="BookedDates" ColumnName="BookedDates" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_getbooking_dates" FunctionName="emedicardModel.Store.emed_getbooking_dates">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_getbooking_dates_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="BookedDates" ColumnName="BookedDates" />
+                <ScalarProperty Name="Special" ColumnName="Special" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_ape_requests">
+            <EntityTypeMapping TypeName="emedicardModel.emed_ape_requests">
+              <MappingFragment StoreEntitySet="emed_ape_requests">
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="StatusDate" ColumnName="StatusDate" />
+                <ScalarProperty Name="StatusBy" ColumnName="StatusBy" />
+                <ScalarProperty Name="ReasonDisapproved" ColumnName="ReasonDisapproved" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
+                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="HeadCount" ColumnName="HeadCount" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_get_ape_request" FunctionName="emedicardModel.Store.emed_get_ape_request">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_get_ape_request_Result">
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="HeadCount" ColumnName="HeadCount" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CITY_NAME" ColumnName="CITY_NAME" />
+                <ScalarProperty Name="PROVINCE_NAME" ColumnName="PROVINCE_NAME" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_get_id_request" FunctionName="emedicardModel.Store.emed_get_id_request">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_get_id_request_Result">
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_corporate_id_request">
+            <EntityTypeMapping TypeName="emedicardModel.emed_corporate_id_request">
+              <MappingFragment StoreEntitySet="emed_corporate_id_request">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PaymentMode" ColumnName="PaymentMode" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="emed_eaccount_users_account">
+            <EntityTypeMapping TypeName="emedicardModel.emed_eaccount_users_account">
+              <MappingFragment StoreEntitySet="emed_eaccount_users_account">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Plans" ColumnName="Plans" />
+                <ScalarProperty Name="MotherCode" ColumnName="MotherCode" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_emed_companycode_by_agent" FunctionName="emedicardModel.Store.SP_EMED_COMPANYCODE_BY_AGENT">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.sp_emed_companycode_by_agent_Result">
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER NAME" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+                <ScalarProperty Name="SOB_APPROVED" ColumnName="SOB_APPROVED" />
+                <ScalarProperty Name="WITH_DETAILEDSOB" ColumnName="WITH_DETAILEDSOB" />
+                <ScalarProperty Name="MOTHER_SOB_APPROVED" ColumnName="MOTHER SOB_APPROVED" />
+                <ScalarProperty Name="MOTHER_WITH_DSOB" ColumnName="MOTHER WITH_DSOB" />
+                <ScalarProperty Name="SIS_SOB_COUNT" ColumnName="SIS SOB COUNT" />
+                <ScalarProperty Name="MOTHER_SOB_COUNT" ColumnName="MOTHER SOB COUNT" />
+                <ScalarProperty Name="MAIN_SOB_COUNT" ColumnName="MAIN SOB COUNT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_ecu_requests">
+            <EntityTypeMapping TypeName="emedicardModel.emed_ecu_requests">
+              <MappingFragment StoreEntitySet="emed_ecu_requests">
+                <ScalarProperty Name="StatusDate" ColumnName="StatusDate" />
+                <ScalarProperty Name="ReasonDisapproved" ColumnName="ReasonDisapproved" />
+                <ScalarProperty Name="StatusBy" ColumnName="StatusBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="HospitalName" ColumnName="HospitalName" />
+                <ScalarProperty Name="HospitalCode" ColumnName="HospitalCode" />
+                <ScalarProperty Name="PreferredDate" ColumnName="PreferredDate" />
+                <ScalarProperty Name="MemberDesignation" ColumnName="MemberDesignation" />
+                <ScalarProperty Name="MemberMInitial" ColumnName="MemberMInitial" />
+                <ScalarProperty Name="MemberFName" ColumnName="MemberFName" />
+                <ScalarProperty Name="MemberLName" ColumnName="MemberLName" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_ecu_schedule_list" FunctionName="emedicardModel.Store.emed_ecu_schedule_list">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_ecu_schedule_list_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="MemberLName" ColumnName="MemberLName" />
+                <ScalarProperty Name="MemberFName" ColumnName="MemberFName" />
+                <ScalarProperty Name="MemberMInitial" ColumnName="MemberMInitial" />
+                <ScalarProperty Name="MemberDesignation" ColumnName="MemberDesignation" />
+                <ScalarProperty Name="PreferredDate" ColumnName="PreferredDate" />
+                <ScalarProperty Name="HospitalName" ColumnName="HospitalName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="ReasonDisapproved" ColumnName="ReasonDisapproved" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetEndorsementListingByStatus" FunctionName="emedicardModel.Store.EMED_NEW_MEMBERSHIP_LIST_WITH_STATUS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.EndorsementListing">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="PlanDetails" ColumnName="PlanDetails" />
+                <ScalarProperty Name="PlanRNBFor" ColumnName="PlanRNBFor" />
+                <ScalarProperty Name="PrinName" ColumnName="PrinName" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="Prin_CompID" ColumnName="Prin_CompID" />
+                <ScalarProperty Name="Eff_Date" ColumnName="Eff_Date" />
+                <ScalarProperty Name="AreaDescription" ColumnName="AreaDescription" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetEndorsementList" FunctionName="emedicardModel.Store.EMED_NEW_MEMBERSHIP_LIST">
+          <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.EndorsementListAll">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="appnum" ColumnName="appnum" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="PlanDetails" ColumnName="PlanDetails" />
+                <ScalarProperty Name="PlanRNBFor" ColumnName="PlanRNBFor" />
+                <ScalarProperty Name="DepName" ColumnName="DepName" />
+                <ScalarProperty Name="PrinName" ColumnName="PrinName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="Prin_CompID" ColumnName="Prin_CompID" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Eff_Date" ColumnName="Eff_Date" />
+                <ScalarProperty Name="AreaDescription" ColumnName="AreaDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_requested_utilization">
+            <EntityTypeMapping TypeName="emedicardModel.emed_requested_utilization">
+              <MappingFragment StoreEntitySet="emed_requested_utilization">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="corp_account_listing" FunctionName="emedicardModel.Store.emed_corporate_account_listing">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.corp_account_listing_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_members_to_cancel">
+            <EntityTypeMapping TypeName="emedicardModel.emed_members_to_cancel">
+              <MappingFragment StoreEntitySet="emed_members_to_cancel">
+                <ScalarProperty Name="MotherCode" ColumnName="MotherCode" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="EffectivityDate" ColumnName="EffectivityDate" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emc_cancel_membership_list" FunctionName="emedicardModel.Store.EMC_CANCEL_MEMBERSHIP_LIST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emc_cancel_membership_list_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="EffectivityDate" ColumnName="EffectivityDate" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="mem_name" ColumnName="mem_name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emc_membership_cancel_confiramation_list" FunctionName="emedicardModel.Store.EMC_MEMBERSHIP_CANCEL_CONFIRMATION_LIST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emc_membership_cancel_confiramation_list_Result">
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="EffectivityDate" ColumnName="EffectivityDate" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="EndorsementPrincipal">
+            <EntityTypeMapping TypeName="emedicardModel.EndorsementPrincipal">
+              <MappingFragment StoreEntitySet="emed_endorsement_principal">
+                <ScalarProperty Name="AreaDescription" ColumnName="AreaDescription" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+                <ScalarProperty Name="Eff_Date" ColumnName="Eff_Date" />
+                <ScalarProperty Name="Email_Address" ColumnName="Email_Address" />
+                <ScalarProperty Name="Updated_Date" ColumnName="Updated_Date" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="DateEndorsed" ColumnName="DateEndorsed" />
+                <ScalarProperty Name="EndorsedTo" ColumnName="EndorsedTo" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PlanRNBFor" ColumnName="PlanRNBFor" />
+                <ScalarProperty Name="PlanDetails" ColumnName="PlanDetails" />
+                <ScalarProperty Name="PlanCode" ColumnName="PlanCode" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="Prin_CompID" ColumnName="Prin_CompID" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EndorsementDependents">
+            <EntityTypeMapping TypeName="emedicardModel.EndorsementDependent">
+              <MappingFragment StoreEntitySet="emed_endorsement_dependent">
+                <ScalarProperty Name="Eff_Date" ColumnName="Eff_Date" />
+                <ScalarProperty Name="Updated_Date" ColumnName="Updated_Date" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="DateEndorsed" ColumnName="DateEndorsed" />
+                <ScalarProperty Name="EndorsedTo" ColumnName="EndorsedTo" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Prin_MemCode" ColumnName="Prin_MemCode" />
+                <ScalarProperty Name="Prin_AppNum" ColumnName="Prin_AppNum" />
+                <ScalarProperty Name="Prin_ID" ColumnName="Prin_ID" />
+                <ScalarProperty Name="RelationShipDetail" ColumnName="RelationShipDetail" />
+                <ScalarProperty Name="RelationshipCode" ColumnName="RelationshipCode" />
+                <ScalarProperty Name="PlanRNBFor" ColumnName="PlanRNBFor" />
+                <ScalarProperty Name="PlanDetails" ColumnName="PlanDetails" />
+                <ScalarProperty Name="PlanCode" ColumnName="PlanCode" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_get_user_assigned_accounts" FunctionName="emedicardModel.Store.emed_get_user_assigned_accounts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_get_user_assigned_accounts_Result">
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emedicard_emember_users">
+            <EntityTypeMapping TypeName="emedicardModel.emedicard_emember_users">
+              <MappingFragment StoreEntitySet="emed_emember_users">
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
+                <ScalarProperty Name="DateActivationConfirmation" ColumnName="DateActivationConfirmation" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DateRegistered" ColumnName="DateRegistered" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="TelNo" ColumnName="TelNo" />
+                <ScalarProperty Name="HomeAddress" ColumnName="HomeAddress" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Pword" ColumnName="Pword" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="emed_agent_users">
+            <EntityTypeMapping TypeName="emedicardModel.emed_agent_users">
+              <MappingFragment StoreEntitySet="emed_agent_users">
+                <ScalarProperty Name="Access_Reimbursements" ColumnName="Access_Reimbursements" />
+                <ScalarProperty Name="Access_ClinicResults" ColumnName="Access_ClinicResults" />
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DateUserActivated" ColumnName="DateUserActivated" />
+                <ScalarProperty Name="DateRegistered" ColumnName="DateRegistered" />
+                <ScalarProperty Name="Access_ActionMemos" ColumnName="Access_ActionMemos" />
+                <ScalarProperty Name="Access_ResignedMembers" ColumnName="Access_ResignedMembers" />
+                <ScalarProperty Name="Access_ActiveMembers" ColumnName="Access_ActiveMembers" />
+                <ScalarProperty Name="Access_ECU" ColumnName="Access_ECU" />
+                <ScalarProperty Name="Access_ID" ColumnName="Access_ID" />
+                <ScalarProperty Name="Access_Benefits" ColumnName="Access_Benefits" />
+                <ScalarProperty Name="Access_Endorsement" ColumnName="Access_Endorsement" />
+                <ScalarProperty Name="Access_Utilization" ColumnName="Access_Utilization" />
+                <ScalarProperty Name="Access_APE" ColumnName="Access_APE" />
+                <ScalarProperty Name="MainUserID" ColumnName="MainUserID" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+                <ScalarProperty Name="AgentCode" ColumnName="AgentCode" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="BrokerName" ColumnName="BrokerName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Pword" ColumnName="Pword" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_user_accounts_bystatus" FunctionName="emedicardModel.Store.emed_get_user_assigned_accounts_by_status">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_user_accounts_bystatus_Result">
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_corporate_users_request_list" FunctionName="emedicardModel.Store.emed_corporate_users_request_list">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_corporate_users_request_list_Result">
+                <ScalarProperty Name="rec_id" ColumnName="rec_id" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="file_path" ColumnName="file_path" />
+                <ScalarProperty Name="uploaded_by" ColumnName="uploaded_by" />
+                <ScalarProperty Name="uploaded_date" ColumnName="uploaded_date" />
+                <ScalarProperty Name="req_status" ColumnName="req_status" />
+                <ScalarProperty Name="subject" ColumnName="subject" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="emed_corporate_accounts">
+            <EntityTypeMapping TypeName="emedicardModel.emed_corporate_accounts">
+              <MappingFragment StoreEntitySet="emed_corporate_accounts">
+                <ScalarProperty Name="allow_upload" ColumnName="allow_upload" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Plans" ColumnName="Plans" />
+                <ScalarProperty Name="MotherCode" ColumnName="MotherCode" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="emed_corporate_users_requests">
+            <EntityTypeMapping TypeName="emedicardModel.emed_corporate_users_requests">
+              <MappingFragment StoreEntitySet="emed_corporate_users_requests">
+                <ScalarProperty Name="uploaded_by_name" ColumnName="uploaded_by_name" />
+                <ScalarProperty Name="is_closed" ColumnName="is_closed" />
+                <ScalarProperty Name="grp_type" ColumnName="grp_type" />
+                <ScalarProperty Name="is_read_urg" ColumnName="is_read_urg" />
+                <ScalarProperty Name="is_read_agent" ColumnName="is_read_agent" />
+                <ScalarProperty Name="is_read_corp" ColumnName="is_read_corp" />
+                <ScalarProperty Name="mother_id" ColumnName="mother_id" />
+                <ScalarProperty Name="is_mother" ColumnName="is_mother" />
+                <ScalarProperty Name="subject" ColumnName="subject" />
+                <ScalarProperty Name="account_code" ColumnName="account_code" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="processed_date" ColumnName="processed_date" />
+                <ScalarProperty Name="processed_by" ColumnName="processed_by" />
+                <ScalarProperty Name="uploaded_date" ColumnName="uploaded_date" />
+                <ScalarProperty Name="uploaded_by" ColumnName="uploaded_by" />
+                <ScalarProperty Name="file_path" ColumnName="file_path" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="rec_id" ColumnName="rec_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_corporate_request_list" FunctionName="emedicardModel.Store.emed_corporate_request_list">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_corporate_request_list_Result">
+                <ScalarProperty Name="rec_id" ColumnName="rec_id" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="file_path" ColumnName="file_path" />
+                <ScalarProperty Name="uploaded_by" ColumnName="uploaded_by" />
+                <ScalarProperty Name="uploaded_date" ColumnName="uploaded_date" />
+                <ScalarProperty Name="req_status" ColumnName="req_status" />
+                <ScalarProperty Name="subject" ColumnName="subject" />
+                <ScalarProperty Name="new_msg" ColumnName="new_msg" />
+                <ScalarProperty Name="status_description" ColumnName="status_description" />
+                <ScalarProperty Name="status_date" ColumnName="status_date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_get_user_fullname" FunctionName="emedicardModel.Store.emed_get_user_fullname">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_update_request_views" FunctionName="emedicardModel.Store.emed_update_request_views" />
+          <EntitySetMapping Name="emed_email_settings">
+            <EntityTypeMapping TypeName="emedicardModel.emed_email_settings">
+              <MappingFragment StoreEntitySet="emed_email_settings">
+                <ScalarProperty Name="include_self" ColumnName="include_self" />
+                <ScalarProperty Name="bcc" ColumnName="bcc" />
+                <ScalarProperty Name="cc" ColumnName="cc" />
+                <ScalarProperty Name="send_to_email" ColumnName="send_to_email" />
+                <ScalarProperty Name="send_to_tag" ColumnName="send_to_tag" />
+                <ScalarProperty Name="mail_description" ColumnName="mail_description" />
+                <ScalarProperty Name="app_type" ColumnName="app_type" />
+                <ScalarProperty Name="rec_id" ColumnName="rec_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_ecorpuser_by_userid_accounts" FunctionName="emedicardModel.Store.emed_get_ecorpuser_by_userid_accounts" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_get_ecorpuser_by_userid_accounts_Result">
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_ecorpaccounts_by_userid" FunctionName="emedicardModel.Store.emed_get_ecorpaccounts_by_userid" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="emedicardModel.emed_get_ecorpaccounts_by_userid_Result">
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="emedicard" ZoomLevel="41">
+        <EntityTypeShape EntityType="emedicardModel.EnrolledDependent" Width="2.125" PointX="5.375" PointY="0.75" Height="5.2494108072916656" />
+        <EntityTypeShape EntityType="emedicardModel.emed_consultation" Width="1.5" PointX="0.75" PointY="6.75" Height="2.3648893229166656" />
+        <EntityTypeShape EntityType="emedicardModel.emed_consultation_details" Width="1.5" PointX="2.75" PointY="6.75" Height="1.9802864583333317" />
+        <EntityTypeShape EntityType="emedicardModel.emed_doctors_user" Width="1.5" PointX="4.75" PointY="6.75" Height="2.7494921874999996" />
+        <EntityTypeShape EntityType="emedicardModel.emed_corporate_users" Width="1.875" PointX="0.75" PointY="10.75" Height="6.9801236979166674" />
+        <EntityTypeShape EntityType="emedicardModel.emed_book_dates" Width="1.5" PointX="3.375" PointY="10.75" Height="1.5956835937500031" />
+        <EntityTypeShape EntityType="emedicardModel.emed_ape_requests" Width="1.5" PointX="5.375" PointY="10.75" Height="4.2879036458333317" />
+        <EntityTypeShape EntityType="emedicardModel.emed_corporate_id_request" Width="2.5" PointX="14.25" PointY="0.75" Height="3.7109993489583388" />
+        <EntityTypeShape EntityType="emedicardModel.emed_eaccount_users_account" Width="2.375" PointX="7.375" PointY="10.75" Height="2.7494921875000031" />
+        <EntityTypeShape EntityType="emedicardModel.emed_ecu_requests" Width="1.5" PointX="12.375" PointY="0.75" Height="4.8648079427083388" />
+        <EntityTypeShape EntityType="emedicardModel.emed_requested_utilization" Width="1.5" PointX="10.125" PointY="14.25" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="emedicardModel.emed_members_to_cancel" Width="2.125" PointX="15.375" PointY="5.75" Height="4.4802050781250031" />
+        <EntityTypeShape EntityType="emedicardModel.EndorsementPrincipal" Width="1.5" PointX="12.375" PointY="6.75" Height="6.5955208333333317" />
+        <EntityTypeShape EntityType="emedicardModel.EndorsementDependent" Width="2" PointX="15.375" PointY="11.75" Height="6.7878222656250031" />
+        <EntityTypeShape EntityType="emedicardModel.emedicard_emember_users" Width="2.125" PointX="0.75" PointY="0.75" Height="4.4802050781250031" />
+        <EntityTypeShape EntityType="emedicardModel.emed_agent_users" Width="1.75" PointX="8.375" PointY="0.75" Height="5.6340136718750031" />
+        <EntityTypeShape EntityType="emedicardModel.emed_corporate_accounts" Width="2.625" PointX="12.375" PointY="14.75" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="emedicardModel.emed_corporate_users_requests" Width="2" PointX="7.125" PointY="15.25" Height="4.2879036458333317" />
+        <EntityTypeShape EntityType="emedicardModel.emed_email_settings" Width="1.5" PointX="3.375" PointY="16.75" Height="2.5571907552083317" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

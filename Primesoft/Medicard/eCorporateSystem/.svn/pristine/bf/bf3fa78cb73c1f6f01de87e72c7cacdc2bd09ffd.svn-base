@@ -1,0 +1,8 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Disapprove Cancellation of Dependent's Membership By Corporate Admin Sent to Member</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+<p class="details">Your cancellation of dependent's membership have been disapprove by Corporate Administrator.</p>
+<br />

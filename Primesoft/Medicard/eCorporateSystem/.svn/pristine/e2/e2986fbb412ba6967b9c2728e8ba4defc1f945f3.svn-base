@@ -1,0 +1,103 @@
+﻿using Corelib;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+using WebUI.Areas.CorporateAdministrator.Models;
+using WebUI.Models;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewProfileManagement")]
+    public class ProfileManagementController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+
+        #endregion
+
+        #region -- Action Results --
+
+        // GET: CorporateAdministrator/ProfileManagement
+        //[Authorize(Roles = "SysAd, CanViewProfileManagement")]
+        //public async Task<ActionResult> Index()
+        //{
+        //    var corporateAdmin = await db.CorporateAdmins.FirstOrDefaultAsync(t => t.UserName == User.Identity.Name);
+        //    if (corporateAdmin == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+        //    var model = new ProfileManagementViewModel();
+        //    Helper.MapProperties(corporateAdmin, model);
+
+        //    return View(model);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "SysAd, CanViewProfileManagement")]
+        //public async Task<ActionResult> Index([Bind(Include = "Id, FirstName, MiddleInitial, LastName, EmailAddress, Phone, UserId, UserName, OldPassword, Password, ConfirmPassword, Designation, Mobile, Fax, Address")] ProfileManagementViewModel corporateAdmin, string[] AccountCode, bool[] UseAccountCode, bool[] UseEmailAsLogin, bool[] UseRandomGeneratedPassword)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var entity = db.CorporateAdmins.FirstOrDefault(t => t.UserName == User.Identity.Name);
+        //        if (entity != null)
+        //        {
+        //            if (entity.FirstName != corporateAdmin.FirstName || entity.MiddleInitial != corporateAdmin.MiddleInitial || entity.LastName != corporateAdmin.LastName)
+        //            {
+        //                await Helper.UpdateName(entity.UserId, corporateAdmin.FirstName, corporateAdmin.MiddleInitial, corporateAdmin.LastName);
+        //            }
+
+        //            if (!string.IsNullOrEmpty(corporateAdmin.Password))
+        //            {
+        //                await Helper.UpdateUserPasswordAsync(entity.UserId, corporateAdmin.UserName, corporateAdmin.Password);
+        //            }
+
+        //            if (entity.UserName != corporateAdmin.UserName)
+        //            {
+        //                var applicationUser = db.Users.FirstOrDefault(t => t.Id == corporateAdmin.UserId);
+        //                applicationUser.UserName = corporateAdmin.UserName;
+        //                db.Entry(applicationUser).State = EntityState.Modified;
+        //                db.SaveChanges();
+        //                await Helper.LoginUser(corporateAdmin.UserId);
+        //            };
+
+        //            Helper.MapProperties(corporateAdmin, entity, true, "Accounts");
+
+        //            db.Entry(entity).State = EntityState.Modified;
+        //            await db.SaveChangesAsync();
+        //            return RedirectToAction("Index");
+        //        }
+        //        else
+        //        {
+        //            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //        }
+        //    }
+
+        //    return View(corporateAdmin);
+        //}
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
+    }
+}

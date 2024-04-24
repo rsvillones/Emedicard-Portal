@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "HrMemberProfileNotification";
+}
+
+<h2>HrMemberProfileNotification</h2>
+

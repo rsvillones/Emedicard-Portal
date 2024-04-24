@@ -1,0 +1,8 @@
+﻿@model MemberRequest
+@{
+    ViewBag.Title = "Amendment";
+}
+@using (Html.BeginForm("Amendment", "RequestManagement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.Partial("_Amendment", Model)
+}

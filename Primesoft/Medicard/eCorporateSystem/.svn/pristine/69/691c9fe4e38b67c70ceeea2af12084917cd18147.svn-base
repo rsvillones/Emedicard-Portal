@@ -1,0 +1,97 @@
+﻿@model UtilizationReportExceptionViewModel
+
+@{
+    ViewBag.Title = "Utilization Report Exception";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="title">Utilization Report Exception</h2>
+    </div>
+    @if (User.IsInRole("SysAd") || User.IsInRole("CanAddUtilizationReportException") || User.IsInRole("CanEditUtilizationReportException")
+        || User.IsInRole("CanDeleteUtilizationReportException"))
+    {
+        <div class="col-lg-4">
+            @if (User.IsInRole("SysAd") || User.IsInRole("CanAddUtilizationReportException"))
+            {
+                <p style="float: right">
+                    <input type="button" class="btn btn-primary" id="AddNewException" value="Add Exception">
+                </p>
+            }
+            <p style="float: right" id="SaveContainer">
+                <input type="button" class="btn btn-primary" id="SaveException" value="Save">
+            </p>
+        </div>
+    }
+</div>
+
+@using (Html.BeginForm("Index", "UtilizationReportExceptions", new { accountCode = ViewBag.AccountCode }, FormMethod.Post, new { @Id = "UtilizationReportExceptions" }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    <table class="table table-custom">
+        <thead>
+            <tr>
+                <th>
+                    Member Name
+                </th>
+                <th>
+                    Users
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="ExceptionBody">
+            @if (Model.UtilizationReportExceptions != null && Model.UtilizationReportExceptions.Count > 0)
+            {
+                foreach (var item in Model.UtilizationReportExceptions)
+                {
+                    @Html.Partial("_UtilizationReportException", item)
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#AddNewException').click(function () {
+                var option = {
+                    url: '@Url.Action("NewUtilizationReportException")',
+                    type: 'post',
+                    data: {
+                        accountCode: '@ViewBag.AccountCode'
+                    }
+                };
+                $.ajax(option).done(function (data) {
+                    $('#ExceptionBody').prepend(data);
+                    generateSelectPicker();
+                });
+            });
+            $('#SaveContainer').click(function () {
+                $('#UtilizationReportExceptions').submit();
+            });
+            generateSelectPicker();
+        });
+        function deleteMember(button) {
+            var tr = $(button).closest('tr');
+            tr.remove();
+        }
+        function generateSelectPicker() {
+            $('.selectpicker').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectpicker').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+        }
+    </script>
+}
+
+

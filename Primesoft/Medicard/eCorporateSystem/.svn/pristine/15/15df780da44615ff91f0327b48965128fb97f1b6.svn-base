@@ -1,0 +1,81 @@
+﻿using Corelib.Enums;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class CancelledMember : BaseModel
+    {
+        #region -- Constructors --
+
+        public CancelledMember()
+        {
+
+        }
+
+        public CancelledMember(LegacyMember legacyMember)
+        {
+            Config.MapProperties(legacyMember, this,false);
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(25)]
+        [Index]
+        [Required]
+        public string MemberCode { get; set; }
+
+        public CancelledMembershipStatus Status { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        public string LastName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        public string EmailAddress { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateOfBirth { get; set; }
+
+        public int? Age { get; set; }
+
+        public string Area { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public int AppliedPlan { get; set; }
+
+        public string Type { get; set; }
+
+        public string Relationship { get; set; }
+
+        public string Gender { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        public string Waiver { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? ValidityDate { get; set; }
+
+        public string Remarks { get; set; }
+        
+        #endregion
+    }
+}

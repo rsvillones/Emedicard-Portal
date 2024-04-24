@@ -1,0 +1,156 @@
+﻿@model HomeIndexViewModel
+
+<div id="modal-subtitle">Account Information</div>
+<br />
+<div class="modal-sub">
+    <div class="row">
+        <div class="col-lg-3">
+            <label>Member Code:&nbsp;</label>
+        </div>
+        <div class="col-lg-9">
+            <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.PrincipalCode)&nbsp;</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <label>Effectivity:&nbsp;</label>
+        </div>
+        <div class="col-lg-9">
+            <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.EffectivityDate)&nbsp;</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <label>Validity:&nbsp;</label>
+        </div>
+        <div class="col-lg-9">
+            <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.ValidityDate)&nbsp;</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <label>ID Remarks:&nbsp;</label>
+        </div>
+        <div class="col-lg-9">
+            <div class="row">
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkOne))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkOne)&nbsp;</label>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkTwo))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkTwo)&nbsp;</label>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkThree))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkThree)&nbsp;</label>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkFour))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkFour)&nbsp;</label>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkFive))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkFive)&nbsp;</label>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkSix))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkSix)&nbsp;</label>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LegacyPrincipalProcess.IdRemarkSeven))
+                {
+                    <div class="col-lg-12">
+                        <label>@Html.DisplayFor(model => model.LegacyPrincipalProcess.IdRemarkSeven)&nbsp;</label>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div id="modal-subtitle">Dependent Information</div>
+<br />
+<div class="modal-sub-scrollable">
+    @foreach (var dependent in Model.LegacyDependentProcesses)
+    {   <div class="row">
+        <div class="col-lg-3">
+            <label>Name:&nbsp;</label>
+        </div>
+        <div class="col-lg-9">
+            <label>@Html.DisplayFor(model => dependent.FullName)&nbsp;</label>
+        </div>
+    </div><div class="row">
+        <div class="col-lg-3">
+            <label>Dependent Code:&nbsp;</label>
+        </div>
+        <div class="col-lg-9">
+            <label>@Html.DisplayFor(model => dependent.DependentCode)&nbsp;</label>
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <label>ID Remarks:&nbsp;</label>
+            </div>
+            <div class="col-lg-9">
+                <div class="row">
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkOne))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkOne)&nbsp;</label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkTwo))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkTwo)&nbsp;</label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkThree))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkThree)&nbsp;</label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkFour))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkFour)&nbsp;</label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkFive))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkFive)&nbsp;</label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkSix))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkSix)&nbsp;</label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(dependent.IdRemarkSeven))
+                    {
+                        <div class="col-lg-12">
+                            <label>@Html.DisplayFor(model => dependent.IdRemarkSeven)&nbsp;</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="hline"></div>
+    }
+
+</div>

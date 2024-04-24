@@ -1,0 +1,39 @@
+﻿@model Account
+@{
+    ViewBag.CodeList = new SelectList(ViewBag.LegacyAccounts, "Code", "Name", Model.Code);
+}
+
+<tr>
+    @using (Html.BeginCollectionItem("Accounts"))
+    {
+        <td style="width:55%">
+            @Html.HiddenFor(t => t.Id)
+            @Html.HiddenFor(t => t.Code)
+            @Html.HiddenFor(t => t.Guid)
+            @Html.HiddenFor(t => t.Timestamp)
+            @if (ViewBag.DisableDropdown != null && ViewBag.DisableDropdown)
+            {
+                @Html.DropDownList("Code", (IEnumerable<SelectListItem>)ViewBag.CodeList, new { @class = "form-control white-readonly", @disabled = "disabled" })
+            }
+            else
+            {
+                @Html.DropDownList("Code", (IEnumerable<SelectListItem>)ViewBag.CodeList, new { @class = "form-control" })
+            }
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsReadOnly)
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsCorporateAdmin)
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsUnderWriter)
+        </td>
+        <td style="width:6%">
+            @if (ViewBag.DisableDropdown == null || !ViewBag.DisableDropdown)
+            {
+                @Html.ActionLink("Delete", "Delete", null, new { @class = "btn btn-danger btn-xs", @onclick = "$(this).parent().parent().remove(); return false;" })
+            }
+        </td>
+    }
+</tr>

@@ -1,0 +1,265 @@
+﻿using Corelib.Enums;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+
+namespace Corelib.Models
+{
+    public class Member : BaseModel, IValidatableObject
+    {
+        #region -- Constructor --
+
+        public Member()
+        {
+            this.Status = MembershipStatus.New;
+            this.DateOfBirth = DateTime.MinValue;
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(25)]
+        [Index]
+        public string ControlNumber { get; set; }
+
+        [Display(Name = "Email Address")]
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+
+        [Display(Name = "Other Email Address")]
+        [DataType(DataType.EmailAddress)]
+        public string OtherEmailAddress { get; set; }
+
+        [Display(Name = "Employee Number")]
+        public string EmployeeNumber { get; set; }
+
+        [Display(Name = "Area")]
+        public string Area { get; set; }
+
+        [Display(Name = "Cost Center")]
+        public string CostCenter { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        public string MiddleName { get; set; }
+
+        [Display(Name = "Suffix")]
+        public string Suffix { get; set; }
+
+        [Display(Name = "Gender")]
+        public string Gender { get; set; }
+
+        [Display(Name = "Date of Birth")]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age")]
+        [NotMapped]
+        public int Age
+        {
+            get
+            {
+                DateTime today = DateTime.Today;
+                int age = today.Year - this.DateOfBirth.Year;
+                if (this.DateOfBirth > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
+
+        [Display(Name = "Civil Status")]
+        public string CivilStatus { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Effectivity Date")]
+        public DateTime EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Validity Date")]
+        public DateTime ValidityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Date Hired")]
+        public DateTime? DateHired { get; set; }
+
+        [Required]
+        [Display(Name = "Applied Plan")]
+        public int AppliedPlan { get; set; }
+
+        [NotMapped]
+        public string AppliedPlanDescription
+        {
+            get
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var roomRate = legacyDb.LegacyRoomRates.Include(t => t.LegacyPlan).FirstOrDefault(t => t.Id == this.AppliedPlan) ?? new LegacyRoomRate() { LegacyPlan = new LegacyPlan() };
+                    return roomRate.LegacyPlan.Description;
+                }
+            }
+        }
+
+        [Display(Name = "Optional Plan")]
+        public int? OptionalPlan { get; set; }
+
+        public string AllowedPlans { get; set; }
+
+        [Display(Name = "Dependents")]
+        public int Dependent { get; set; }
+
+        [Display(Name = "Dependent Optional Plan")]
+        public int? DependentOptionalPlan { get; set; }
+
+        [Display(Name = "Dependent Applied Plan")]
+        public int? DependentAppliedPlan { get; set; }
+
+        public string AllowedDependentPlans { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int? EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        [Required]
+        [StringLength(25)]
+        public string AccountCode { get; set; }
+
+        [StringLength(128)]
+        [Index]
+        public string UserId { get; set; }
+
+        [StringLength(128)]
+        [Index]
+        public string UserName { get; set; }
+
+        [Index]
+        public int? PrinAppNum { get; set; }
+
+        public MembershipStatus Status { get; set; }
+
+        public ICollection<Dependent> Dependents { get; set; }
+
+        public ICollection<MedicalHistory> MedicalHistories { get; set; }
+
+        [StringLength(25)]
+        [Index]
+        public string Code { get; set; }
+
+        [StringLength(32)]
+        public string EndorsementType { get; set; }
+
+        [StringLength(25)]
+        [Index(IsUnique=true)]
+        public string LegacyMapCode { get; set; }
+
+        #region -- Profile Properties --
+
+        [StringLength(256)]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        public string City { get; set; }
+
+        [StringLength(8)]
+        public string AreaCode { get; set; }
+
+        [StringLength(32)]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        public string Mobile { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        public int? Weight { get; set; }
+
+        [StringLength(32)]
+        public string Position { get; set; }
+
+        #endregion
+
+        #endregion
+
+        #region -- Not Mapped Properties --
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}.", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+
+        [NotMapped]
+        public string Address
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Street)) Street = "N/A";
+                if (string.IsNullOrEmpty(City)) City = "N/A";
+                if (string.IsNullOrEmpty(Province)) Province = "N/A";
+                if (string.IsNullOrEmpty(AreaCode)) AreaCode = "N/A";
+                return string.Format("{0}, {1}, {2}, {3}.", Street, City, Province, AreaCode);
+            }
+        }
+
+        #endregion
+
+        #region -- IValidatableObject Members --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (this.EndorsementType == "New")
+                {
+                    if (db.Members.Any(t => t.LastName == this.LastName && t.FirstName == this.FirstName && t.MiddleName == this.MiddleName && t.DateOfBirth == this.DateOfBirth && t.AccountCode == this.AccountCode && t.EndorsementBatchId != this.EndorsementBatchId))
+                    {
+                        yield return new ValidationResult("Member already exists in the database", new Collection<string>() { "LastName", "FirstName", "MiddleName", "DateOfBirth" });
+                    }
+                }
+
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.AccountCode) ?? new AccountSetting();
+                if (accountSetting.UseEmailAsLogin && String.IsNullOrEmpty(this.EmailAddress))
+                {
+                    yield return new ValidationResult("Email address is required to be used for login.", new Collection<string>() { "EmailAddress" });
+                }
+                if (!String.IsNullOrEmpty(accountSetting.DomainEmail))
+                {
+                    if (String.IsNullOrEmpty(this.EmailAddress) || this.EmailAddress.Substring(this.EmailAddress.IndexOf("@") + 1) != accountSetting.DomainEmail)
+                    {
+                        yield return new ValidationResult(String.Format("Invalid Email. Only @{0} email accounts are valid.", accountSetting.DomainEmail), new Collection<string>() { "EmailAddress" });
+                    }
+                }
+            }
+        }
+
+        #endregion
+    }
+}

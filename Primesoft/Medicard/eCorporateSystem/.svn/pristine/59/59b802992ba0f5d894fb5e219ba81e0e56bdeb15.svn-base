@@ -1,0 +1,177 @@
+@model PagedList.IPagedList<AdditionalDependent>
+@{
+    ViewBag.Title = "Additional Dependents";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+@Html.Action("AccountInformation", "BaseAccount")
+<div class="row">
+    <div class="col-lg-12">
+        <div id="panel-title">
+            Application for Additional Dependents
+            @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddAdditionalDependents")))
+            {
+                @Html.ActionLink("Create New", "Create", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary save btn-sm btn-margin" })
+            }
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-6 pageList-margin">
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+                                <p class="pager-padding" style="float: right">
+                                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                                </p>
+                            </div>
+                            @using (Html.BeginForm("Index", "AdditionalDependents", FormMethod.Get, new { accountCode = ViewBag.AccountCode }))
+                            {
+                                <div class="col-lg-2">&nbsp;</div>
+                                <div class="col-lg-4">
+                                    <div class="input-group input-group-search">
+                                        <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="dropdown-toggle btn-dd btn-default search-dropdown" data-toggle="dropdown" tabindex="-1">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="rightMenu dropdown-menu">
+                                                <div class="col-sm-12">
+                                                    <div class="row"><div class="col-sm-12 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Member Name:</label>
+                                                        <div class="col-lg-12">
+                                                            <input type="text" value="@ViewBag.MemberName" name="memberName" onclick="return false;" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Dependent Name:</label>
+                                                        <div class="col-lg-12">
+                                                            <input type="text" value="@ViewBag.DependentName" name="dependentName" onclick="return false;" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Application Date:</label>
+                                                        <div class="col-lg-12">
+                                                            <input type="text" value="@ViewBag.ApplicationDate" name="applicationDate" onclick="return false;" class="form-control last-input" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-grp btn-search"
+                                                tabindex="-1">
+                                            Search
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Date of Application
+                                    </th>
+                                    <th>
+                                        Name of Member
+                                    </th>
+                                    <th>
+                                        Name of Dependent
+                                    </th>
+                                    <th>
+                                        Gender
+                                    </th>
+                                    <th>
+                                        Relationship
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th>
+                                        &nbsp;
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ApplicationDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MemberName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.FullName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Gender)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Relationship.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                                                    Actions
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                                                    @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddAdditionalDependents") || User.IsInRole("CanEditAdditionalDependents"))))
+                                                    {
+                                                        if (item.Status == Corelib.Enums.RequestStatus.Submitted)
+                                                        {
+                                                            <li><a href="javascript:void(0)" onclick="approveApplication('@Url.Action("ApproveApplication", "AdditionalDependents", new { area="",accountCode = ViewBag.AccountCode, guid = item.Guid })')">Approve</a></li>
+                                                            <li>@Html.ActionLink("Disapprove", "DisapproveApplication", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                            <li>@Html.ActionLink("Cancel", "CancelApplication", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                        }
+                                                    }
+                                                    <li>@Html.ActionLink("View Data", "Edit", new { guid = item.Guid })</li>
+                                                    <li>@Html.ActionLink("Medical History", "MedicalHistory", new { guid = item.Guid })</li>
+                                                </ul>
+                                            </div>
+
+
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[name="applicationDate"]').datepicker();
+            $(function () {
+                $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                    event.stopPropagation();
+                });
+            });
+            $(function () {
+                //$(".dropdown-toggle").dropdown('toggle'); // this works
+                $('#click').click(function (e) {
+                    e.stopPropagation();
+                    $(".search-dropdown").dropdown('toggle');// this doesn't
+                });
+            });
+        });
+
+        function approveApplication(url) {
+            confirmPrompt('Approve Dialog', 'You are about to approve this item<br />Press OK to continue.', url);
+        }
+    </script>
+}

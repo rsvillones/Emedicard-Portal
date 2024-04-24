@@ -1,0 +1,106 @@
+﻿@model Dependent
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@using (Html.BeginForm("Edit", "Dependents", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.Timestamp);
+    @Html.HiddenFor(model => model.Code)
+    @Html.HiddenFor(model => model.CrBy);
+    @Html.HiddenFor(model => model.CrById);
+    @Html.HiddenFor(model => model.CrDate);
+    
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Edit Dependent Personal Details</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="PersonalDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                @Html.Partial("_Detail", Model)
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            <input type="submit" value="Save" class="btn btn-primary" />
+                                                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#DateOfBirth").datepicker();
+        });
+        function OnDateOfBirthChange() {
+            var options = {
+                url: '@Url.Action("ComputeAge", "Utilities", new { area = "" })',
+                type: 'POST',
+                data: {
+                    dateOfBirth: $('#DateOfBirth').val()
+                },
+                success: function (age) {
+                    $('#Age').val(age);
+                }
+            };
+            $.ajax(options);
+        }
+
+        function onChangeRelationship(input) {
+            var option = {
+                url: '@Url.Action("GetGenderOfRelationship")',
+                type: 'post',
+                data: {
+                    relationshipCode: input.val()
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#Gender').html(data);
+            });
+        }
+        function clearFileInput() {
+            var oldInput = document.getElementById("FileWrapper");
+            var newInput = document.createElement("input");
+            newInput.type = "file";
+            newInput.id = oldInput.id;
+            newInput.name = oldInput.name;
+            newInput.className = oldInput.className;
+            newInput.style.cssText = oldInput.style.cssText;
+            // copy any other relevant attributes
+
+            oldInput.parentNode.replaceChild(newInput, oldInput);
+        }
+        function clearExistingFileInput(input) {
+            input.siblings('a').remove();
+            input.siblings('label[for="NoFile"]').remove();
+            input.siblings('label[for="CurrentUploaded"]').after('<label for="NoFile">&nbsp;Existing file deleted.<label>');
+            $('#DocumentContentType').val('');
+            $('#DocumentFile').val('');
+            $('#DocumentFileName').val('');
+        }
+    </script>
+    @Html.Partial("_Message")
+}

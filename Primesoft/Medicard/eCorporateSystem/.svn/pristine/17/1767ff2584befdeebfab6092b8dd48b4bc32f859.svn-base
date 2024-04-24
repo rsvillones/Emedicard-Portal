@@ -1,0 +1,121 @@
+﻿using Corelib.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+using WebUI.Areas.CorporateAdministrator.Models;
+
+namespace WebUI.Controllers
+{
+    public class ProfileController : BaseDbController
+    {
+        #region -- Action Results --
+
+        public ActionResult Index(string messageType, string message)
+        {
+            var user = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (user == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (TempData["PasswordExpired"] != null && (bool)TempData["PasswordExpired"])
+            {
+                messageType = "Info";
+                message = "Your password is unchanged or is expired. Please update your password in order to continue to use the system.";
+            }
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = new ProfileIndexViewModel();
+            Helper.MapProperties(user, model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Index([Bind(Include = "Id, Name, Email, PhoneNumber, UserId, UserName, IsMember, OldPassword, Password, ConfirmPassword, Designation, Mobile, Fax, Address, CrById, AgentCode, MemberCode, AcceptedMemorandumOfAgreement")] ProfileIndexViewModel applicationUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var entity = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+                if (entity != null)
+                {
+                    var currentPasswordHash = entity.PasswordHash;
+                    var currentSecurityStamp = entity.SecurityStamp;
+                    var currentLastPasswordChangedDate = entity.LastPasswordChangedDate;
+
+                    db.Entry(entity).CurrentValues.SetValues(applicationUser);
+
+                    entity.LastPasswordChangedDate = currentLastPasswordChangedDate;
+
+                    if (string.IsNullOrEmpty(applicationUser.Password))
+                    {
+                        entity.PasswordHash = currentPasswordHash;
+                        entity.SecurityStamp = currentSecurityStamp;
+                    }
+
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    if (!string.IsNullOrEmpty(applicationUser.Password))
+                    {
+                        await Helper.UpdateUserPasswordAsync(entity.Id, applicationUser.UserName, applicationUser.Password);
+                        entity.LastPasswordChangedDate = DateTime.Now;
+                        db.SaveChanges();
+                    }
+                    await Helper.LoginUser(entity.Id);
+
+                    var member = db.Members.FirstOrDefault(t => t.UserId == entity.Id);
+                    if (member != null)
+                    {
+                        member.UserName = entity.UserName;
+                        db.SaveChanges();
+                    }
+
+                    var memberAssociated = false;
+                    if (!String.IsNullOrEmpty(applicationUser.MemberCode))
+                    {
+                        var associatedMember = db.Members.FirstOrDefault(t => t.Code == applicationUser.MemberCode);
+                        if (associatedMember != null)
+                        {
+                            var associatedUser = db.Users.FirstOrDefault(t => t.Id == associatedMember.UserId);
+                            if (associatedUser != null && associatedUser.Id != entity.Id)
+                            {
+                                db.Users.Remove(associatedUser);
+                                associatedMember.UserId = entity.Id;
+                                associatedMember.UserName = entity.UserName;
+                                entity.IsMember = true;
+                                db.SaveChanges();
+                                
+                                memberAssociated = true;
+                            }
+
+                            var store = new UserStore<ApplicationUser>(db);
+                            var manager = new UserManager<ApplicationUser>(store);
+                            if (!manager.IsInRole(associatedUser.Id, "Member"))
+                            {
+                                manager.AddToRole(associatedUser.Id, "Member");
+                            }
+                        }
+                    }
+
+                    return RedirectToAction("Index", new { messageType = "Success", message = memberAssociated ? "Successfully updated user profile." : "Successfully updated user profile. If this is your first time to associate your member account. Please logout and login again to reflect changes." });
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+
+            return View(applicationUser);
+        }
+
+        #endregion
+    }
+}

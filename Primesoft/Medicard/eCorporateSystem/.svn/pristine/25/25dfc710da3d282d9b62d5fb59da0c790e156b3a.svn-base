@@ -1,0 +1,148 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class BaseAccountController : Controller
+    {
+        #region -- Variable Declarations --
+
+        protected IdentityDataContext db = new IdentityDataContext();
+        protected LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public BaseAccountController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        protected LegacyAccount LegacyAccount { get; set; }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public virtual ActionResult ValidateAccountCode(string accountCode)
+        {
+            if (string.IsNullOrEmpty(accountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccounts = Helper.GetLegacyAccounts(null, legacyDb);
+            if (!legacyAccounts.Any(t => t.Code == accountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+            if (legacyAccount == null) return HttpNotFound();
+
+            this.LegacyAccount = legacyAccount;
+            ViewBag.AccountCode = legacyAccount.Code;
+
+            return null;
+        }
+
+        [ChildActionOnly]
+        public ActionResult AccountInformation(string accountCode)
+        {
+            var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+            return PartialView("_AccountInformation", legacyAccount);
+        }
+
+        public virtual ActionResult ReadOnlyAttribute(EndorsementBatch model)
+        {
+            ViewBag.ReadOnly = (model.Status != Corelib.Enums.EndorsementBatchStatus.New && model.Status != Corelib.Enums.EndorsementBatchStatus.ForEmployeeUpdating);
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control", @onchange = "OnDateOfBirthChange()" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult AmendmentReadOnlyAttribute(Amendment model)
+        {
+            ViewBag.ReadOnly = (model.Status == Corelib.Enums.RequestStatus.ForProcessing || model.Status == Corelib.Enums.RequestStatus.CancelledRequest ||
+                model.Status == Corelib.Enums.RequestStatus.Disapproved || model.Status == Corelib.Enums.RequestStatus.Approved);
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlRequestForAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDataTypeAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDependentAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+                ViewBag.HtmlRequestForAttributes = new { @class = "form-control", @onChange = "onChangeRequestFor($(this))" };
+                ViewBag.HtmlDataTypeAttributes = new { @class = "form-control", @onChange = "dataTypeOnchange($(this))" };
+                ViewBag.HtmlDependentAttributes = new { @class = "form-control", @onChange = "onChangeDependent()" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult IdReplacementReadOnlyAttribute(IdReplacement model)
+        {
+            ViewBag.ReadOnly = (model.Status == Corelib.Enums.RequestStatus.ForProcessing || model.Status == Corelib.Enums.RequestStatus.CancelledRequest ||
+                model.Status == Corelib.Enums.RequestStatus.Disapproved || model.Status == Corelib.Enums.RequestStatus.Approved);
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

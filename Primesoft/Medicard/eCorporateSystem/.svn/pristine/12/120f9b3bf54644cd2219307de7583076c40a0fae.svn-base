@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Mvc.Mailer;
+using Corelib.Models;
+
+namespace WebUI.Mailers
+{
+    public interface IUserMailer
+    {
+        MvcMailMessage SendMemberNotification(Member member, string username, string password);
+
+        MvcMailMessage SendBatchSummaryNotification(List<Member> members);
+
+        MvcMailMessage SendCorpAdminMemberProfileNotification(Member member);
+
+        MvcMailMessage SendUrgMemberProfileNotification(Member member);
+
+        MvcMailMessage SendMemberActionMemo(ActionMemo actionMemo, bool bypassHrApproval);
+
+        MvcMailMessage SendUrgActionMemo(EndorsementBatch endorsementBatch);
+
+        MvcMailMessage SendCorpAdminActionMemo(ActionMemo actionMemo);
+
+        MvcMailMessage SendMemberAmendment(Amendment amendment, bool bypassHrApproval);
+
+        MvcMailMessage SendUrgAmendment(Amendment amendment);
+
+        MvcMailMessage SendCorpAdminAmendment(Amendment amendment);
+
+        MvcMailMessage SendCorpAdminCancelAmendment(Amendment amendment);
+
+        MvcMailMessage SendMemberIdReplacement(IdReplacement idReplacement, bool bypassHrApproval);
+
+        MvcMailMessage SendCorpAdminIdReplacement(IdReplacement idReplacement);
+
+        MvcMailMessage SendCorpAdminCancelIdReplacement(IdReplacement idReplacement);
+
+        MvcMailMessage SendUrgIdReplacement(IdReplacement idReplacement);
+
+        MvcMailMessage SendMemberAdditionalDependent(AdditionalDependent model, bool bypassHrApproval);
+
+        MvcMailMessage SendCorpAdminAdditionalDependent(AdditionalDependent model);
+
+        MvcMailMessage SendCorpAdminCancelAdditionalDependent(AdditionalDependent model);
+
+        MvcMailMessage SendMemberDependentCancellation(DependentCancellation model, bool bypassHrApproval);
+
+        MvcMailMessage SendCorpAdminDependentCancellation(DependentCancellation model);
+
+        MvcMailMessage SendCorpAdminCancelDependentCancellation(DependentCancellation model);
+
+        MvcMailMessage SendMembershipCancellation(CancelledMember model);
+
+        MvcMailMessage SendCorpAdminMembershipCancellation(IEnumerable<CancelledMember> model);
+
+        MvcMailMessage SendMembershipRenewal(RenewalMember model);
+
+        MvcMailMessage SendCorpAdminMembershipRenewal(IEnumerable<RenewalMember> model);
+    }
+}

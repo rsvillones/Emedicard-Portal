@@ -1,0 +1,77 @@
+﻿@model RenewalMemberWrapper
+
+@if (Model.IsValid)
+{
+    @:<tr>
+}
+else
+{
+    @:<tr style='background-color:#E84646'>
+}
+<th class="vtop">
+@if (Model.IsValid)
+{
+    @Html.DisplayFor(model => model.Identifier)
+}
+else
+{
+<a href="javascript:void(0)" onclick="showMessage('Invalid Data', '@Model.ErrorMessage'); return false;" style="color:#ffffff">
+    @Html.DisplayFor(model => model.Identifier)
+</a>
+}
+</th>
+<td class="vtop">
+        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.Area, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.EmployeeNumber, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.AppliedPlanFromExcel, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.AllowedPlansFromExcel, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.PrincipalMemberCode, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>    
+<td class="vtop">
+        @Html.EditorFor(model => model.RelationshipExcel, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.CivilStatus, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+<td class="vtop">
+        @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+@*<td class="vtop">
+        @Html.EditorFor(model => model.ValidityDate, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>*@
+<td class="vtop">
+        @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+    </td>
+</tr>

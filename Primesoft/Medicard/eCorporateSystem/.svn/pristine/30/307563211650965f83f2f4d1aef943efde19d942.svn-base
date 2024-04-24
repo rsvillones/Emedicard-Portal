@@ -1,0 +1,22 @@
+﻿@model AccountSetting
+<td>
+    @Html.HiddenFor(model => model.Guid)
+    @Html.HiddenFor(model => model.AccountCode)
+    @Html.DisplayFor(model => model.AccountCode)
+</td>
+<td>
+    @Html.CheckBoxFor(model => model.UseEmailAsLogin, new { @onClick = "useEmailAsLogin($(this))" })
+</td>
+<td>
+    @Html.CheckBoxFor(model => model.UseRandomGeneratedPassword, new { @onChange = "useRandomGeneratedPassword($(this))" })
+</td>
+<td>
+    @Html.CheckBoxFor(model => model.BypassHRManagerApproval, new { @onChange = "bypassHRManagerApproval($(this))" })
+</td>
+<td>
+    @Html.CheckBoxFor(model => model.BypassMedicalHistory, new { @onChange = "bypassMedicalHistory($(this))" })
+</td>
+<td>
+    @Html.DropDownListFor(model => model.UrgSetting, new SelectList(Enum.GetValues(typeof(Corelib.Enums.UrgSetting)), Model.UrgSetting), new { @onChange = "urgSetting($(this))", @class = "form-control" })
+</td>
+<td></td>

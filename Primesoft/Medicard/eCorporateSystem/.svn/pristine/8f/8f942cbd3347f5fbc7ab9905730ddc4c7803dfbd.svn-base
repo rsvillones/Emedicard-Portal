@@ -1,0 +1,97 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dental.aspx.cs" Inherits="WebUI.Reports.UtilizationReporting.Dental" %>
+
+<%@ Register TagPrefix="rsweb" Namespace="Microsoft.Reporting.WebForms" Assembly="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" %>
+
+<!DOCTYPE html>
+
+<html>
+<head id="Head1" runat="server">
+    <link href="/Content/report.css" rel="stylesheet" />
+
+    <link rel="Stylesheet" type="text/css" href="/Content/themes/jquery-ui.css"/>
+    <%--<link rel="Stylesheet" type="text/css" href="/Content/themes/jquery-ui.structure.css"/>
+    <link rel="Stylesheet" type="text/css" href="/Content/themes/jquery-ui.theme.css"/>--%>
+
+    <script type="text/javascript" src="/Scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery-ui.js"></script>  
+
+    <script type="text/javascript">
+        $(function () {
+            $('#StartDateText').datepicker();
+            $('#EndDateText').datepicker();
+        });
+    </script>
+
+</head>
+<body>
+    <form id="form1" runat="server" style="height: 100%">
+        <div class="row form-report">
+            <div class="col-lg-1">
+                <label class="label-report">Start Date:</label>
+            </div>
+            <div class="col-lg-2">
+                <asp:TextBox ID="StartDateText" Width="150px" runat="server" AppendDataBoundItems="False" AutoPostBack="False" CausesValidation="true" ValidationGroup="Dental" CssClass="col-lg-12 form-control startDate"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator1"
+                    ControlToValidate="StartDateText"
+                    EnableClientScript="False"
+                    Display="Dynamic"
+                    ErrorMessage="Please enter a value."
+                    Text="Please enter a value."
+                    runat="server" CssClass="report-error" Width="150px" />
+            </div>
+            <div class="col-lg-1">
+                <label class="label-report space">End Date:</label>
+            </div>
+            <div class="col-lg-2">
+                <asp:TextBox ID="EndDateText" Width="150px" runat="server" AppendDataBoundItems="False" AutoPostBack="False" CausesValidation="true" ValidationGroup="Dental" CssClass="col-lg-12 form-control endDate"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator2"
+                    ControlToValidate="EndDateText"
+                    EnableClientScript="False"
+                    Display="Dynamic"
+                    ErrorMessage="Please enter a value."
+                    Text="Please enter a value."
+                    runat="server" CssClass="report-error" Width="150px" />
+            </div>
+            <div class="col-lg-2">
+                <label class="label-report space">Member Last Name:</label>
+            </div>
+            <div class="col-lg-2">
+                <asp:TextBox ID="LastNameText" Width="150px" runat="server" AppendDataBoundItems="False" AutoPostBack="False" CssClass="col-lg-12 form-control"></asp:TextBox>
+            </div>
+            <div class="col-lg-2">
+                <asp:Button ID="GenerateButton" runat="server" CssClass="btn-report btn-primary" Text="Generate" OnClick="GenerateReport" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+                <rsweb:ReportViewer ID="UtilizationReportDentalViewer" runat="server" Width="100%" Height="100%"></rsweb:ReportViewer>
+            </div>
+        </div>
+    </form>
+    <script>
+        var ie = false;
+    </script>
+    <!--[if IE ]>
+        <script>
+        ie = true;
+        </script>
+    <![endif]-->
+
+    <script language="javascript" type="text/javascript">
+        if (ie == false) {
+            ResizeReport();
+            window.onresize = function resize() { ResizeReport(); };
+            function ResizeReport() {
+                var viewer = document.getElementById("<%= UtilizationReportDentalViewer.ClientID %>");
+                var fixedtable = document.getElementById("UtilizationReportDentalViewer_fixedTable").getElementsByTagName('tbody')[0];;
+                var window = document.documentElement.clientHeight;
+                fixedtable.style.height = (window - 77) + "px";
+                viewer.style.height = (window - 45) + "px";
+            }
+        };
+    </script>
+</body>
+</html>
+
+

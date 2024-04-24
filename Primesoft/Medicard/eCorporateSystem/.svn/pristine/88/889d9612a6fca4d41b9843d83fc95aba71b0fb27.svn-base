@@ -1,0 +1,24 @@
+﻿using System.Web.Mvc;
+
+namespace WebUI.Areas.MembershipEndorsement
+{
+    public class MembershipEndorsementAreaRegistration : AreaRegistration 
+    {
+        public override string AreaName 
+        {
+            get 
+            {
+                return "MembershipEndorsement";
+            }
+        }
+
+        public override void RegisterArea(AreaRegistrationContext context) 
+        {
+            context.MapRoute(
+                "MembershipEndorsement_default",
+                "MembershipEndorsement/{controller}/{action}/{id}",
+                new { action = "Index", id = UrlParameter.Optional }
+            );
+        }
+    }
+}

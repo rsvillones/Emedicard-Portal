@@ -1,0 +1,11 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Amendment Request Cancelled</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+<p class="details">Your amendment request has been cancelled by your Corporate Administrator.</p>
+<br />
+<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />

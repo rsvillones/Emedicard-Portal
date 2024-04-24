@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Classes;
+using Corelib.Models;
+
+namespace Corelib.ViewModels
+{
+    public class ImportViewModel
+    {
+        public UploadSummary UploadSummary { get; set; }
+
+        public IEnumerable<ApplicationVerification> ApplicationVerifications { get; set; }
+
+    }
+}

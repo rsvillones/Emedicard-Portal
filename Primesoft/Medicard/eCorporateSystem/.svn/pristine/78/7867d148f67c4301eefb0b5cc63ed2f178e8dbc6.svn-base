@@ -1,0 +1,9 @@
+using Mvc.Mailer;
+
+namespace Corelib.Mailers
+{ 
+    public interface IUserMailer
+    {
+        MvcMailMessage SendMemberNotification();
+	}
+}

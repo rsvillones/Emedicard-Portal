@@ -1,0 +1,31 @@
+﻿@model ReimbursementDisapproved
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <div class="col-lg-12">
+                @Html.TextAreaFor(model => model.Remark, new { @class = "form-control white-readonly",@readonly ="readonly" } )
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.DeniedDate, htmlAttributes: new { @class = "control-label col-lg-5" })
+            <div class="col-lg-7">
+                @Html.DisplayFor(model => model.DeniedDate, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReleasedDate, htmlAttributes: new { @class = "control-label col-lg-5" })
+            <div class="col-lg-7">
+                @Html.DisplayFor(model => model.ReleasedDate, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+    </div>
+</div>

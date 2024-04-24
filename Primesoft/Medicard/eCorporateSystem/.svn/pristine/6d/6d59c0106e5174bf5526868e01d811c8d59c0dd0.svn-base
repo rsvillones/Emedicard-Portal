@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ActionMemo>
+
+@{
+    ViewBag.Title = "Action Memos";
+}
+
+<table class="table table-custom">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.EndorsementBatch.ControlNumber)</th>
+        <th>@Html.DisplayNameFor(model => model.DateIssued)</th>
+        <th>@Html.DisplayNameFor(model => model.Type)</th>
+        <th>@Html.DisplayNameFor(model => model.Member.EmployeeNumber)</th>
+        <th>Member Name</th>
+        <th>Issued To</th>
+        <th>Member Type</th>
+        <th>@Html.DisplayNameFor(model => model.Details)</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.EndorsementBatch.ControlNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.DateIssued)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Member.EmployeeNumber)
+            </td>
+            <td>
+                @if (item.Dependent != null)
+                {
+                    @Html.DisplayFor(model => item.Dependent.FullName)
+                }
+                else
+                {
+                    @Html.DisplayFor(model => item.Member.FullName)
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Member.FullName)
+            </td>
+            <td>
+                @if (item.Dependent != null)
+                {
+                    @:Dependent
+                }
+                else
+                {
+                    @:Principal
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Details)
+            </td>
+            <td>&nbsp;
+            </td>
+        </tr>
+    }
+</table>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

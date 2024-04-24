@@ -1,0 +1,9 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Cancellation of Dependent's Membership By Member Sent to Corporate Admin</p>
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following has submitted their cancellation of dependent's membership for your approval:</p>
+<p class="details">Member Code: @Model.DependentCancellation.MemberCode</p>
+<p class="details">Member Name: @Model.DependentCancellation.MemberName</p>

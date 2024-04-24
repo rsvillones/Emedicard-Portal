@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class PersonalDetail : BaseModel
+    {
+        #region -- Properties --
+
+        [Required]
+        [StringLength(32)]
+        public string EmployeeNumber { get; set; }
+
+        [Required]
+        [StringLength(32)]
+        public string LastName { get; set; }
+
+        [Required]
+        [StringLength(32)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [StringLength(32)]
+        public string MiddleName { get; set; }
+
+        [StringLength(8)]
+        public string Suffix { get; set; }
+
+        [Required]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        [NotMapped]
+        public int Age { get; set; }
+
+        [StringLength(64)]
+        public string Area { get; set; }
+
+        [StringLength(32)]
+        public string CostCenter { get; set; }
+
+        [Required]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime EffectivityDate { get; set; }
+
+        [Required]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime ValidityDate { get; set; }
+
+        //[Required]
+        //[DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        //public DateTime ValidityDate { get; set; }
+
+        [Required]
+        [StringLength(8)]
+        public string Gender { get; set; }
+
+        [Required]
+        [StringLength(8)]
+        public string CivilStatus { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
+        public int AllowedDependents { get; set; }
+
+        #endregion
+    }
+}

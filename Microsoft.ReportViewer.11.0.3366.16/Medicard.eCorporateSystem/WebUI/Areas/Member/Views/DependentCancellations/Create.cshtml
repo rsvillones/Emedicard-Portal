@@ -1,0 +1,66 @@
+﻿@model DependentCancellation
+
+@{
+    ViewBag.Title = "Create";
+}
+@using (Html.BeginForm("Create", "DependentCancellations", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Cancellation Details</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="PersonalDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                @Html.Partial("_DependentCancellation", Model)
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                                                            <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                                                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#RequestEffectivityDate').datepicker();
+            $('#MemberContainer').hide();
+        });
+        function clearFileInput() {
+            var oldInput = document.getElementById("FileWrapper");
+            var newInput = document.createElement("input");
+            newInput.type = "file";
+            newInput.id = oldInput.id;
+            newInput.name = oldInput.name;
+            newInput.className = oldInput.className;
+            newInput.style.cssText = oldInput.style.cssText;
+            // copy any other relevant attributes
+
+            oldInput.parentNode.replaceChild(newInput, oldInput);
+        }
+    </script>
+    @Html.Partial("_Message")
+}

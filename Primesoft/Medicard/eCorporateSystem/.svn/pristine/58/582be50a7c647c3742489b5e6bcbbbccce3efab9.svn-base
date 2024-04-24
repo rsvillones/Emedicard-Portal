@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  For more information on how to configure your ASP.NET application, please visit
+  http://go.microsoft.com/fwlink/?LinkId=301880
+  -->
+<configuration>
+  <configSections>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    <sectionGroup name="system.web.webPages.razor" type="System.Web.WebPages.Razor.Configuration.RazorWebSectionGroup, System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35">
+      <section name="host" type="System.Web.WebPages.Razor.Configuration.HostSection, System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" requirePermission="false" />
+      <section name="pages" type="System.Web.WebPages.Razor.Configuration.RazorPagesSection, System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" requirePermission="false" />
+    </sectionGroup>
+  </configSections>
+  <connectionStrings>
+    <!--<add name="Medicard.eCorporateSystem" connectionString="Data Source=192.168.1.26;Initial Catalog=eCorporateSystem;User Id=sa;Password=psi2004;" providerName="System.Data.SqlClient" />-->
+    <!--<add name="Medicard.LegacySystem" connectionString="Data Source=192.168.1.26;Initial Catalog=MedicardDb;User Id=sa;Password=psi2004;" providerName="System.Data.SqlClient" />-->
+    <!--<add name="Medicard.eCorporateSystem" connectionString="Data Source=RBSYSSERVER;Initial Catalog=eCorporateSystem;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />-->
+    <!--<add name="Medicard.LegacySystem" connectionString="Data Source=RBSYSSERVER;Initial Catalog=MedicardDb;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />-->
+    <add name="Medicard.eCorporateSystem" connectionString="Data Source=(local);Initial Catalog=eCorporateSystem;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />
+    <add name="Medicard.LegacySystem" connectionString="Data Source=(local);Initial Catalog=MedicardDb;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />
+    <!--<add name="Medicard.UtilizationSystem" connectionString="Data Source=(local);Initial Catalog=Claims;User Id=sa;Password=ssw0rd;" providerName="System.Data.SqlClient" />-->
+    <!--<add name="Medicard.eCorporateSystem" connectionString="Data Source=emedicard;Initial Catalog=eMEDICARD;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />-->
+    <!--<add name="Medicard.LegacySystem" connectionString="Data Source=emedicard;Initial Catalog=Medicard;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />-->
+    <add name="Medicard.UtilizationSystem" connectionString="Data Source=hellion\twilight;Initial Catalog=Claims;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+    <add name="Medicard.ReimbursementSystem" connectionString="Data Source=hellion\twilight;Initial Catalog=ReimDB;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  <appSettings>
+    <add key="webpages:Version" value="3.0.0.0" />
+    <add key="webpages:Enabled" value="false" />
+    <add key="ClientValidationEnabled" value="true" />
+    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+    <add key="RecordCountPerPage" value="20" />
+    <add key="ItemsPerPage" value="5" />
+    <add key="NotificationFromEmail" value="noreply@medicardphils.com" />
+    <add key="MvcMailer.BaseURL" value="" />
+
+    <add key="Domain" value="medicardphils" />
+    <add key="DomainPath" value="LDAP://10.10.24.201/DC=medicardphils,DC=com" />
+    <!--<add key="Domain" value="primesoft-ph" />
+    <add key="DomainPath" value="LDAP://192.168.1.23/CN=Users,DC=primesoft-ph,DC=local" />-->
+    <add key="AutoLogin" value="false" />
+    <add key="EmailDomain" value="@medicardphils.com" />
+    <add key="BenefitsAndExclusionsUrl" value="http://devteam.medicardphils.com/emedps/AccountManager/BenfitsExclusions1.aspx?t=1&amp;a=##AccountCode##&amp;tab=##Tab##" />
+    <add key="BenefitsAndExclusionsBaseUrl" value="http://devteam.medicardphils.com/emedps/AccountManager" />
+    <add key="BenefitsAndExclusionsCssPath" value="/emedps" />
+    <add key="ActionMemoDocumentsPath" value="\\triton\emed_files\AM" />
+    <add key="UrgActionMemoTemplatePath" value="D:\Projects\Medicard\eCorporateSystem\WebUI\Views\EmailTemplates\UrgActionMemo.cshtml" />
+    <add key="BaseUrl" value="http://localhost:49635" />
+
+    <add key="EmailLayout" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\_Layout.cshtml" />
+
+    <add key="NewAccess" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\NewUser\NewAccess.cshtml" />
+
+    <add key="ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessNewEndorsementBatchByCorporateAdminToMember" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToMember.cshtml" />
+    <add key="SubmitNewMemberByMemberToCorporateAdmin" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\SubmitNewMemberByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitNewMemberByMemberToMember" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\SubmitNewMemberByMemberToMember.cshtml" />
+    <add key="SubmitNewMemberByMemberToUrg" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\SubmitNewMemberByMemberToUrg.cshtml" />
+
+    <add key="ProcessRenewalByCorporateAdminToCorporateAdmin" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessRenewalByCorporateAdminToMember" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToMember.cshtml" />
+
+    <add key="ProcessCancelledMemberByCorporateAdminToUrg" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\CancelledMember\ProcessCancelledMemberByCorporateAdminToUrg.cshtml" />
+
+    <add key="ApproveNewMemberByUrgToCorporateAdmin" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ApproveNewMemberByUrgToCorporateAdmin.cshtml" />
+    <add key="ApproveNewMemberByUrgToMember" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ApproveNewMemberByUrgToMember.cshtml" />
+
+    <add key="ActionMemoByUrgToCorporateAdmin" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoByUrgToCorporateAdmin.cshtml" />
+    <add key="ActionMemoByUrgToMember" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoByUrgToMember.cshtml" />
+    <add key="ActionMemoReplyByMemberToCorporateAdmin" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToCorporateAdmin.cshtml" />
+    <add key="ActionMemoReplyByMemberToUrg" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToUrg.cshtml" />
+    <add key="ActionMemoReplyByCorporateAdminToMember" value="D:\Projects\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoReplyByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitIdReplacementByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToMember.cshtml" />
+    <add key="SubmitIdReplacementByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitIdReplacementByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToUrg.cshtml" />
+    <add key="SubmitIdReplacementByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToMember.cshtml" />
+    <add key="SubmitIdReplacementByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledIdReplacementByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\CancelledIdReplacementByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitAmendmentByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByMemberToMember.cshtml" />
+    <add key="SubmitAmendmentByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitAmendmentByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByMemberToUrg.cshtml" />
+    <add key="SubmitAmendmentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToMember.cshtml" />
+    <add key="SubmitAmendmentByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledAmendmentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\CancelledAmendmentByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitAdditionalDependentByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToMember.cshtml" />
+    <add key="SubmitAdditionalDependentByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitAdditionalDependentByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToUrg.cshtml" />
+    <add key="SubmitAdditionalDependentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <add key="SubmitAdditionalDependentByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledAdditionalDependentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\CancelledAdditionalDependentByCorporateAdminToMember.cshtml" />
+
+    <add key="SmtpServer" value="owa.medicardphils.com" />
+    <add key="SmtpUsername" value="noreply@medicardphils.com" />
+    <add key="SmtpPassword" value="medicard123" />
+    <add key="SmtpPort" value="25" />
+  </appSettings>
+  <system.net>
+    <mailSettings>
+      <smtp deliveryMethod="Network">
+        <network host="owa.medicardphils.com" userName="noreply@medicardphils.com" password="medicard123" port="25" />
+      </smtp>
+    </mailSettings>
+  </system.net>
+  <system.web>
+    <!--<httpHandlers>
+      <add path="Reserved.ReportViewerWebControl.axd" verb="*" type="Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+        validate="false" />
+    </httpHandlers>-->
+    <compilation debug="true" targetFramework="4.5">
+      <buildProviders>
+        <add extension=".rdlc" type="Microsoft.Reporting.RdlBuildProvider, Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+      </buildProviders>
+      <assemblies>
+        <add assembly="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845DCD8080CC91" />
+        <add assembly="Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845DCD8080CC91" />
+      </assemblies>
+    </compilation>
+    <authentication mode="Forms">
+      <forms loginUrl="~/Account/Login" timeout="2880" />
+    </authentication>
+    <authorization>
+      <deny users="?" />
+      <allow users="*" />
+    </authorization>
+    <httpRuntime targetFramework="4.5" maxRequestLength="1048576" executionTimeout="3600" />
+  </system.web>
+  <system.webServer>
+    <handlers>
+      <add name="ReportViewerWebControlHandler" preCondition="integratedMode" verb="*" path="Reserved.ReportViewerWebControl.axd" type="Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+    </handlers>
+    <security>
+      <requestFiltering>
+        <requestLimits maxAllowedContentLength="1073741824" />
+      </requestFiltering>
+    </security>
+    <modules runAllManagedModulesForAllRequests="true">
+      <remove name="FormsAuthenticationModule" />
+    </modules>
+  </system.webServer>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-5.1.0.0" newVersion="5.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-1.5.2.14234" newVersion="1.5.2.14234" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <entityFramework>
+    <defaultConnectionFactory type="System.Data.Entity.Infrastructure.LocalDbConnectionFactory, EntityFramework">
+      <parameters>
+        <parameter value="v11.0" />
+      </parameters>
+    </defaultConnectionFactory>
+    <providers>
+      <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+    </providers>
+  </entityFramework>
+  <location path="Content">
+    <system.web>
+      <authorization>
+        <allow users="*" />
+      </authorization>
+    </system.web>
+  </location>
+  <system.web.webPages.razor>
+    <host factoryType="System.Web.Mvc.MvcWebRazorHostFactory, System.Web.Mvc, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
+    <pages pageBaseType="System.Web.Mvc.WebViewPage">
+      <namespaces>
+        <add namespace="System.Web.Mvc" />
+        <add namespace="System.Web.Mvc.Ajax" />
+        <add namespace="System.Web.Mvc.Html" />
+        <add namespace="System.Web.Routing" />
+        <add namespace="System.Web.Optimization" />
+        <add namespace="WebUI" />
+        <add namespace="WebUI.Models" />
+        <add namespace="WebUI.Areas.CorporateAdministrator.Models" />
+        <add namespace="Corelib" />
+        <add namespace="Corelib.Models" />
+        <add namespace="PagedList.Mvc" />
+      </namespaces>
+    </pages>
+  </system.web.webPages.razor>
+</configuration>

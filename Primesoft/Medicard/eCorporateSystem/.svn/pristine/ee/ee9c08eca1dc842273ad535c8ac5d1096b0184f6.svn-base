@@ -1,0 +1,253 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class BaseAccountController : Controller
+    {
+        #region -- Variable Declarations --
+
+        protected IdentityDataContext db = new IdentityDataContext();
+        protected LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public BaseAccountController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        protected LegacyAccount LegacyAccount { get; set; }
+
+        protected bool IsReadOnlyUser { get; set; }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public virtual ActionResult ValidateAccountCode(string accountCode)
+        {
+            LegacyAccount legacyAccount;
+
+            if (!Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            this.LegacyAccount = legacyAccount;
+            this.IsReadOnlyUser = false;
+            if (!User.IsInRole("SysAd")){
+                var account = db.Accounts.FirstOrDefault(t => t.Code == this.LegacyAccount.Code && !t.Deleted && t.ApplicationUser.UserName == db.User.UserName);
+                this.IsReadOnlyUser = account != null ? account.IsReadOnly : true;
+            }
+
+            ViewBag.AccountCode = legacyAccount.Code;
+            ViewBag.IsReadOnlyUser = this.IsReadOnlyUser;
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+            ViewBag.AccountSetting = accountSetting;
+
+            return null;
+        }
+
+        [ChildActionOnly]
+        public ActionResult AccountInformation(string accountCode)
+        {
+            var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+            var legacyAgent = legacyDb.LegacyAgents.FirstOrDefault(t => t.Code == legacyAccount.AgentCode) ?? new LegacyAgent();
+
+            ViewBag.LegacyAgent = legacyAgent;
+
+            return PartialView("_AccountInformation", legacyAccount);
+        }
+
+        public virtual ActionResult ReadOnlyAttribute(EndorsementBatch model)
+        {
+            ViewBag.ReadOnly = this.IsReadOnlyUser || model.Status != Corelib.Enums.EndorsementBatchStatus.New;
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control", @onchange = "OnDateOfBirthChange()" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult AmendmentReadOnlyAttribute(Amendment model)
+        {
+            ViewBag.ReadOnly = this.IsReadOnlyUser ||  
+                (model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved ||
+                model.Status == Corelib.Enums.RequestStatus.ForProcessing || model.Status == Corelib.Enums.RequestStatus.CancelledRequest ||
+                model.Status == Corelib.Enums.RequestStatus.Disapproved || model.Status == Corelib.Enums.RequestStatus.Approved);
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlRequestForAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDataTypeAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDependentAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+                ViewBag.HtmlRequestForAttributes = new { @class = "form-control", @onChange = "onChangeRequestFor($(this))" };
+                ViewBag.HtmlDataTypeAttributes = new { @class = "form-control", @onChange = "dataTypeOnchange($(this))" };
+                ViewBag.HtmlDependentAttributes = new { @class = "form-control", @onChange = "onChangeDependent()" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult IdReplacementReadOnlyAttribute(IdReplacement model)
+        {
+            ViewBag.ReadOnly = this.IsReadOnlyUser || 
+                (model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved ||
+                model.Status == Corelib.Enums.RequestStatus.ForProcessing || model.Status == Corelib.Enums.RequestStatus.CancelledRequest ||
+                model.Status == Corelib.Enums.RequestStatus.Disapproved || model.Status == Corelib.Enums.RequestStatus.Approved);
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.IsReadOnly = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+                ViewBag.IsReadOnly = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult AdditionalDependentReadOnlyAttribute(AdditionalDependent model)
+        {
+            ViewBag.ReadOnly = this.IsReadOnlyUser ||  
+                (model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved ||
+                model.Status == Corelib.Enums.RequestStatus.ForProcessing || model.Status == Corelib.Enums.RequestStatus.CancelledRequest ||
+                model.Status == Corelib.Enums.RequestStatus.Disapproved || model.Status == Corelib.Enums.RequestStatus.Approved);
+            
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlOptionalPlanAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" }; 
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control disabled", @onchange = "OnDateOfBirthChange()" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+                ViewBag.HtmlOptionalPlanAttributes = new { @class = "form-control", @onchange = "if($(this).val() != '') { $('#OptionalPlanWarning').removeClass('hidden'); } else { if(!$('#OptionalPlanWarning').hasClass('hidden')) { $('#OptionalPlanWarning').addClass('hidden'); } }" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult DependentCancellationReadOnlyAttribute(DependentCancellation model)
+        {
+            ViewBag.ReadOnly = this.IsReadOnlyUser ||
+                (model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || model.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved ||
+                model.Status == Corelib.Enums.RequestStatus.ForProcessing || model.Status == Corelib.Enums.RequestStatus.CancelledRequest ||
+                model.Status == Corelib.Enums.RequestStatus.Disapproved || model.Status == Corelib.Enums.RequestStatus.Approved);
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+                ViewBag.DestroyPicker = "True";
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+                ViewBag.HtmlMemberAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+                ViewBag.DestroyPicker = "False";
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult CancelledMemberReadOnlyAttribute(bool status)
+        {
+            ViewBag.ReadOnly = status;
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            }
+            else
+            {
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control", @onChange = "onChangeMember($(this))" };
+            }
+
+            return null;
+        }
+
+        public virtual ActionResult ActionMemoReadOnlyAttribute(bool status)
+        {
+            ViewBag.ReadOnly = status;
+            if (ViewBag.ReadOnly)
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            }
+            else
+            {
+                ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control" };
+                ViewBag.HtmlDropDownAttributes = new { @class = "form-control" };
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

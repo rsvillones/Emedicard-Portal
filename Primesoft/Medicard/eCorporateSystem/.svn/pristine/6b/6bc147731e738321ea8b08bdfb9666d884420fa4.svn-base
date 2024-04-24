@@ -1,0 +1,54 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewMembershipEndorsements")]
+    public class MembershipEndorsementsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewMembershipEndorsements")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var endorsementBatches = db.EndorsementBatches.Where(t => accountCodes.Contains(t.AccountCode));
+
+            Helper.SetSortParameters<EndorsementBatch>(this, ref endorsementBatches, string.IsNullOrEmpty(sortOrder) ? "date_desc" : sortOrder, currentFilter, new SortParameter() { PropertyName = "Date" }, null);
+
+            return View(endorsementBatches.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

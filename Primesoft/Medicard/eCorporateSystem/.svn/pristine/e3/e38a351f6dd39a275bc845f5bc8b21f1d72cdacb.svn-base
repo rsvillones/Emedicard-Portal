@@ -1,0 +1,105 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Tester
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var actionMemos = new List<ActionMemo>();
+
+            using (var db = new IdentityDataContext())
+            {
+                db.User = new ApplicationUser() { UserName = "eMedicardWindowsService", Id = Guid.NewGuid().ToString() };
+
+                var actionMemoProcessDate = db.ActionMemoProcessDates.OrderByDescending(t => t.Date).FirstOrDefault();
+                var dateTo = DateTime.Now;
+                IEnumerable<IActionMemo> legacyActionMemos;
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    legacyActionMemos = LegacyHelper.GetLegacyActionMemos(legacyDb, actionMemoProcessDate.Date, dateTo).ToList();
+                }
+
+                foreach (var legacyActionMemo in legacyActionMemos)
+                {
+                    Member member = null;
+                    Dependent dependent = null;
+                    if (legacyActionMemo.PrincipalOrDependent == "Dependent")
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == legacyActionMemo.PrinAppNum);
+                        dependent = db.Dependents.FirstOrDefault(t => t.DepAppNum == legacyActionMemo.DepAppNum.Value);
+                    }
+                    else
+                    {
+                        //member = db.Members.FirstOrDefault(t => t.Code == legacyActionMemo.PrincipalCode);
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == legacyActionMemo.PrinAppNum);
+                    }
+                    
+                    if (member != null)
+                    {
+                        var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.ControlNumber == legacyActionMemo.ControlNumber);
+                        if (endorsementBatch == null)
+                        {
+                            endorsementBatch = new EndorsementBatch()
+                            {
+                                Date = legacyActionMemo.ActionMemoDate.Value,
+                                Deadline = legacyActionMemo.ActionMemoDate.Value.AddDays(3),
+                                Status = EndorsementBatchStatus.New,
+                                EndorsementType = "Action Memo",
+                                EndorsementCount = 1,
+                                AccountCode = legacyActionMemo.AccountCode,
+                                ReferenceNumber = Config.GenerateLegacyMapCode(db),
+                                ControlNumber = legacyActionMemo.ControlNumber
+                            };
+                        }
+
+                        var actionMemo = new ActionMemo()
+                        {
+                            DateIssued = legacyActionMemo.ActionMemoDate.Value,
+                            Type = legacyActionMemo.Type,
+                            MemberId = member.Id,
+                            DependentId = dependent != null ? (int?)dependent.Id : null,
+                            EndorsementBatch = endorsementBatch,
+                            EndorsementBatchId = endorsementBatch.Id,
+                            Details = legacyActionMemo.ActionMemoRemarks,
+                            IsNew = true,
+                            ControlNumber = legacyActionMemo.ControlNumber
+                        };
+
+                        db.ActionMemos.Add(actionMemo);
+                        actionMemos.Add(actionMemo);
+                    }
+                }
+                
+                db.ActionMemoProcessDates.Add(new ActionMemoProcessDate()
+                {
+                    Date = dateTo
+                });
+
+                db.SaveChanges();
+
+                foreach (var actionMemo in actionMemos)
+                {
+                    WebUI.Helper.UrgActionMemo(null, actionMemo, actionMemo.EndorsementBatch.AccountCode);
+                }
+           }
+        }
+    }
+}

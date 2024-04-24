@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class LegacyMember
+    {
+        #region -- Properties --
+
+        [Key]
+        public string Code { get; set; }
+
+        public string LastName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+        
+        public string EmailAddress { get; set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        public int? Age { get; set; }
+
+        public string Area { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public int AppliedPlan { get; set; }
+
+        public string Type { get; set; }
+
+        public string Relationship { get; set; }
+
+        public string Gender { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        public string Waiver { get; set; }
+
+        public DateTime? EffectivityDate { get; set; }
+
+        public DateTime? ValidityDate { get; set; }
+
+        public string Remarks { get; set; }
+
+        #endregion
+    }
+}

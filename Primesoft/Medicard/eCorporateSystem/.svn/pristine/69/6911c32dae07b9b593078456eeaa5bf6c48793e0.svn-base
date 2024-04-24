@@ -1,0 +1,96 @@
+﻿@model PagedList.IPagedList<EndorsementBatch>
+
+@{
+    ViewBag.Title = "Membership Endorsements";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">
+        <p style="float: right">
+            @Html.ActionLink("Batch Upload", "BatchUpload", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+        </p>
+    </div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            Date
+        </th>
+        <th>
+            Filename
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Endorsement Type
+        </th>
+        <th>
+            Deadline
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Filename)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.EndorsementType)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Deadline)
+            </td>
+            <td>
+                @switch (item.Status)
+                {
+                    case Corelib.Enums.EndorsementBatchStatus.New:
+                        @Html.ActionLink("Process", "ProcessBatch", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs" })
+                        @Html.ActionLink("View Data", "BatchUpload", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                        @Html.ActionLink("Delete", "Delete", new { guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+                        break;
+                    case Corelib.Enums.EndorsementBatchStatus.Cancelled:
+                        @Html.ActionLink("Process", "ProcessBatch", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs" })
+                        @Html.ActionLink("View Data", "BatchUpload", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                        @Html.ActionLink("Delete", "Delete", new { guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+                        break;
+                    case Corelib.Enums.EndorsementBatchStatus.ForEmployeeUpdating:
+                        @Html.ActionLink("View Data", "BatchUpload", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary btn-xs" })
+                        @Html.ActionLink("Cancel", "CancelBatch", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { @class = "btn btn-danger btn-xs" })
+                        break;
+                    default:
+                        break;
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+}
+
+

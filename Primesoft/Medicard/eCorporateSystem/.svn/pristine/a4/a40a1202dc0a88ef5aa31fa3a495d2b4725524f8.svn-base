@@ -1,0 +1,41 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">eMedicard: Members for Renewal</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">This is to confirm your instruction for Membership Renewal,</p>
+<p class="details">the details of which are as follows:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count: @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<table>
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Birthday</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model.EndorsementBatch.RenewalMembers)
+        {
+            <tr>
+                <td>@member.LastName</td>
+                <td>@member.FirstName</td>
+                <td>@member.MiddleName</td>
+                <td>@member.DateOfBirth</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />

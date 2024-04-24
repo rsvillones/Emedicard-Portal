@@ -1,0 +1,62 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace WebUI.Areas.CorporateAdministrator.Models
+{
+    public class ProfileManagementViewModel : CorporateAdmin, IValidatableObject
+    {
+        #region -- Properties --
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Old Password")]
+        public string OldPassword { get; set; }
+
+        [StringLength(32, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
+        #endregion
+
+        #region -- IValidatableObject Members --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (db.Users.Any(t => t.UserName == this.UserName && t.Id != this.UserId))
+                {
+                    yield return new ValidationResult("Username is already registered in the database.", new string[] { "UserName" });
+                }
+            }
+
+            if (!String.IsNullOrEmpty(this.OldPassword) && String.IsNullOrEmpty(this.Password))
+            {
+                yield return new ValidationResult("Please specify new password.", new string[] { "Password" });
+            }
+
+            if (!String.IsNullOrEmpty(this.Password) && String.IsNullOrEmpty(this.OldPassword))
+            {
+                yield return new ValidationResult("Please specify old password.", new string[] { "OldPassword" });
+            }
+
+            if (!String.IsNullOrEmpty(this.OldPassword) && !Helper.ValidateOldPassword(this.UserId, this.OldPassword))
+            {
+                yield return new ValidationResult("Invalid Password.", new string[] { "OldPassword" });
+            }
+        }
+
+        #endregion
+
+    }
+}

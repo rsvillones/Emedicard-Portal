@@ -1,0 +1,95 @@
+@model Corelib.Models.Group
+
+@{
+    ViewBag.Title = "Delete";
+}
+<div class="row">
+    <div class="col-md-7 col-centered">
+    <div id="panel-title">Delete Group</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <label class="text-danger">Are you sure you want to delete this?</label>
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Name)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Guid)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Guid)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.CrBy)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.CrBy)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.CrDate)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.CrDate)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.ModBy)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.ModBy)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.ModDate)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.ModDate)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Deleted)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Deleted)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Timestamp)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Timestamp)
+                            </dd>
+
+                        </dl>
+
+                        @using (Html.BeginForm()) {
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-actions no-color" style="text-align: right">
+                                <input type="submit" value="Delete" class="btn btn-danger" /> 
+                                @Html.ActionLink("Back to List", "Index", null, new {@class = "btn btn-primary"})
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

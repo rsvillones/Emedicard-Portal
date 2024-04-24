@@ -1,0 +1,77 @@
+@model IEnumerable<ActionMemo>
+
+<table class="table table-fixed">
+    <thead>
+        <tr>
+            <th style="width:24%">
+                <label>Date Issued</label>
+            </th>
+            <th style="width:21%">
+                <label>Type</label>
+            </th>
+            <th style="width:20%">
+                <label>Issued To</label>
+            </th>
+            <th style="width:23%">
+                <label>Details</label>
+            </th>
+            <th style="width:12%">
+                &nbsp;
+            </th>
+        </tr>
+    </thead>
+</table>
+<div class="scrollable-tables" style="margin-top: -3px !important;height: 130px !important;margin-bottom: 0 !important">
+    <table class="table table-fixed">
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="width:25%">
+                            <p class="box">
+                                @Html.DisplayFor(model => item.DateIssued)
+                                @if (item.IsNew)
+                                {
+                                    <label class="new">!</label>
+                                }
+                                else
+                                {
+                                    <label class="new">&nbsp;</label>
+                                }
+                            </p>
+                        </td>
+                        <td style="width:20%">
+                            @Html.DisplayFor(model => item.Type)
+                        </td>
+                        <td style="width:20%">
+                            @if (item.Dependent != null)
+                            {
+                                @Html.DisplayFor(mode => item.Dependent.FullName)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(mode => item.Member.FullName)
+                            }
+                        </td>
+                        <td style="width:25%">
+                            @Html.DisplayFor(model => item.Details)
+                        </td>
+                        <td style="width: 10%">
+                            @if (item.Status == Corelib.Enums.ActionMemoStatus.New)
+                            {
+                                @Html.ActionLink("Reply", "Reply", "ActionMemos", new { area = "Member", guid = item.Guid }, new { @class = "btn btn-primary" })
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                @Html.Partial("_NoData", 5)
+            }
+        </tbody>
+    </table>
+</div>
+

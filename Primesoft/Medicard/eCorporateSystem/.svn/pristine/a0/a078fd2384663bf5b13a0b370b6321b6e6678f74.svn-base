@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="eCorporateSystem" Class="StoredProceduresDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=RBSYSSERVER;Initial Catalog=eCorporateSystem;User ID=sa" SettingsObjectName="Corelib.Properties.Settings" SettingsPropertyName="eCorporateSystemConnectionString1" Provider="System.Data.SqlClient" />
+  <Function Name="dbo.SpReport_ActivePrincipalMembers" Method="ActivePrincipalMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_ActivePrincipalMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(25)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_ActiveDependentMembers" Method="ActiveDependentMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_ActiveDependentMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PrincipalLastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalFirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalMiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_CancelledDependentMembers" Method="CancelledDependentMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_CancelledDependentMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PrincipalLastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalFirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalMiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ValidityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateCancelled" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_CancelledPrincipalMembers" Method="CancelledPrincipalMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_CancelledPrincipalMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(25)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ValidityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCancelled" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+</Database>

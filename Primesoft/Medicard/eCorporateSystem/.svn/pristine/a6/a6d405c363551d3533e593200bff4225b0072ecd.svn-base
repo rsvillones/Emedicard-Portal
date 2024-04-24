@@ -1,0 +1,212 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    public class UsersController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private ApplicationUserManager _userManager;
+        private IdentityDataContext db = new IdentityDataContext();
+
+        #endregion
+
+        #region -- Properties --
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        // GET: Users
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var users = from t in db.Users select t;
+            if (!string.IsNullOrEmpty(currentFilter))
+            {
+                users = users.Where(t =>
+                    t.UserName.Contains(currentFilter)
+                    ||
+                    t.Email.Contains(currentFilter)
+                    ||
+                    t.Name.Contains(currentFilter)
+                );
+            }
+
+            Helper.SetSortParameters<ApplicationUser>(this, ref users, sortOrder, currentFilter, new SortParameter() { PropertyName = "Name" },
+                new List<SortParameter>()
+                {
+                    new SortParameter() { PropertyName = "Email"},
+                    new SortParameter() { PropertyName = "UserName"}
+                });
+
+            return View(users.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        // GET: Users/Create
+        public ActionResult Create()
+        {
+            var model = new ApplicationUserViewModel();
+
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(model);
+        }
+
+        // POST: Users/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Id, Guid, Email, PhoneNumber, UserName, Name, Password, ConfirmPassword")] ApplicationUserViewModel applicationUser, int[] GroupId)
+        {
+            if (GroupId != null)
+            {
+                foreach (var groupId in GroupId)
+                {
+                    var group = db.Groups.FirstOrDefault(t => t.Id == groupId);
+                    if (group != null)
+                    {
+                        applicationUser.Groups.Add(group);
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                Helper.AddUser(applicationUser);
+
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(applicationUser);
+        }
+
+        // GET: Users/Edit/5
+        public async Task<ActionResult> Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var applicationUser = await db.Users.Include(t => t.Groups).FirstOrDefaultAsync(t => t.Guid == guid);
+            if (applicationUser == null) return HttpNotFound();
+
+            var model = new ApplicationUserViewModel()
+            {
+                Name = applicationUser.Name,
+                UserName = applicationUser.UserName,
+                Password = "###PASSWORD###",
+                ConfirmPassword = "###PASSWORD###",
+                Email = applicationUser.Email,
+                PhoneNumber = applicationUser.PhoneNumber,
+                Groups = applicationUser.Groups
+            };
+
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(model);
+        }
+
+        //// POST: Users/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Guid, Email, PhoneNumber, UserName, Name, Password, ConfirmPassword")] ApplicationUserViewModel applicationUser, int[] GroupId)
+        {
+            if (GroupId != null)
+            {
+                foreach (var groupId in GroupId)
+                {
+                    var group = db.Groups.FirstOrDefault(t => t.Id == groupId);
+                    if (group != null)
+                    {
+                        applicationUser.Groups.Add(group);
+                    }
+                }
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(applicationUser).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(applicationUser);
+        }
+
+        //// GET: Users/Delete/5
+        //public async Task<ActionResult> Delete(Guid? guid)
+        //{
+        //    if (guid == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ApplicationUser applicationUser = await db.ApplicationUsers.FirstOrDefaultAsync(t => t.Guid == guid);
+        //    if (applicationUser == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(applicationUser);
+        //}
+
+        //// POST: Users/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> DeleteConfirmed(Guid? guid)
+        //{
+        //    ApplicationUser applicationUser = await db.ApplicationUsers.FirstOrDefaultAsync(t => t.Guid == guid);
+        //    db.ApplicationUsers.Remove(applicationUser);
+        //    await db.SaveChangesAsync();
+        //    return RedirectToAction("Index");
+        //}
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

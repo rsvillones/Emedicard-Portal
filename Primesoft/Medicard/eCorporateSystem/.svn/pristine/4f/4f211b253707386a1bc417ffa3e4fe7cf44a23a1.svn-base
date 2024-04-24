@@ -1,0 +1,459 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceProcess;
+using System.Text;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Data.Entity;
+using WebUI;
+
+namespace WindowsService
+{
+    public partial class MainService : ServiceBase
+    {
+        #region -- Constructor --
+
+        public MainService()
+        {
+            InitializeComponent();
+
+            _actionMemoTimer.Interval = Config.CheckActionMemoMinutes * 60 * 1000;
+            _corporateAccountTimer.Interval = Config.CheckActionMemoMinutes * 60 * 1000;
+            _emailNotificationTimer.Interval = 60000;
+            _memberProcessTimer.Interval = Config.CheckActionMemoMinutes * 60 * 1000;
+
+            _actionMemoTimer.Elapsed += QueryActionMemos;
+            _corporateAccountTimer.Elapsed += QueryCorporateAccounts;
+            _emailNotificationTimer.Elapsed += SendEmailNotifications;
+            _memberProcessTimer.Elapsed += QueryMemberProcess;
+        }
+
+        #endregion
+
+        #region -- Variable Declarations --
+
+        private Timer _actionMemoTimer = new Timer();
+        private Timer _corporateAccountTimer = new Timer();
+        private Timer _emailNotificationTimer = new Timer();
+        private Timer _memberProcessTimer = new Timer();
+
+        private readonly string _windowsServiceUser = "eMedicardWindowsService";
+
+        #endregion
+
+        #region -- Event Handlers --
+
+        protected override void OnStart(string[] args)
+        {
+            _actionMemoTimer.Enabled = true;
+            _corporateAccountTimer.Enabled = true;
+            _emailNotificationTimer.Enabled = true;
+            _memberProcessTimer.Enabled = true;
+        }
+
+        protected override void OnStop()
+        {
+            _actionMemoTimer.Enabled = false;
+            _corporateAccountTimer.Enabled = false;
+            _emailNotificationTimer.Enabled = false;
+            _memberProcessTimer.Enabled = false;
+        }
+
+        void QueryActionMemos(object sender, ElapsedEventArgs e)
+        {
+            CheckActionMemos();
+        }
+
+        void QueryCorporateAccounts(object sender, ElapsedEventArgs e)
+        {
+            CheckCorporateAccounts();
+        }
+
+        void SendEmailNotifications(object sender, ElapsedEventArgs e)
+        {
+        }
+
+        void QueryMemberProcess(object sender, ElapsedEventArgs e)
+        {
+            CheckMemberProcess();
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public void CheckActionMemos()
+        {
+            var endorsementBatchIds = new List<int>();
+
+            using (var db = new IdentityDataContext())
+            {
+                db.User = new ApplicationUser() { UserName = _windowsServiceUser, Id = Guid.NewGuid().ToString() };
+
+                var actionMemoProcessDate = db.ActionMemoProcessDates.OrderByDescending(t => t.Date).FirstOrDefault();
+                if (actionMemoProcessDate == null)
+                {
+                    actionMemoProcessDate = new ActionMemoProcessDate()
+                    {
+                        Date = DateTime.Now.AddMinutes(-30)
+                    };
+                }
+
+                var dateTo = DateTime.Now;
+                IEnumerable<IActionMemo> legacyActionMemos;
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    legacyActionMemos = LegacyHelper.GetLegacyActionMemos(legacyDb, actionMemoProcessDate.Date, dateTo).ToList();
+                }
+
+                foreach (var legacyActionMemo in legacyActionMemos)
+                {
+                    var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == legacyActionMemo.AccountCode) ?? new AccountSetting();
+
+                    Member member = null;
+                    Dependent dependent = null;
+                    if (legacyActionMemo.PrincipalOrDependent == "Dependent")
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == legacyActionMemo.PrinAppNum || (!String.IsNullOrEmpty(legacyActionMemo.PrincipalCode) && t.Code == legacyActionMemo.PrincipalCode));
+                        dependent = db.Dependents.FirstOrDefault(t => t.DepAppNum == legacyActionMemo.DepAppNum.Value || (!String.IsNullOrEmpty(legacyActionMemo.DependentCode) && t.Code == legacyActionMemo.DependentCode));
+                    }
+                    else
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == legacyActionMemo.PrinAppNum || (!String.IsNullOrEmpty(legacyActionMemo.PrincipalCode) && t.Code == legacyActionMemo.PrincipalCode));
+                    }
+
+                    if (member != null)
+                    {
+                        var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.ReplyTo == legacyActionMemo.ControlNumber);
+                        if (endorsementBatch == null)
+                        {
+                            endorsementBatch = new EndorsementBatch()
+                            {
+                                Date = legacyActionMemo.ActionMemoDate.Value,
+                                Deadline = legacyActionMemo.ActionMemoDate.Value.AddDays(accountSetting.ActionMemoDueDateDays),
+                                Status = EndorsementBatchStatus.New,
+                                EndorsementType = "Action Memo",
+                                EndorsementCount = 1,
+                                AccountCode = legacyActionMemo.AccountCode,
+                                //ReferenceNumber = Config.GenerateLegacyMapCode(db),
+                                ReplyTo = legacyActionMemo.ControlNumber
+                            };
+                        }
+                        else
+                        {
+                            endorsementBatch.EndorsementCount++;
+                        }
+
+                        var actionMemo = new ActionMemo()
+                        {
+                            DateIssued = legacyActionMemo.ActionMemoDate.Value,                            
+                            DueDate = legacyActionMemo.ActionMemoDate.Value.AddDays(accountSetting.ActionMemoDueDateDays),
+                            Type = legacyActionMemo.Type,
+                            MemberId = member.Id,
+                            DependentId = dependent != null ? (int?)dependent.Id : null,
+                            EndorsementBatch = endorsementBatch,
+                            EndorsementBatchId = endorsementBatch.Id,
+                            Details = legacyActionMemo.ActionMemoRemarks,
+                            IsNew = true
+                        };
+
+                        db.ActionMemos.Add(actionMemo);
+                        Helper.CreateUserForMember(db, accountSetting, member);
+
+                        db.SaveChanges();
+
+                        if (!endorsementBatchIds.Contains(endorsementBatch.Id))
+                        {
+                            endorsementBatchIds.Add(endorsementBatch.Id);
+                        }
+                    }
+                }
+
+                db.ActionMemoProcessDates.Add(new ActionMemoProcessDate()
+                {
+                    Date = dateTo
+                });
+                db.SaveChanges();
+
+                foreach (var endorsementBatchId in endorsementBatchIds)
+                {
+                    var endorsementBatch = db.EndorsementBatches
+                        .Include(t => t.ActionMemos)
+                        .Include(t => t.ActionMemos.Select(am => am.Member))
+                        .Include(t => t.ActionMemos.Select(am => am.Dependent))
+                        .FirstOrDefault(t => t.Id == endorsementBatchId);
+
+                    Emailer.Emailer.SendActionMemoInstant(endorsementBatch);
+                }
+            }
+        }
+
+        public void CheckCorporateAccounts()
+        {
+            var saveDb = false;
+            using (var db = new IdentityDataContext())
+            {
+                db.User = new ApplicationUser()
+                {
+                    CrById = Guid.NewGuid().ToString(),
+                    UserName = _windowsServiceUser
+                };
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var legacyAccounts = LegacyHelper.GetAllLegacyAccounts(legacyDb);
+                    foreach (var legacyAccount in legacyAccounts)
+                    {
+                        if (!db.AccountSettings.Any(t => t.AccountCode == legacyAccount.Code))
+                        {
+                            db.AccountSettings.Add(new AccountSetting()
+                            {
+                                AccountCode = legacyAccount.Code,
+                                AccountName = legacyAccount.Name
+                            });
+                            saveDb = true;
+                        }
+                    }
+                }
+                if (saveDb) db.SaveChanges();
+            }
+        }
+
+        private void MapProperties(object source, object destination, bool mapId = true, params string[] propertiesToExclude)
+        {
+            foreach (var pi in destination.GetType().GetProperties())
+            {
+                if (!pi.CanWrite || source.GetType().GetProperty(pi.Name) == null || (!mapId && pi.Name == "Id") || (propertiesToExclude != null && propertiesToExclude.Contains(pi.Name)))
+                    continue;
+
+                destination.GetType().GetProperty(pi.Name).SetValue(destination, source.GetType().GetProperty(pi.Name).GetValue(source));
+            }
+        }
+
+        public void CheckMemberProcess()
+        {
+            var endorsementBatchIds = new List<int>();
+
+            var membersToDelete = new List<Member>();
+
+            using (var db = new IdentityDataContext())
+            {
+                db.User = new ApplicationUser() { UserName = _windowsServiceUser, Id = Guid.NewGuid().ToString() };
+
+                var memberStatusProcessDate = db.MemberStatusProcessDates.OrderByDescending(t => t.Date).FirstOrDefault();
+                if (memberStatusProcessDate == null)
+                {
+                    memberStatusProcessDate = new MemberStatusProcessDate()
+                    {
+                        Date = DateTime.Now.AddMinutes(-30)
+                    };
+                }
+
+                var dateTo = DateTime.Now;
+                IEnumerable<IMemberProcess> memberProcesses;
+                var processedMembers = new List<Member>();
+                var processedDependents = new List<Dependent>();
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    memberProcesses = LegacyHelper.GetMemberProcesses(legacyDb, memberStatusProcessDate.Date, dateTo).ToList();
+                }
+
+                foreach (var memberProcess in memberProcesses)
+                {
+                    Member member = null;
+                    Dependent dependent = null;
+
+                    if (memberProcess.PrincipalOrDependent == "Dependent")
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == memberProcess.PrinAppNum || t.Code == memberProcess.PrincipalCode);
+                        dependent = db.Dependents.FirstOrDefault(t => t.DepAppNum == memberProcess.DepAppNum.Value || t.Code == memberProcess.DependentCode);
+                    }
+                    else
+                    {
+                        member = db.Members.FirstOrDefault(t => t.PrinAppNum == memberProcess.PrinAppNum || t.Code == memberProcess.PrincipalCode);
+                    }
+
+                    if (member != null)
+                    {
+                        if (memberProcess.PrincipalOrDependent == "Dependent" && processedDependents.Any(t => t.DepAppNum == memberProcess.DepAppNum)) continue;
+                        if (memberProcess.PrincipalOrDependent == "Principal" && processedMembers.Any(t => t.PrinAppNum == memberProcess.PrinAppNum)) continue;
+
+                        if (memberProcess.PrincipalOrDependent == "Dependent")
+                        {
+                            var currentStatus = dependent.Status;
+                            SetStatus(dependent, memberProcess.StatCode, memberProcess.DependentCode);
+                            processedDependents.Add(dependent);
+                            if ((dependent.Status == MembershipStatus.Approved || dependent.Status == MembershipStatus.VerifyMembership) && dependent.Member.EndorsementBatchId.HasValue && currentStatus != dependent.Status)
+                            {
+                                endorsementBatchIds.Add(dependent.Member.EndorsementBatchId.Value);
+                            }
+                        }
+                        else
+                        {
+                            var currentStatus = member.Status;
+                            SetStatus(member, memberProcess.StatCode, memberProcess.PrincipalCode);
+                            processedMembers.Add(member);
+                            if ((member.Status == MembershipStatus.Approved || member.Status == MembershipStatus.VerifyMembership) && member.EndorsementBatchId.HasValue && currentStatus != member.Status)
+                            {
+                                endorsementBatchIds.Add(member.EndorsementBatchId.Value);
+                            }
+                            if (member.Status == MembershipStatus.Disapproved || member.Status == MembershipStatus.Cancelled || member.Status == MembershipStatus.PermanentResigned)
+                            {
+                                membersToDelete.Add(member);
+                            }
+                        }
+                    }
+                }
+
+                db.MemberStatusProcessDates.Add(new MemberStatusProcessDate()
+                {
+                    Date = dateTo
+                });
+
+                db.SaveChanges();
+
+                foreach (var member in membersToDelete)
+                {
+                    RemoveMember(member);
+                }
+
+                foreach (var endorsementBatchId in endorsementBatchIds)
+                {
+                    var endorsementBatch = db.EndorsementBatches
+                        .Include(t => t.Members)
+                        .Include(t => t.Members.Select(m => m.Dependents))
+                        .FirstOrDefault(t => t.Id == endorsementBatchId);
+
+                    Emailer.Emailer.SendTransmittalInstant(endorsementBatch);
+
+                    if(!db.Members.Any(t => t.EndorsementBatchId == endorsementBatchId && string.IsNullOrEmpty(t.Code)))
+                    {
+                        endorsementBatch.Status = EndorsementBatchStatus.Completed;
+                        db.SaveChanges();
+                    }
+                }
+            }
+        }
+
+        private void SetStatus(object entity, int? statCode, string code)
+        {
+            switch (statCode)
+            {
+                case 0:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    entity.GetType().GetProperty("Code").SetValue(entity, code);
+                    if (entity.GetType() == typeof(Member)) CreateUserForMember(entity as Member);
+                    break;
+                case 1:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Disapproved);                    
+                    break;
+                case 2:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForEncoding);
+                    break;
+                case 3:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.MedicalEvaluation);
+                    break;
+                case 4:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.OnHold);
+                    break;
+                case 5:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForApproval);
+                    break;
+                case 9:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.PermanentResigned);
+                    break;
+                case 15:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Cancelled);
+                    break;
+                case 16:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.PendingeMedicard);
+                    break;
+                case 17:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Lapse);
+                    break;
+                case 18:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForReactivation);
+                    break;
+                case 20:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    if (entity.GetType() == typeof(Member)) CreateUserForMember(entity as Member);
+                    break;
+                case 21:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    if (entity.GetType() == typeof(Member)) CreateUserForMember(entity as Member);
+                    break;
+                case 22:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.VerifyMembership);
+                    break;
+            }
+        }
+
+        private void RemoveMember(Member member)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var currentMember = db.Members.FirstOrDefault(t => t.Id == member.Id);
+                if (currentMember != null)
+                {
+                    var userName = currentMember.UserName;
+                    var endorsementBatchId = currentMember.EndorsementBatchId;
+
+                    var user = db.Users.FirstOrDefault(t => t.UserName == userName);
+                    if (user != null)
+                    {
+                        db.Users.Remove(user);
+                    }
+
+                    db.Members.Remove(currentMember);
+
+                    var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == endorsementBatchId);
+
+                    if (!db.Members.Any(t => t.EndorsementBatchId == endorsementBatch.Id))
+                    {
+                        db.EndorsementBatches.Remove(endorsementBatch);
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        private void CreateUserForMember(Member member)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == member.AccountCode) ?? new AccountSetting();
+                Helper.CreateUserForMember(db, accountSetting, member);
+            }
+        }
+
+        private DateTime ComputeActionMemoDeadline(DateTime actionMemoDate, int ActionMemoDueDateDays)
+        {
+            using (var legacyDb = new LegacyDataContext())
+            {
+                var deadline = new DateTime(actionMemoDate.Year, actionMemoDate.Month, actionMemoDate.Day).AddDays(ActionMemoDueDateDays);
+
+                var addDays = 0;
+                for (var currentDate = actionMemoDate; currentDate <= deadline; currentDate = currentDate.AddDays(1))
+                {
+                    if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday) addDays++;
+                    else if (legacyDb.LegacyHolidays.Any(t => t.Date == currentDate)) addDays++;
+                }
+                if (addDays != 0) deadline = deadline.AddDays(addDays);
+
+                return deadline;
+            }
+        }
+
+        #endregion
+    }
+}

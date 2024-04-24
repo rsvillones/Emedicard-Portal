@@ -1,0 +1,183 @@
+@{
+    ViewBag.Title = "Benefits and Exclusions";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@Html.Action("AccountInformation", "BaseAccount")
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Benefits</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row spacing">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="col-lg-12">
+                                        <ul class="nav nav-tabs" role="tablist" id="BenefitsAndExclusionsTabList">
+                                            @if (ViewBag.ShowHospitalization)
+                                            {
+                                                <li class="active"><a href="#HOPS" role="tab" data-toggle="tab">Hospitalization and Out-Patient Services</a></li>
+                                            }
+                                            @if (ViewBag.ShowPreventiveHealthcare)
+                                            {
+                                                <li><a href="#PHS" role="tab" data-toggle="tab" data-url="@(Config.BenefitsAndExclusionsUrl.Replace("##AccountCode##", ViewBag.AccountCode).Replace("##Tab##", "1"))">Preventive Healthcare Services</a></li>
+                                            }
+                                            @if (ViewBag.ShowEmergencyCare)
+                                            {
+                                                <li><a href="#ECS" role="tab" data-toggle="tab">Emergency Care Services</a></li>
+                                            }
+                                            @if (ViewBag.ShowMemberFinancialAssistance)
+                                            {
+                                                <li><a href="#MFA" role="tab" data-toggle="tab">Member Financial Assistance</a></li>
+                                            }
+                                            @if (ViewBag.ShowDentalCare)
+                                            {
+                                                <li><a href="#DCS" role="tab" data-toggle="tab">Dental Care Services</a></li>
+                                            }
+                                            @if (ViewBag.ShowPreExistingCondition)
+                                            {
+                                                <li><a href="#PEC" role="tab" data-toggle="tab">Pre-Existing Condition</a></li>
+                                            }
+                                            @if (ViewBag.ShowPointOfService)
+                                            {
+                                                <li><a href="#POS" role="tab" data-toggle="tab">Point of Service</a></li>
+                                            }
+                                            @if (ViewBag.ShowMaternity)
+                                            {
+                                                <li><a href="#MAT" role="tab" data-toggle="tab">Maternity</a></li>
+                                            }
+                                            @if (ViewBag.ShowExecutiveCheckup)
+                                            {
+                                                <li><a href="#ECU" role="tab" data-toggle="tab">Executive Check Up</a></li>
+                                            }
+                                            @if (ViewBag.ShowExclusion)
+                                            {
+                                                <li><a href="#EXC" role="tab" data-toggle="tab">Exclusions</a></li>
+                                            }
+                                            @if (ViewBag.ShowDreadedDisease)
+                                            {
+                                                <li><a href="#DD" role="tab" data-toggle="tab">Dreaded Disease</a></li>
+                                            }
+                                            @if (ViewBag.ShowEligibility)
+                                            {
+                                                <li><a href="#ME" role="tab" data-toggle="tab">Membership Eligibility</a></li>
+                                            }
+                                            @if (ViewBag.ShowOtherInformation)
+                                            {
+                                                <li><a href="#OI" role="tab" data-toggle="tab">Other Information</a></li>
+                                            }
+                                        </ul>
+
+                                        <div class="tab-content" id="BenefitsAndExclusionsTabContent">
+                                            @if (ViewBag.ShowHospitalization)
+                                            {
+                                                <div class="active tab-pane" id="HOPS" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetHospitalization", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowPreventiveHealthcare)
+                                            {
+                                                <div class="tab-pane" id="PHS" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetPreventiveHealthcare", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowEmergencyCare)
+                                            {
+                                                <div class="tab-pane" id="ECS" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetEmergencyCare", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowMemberFinancialAssistance)
+                                            {
+                                                <div class="tab-pane" id="MFA" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetMemberFinancialAssistance", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowDentalCare)
+                                            {
+                                                <div class="tab-pane" id="DCS" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetDentalCare", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowPreExistingCondition)
+                                            {
+                                                <div class="tab-pane" id="PEC" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetPreExistingCondition", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowPointOfService)
+                                            {
+                                                <div class="tab-pane" id="POS" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetPointOfService", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowMaternity)
+                                            {
+                                                <div class="tab-pane" id="MAT" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetMaternity", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowExecutiveCheckup)
+                                            {
+                                                <div class="tab-pane" id="ECU" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetExecutiveCheckup", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowExclusion)
+                                            {
+                                                <div class="tab-pane" id="EXC" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetExclusion", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowDreadedDisease)
+                                            {
+                                                <div class="tab-pane" id="DD" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetDreadedDisease", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowEligibility)
+                                            {
+                                                <div class="tab-pane" id="ME" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetEligibility", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                            @if (ViewBag.ShowOtherInformation)
+                                            {
+                                                <div class="tab-pane" id="OI" style="background:#eee">
+                                                    <iframe frameborder="0" width="100%" src="@Url.Action("GetOtherInformation", new { accountCode = ViewBag.AccountCode })"></iframe>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('iframe').load(function () {
+                var isActive = false;
+                if (!$(this).parent().hasClass('active')) {
+                    $(this).parent().addClass('active');
+                }
+                else {
+                    isActive = true;
+                }
+                var height = $(this.contentWindow.document).height() + 'px';
+                this.style.height = height;
+                if (!isActive) $(this).parent().removeClass('active');
+            });
+        });
+    </script>
+}

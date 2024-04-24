@@ -1,0 +1,10 @@
+using Mvc.Mailer;
+
+namespace Corelib.Mailers
+{ 
+    public interface IUserMailer
+    {
+			MvcMailMessage Welcome();
+			MvcMailMessage PasswordReset();
+	}
+}

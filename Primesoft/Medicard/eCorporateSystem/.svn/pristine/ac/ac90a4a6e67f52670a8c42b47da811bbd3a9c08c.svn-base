@@ -1,0 +1,165 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewBenefitsAndExclusions")]
+    public class BenefitsAndExclusionsController : BaseAccountController
+    {
+        #region -- Action Results --
+
+        public ActionResult Index(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.ShowHospitalization = (User.IsInRole("SysAd") || User.IsInRole("CanViewHospitalizationAndOutPatientServices"));
+            ViewBag.ShowPreventiveHealthcare = (User.IsInRole("SysAd") || User.IsInRole("CanViewPreventiveHealthcareServices"));
+            ViewBag.ShowEmergencyCare = (User.IsInRole("SysAd") || User.IsInRole("CanViewEmergencyCareServices"));
+            ViewBag.ShowMemberFinancialAssistance = (User.IsInRole("SysAd") || User.IsInRole("CanViewMemberFinancialAssistance"));
+            ViewBag.ShowDentalCare = (User.IsInRole("SysAd") || User.IsInRole("CanViewDentalCareServices"));
+            ViewBag.ShowExclusion = (User.IsInRole("SysAd") || User.IsInRole("CanViewExclusions")) && this.LegacyAccount.PackageCode == "PKG0000005";
+            ViewBag.ShowPreExistingCondition = (User.IsInRole("SysAd") || User.IsInRole("CanViewPreExistingCondition"));
+            ViewBag.ShowPointOfService = (User.IsInRole("SysAd") || User.IsInRole("CanViewPointOfService")) && this.LegacyAccount.PackageCode == "PKG0000005";
+            ViewBag.ShowMaternity = (User.IsInRole("SysAd") || User.IsInRole("CanViewMaternity")) && this.LegacyAccount.PackageCode == "PKG0000005";
+            ViewBag.ShowExecutiveCheckup = (User.IsInRole("SysAd") || User.IsInRole("CanViewExecutiveCheckUp")) && this.LegacyAccount.PackageCode == "PKG0000005";
+            ViewBag.ShowDreadedDisease = (User.IsInRole("SysAd") || User.IsInRole("CanViewDreadedDisease")) && this.LegacyAccount.PackageCode != "PKG0000005";
+            ViewBag.ShowEligibility = (User.IsInRole("SysAd") || User.IsInRole("CanViewMembershipEligibility")) && this.LegacyAccount.PackageCode != "PKG0000005";
+
+            return View();
+        }
+
+        public async Task<String> GetHospitalization(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 0);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetPreventiveHealthcare(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 1);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetEmergencyCare(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 2);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetMemberFinancialAssistance(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 3);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetDentalCare(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 4);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetExclusion(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 5);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetPreExistingCondition(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 6);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetPointOfService(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 7);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetMaternity(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 8);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetExecutiveCheckup(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 9);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetDreadedDisease(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 10);
+
+            return returnValue;
+        }
+
+        public async Task<String> GetEligibility(string accountCode)
+        {
+            var returnValue = await GetBenefitsAndExclusions(accountCode, 11);
+
+            return returnValue;
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private async Task<string> GetBenefitsAndExclusions(string accountCode, int tab)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return null;
+
+            using (var client = new WebClient())
+            {
+                var htmlDocument = await client.DownloadStringTaskAsync(Config.BenefitsAndExclusionsUrl.Replace("##AccountCode##", ViewBag.AccountCode).Replace("##Tab##", tab.ToString()));
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(htmlDocument);
+
+                HtmlAgilityPack.HtmlNode baseNode = doc.CreateElement("base");
+                HtmlAgilityPack.HtmlAttribute hrefAttribute = doc.CreateAttribute("href", Config.BenefitsAndExclusionsBaseUrl);
+                baseNode.Attributes.Add(hrefAttribute);
+                doc.DocumentNode.SelectSingleNode("//head").InsertBefore(baseNode, doc.DocumentNode.SelectSingleNode("//meta"));
+                if (doc.DocumentNode.SelectNodes("//link[@rel='stylesheet']") != null)
+                {
+                    foreach (var cssNode in doc.DocumentNode.SelectNodes("//link[@rel='stylesheet']"))
+                    {
+                        cssNode.Attributes["href"].Value = cssNode.Attributes["href"].Value.Replace("..", Config.BenefitsAndExclusionsCssPath);
+                    }
+                }
+                if (doc.DocumentNode.SelectNodes("//img[@class='toggleChk']") != null)
+                {
+                    foreach (var imgNode in doc.DocumentNode.SelectNodes("//img[@class='toggleChk']"))
+                    {
+                        if (imgNode.Attributes["src"] != null && !String.IsNullOrEmpty(imgNode.Attributes["src"].Value))
+                        {
+                            imgNode.Attributes["src"].Value = imgNode.Attributes["src"].Value.Replace("..", Config.BenefitsAndExclusionsCssPath);
+                        }
+                    }
+                }
+
+                return doc.DocumentNode.OuterHtml;
+            }
+        }
+
+        #endregion
+    }
+}

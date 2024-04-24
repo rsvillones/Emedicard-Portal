@@ -1,0 +1,13 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">eMediCard: Submit your Membership Profile</p>
+<br />
+<p class="greetings">Dear @Model.Member.FirstName,</p>
+<br />
+<p class="details">To process your Membership Application with MediCard, please update and submit your Membership Profile on or before @Model.SubmittionDeadline.ToString("MM/dd/yyyy")</p>
+<p class="details">You may now click on <a href="@(Corelib.Config.BaseUrl)">here</a> to login and submit your profile.</p>
+<br />
+<p class="details">Thank you for using eMedicard!</p>
+<br />

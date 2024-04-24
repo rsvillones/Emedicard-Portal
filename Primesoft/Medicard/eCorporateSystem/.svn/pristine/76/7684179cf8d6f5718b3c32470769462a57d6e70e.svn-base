@@ -1,0 +1,101 @@
+﻿@model PagedList.IPagedList<AdditionalDependent>
+@{
+    ViewBag.Title = "Additional Dependents";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+    IEnumerable<Member> members = ViewBag.Members;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="title">Application for Additional Dependents</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">
+        <p style="float: right">
+            @Html.ActionLink("Add", "Create", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+        </p>
+    </div>
+</div>
+
+
+<table class="table table-custom">
+    <thead>
+        <tr>
+            <th>
+                Name of Member
+            </th>
+            <th>
+                Name of Dependent
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Civil Status
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                Date of Birth
+            </th>
+            <th>
+                Plan
+            </th>
+            <th>
+                Relationship
+            </th>
+            <th>
+                &nbsp;
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var member = members.FirstOrDefault(t => t.Id == item.MemberId) ?? new Member();
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => member.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CivilStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OptionalPlan)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Relationship)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                    @Html.ActionLink("Delete", "#", new { guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

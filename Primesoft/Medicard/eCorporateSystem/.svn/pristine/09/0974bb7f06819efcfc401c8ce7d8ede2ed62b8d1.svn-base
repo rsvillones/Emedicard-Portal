@@ -1,0 +1,457 @@
+@model EndorsementBatch
+
+@{
+    ViewBag.Title = "Membership Renewal";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("Renewal", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(false);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.ReferenceNumber);
+    @Html.HiddenFor(model => model.Filename);
+    @Html.HiddenFor(model => model.GuidFilename);
+    @Html.HiddenFor(model => model.Timestamp);
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Membership Renewal</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadRenewal">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title" style="margin-bottom: 1em">Batch Upload for Renewal</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Submission Deadline:</label>
+                                                        <div class="col-lg-8 editor-form-control">
+                                                            @Html.EditorFor(model => model.Deadline, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessage("DeadLineError", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Remarks:</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">&nbsp;</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <label class="inline">Allowed file extension: xlsx.</label>
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <input id="DownloadActiveMembersButton" type="button" class="btn-download-active" value="Download Template" />
+                                                                <div style="display:none">
+                                                                    <input type="checkbox" id="IncludeActiveMembers" checked="checked" />
+                                                                    <label for="IncludeActiveMembers">Include Active Members</label>
+                                                                </div>
+                                                                <a href="javascript:void(0);" onclick="showInstruction()">Renewal Instruction</a>
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <input type="file" id="uploadNewApplication" name="uploadNewApplication" style="background-color:blue" />
+                                                                    <input type="hidden" id="uploadStringNewApplication" name="uploadStringNewApplication" />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div id="ForProcessingContainer"></div>
+                                                        <div id="ForCreatingUserAccountContainer"></div>
+                                                        <div id="ForDownloadContainer"></div>
+                                                        <div id="RowsContainer">
+                                                            @if (ViewBag.ViewData != null && ViewBag.ViewData)
+                                                            {
+                                                                @Html.Action("GetRenewalMemberWrappers", new { accountCode = ViewBag.AccountCode, guid = Model.Guid, errorOnly = Model.HasEndorsementError })
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade" id="renewalInstructionModal" tabindex="-1" role="dialog" aria-labelledby="renewalInstructionModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="renewalInstructionTitle">Renewal Procedure:</h4>
+            </div>
+            <div class="modal-body" id="renewalInstructionBody">
+                <p>
+                    Click the <b>Download Template</b> button to download the updated list of Active Members.
+                    The data in yellow cannot be edited but instead, you can put <b>Remarks</b> on the provided <b>last column</b> for the following:
+                </p>
+                <p>
+                    1.	Change in status (please include married name)<br />
+                    2.	Change in member type (from Principal to Dependent or from Dependent to Principal, in this case, please provide the Relationship<br />
+                    3.	Corrections in spelling of names<br />
+                    4.	Corrections on birthdays (please provide copy of birth certificate)<br />
+                    5.	Under Status column select "Not for Renewal" for members to be deleted effective renewal. Members with blank Status will be processed for Renewal.<br />
+                </p>
+                <p>
+                    Where applicable, you can edit the following fields if changes have to be effected on renewal:
+                </p>
+                <p>
+                    1.	Area (if currently being used by company)<br />
+                    2.	Employee ID (if currently being used by company)<br />
+                    3.	Applied Plan (for upgrades or downgrades)<br />
+                    4.	Optional Plan ( for upgrades or downgrades)<br />
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        function deleteMember(button) {
+            var tr = $(button).parent().parent();
+            tr.remove();
+        }
+        var errorList = '.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists"), .table-error:contains("active subscription")';
+
+        function showInstruction() {
+            $('#renewalInstructionModal').modal('show');
+        }
+
+        $(document).ready(function () {
+            $('#renewalInstructionModal').modal('show');
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+                // If Internet Explorer
+                $("#uploadNewApplication").uploadify({
+                    'swf': '@Url.Content("~/Content/uploadify/uploadify.swf")',
+                    'uploader': '@Url.Action("UploadRenewalExcel")',
+                    'formData': {
+                        'accountCode': '@ViewBag.AccountCode',
+                        'endorsementBatchId': '@Model.Id',
+                        'endorsementBatchGuid': '@Model.Guid'
+                    },
+                    'multi': false,
+                    'auto': true,
+                    'method': 'post',
+                    'buttonText': 'Select File',
+                    'onUploadError': function (file, data) {
+                        alert(file);
+                    },
+                    'onUploadProgress': function (file) {
+                        $('#RowsContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+                    },
+                    'onUploadSuccess': function (file, data) {
+                        $('#RowsContainer').html('');
+                        var json = $.parseJSON(data);
+                        if (json.Success) {
+                            $('#Filename').val(json.Filename);
+                            $('#GuidFilename').val(json.GuidFilename);
+                            uploadEndorsement(json.EndorsementGuid);
+                        }
+                        else {
+                            alert(json.ErrorMessage);
+                        }
+                    }
+                });
+            }
+            else {
+                // If another browser
+                $("#uploadNewApplication").uploadifive({
+                    'method': 'post',
+                    'formData': {
+                        'accountCode': '@ViewBag.AccountCode',
+                        'endorsementBatchId': '@Model.Id',
+                        'endorsementBatchGuid': '@Model.Guid'
+                    },
+                    'uploadScript': '/CorporateAdministrator/Endorsement/UploadRenewalExcel',
+                    'fileObjName': 'fileData',
+                    'buttonText': 'Select File',
+                    'multi': false,
+                    'auto': true,
+                    'height': 40,
+                    'width': 60,
+                    'removeCompleted': true,
+                    'onError': function (file, data) {
+                        alert(file);
+                    },
+                    'onUpload': function (file) {
+                        $('#RowsContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+                    },
+                    'onUploadComplete': function (file, data) {
+                        $('#RowsContainer').html('');
+                        var json = $.parseJSON(data);
+                        if (json.Success) {
+                            $('#Filename').val(json.Filename);
+                            $('#GuidFilename').val(json.GuidFilename);
+                            uploadEndorsement(json.EndorsementGuid);
+                        }
+                        else {
+                            alert(json.ErrorMessage);
+                        }
+                    }
+                });
+            }
+
+            processEndorsement('@Model.Guid');
+
+            $('#DownloadActiveMembersButton').click(function (e) {
+                e.preventDefault();
+                var isInclude = false;
+                if ($('#IncludeActiveMembers').is(":checked")) {
+                    isInclude = true;
+                }
+                var options = {
+                    url: '@Url.Action("DownloadRenewalTemplate")',
+                    type: 'POST',
+                    data: {
+                        accountCode: '@ViewBag.AccountCode',
+                        guid: '@Model.Guid',
+                        includeActiveMembers: isInclude
+                    },
+                    success: function (data) {
+                        var json = data;
+                        if (json.Success) {
+                            downloadRenewalMember(data.EndorsementGuid);
+                        }
+                    }
+                };
+                $.ajax(options);
+            });
+
+            $('.selectpicker').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectpicker').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+
+            $('#ApplicationVerificationBody:contains("exists"),#ApplicationVerificationBody:contains("required")').each(function () {
+                $("#ApplicationVerificationBody").find("td").css({ "height": "64px" });
+            });
+
+            $('.sticky-col tbody tr input').remove();
+
+            $(errorList).closest('tr').css("background-color", "#E84646");
+
+            $('#ShowOnlyError').click(function () {
+                GetExcelRows($(this).is(":checked"));
+            });
+
+            $('#Deadline').datepicker();
+
+            @if (ViewBag.Validate != null && ViewBag.Validate)
+            {
+                @:$('form').valid();
+                                                                                                                                                                                                                                        }
+        });
+
+        function OnMemberWrapperBegin() {
+            $('#RowsContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+        }
+
+        function GetExcelRows(errorOnly) {
+            var options = {
+                url: '@Url.Action("GetRenewalMemberWrappers")',
+                type: 'POST',
+                data: {
+                    accountCode: '@ViewBag.AccountCode',
+                    guid: '@Model.Guid',
+                    errorOnly: errorOnly
+                },
+                success: function (html) {
+                    $('#RowsContainer').html(html);
+                    setStickyHeader();
+                    $('#ShowOnlyError').click(function () {
+                        GetExcelRows($(this).is(":checked"));
+                    });
+                }
+            }
+            $.ajax(options);
+        }
+
+        function IsValidRenewalMemberWrappers(endorsementGuid) {
+            var options = {
+                url: '@Url.Action("IsValidRenewalMemberWrappers")',
+                type: 'POST',
+                data: {
+                    guid: endorsementGuid,
+                },
+                success: function (data) {
+                    GetExcelRows(data);
+                }
+            }
+            $.ajax(options);
+        }
+
+        function GetDownloadFile(endorsementGuid) {
+            window.location.href = '@(Url.Action("RenewalFileDownload"))?guid=' + endorsementGuid;
+        }
+
+        function uploadEndorsement(endorsementGuid) {
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("GetEndorsementLog")',
+                        type: 'post',
+                        data: {
+                            guid: endorsementGuid
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (data) {
+                        isPaused = false;
+                        if (data.Success) {
+                            $('#RowsContainer').html('<div class="row"><div class="col-lg-12"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' + data.CurrentData + '" aria-valuemin="0" aria-valuemax="' + data.NumberOfData + '" style="width:' + parseFloat(Math.round((data.CurrentData / data.NumberOfData) * 100).toFixed(2)) + '%;"><span class="sr-only"></span></div></div></div><div class="col-lg-12"><div style="text-align:center;margin-top:-3em">' + data.Remark + '</div></div></div>');
+                            if (data.IsProcessed) {
+                                clearInterval(interval);
+                                IsValidRenewalMemberWrappers(endorsementGuid);
+                            }
+                        }
+                        else {
+                            clearInterval(interval);
+                            alert(data.ErrorMessage);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+        function processEndorsement(endorsementGuid) {
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("GetEndorsementLogForProcessing")',
+                        type: 'post',
+                        data: {
+                            guid: endorsementGuid
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (data) {
+                        isPaused = false;
+                        if (data.Success) {
+                            $('#ForProcessingContainer').html('<div class="row"><div class="col-lg-12"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' + data.CurrentData + '" aria-valuemin="0" aria-valuemax="' + data.NumberOfData + '" style="width:' + parseFloat(Math.round((data.CurrentData / data.NumberOfData) * 100).toFixed(2)) + '%;"><span class="sr-only"></span></div></div></div><div class="col-lg-12"><div style="text-align:center;margin-top:-3em">' + data.Remark + '</div></div></div>');
+                            if (data.IsProcessed) {
+                                clearInterval(interval);
+                                $('#ForProcessingContainer').empty();
+                                processUserAccount('@Model.Guid')
+                            }
+                        }
+                        else {
+                            clearInterval(interval);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+        function processUserAccount(endorsementGuid) {
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("GetEndorsementLogForCreatingUserAccounts")',
+                        type: 'post',
+                        data: {
+                            guid: endorsementGuid
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (data) {
+                        isPaused = false;
+                        if (data.Success) {
+                            $('#ForCreatingUserAccountContainer').html('<div class="row"><div class="col-lg-12"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' + data.CurrentData + '" aria-valuemin="0" aria-valuemax="' + data.NumberOfData + '" style="width:' + parseFloat(Math.round((data.CurrentData / data.NumberOfData) * 100).toFixed(2)) + '%;"><span class="sr-only"></span></div></div></div><div class="col-lg-12"><div style="text-align:center;margin-top:-3em">' + data.Remark + '</div></div></div>');
+                            if (data.IsProcessed) {
+                                clearInterval(interval);
+                                $('#ForCreatingUserAccountContainer').empty();
+                            }
+                        }
+                        else {
+                            clearInterval(interval);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+        function downloadRenewalMember(endorsementGuid) {
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("GetEndorsementLogForDownload")',
+                        type: 'post',
+                        data: {
+                            guid: endorsementGuid
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (data) {
+                        isPaused = false;
+                        if (data.Success) {
+                            $('#ForDownloadContainer').html('<div class="row"><div class="col-lg-12"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' + data.CurrentData + '" aria-valuemin="0" aria-valuemax="' + data.NumberOfData + '" style="width:' + parseFloat(Math.round((data.CurrentData / data.NumberOfData) * 100).toFixed(2)) + '%;"><span class="sr-only"></span></div></div></div><div class="col-lg-12"><div style="text-align:center;margin-top:-3em">' + data.Remark + '</div></div></div>');
+                            if (data.IsProcessed) {
+                                clearInterval(interval);
+                                $('#ForDownloadContainer').empty();
+                                GetDownloadFile(endorsementGuid)
+                            }
+                        }
+                        else {
+                            clearInterval(interval);
+                            $('#ForDownloadContainer').empty();
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+    </script>
+}
+

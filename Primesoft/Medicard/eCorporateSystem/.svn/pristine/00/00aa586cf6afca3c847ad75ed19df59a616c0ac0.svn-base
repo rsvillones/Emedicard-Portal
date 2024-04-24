@@ -1,0 +1,132 @@
+﻿@model AdditionalDependent
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+@using (Html.BeginForm("Create", "AdditionalDependents", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(t => t.Id)
+    @Html.HiddenFor(t => t.Guid)
+    @Html.HiddenFor(t => t.Timestamp)
+    @Html.HiddenFor(t => t.Status)
+    @Html.HiddenFor(t => t.AccountCode)
+    @Html.HiddenFor(model => model.DocumentFileName)
+    @Html.HiddenFor(model => model.DocumentFile)
+    @Html.HiddenFor(model => model.DocumentContentType)
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Dependent Personal Details</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    @Html.ValidationSummary(true)
+
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="PersonalDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                @Html.Partial("_Dependent", Model)
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                                                            <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                                                            @if (ViewBag.BypassMedicalHistory != null && !ViewBag.BypassMedicalHistory)
+                                                            {
+                                                                <input type="submit" name="Submit" value="Continue" class="btn btn-primary" />
+                                                            }
+                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#DateOfBirth").datepicker();
+            $('#MemberContainer').attr("style", "margin-bottom:14px");
+
+            $('#@Html.IdFor(t => t.MemberCode)').select2({
+                placeholder: "Search for a Active Member",
+                minimumInputLength: 1,
+                ajax: {
+                    url: '@Url.Action("GetActiveMembers")',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            accountCode: '@Model.AccountCode',
+                            page_limit: 10
+                        };
+                    },
+                    results: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter remote JSON data
+                        return { results: data };
+                    }
+                }
+            });
+
+            $('#@Html.IdFor(t => t.MemberCode)').on('select2-selecting', function (e) {
+                $('#@Html.IdFor(t => t.MemberName)').val(e.choice.text);
+            });
+
+            $("#@Html.IdFor(t => t.MemberCode)").select2('data', { id: '@Model.MemberCode', text: '@Model.MemberName' });
+
+        });
+
+        function OnDateOfBirthChange() {
+            var options = {
+                url: '@Url.Action("ComputeAge", "Utilities", new { area = "" })',
+                type: 'POST',
+                data: {
+                    dateOfBirth: $('#DateOfBirth').val()
+                },
+                success: function (age) {
+                    $('#Age').val(age);
+                }
+            };
+            $.ajax(options);
+        }
+
+        function clearFileInput() {
+            var oldInput = document.getElementById("FileWrapper");
+            var newInput = document.createElement("input");
+            newInput.type = "file";
+            newInput.id = oldInput.id;
+            newInput.name = oldInput.name;
+            newInput.className = oldInput.className;
+            newInput.style.cssText = oldInput.style.cssText;
+            // copy any other relevant attributes
+
+            oldInput.parentNode.replaceChild(newInput, oldInput);
+        }
+        function clearExistingFileInput(input) {
+            input.siblings('a').remove();
+            input.siblings('label[for="NoFile"]').remove();
+            input.siblings('label[for="CurrentUploaded"]').after('<label for="NoFile">&nbsp;Existing file deleted.<label>');
+            $('#DocumentContentType').val('');
+            $('#DocumentFile').val('');
+            $('#DocumentFileName').val('');
+        }
+    </script>
+    @Html.Partial("_PostMessage")
+}

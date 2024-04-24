@@ -1,0 +1,987 @@
+@{
+    ViewBag.Title = "Utilization Reporting";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@Html.Action("AccountInformation", "BaseAccount")
+
+<head>
+<style>
+/* Component styles */
+
+
+
+
+</style>
+</head>
+
+@*<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Utilization Reporting</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Select Service</label>
+                                    <div class="col-md-4">
+                                        <select class="form-control">
+                                            <option>MEMBER UTILIZATION ALL SERVICE (PER MEMBER)</option>
+                                            <option>IN-PATIENT</option>
+                                            <option>OUT-PATIENT</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 checkbox-align">
+                                        <input type="checkbox" />
+                                        <label>Group by Diseases</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Member Code</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Last Name</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Date From</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">Date To</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">&nbsp;</label>
+                                    <div class="col-md-5">
+                                        <input type="submit" value="Submit" class="btn btn-primary" />
+                                        <input type="submit" value="Export to Excel" class="btn btn-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+
+<div class="row">
+    <div class="col-lg-6">
+            <div class="input-group">
+               
+               <input type="text" class="form-control space-cr" placeholder="Search & Filter">
+                <div class="input-group-btn">
+                  
+                  <button type="button" class="dropdown-toggle btn-dd btn-default" data-toggle="dropdown" tabindex="-1">
+                     <span class="caret"></span>
+                     <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                    <div class="rightMenu dropdown-menu">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Employee No.</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" onclick="return false;" class="form-control input-sm"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Name</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" onclick="return false;" class="form-control input-sm"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Test</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" onclick="return false;" class="form-control input-sm"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Category</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" onclick="return false;" class="form-control input-sm"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+               </div><!-- /btn-group -->
+                <button type="button" class="btn btn-primary btn-grp"  
+                     tabindex="-1">Search
+                  </button>
+            </div><!-- /input-group -->
+    </div>
+</div>
+<br />
+
+<div class="row">
+    <div class="col-lg-6">
+            <div class="input-group">
+               
+               <input type="text" class="form-control space-cr" placeholder="Search & Filter">
+                <div class="input-group-btn">
+                  
+                  <button type="button" class="dropdown-toggle btn-dd btn-default" data-toggle="dropdown" tabindex="-1">
+                     <span class="caret"></span>
+                     <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                    <div class="rightMenu-1 dropdown-menu">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search</h4></div></div>
+                                <div class="col-sm-10 col-centered">
+                                    <div class="checkbox">
+                                        <label>
+                                          <input type="checkbox"> Employee No.
+                                        </label>
+                                      </div>
+                                </div>
+                                <div class="col-sm-10 col-centered">
+                                    <div class="checkbox">
+                                        <label>
+                                          <input type="checkbox"> Name
+                                        </label>
+                                      </div>
+                                </div>
+                                <div class="col-sm-10 col-centered">
+                                    <div class="checkbox">
+                                        <label>
+                                          <input type="checkbox"> Test
+                                        </label>
+                                      </div>
+                                </div>
+                                <div class="col-sm-10 col-centered">
+                                    <div class="checkbox">
+                                        <label>
+                                          <input type="checkbox"> Category
+                                        </label>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+               </div><!-- /btn-group -->
+                <button type="button" class="btn btn-primary btn-grp"  
+                     tabindex="-1">Search
+                  </button>
+            </div><!-- /input-group -->
+    </div>
+</div>
+
+<table class="altRow">
+    <thead>
+    <tr>
+        <th style="width:10%">
+            TEST
+        </th>
+        <th style="width:22%">
+            TEST
+        </th>
+        <th style="width:12%">
+            TEST
+        </th>
+        <th style="width:20%">
+            TEST
+        </th>
+        <th style="width:18%">
+            TEST
+        </th>
+        <th style="width:18%">
+            TEST
+        </th>
+    </tr>
+        </thead>
+<tbody>
+    <div class="AccountSetting">
+    <tr>
+        <td rowspan="2">1</td>
+        <td>joe</td>
+        <td>1</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td>tom</td>
+        <td>2</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>joe</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>joe</td>
+        <td>4</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>joe</td>
+        <td>6</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td rowspan="2">5</td>
+        <td>joe</td>
+        <td>5</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td>tom</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+        <td>3</td>
+    </tr>
+    </tbody>
+    </div>
+</table>
+
+
+<table class="">
+					<thead>
+						<tr>
+							<th>Population</th><th>Alpha</th><th>Beta</th><th>Gamma</th><th>Delta</th><th>Epsilon</th><th>Zeta</th><th>Eta</th><th>Theta</th><th>Iota</th><th>Kappa</th><th>Lambda</th><th>Mu</th><th>Nu</th><th>Xi</th><th>Omicron</th><th>Pi</th><th>Rho</th><th>Sigma</th><th>Tau</th><th>Upsilon</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Sample #1</th><td>23</td><td>88</td><td>8</td><td>2</td><td>67</td><td>83</td><td>81</td><td>37</td><td>91</td><td>96</td><td>13</td><td>3</td><td>95</td><td>98</td><td>10</td><td>87</td><td>70</td><td>54</td><td>72</td><td>75</td>
+						</tr><tr>
+							<th>Sample #2</th><td>14</td><td>21</td><td>20</td><td>21</td><td>9</td><td>68</td><td>60</td><td>73</td><td>22</td><td>29</td><td>9</td><td>49</td><td>49</td><td>66</td><td>58</td><td>10</td><td>8</td><td>24</td><td>19</td><td>65</td>
+						</tr><tr>
+							<th>Sample #3</th><td>4</td><td>50</td><td>89</td><td>72</td><td>99</td><td>90</td><td>24</td><td>86</td><td>95</td><td>44</td><td>32</td><td>97</td><td>18</td><td>90</td><td>81</td><td>9</td><td>38</td><td>4</td><td>85</td><td>15</td>
+						</tr><tr>
+							<th>Sample #4</th><td>10</td><td class="err">Parse error</td><td>32</td><td>45</td><td>53</td><td>29</td><td>35</td><td>35</td><td>75</td><td>9</td><td>69</td><td>66</td><td>93</td><td>42</td><td>81</td><td>85</td><td>72</td><td>70</td><td>15</td><td>38</td>
+						</tr><tr>
+							<th>Sample #5</th><td>85</td><td>42</td><td>71</td><td>56</td><td>30</td><td>3</td><td>41</td><td>87</td><td>94</td><td>99</td><td>24</td><td>20</td><td>96</td><td>62</td><td>90</td><td>13</td><td>38</td><td>47</td><td>9</td><td>6</td>
+						</tr><tr>
+							<th>Sample #6</th><td>18</td><td>80</td><td>85</td><td>65</td><td>9</td><td>93</td><td>93</td><td>61</td><td>49</td><td>10</td><td>45</td><td>3</td><td>93</td><td>61</td><td>4</td><td>80</td><td>2</td><td>60</td><td>53</td><td>81</td>
+						</tr><tr>
+							<th>Sample #7</th><td>30</td><td>81</td><td>46</td><td>50</td><td>71</td><td>60</td><td>8</td><td>33</td><td>87</td><td>34</td><td>35</td><td>74</td><td>34</td><td>31</td><td>97</td><td>10</td><td>40</td><td>95</td><td>92</td><td>93</td>
+						</tr><tr>
+							<th>Sample #8</th><td>23</td><td>88</td><td>8</td><td>2</td><td>67</td><td>83</td><td>81</td><td>37</td><td>91</td><td>96</td><td>13</td><td>3</td><td>95</td><td>98</td><td>10</td><td>87</td><td>70</td><td>54</td><td>72</td><td>75</td>
+						</tr><tr>
+							<th>Sample #9</th><td>14</td><td>21</td><td>20</td><td>21</td><td>9</td><td>68</td><td>60</td><td>73</td><td>22</td><td>29</td><td>9</td><td>49</td><td>49</td><td>66</td><td>58</td><td>10</td><td>8</td><td>24</td><td>19</td><td>65</td>
+						</tr><tr>
+							<th>Sample #10</th><td>4</td><td>50</td><td>89</td><td>72</td><td>99</td><td>90</td><td>24</td><td>86</td><td>95</td><td>44</td><td>32</td><td>97</td><td>18</td><td>90</td><td>81</td><td>9</td><td>38</td><td>4</td><td>85</td><td>15</td>
+						</tr><tr>
+							<th>Sample #11</th><td>10</td><td class="err">Parse error</td><td>32</td><td>45</td><td>53</td><td>29</td><td>35</td><td>35</td><td>75</td><td>9</td><td>69</td><td>66</td><td>93</td><td>42</td><td>81</td><td>85</td><td>72</td><td>70</td><td>15</td><td>38</td>
+						</tr><tr>
+							<th>Sample #12</th><td>85</td><td>42</td><td>71</td><td>56</td><td>30</td><td>3</td><td>41</td><td>87</td><td>94</td><td>99</td><td>24</td><td>20</td><td>96</td><td>62</td><td>90</td><td>13</td><td>38</td><td>47</td><td>9</td><td>6</td>
+						</tr><tr>
+							<th>Sample #13</th><td>18</td><td>80</td><td>85</td><td>65</td><td>9</td><td>93</td><td>93</td><td>61</td><td>49</td><td>10</td><td>45</td><td>3</td><td>93</td><td>61</td><td>4</td><td>80</td><td>2</td><td>60</td><td>53</td><td>81</td>
+						</tr><tr>
+							<th>Sample #14</th><td>30</td><td>81</td><td>46</td><td>50</td><td>71</td><td>60</td><td>8</td><td>33</td><td>87</td><td>34</td><td>35</td><td>74</td><td>34</td><td>31</td><td>97</td><td>10</td><td>40</td><td>95</td><td>92</td><td>93</td>
+						</tr><tr>
+							<th>Sample #15</th><td>23</td><td>88</td><td>8</td><td>2</td><td>67</td><td>83</td><td>81</td><td>37</td><td>91</td><td>96</td><td>13</td><td>3</td><td>95</td><td>98</td><td>10</td><td>87</td><td>70</td><td>54</td><td>72</td><td>75</td>
+						</tr><tr>
+							<th>Sample #16</th><td>14</td><td>21</td><td>20</td><td>21</td><td>9</td><td>68</td><td>60</td><td>73</td><td>22</td><td>29</td><td>9</td><td>49</td><td>49</td><td>66</td><td>58</td><td>10</td><td>8</td><td>24</td><td>19</td><td>65</td>
+						</tr><tr>
+							<th>Sample #17</th><td>4</td><td>50</td><td>89</td><td>72</td><td>99</td><td>90</td><td>24</td><td>86</td><td>95</td><td>44</td><td>32</td><td>97</td><td>18</td><td>90</td><td>81</td><td>9</td><td>38</td><td>4</td><td>85</td><td>15</td>
+						</tr><tr>
+							<th>Sample #18</th><td>10</td><td class="err">Parse error</td><td>32</td><td>45</td><td>53</td><td>29</td><td>35</td><td>35</td><td>75</td><td>9</td><td>69</td><td>66</td><td>93</td><td>42</td><td>81</td><td>85</td><td>72</td><td>70</td><td>15</td><td>38</td>
+						</tr><tr>
+							<th>Sample #19</th><td>85</td><td>42</td><td>71</td><td>56</td><td>30</td><td>3</td><td>41</td><td>87</td><td>94</td><td>99</td><td>24</td><td>20</td><td>96</td><td>62</td><td>90</td><td>13</td><td>38</td><td>47</td><td>9</td><td>6</td>
+						</tr><tr>
+							<th>Sample #20</th><td>18</td><td>80</td><td>85</td><td>65</td><td>9</td><td>93</td><td>93</td><td>61</td><td>49</td><td>10</td><td>45</td><td>3</td><td>93</td><td>61</td><td>4</td><td>80</td><td>2</td><td>60</td><td>53</td><td>81</td>
+						</tr><tr>
+							<th>Sample #21</th><td>30</td><td>81</td><td>46</td><td>50</td><td>71</td><td>60</td><td>8</td><td>33</td><td>87</td><td>34</td><td>35</td><td>74</td><td>34</td><td>31</td><td>97</td><td>10</td><td>40</td><td>95</td><td>92</td><td>93</td>
+						</tr><tr>
+							<th>Sample #22</th><td>23</td><td>88</td><td>8</td><td>2</td><td>67</td><td>83</td><td>81</td><td>37</td><td>91</td><td>96</td><td>13</td><td>3</td><td>95</td><td>98</td><td>10</td><td>87</td><td>70</td><td>54</td><td>72</td><td>75</td>
+						</tr><tr>
+							<th>Sample #23</th><td>14</td><td>21</td><td>20</td><td>21</td><td>9</td><td>68</td><td>60</td><td>73</td><td>22</td><td>29</td><td>9</td><td>49</td><td>49</td><td>66</td><td>58</td><td>10</td><td>8</td><td>24</td><td>19</td><td>65</td>
+						</tr><tr>
+							<th>Sample #24</th><td>4</td><td>50</td><td>89</td><td>72</td><td>99</td><td>90</td><td>24</td><td>86</td><td>95</td><td>44</td><td>32</td><td>97</td><td>18</td><td>90</td><td>81</td><td>9</td><td>38</td><td>4</td><td>85</td><td>15</td>
+						</tr><tr>
+							<th>Sample #25</th><td>10</td><td class="err">Parse error</td><td>32</td><td>45</td><td>53</td><td>29</td><td>35</td><td>35</td><td>75</td><td>9</td><td>69</td><td>66</td><td>93</td><td>42</td><td>81</td><td>85</td><td>72</td><td>70</td><td>15</td><td>38</td>
+						</tr><tr>
+							<th>Sample #26</th><td>85</td><td>42</td><td>71</td><td>56</td><td>30</td><td>3</td><td>41</td><td>87</td><td>94</td><td>99</td><td>24</td><td>20</td><td>96</td><td>62</td><td>90</td><td>13</td><td>38</td><td>47</td><td>9</td><td>6</td>
+						</tr><tr>
+							<th>Sample #27</th><td>18</td><td>80</td><td>85</td><td>65</td><td>9</td><td>93</td><td>93</td><td>61</td><td>49</td><td>10</td><td>45</td><td>3</td><td>93</td><td>61</td><td>4</td><td>80</td><td>2</td><td>60</td><td>53</td><td>81</td>
+						</tr><tr>
+							<th>Sample #28</th><td>30</td><td>81</td><td>46</td><td>50</td><td>71</td><td>60</td><td>8</td><td>33</td><td>87</td><td>34</td><td>35</td><td>74</td><td>34</td><td>31</td><td>97</td><td>10</td><td>40</td><td>95</td><td>92</td><td>93</td>
+						</tr>
+					</tbody>
+				</table>
+@*
+
+<div class="ft_scroller">
+    <table id="fixed_hdr1">
+        <thead>
+            <tr>
+                <th>
+                    SNo
+                </th>
+                <th>
+                    Order Number
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    City
+                </th>
+                <th>
+                    Zip
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Order Date
+                </th>
+                <th>
+                    Company
+                </th>
+                <th>
+                    Comments
+                </th>
+            </tr>
+	</thead>
+        <tbody>
+            <tr>
+                <td>
+                    60
+                </td>
+                <td>
+                    996809
+                </td>
+                <td>
+                    Blaine Carpenter
+                </td>
+                <td>
+                    9943 Phasellus Avenue
+                </td>
+                <td>
+                    Basin
+                </td>
+                <td>
+                    72271
+                </td>
+                <td>
+                    (618) 306-1899
+                </td>
+                <td>
+                    05/20/11
+                </td>
+                <td>
+                    Cakewalk
+                </td>
+                <td>
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    60
+                </td>
+                <td>
+                    996809
+                </td>
+                <td>
+                    Blaine Carpenter
+                </td>
+                <td>
+                    9943 Phasellus Avenue
+                </td>
+                <td>
+                    Basin
+                </td>
+                <td>
+                    72271
+                </td>
+                <td>
+                    (618) 306-1899
+                </td>
+                <td>
+                    05/20/11
+                </td>
+                <td>
+                    Cakewalk
+                </td>
+                <td>
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    60
+                </td>
+                <td>
+                    996809
+                </td>
+                <td>
+                    Blaine Carpenter
+                </td>
+                <td>
+                    9943 Phasellus Avenue
+                </td>
+                <td>
+                    Basin
+                </td>
+                <td>
+                    72271
+                </td>
+                <td>
+                    (618) 306-1899
+                </td>
+                <td>
+                    05/20/11
+                </td>
+                <td>
+                    Cakewalk
+                </td>
+                <td>
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<table class="transactions">
+    <thead>
+        <tr>
+            <th>Test</th>
+            <th>Test</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+    <td>Order 1</td>
+    <td>$10.99</td>
+  </tr>
+  <tr>
+    <td>Order 2</td>
+    <td>$4.50</td>
+  </tr>
+    </tbody>
+  
+</table>*@
+
+@*<div class="row">
+    <div class="col-lg-12">
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>#</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>#</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>FIRST COL</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+            </tr>
+            <tr>
+                <td>FIRST COL</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+            </tr>
+            <tr>
+                <td>FIRST COL</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+</div>     *@
+@*
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>#</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>#</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+                <th>Table heading</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>1</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+                <td>Table cell</td>
+            </tr>
+        </tbody>
+    </table>
+</div>*@
+<table class="table table-white-form altRow">
+    <thead>
+    <tr>
+        <th style="width:10%">
+            <a class="sort-table" href="/AccountSettings?sortOrder=accountcode_desc">
+                Account Code &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th style="width:22%">
+            AccountName
+        </th>
+        <th style="width:12%">
+            &nbsp;
+        </th>
+        <th style="width:20%">
+            &nbsp;
+        </th>
+        <th style="width:18%">
+            &nbsp;
+        </th>
+        <th style="width:18%">
+            &nbsp;
+        </th>
+    </tr>
+        </thead>
+    <tbody>
+                        <tr>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        <input data-val="true" data-val-required="The Guid field is required." id="Guid" name="Guid" type="hidden" value="52f2996a-e199-46ee-b8d1-739e87f2a359">
+        <input data-val="true" data-val-length="The field AccountCode must be a string with a maximum length of 25." data-val-length-max="25" data-val-required="The AccountCode field is required." id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        02202003-000260
+    </td>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        PRIMESOFT PHILIPPINES, INC.
+    </td>
+
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Email as Login field is required." id="UseEmailAsLogin" name="UseEmailAsLogin" onclick="useEmailAsLogin($(this))" type="checkbox" value="true"><input name="UseEmailAsLogin" type="hidden" value="false">Use Email as Login
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Random Generated Password field is required." id="UseRandomGeneratedPassword" name="UseRandomGeneratedPassword" onchange="useRandomGeneratedPassword($(this))" type="checkbox" value="true"><input name="UseRandomGeneratedPassword" type="hidden" value="false">Use Random Generated Password
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass HR Approval field is required." id="BypassHRManagerApproval" name="BypassHRManagerApproval" onchange="bypassHRManagerApproval($(this))" type="checkbox" value="true"><input name="BypassHRManagerApproval" type="hidden" value="false">Bypass HR Approval
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass Medical History field is required." id="BypassMedicalHistory" name="BypassMedicalHistory" onchange="bypassMedicalHistory($(this))" type="checkbox" value="true"><input name="BypassMedicalHistory" type="hidden" value="false">Bypass Medical History
+    </td>
+</tr>
+<tr style="border-bottom: 3px solid #eee;">
+    <td colspan="2">
+        <input id="Guid" name="Guid" type="hidden" value="52f2996a-e199-46ee-b8d1-739e87f2a359">
+        <input id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        <label class="table-label">URG Setting</label>
+        <select class="form-control" data-val="true" data-val-required="The URG Setting field is required." id="UrgSetting" name="UrgSetting" onchange="urgSetting($(this))"><option>All</option>
+<option selected="selected">Partial</option>
+<option>Principal</option>
+</select>
+    </td>
+    <td colspan="2">
+        <label class="table-label">Domain Email Address</label>
+        <div class="input-group" style="width: 100% !important">
+            <input class="form-control" id="DomainEmail" name="DomainEmail" type="text" value="asd">
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-default UpdateAccountSetting" value="update">
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+
+
+                        
+                        <tr>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        <input data-val="true" data-val-required="The Guid field is required." id="Guid" name="Guid" type="hidden" value="8628e0a2-3983-428b-b869-116ebd1e446b">
+        <input data-val="true" data-val-length="The field AccountCode must be a string with a maximum length of 25." data-val-length-max="25" data-val-required="The AccountCode field is required." id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        02202003-000260
+    </td>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        PRIMESOFT PHILIPPINES, INC.
+    </td>
+
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Email as Login field is required." id="UseEmailAsLogin" name="UseEmailAsLogin" onclick="useEmailAsLogin($(this))" type="checkbox" value="true"><input name="UseEmailAsLogin" type="hidden" value="false">Use Email as Login
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Random Generated Password field is required." id="UseRandomGeneratedPassword" name="UseRandomGeneratedPassword" onchange="useRandomGeneratedPassword($(this))" type="checkbox" value="true"><input name="UseRandomGeneratedPassword" type="hidden" value="false">Use Random Generated Password
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass HR Approval field is required." id="BypassHRManagerApproval" name="BypassHRManagerApproval" onchange="bypassHRManagerApproval($(this))" type="checkbox" value="true"><input name="BypassHRManagerApproval" type="hidden" value="false">Bypass HR Approval
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass Medical History field is required." id="BypassMedicalHistory" name="BypassMedicalHistory" onchange="bypassMedicalHistory($(this))" type="checkbox" value="true"><input name="BypassMedicalHistory" type="hidden" value="false">Bypass Medical History
+    </td>
+</tr>
+<tr style="border-bottom: 3px solid #eee;">
+    <td colspan="2">
+        <input id="Guid" name="Guid" type="hidden" value="8628e0a2-3983-428b-b869-116ebd1e446b">
+        <input id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        <label class="table-label">URG Setting</label>
+        <select class="form-control" data-val="true" data-val-required="The URG Setting field is required." id="UrgSetting" name="UrgSetting" onchange="urgSetting($(this))"><option selected="selected">All</option>
+<option>Partial</option>
+<option>Principal</option>
+</select>
+    </td>
+    <td colspan="2">
+        <label class="table-label">Domain Email Address</label>
+        <div class="input-group" style="width: 100% !important">
+            <input class="form-control" id="DomainEmail" name="DomainEmail" type="text" value="">
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-default UpdateAccountSetting" value="update">
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+
+
+                        
+                        <tr>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        <input data-val="true" data-val-required="The Guid field is required." id="Guid" name="Guid" type="hidden" value="d90524a5-a8d9-41d5-b6ab-891c8df4c790">
+        <input data-val="true" data-val-length="The field AccountCode must be a string with a maximum length of 25." data-val-length-max="25" data-val-required="The AccountCode field is required." id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        02202003-000260
+    </td>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        PRIMESOFT PHILIPPINES, INC.
+    </td>
+
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Email as Login field is required." id="UseEmailAsLogin" name="UseEmailAsLogin" onclick="useEmailAsLogin($(this))" type="checkbox" value="true"><input name="UseEmailAsLogin" type="hidden" value="false">Use Email as Login
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Random Generated Password field is required." id="UseRandomGeneratedPassword" name="UseRandomGeneratedPassword" onchange="useRandomGeneratedPassword($(this))" type="checkbox" value="true"><input name="UseRandomGeneratedPassword" type="hidden" value="false">Use Random Generated Password
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass HR Approval field is required." id="BypassHRManagerApproval" name="BypassHRManagerApproval" onchange="bypassHRManagerApproval($(this))" type="checkbox" value="true"><input name="BypassHRManagerApproval" type="hidden" value="false">Bypass HR Approval
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass Medical History field is required." id="BypassMedicalHistory" name="BypassMedicalHistory" onchange="bypassMedicalHistory($(this))" type="checkbox" value="true"><input name="BypassMedicalHistory" type="hidden" value="false">Bypass Medical History
+    </td>
+</tr>
+<tr style="border-bottom: 3px solid #eee;">
+    <td colspan="2">
+        <input id="Guid" name="Guid" type="hidden" value="d90524a5-a8d9-41d5-b6ab-891c8df4c790">
+        <input id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        <label class="table-label">URG Setting</label>
+        <select class="form-control" data-val="true" data-val-required="The URG Setting field is required." id="UrgSetting" name="UrgSetting" onchange="urgSetting($(this))"><option selected="selected">All</option>
+<option>Partial</option>
+<option>Principal</option>
+</select>
+    </td>
+    <td colspan="2">
+        <label class="table-label">Domain Email Address</label>
+        <div class="input-group" style="width: 100% !important">
+            <input class="form-control" id="DomainEmail" name="DomainEmail" type="text" value="">
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-default UpdateAccountSetting" value="update">
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+
+
+                        
+                        <tr>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        <input data-val="true" data-val-required="The Guid field is required." id="Guid" name="Guid" type="hidden" value="46019aff-0523-45b6-941f-85b62776da18">
+        <input data-val="true" data-val-length="The field AccountCode must be a string with a maximum length of 25." data-val-length-max="25" data-val-required="The AccountCode field is required." id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        02202003-000260
+    </td>
+    <td style="border-bottom: 3px solid #eee;" rowspan="2">
+        PRIMESOFT PHILIPPINES, INC.
+    </td>
+
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Email as Login field is required." id="UseEmailAsLogin" name="UseEmailAsLogin" onclick="useEmailAsLogin($(this))" type="checkbox" value="true"><input name="UseEmailAsLogin" type="hidden" value="false">Use Email as Login
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Use Random Generated Password field is required." id="UseRandomGeneratedPassword" name="UseRandomGeneratedPassword" onchange="useRandomGeneratedPassword($(this))" type="checkbox" value="true"><input name="UseRandomGeneratedPassword" type="hidden" value="false">Use Random Generated Password
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass HR Approval field is required." id="BypassHRManagerApproval" name="BypassHRManagerApproval" onchange="bypassHRManagerApproval($(this))" type="checkbox" value="true"><input name="BypassHRManagerApproval" type="hidden" value="false">Bypass HR Approval
+    </td>
+    <td>
+        <input checked="checked" data-val="true" data-val-required="The Bypass Medical History field is required." id="BypassMedicalHistory" name="BypassMedicalHistory" onchange="bypassMedicalHistory($(this))" type="checkbox" value="true"><input name="BypassMedicalHistory" type="hidden" value="false">Bypass Medical History
+    </td>
+</tr>
+<tr style="border-bottom: 3px solid #eee;">
+    <td colspan="2">
+        <input id="Guid" name="Guid" type="hidden" value="46019aff-0523-45b6-941f-85b62776da18">
+        <input id="AccountCode" name="AccountCode" type="hidden" value="02202003-000260">
+        <input id="AccountName" name="AccountName" type="hidden" value="PRIMESOFT PHILIPPINES, INC.">
+        <label class="table-label">URG Setting</label>
+        <select class="form-control" data-val="true" data-val-required="The URG Setting field is required." id="UrgSetting" name="UrgSetting" onchange="urgSetting($(this))"><option selected="selected">All</option>
+<option>Partial</option>
+<option>Principal</option>
+</select>
+    </td>
+    <td colspan="2">
+        <label class="table-label">Domain Email Address</label>
+        <div class="input-group" style="width: 100% !important">
+            <input class="form-control" id="DomainEmail" name="DomainEmail" type="text" value="">
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-default UpdateAccountSetting" value="update">
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+
+
+                        
+        </tbody>
+
+</table>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+   $(document).ready(function() {
+       
+       $("table.altRow tr").filter(function() { 
+  return $(this).children().length == 6;
+}).filter(':even').addClass('alt');
+
+$("tr.alt td[rowspan]").each(function() {
+  $(this).parent().nextAll().slice(0, this.rowSpan - 1).addClass('alt');
+});
+
+      
+       $(function(){
+    var $table = $('.table');
+    //Make a clone of our table
+    var $fixedColumn = $table.clone().insertBefore($table).addClass('fixed-column');
+
+    //Remove everything except for first column
+    $fixedColumn.find('th:not(:first-child),td:not(:first-child)').remove();
+
+    //Match the height of the rows to that of the original table's
+    $fixedColumn.find('tr').each(function (i, elem) {
+        $(this).height($table.find('tr:eq(' + i + ')').height());
+    });
+});
+       
+       //$('#fixed_hdr1').fxdHdrCol({
+       //         fixedCols: 1,
+       //         width: "100%",
+         //       height: 250,
+           //     colModal: [
+             //       { width: 250, align: 'left' },
+               //     { width: 250, align: 'left' },
+                 //   { width: 250, align: 'left' },
+                   // { width: 250, align: 'left' },
+//                    { width: 250, align: 'left' },
+  //                  { width: 250, align: 'left' },
+    //                { width: 250, align: 'left' },
+      //              { width: 250, align: 'left' },
+        //            { width: 250, align: 'left' },
+          //          { width: 250, align: 'left' },
+            //        { width: 250, align: 'left' },
+//
+//
+  //            ]
+   //         });
+                    
+   $(function () {
+            $('.dropdown-menu input').click(function (event) {
+                event.stopPropagation();
+            });
+        });
+   });
+</script>}

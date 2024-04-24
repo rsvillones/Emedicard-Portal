@@ -1,0 +1,23 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">eMediCard: New Member Access</p>
+<br />
+<p class="greetings">Dear @Model.Member.FirstName,</p>
+<br />
+<p class="details">You may now click on <a href="http://emedicard/">here</a> to login using the following details:</p>
+<br />
+<p class="details">
+        Username: @Model.Username
+        <br />
+        Password: @Model.Password
+</p>
+<br />
+<p class="details">Upon login, you will be immediately requested to change your password.</p>
+<br/>
+<p class="details">Thank you for using eMedicard!</p>
+<br />
+<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />

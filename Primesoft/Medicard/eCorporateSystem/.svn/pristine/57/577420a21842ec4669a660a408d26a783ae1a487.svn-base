@@ -1,0 +1,25 @@
+﻿@model Corelib.Classes.UploadSummary
+<fieldset>
+    <legend>Verification Summary</legend>
+    <div>
+        <h5>Row Completed:</h5>
+        <label>
+            @Html.HiddenFor(model => model.RowCompleted)
+            @Model.RowCompleted
+        </label>
+    </div>
+    <div>
+        <h5>File Name:</h5>
+        <label>
+            @Html.HiddenFor(model => model.FileName)
+            @Model.FileName
+        </label>
+    </div>
+    <div>
+        <h5>Row Contains Error:</h5>
+        <label>
+            @Html.HiddenFor(model => model.NumberOfErrors)
+            @Model.NumberOfErrors
+        </label>
+    </div>
+</fieldset>

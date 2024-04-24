@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public interface IMedicalHistory
+    {
+        bool? Answer { get; set; }
+
+        string Remarks { get; set; }
+
+        string SelectedOptions { get; set; }
+
+        IEnumerable<string> SelectedOptionsList { get; set; }
+
+        int QuestionId { get; set; }
+
+        Question Question { get; set; }
+   }
+}

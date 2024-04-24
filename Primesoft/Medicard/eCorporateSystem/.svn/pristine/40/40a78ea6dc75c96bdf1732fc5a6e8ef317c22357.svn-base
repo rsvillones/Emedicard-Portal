@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Corelib;
+using Microsoft.Reporting.WebForms;
+
+namespace WebUI.Reports.UtilizationReporting
+{
+    public partial class Dental : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            AccountCodeHiddenField.Value = Request["accountCode"];
+            if (IsPostBack) return;
+            GenerateReport(sender, e);
+        }
+
+        protected void GenerateReport(object sender, EventArgs e)
+        {
+            using (var db = new UtilizationDataContext())
+            {
+                var startDateParam = new ReportParameter("StartDate", StartDateText.Text);
+                var endDateParam = new ReportParameter("EndDate", EndDateText.Text);
+                var memberCodeParam = new ReportParameter("MemberCode", MemberCodeHiddenField.Value);
+                UtilizationReportDentalViewer.LocalReport.DataSources.Clear();
+                UtilizationReportDentalViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/UtilizationReporting/Dental.rdlc");
+                UtilizationReportDentalViewer.LocalReport.SetParameters(new ReportParameter[] { startDateParam, endDateParam, memberCodeParam });
+                UtilizationReportDentalViewer.LocalReport.DataSources.Add(new ReportDataSource("Dental", UtilizationHelper.GetUtilizationDentals(db, Request["accountCode"], UtilizationHelper.ReportParameterDateTime(StartDateText.Text), UtilizationHelper.ReportParameterDateTime(EndDateText.Text), MemberCodeHiddenField.Value)));                
+            }
+        }
+    }
+}

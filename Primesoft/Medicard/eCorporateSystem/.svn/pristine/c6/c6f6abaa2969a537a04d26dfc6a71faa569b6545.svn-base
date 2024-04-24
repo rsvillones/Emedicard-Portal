@@ -1,0 +1,149 @@
+@using HtmlHelpers.BeginCollectionItem
+@using Corelib.Classes;
+@model Corelib.Models.ApplicationVerification
+<div>
+    @{
+        var option = new List<string>(ViewBag.Options);
+        var applied = 0;
+        var isValidAppliedPlan = int.TryParse(Model.AppliedPlan, out applied);
+        var appliedPlanValue = string.Empty;
+        if (isValidAppliedPlan)
+        {
+            appliedPlanValue = ExcelTools.GetLegacyRoomRateValue(Convert.ToInt32(Model.AppliedPlan), true, Model.AccountCode);
+        }
+        else
+        {
+            appliedPlanValue = Model.AppliedPlan;
+        }
+        var selectedOptionalPlans = "";
+        if (!String.IsNullOrEmpty(Model.OptionalPlan))
+        {
+            foreach (var selectedOptionalPlan in Model.OptionalPlan.Split(','))
+            {
+                if (selectedOptionalPlans != "")
+                {
+                    selectedOptionalPlans += ",";
+                }
+                selectedOptionalPlans += "'" + ExcelTools.GetLegacyRoomRateValue(Convert.ToInt32(selectedOptionalPlan), true, Model.AccountCode) + "'";
+            }
+        }
+
+        ViewBag.AppliedPlan = new SelectList(option.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", appliedPlanValue);
+        ViewBag.OptionalPlanList = new SelectList(option.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", appliedPlanValue);
+
+        var dependentOptions = new List<string>(ViewBag.DependentOptions);
+        var dependentApplied = 0;
+        var isValidDependentApplied = int.TryParse(Model.DependentAppliedPlan, out dependentApplied);
+        var dependentAppliedPlanValue = string.Empty;
+        if (isValidDependentApplied)
+        {
+            dependentAppliedPlanValue = ExcelTools.GetLegacyRoomRateValue(Convert.ToInt32(Model.DependentAppliedPlan), false, Model.AccountCode);
+        }
+        else
+        {
+            dependentAppliedPlanValue = Model.DependentAppliedPlan;
+        }
+        var selectedDependentOptionalPlans = "";
+        if (!String.IsNullOrEmpty(Model.DependentOptionalPlan))
+        {
+            foreach (var selectedDependentOptionalPlan in Model.DependentOptionalPlan.Split(','))
+            {
+                if (selectedDependentOptionalPlans != "")
+                {
+                    selectedDependentOptionalPlans += ",";
+                }
+                selectedDependentOptionalPlans += "'" + ExcelTools.GetLegacyRoomRateValue(Convert.ToInt32(selectedDependentOptionalPlan), false, Model.AccountCode) + "'";
+            }
+        }
+
+        ViewBag.DependentAppliedPlan = new SelectList(dependentOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", dependentAppliedPlanValue);
+        ViewBag.DependentAppliedPlan = new SelectList(dependentOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", dependentAppliedPlanValue);
+        ViewBag.DependentOptionalPlanList = new SelectList(dependentOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", dependentAppliedPlanValue);
+
+        var secondOptions = new List<string>(ViewBag.SecondOptions);
+        ViewBag.Gender = new SelectList(secondOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.Gender);
+
+        var nextOption = new List<string>(ViewBag.NextOption);
+        ViewBag.CivilStatus = new SelectList(nextOption.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.CivilStatus);
+
+        var dateOfBirth = ExcelTools.GetDateFormat(Model.DateOfBirth);
+        var effectivityDate = ExcelTools.GetDateFormat(Model.EffectivityDate);
+        var validityDate = ExcelTools.GetDateFormat(Model.ValidityDate);
+        var dateHired = ExcelTools.GetDateFormat(Model.DateHired);
+        Model.OptionalPlan = selectedOptionalPlans.Replace("'", "");
+        Model.DependentOptionalPlan = selectedDependentOptionalPlans.Replace("'", "");
+    }
+</div>
+@using (Html.BeginCollectionItem("ApplicationVerifications"))
+{
+    <td class="body-cell col">
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.FileName)
+        @Html.HiddenFor(model => model.Row)
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.HiddenFor(model => model.FileGuid)
+        @Html.EditorFor(model => model.EmailAddress)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.EmployeeNumber)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Area)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.CostCenter)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.LastName)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.FirstName)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.MiddleName)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Suffix)
+    </td>
+    <td class="body-cell col3">
+        @Html.DropDownList("Gender", "--Select--")
+    </td>
+    <td class="body-cell col">
+        @Html.TextBoxFor(model => dateOfBirth)
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Age)
+    </td>
+    <td class="body-cell col4">
+        @Html.DropDownList("CivilStatus", "-- Select --")
+    </td>
+    <td class="body-cell col">
+        @Html.TextBoxFor(model => effectivityDate)
+    </td>
+    <td class="body-cell col">
+        @Html.TextBoxFor(model => validityDate)
+    </td>
+    <td class="body-cell col">
+        @Html.TextBoxFor(model => dateHired)
+    </td>
+    <td class="body-cell col2">
+        @Html.DropDownList("AppliedPlan", "--Select--")
+    </td>
+    <td class="body-cell col2">
+        @Html.HiddenFor(model => model.OptionalPlan)
+        @Html.DropDownList("OptionalPlanList", (IEnumerable<SelectListItem>)ViewBag.OptionalPlanList, new { @class = ".optionalplan selectpicker span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + selectedOptionalPlans + "]" })
+    </td>
+    <td class="body-cell col">
+        @Html.EditorFor(model => model.Dependent)
+    </td>
+    <td class="body-cell col2">
+        @Html.DropDownList("DependentAppliedPlan", "-- Select --")
+    </td>
+    <td class="body-cell col2">
+        @Html.HiddenFor(model => model.DependentOptionalPlan)
+        @Html.DropDownList("DependentOptionalPlanList", (IEnumerable<SelectListItem>)ViewBag.DependentOptionalPlanList, new { @class = ".dependent-optional-plan" + Model.Id.ToString() + " selectpicker span2 form-control", @multiple = "", @data_selected_text_format = "count>0", @data_value = "[" + selectedDependentOptionalPlans + "]" })
+    </td>
+    <td class="body-cell col5">
+        <a href="#" class="btn btn-danger">Delete</a>
+    </td>
+}

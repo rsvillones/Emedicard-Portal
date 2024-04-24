@@ -1,0 +1,1113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{405D8518-7ECC-432C-820F-A5748EC624D2}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>emedicard</RootNamespace>
+    <AssemblyName>emedicard</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MyType>Custom</MyType>
+    <UseIISExpress>false</UseIISExpress>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>emedicard.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>emedicard.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Telerik.Web.UI, Version=2010.1.309.40, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Collections.Specialized" />
+    <Import Include="System.Configuration" />
+    <Import Include="System.Text" />
+    <Import Include="System.Text.RegularExpressions" />
+    <Import Include="System.Web" />
+    <Import Include="System.Web.Caching" />
+    <Import Include="System.Web.SessionState" />
+    <Import Include="System.Web.Security" />
+    <Import Include="System.Web.Profile" />
+    <Import Include="System.Web.UI" />
+    <Import Include="System.Web.UI.WebControls" />
+    <Import Include="System.Web.UI.WebControls.WebParts" />
+    <Import Include="System.Web.UI.HtmlControls" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AccountManager\ActionMemos.aspx" />
+    <Content Include="AccountManager\ActiveMembers.aspx" />
+    <Content Include="AccountManager\BenfitsExclusions.aspx" />
+    <Content Include="AccountManager\Default.aspx" />
+    <Content Include="AccountManager\eCorporateUsers.aspx" />
+    <Content Include="AccountManager\Endorsement.aspx" />
+    <Content Include="AccountManager\js\bootstrap-alert.js" />
+    <Content Include="AccountManager\js\bootstrap-button.js" />
+    <Content Include="AccountManager\js\bootstrap-carousel.js" />
+    <Content Include="AccountManager\js\bootstrap-collapse.js" />
+    <Content Include="AccountManager\js\bootstrap-dropdown.js" />
+    <Content Include="AccountManager\js\bootstrap-modal.js" />
+    <Content Include="AccountManager\js\bootstrap-popover.js" />
+    <Content Include="AccountManager\js\bootstrap-scrollspy.js" />
+    <Content Include="AccountManager\js\bootstrap-tab.js" />
+    <Content Include="AccountManager\js\bootstrap-toggle.js" />
+    <Content Include="AccountManager\js\bootstrap-tooltip.js" />
+    <Content Include="AccountManager\js\bootstrap-tour.js" />
+    <Content Include="AccountManager\js\bootstrap-transition.js" />
+    <Content Include="AccountManager\js\bootstrap-typeahead.js" />
+    <Content Include="AccountManager\js\charisma.js" />
+    <Content Include="AccountManager\js\emed.js" />
+    <Content Include="AccountManager\js\excanvas.js" />
+    <Content Include="AccountManager\js\fullcalendar.min.js" />
+    <Content Include="AccountManager\js\jquery-1.7.2.min.js" />
+    <Content Include="AccountManager\js\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="AccountManager\js\jquery.autogrow-textarea.js" />
+    <Content Include="AccountManager\js\jquery.chosen.min.js" />
+    <Content Include="AccountManager\js\jquery.cleditor.min.js" />
+    <Content Include="AccountManager\js\jquery.colorbox.min.js" />
+    <Content Include="AccountManager\js\jquery.cookie.js" />
+    <Content Include="AccountManager\js\jquery.dataTables.min.js" />
+    <Content Include="AccountManager\js\jquery.elfinder.min.js" />
+    <Content Include="AccountManager\js\jquery.flot.min.js" />
+    <Content Include="AccountManager\js\jquery.flot.pie.min.js" />
+    <Content Include="AccountManager\js\jquery.flot.resize.min.js" />
+    <Content Include="AccountManager\js\jquery.flot.stack.js" />
+    <Content Include="AccountManager\js\jquery.history.js" />
+    <Content Include="AccountManager\js\jquery.iphone.toggle.js" />
+    <Content Include="AccountManager\js\jquery.js" />
+    <Content Include="AccountManager\js\jquery.noty.js" />
+    <Content Include="AccountManager\js\jquery.raty.min.js" />
+    <Content Include="AccountManager\js\jquery.uniform.min.js" />
+    <Content Include="AccountManager\js\jquery.uploadify-3.1.min.js" />
+    <Content Include="AccountManager\MembershipCancelConfirmation.aspx" />
+    <Content Include="AccountManager\MemCancelation.aspx" />
+    <Content Include="AccountManager\OnSiteAPE.aspx" />
+    <Content Include="AccountManager\RequestIDReplace.aspx" />
+    <Content Include="AccountManager\Resigned.aspx" />
+    <Content Include="AccountManager\uctl\AccountInformation.ascx" />
+    <Content Include="AccountManager\uctl\AccountList.ascx" />
+    <Content Include="AccountManager\uctl\left-menu.ascx" />
+    <Content Include="AccountManager\Utilization.aspx" />
+    <Content Include="Activate.aspx" />
+    <Content Include="ActivationSent.aspx" />
+    <Content Include="ChangeEmail.aspx" />
+    <Content Include="css\bootstrap-cerulean.css" />
+    <Content Include="css\bootstrap-classic.css" />
+    <Content Include="css\bootstrap-classic.min.css" />
+    <Content Include="css\bootstrap-cyborg.css" />
+    <Content Include="css\bootstrap-journal.css" />
+    <Content Include="css\bootstrap-redy.css" />
+    <Content Include="css\bootstrap-responsive.css" />
+    <Content Include="css\bootstrap-responsive.min.css" />
+    <Content Include="css\bootstrap-simplex.css" />
+    <Content Include="css\bootstrap-slate.css" />
+    <Content Include="css\bootstrap-spacelab.css" />
+    <Content Include="css\bootstrap-united.css" />
+    <Content Include="css\charisma-app.css" />
+    <Content Include="css\chosen.css" />
+    <Content Include="css\colorbox.css" />
+    <Content Include="css\eConsult.css" />
+    <Content Include="css\elfinder.min.css" />
+    <Content Include="css\elfinder.theme.css" />
+    <Content Include="css\emed.css" />
+    <Content Include="css\fullcalendar.css" />
+    <Content Include="css\fullcalendar.print.css" />
+    <Content Include="css\jquery-ui-1.8.21.custom.css" />
+    <Content Include="css\jquery.cleditor.css" />
+    <Content Include="css\jquery.iphone.toggle.css" />
+    <Content Include="css\jquery.noty.css" />
+    <Content Include="css\noty_theme_default.css" />
+    <Content Include="css\opa-icons.css" />
+    <Content Include="css\resp-popup.css" />
+    <Content Include="css\uniform.default.css" />
+    <Content Include="css\uploadify.css" />
+    <Content Include="Default.aspx" />
+    <Content Include="Default2.aspx" />
+    <Content Include="doc\assets\images\html_structure.png" />
+    <Content Include="doc\assets\images\image_1.png" />
+    <Content Include="doc\css\documenter_style.css" />
+    <Content Include="doc\css\img\info.png" />
+    <Content Include="doc\css\img\pre_bg.png" />
+    <Content Include="doc\css\img\warning.png" />
+    <Content Include="doc\favicon.ico" />
+    <Content Include="doc\index.html" />
+    <Content Include="doc\js\jquery.1.6.4.js" />
+    <Content Include="doc\js\jquery.easing.js" />
+    <Content Include="doc\js\jquery.scrollTo-1.4.2-min.js" />
+    <Content Include="doc\js\script.js" />
+    <Content Include="eaccount\AddAgentUser.aspx" />
+    <Content Include="eaccount\Default.aspx" />
+    <Content Include="eaccount\EditProfile.aspx" />
+    <Content Include="eaccount\EditUser.aspx" />
+    <Content Include="eaccount\js\bootstrap-alert.js" />
+    <Content Include="eaccount\js\bootstrap-button.js" />
+    <Content Include="eaccount\js\bootstrap-carousel.js" />
+    <Content Include="eaccount\js\bootstrap-collapse.js" />
+    <Content Include="eaccount\js\bootstrap-dropdown.js" />
+    <Content Include="eaccount\js\bootstrap-modal.js" />
+    <Content Include="eaccount\js\bootstrap-popover.js" />
+    <Content Include="eaccount\js\bootstrap-scrollspy.js" />
+    <Content Include="eaccount\js\bootstrap-tab.js" />
+    <Content Include="eaccount\js\bootstrap-toggle.js" />
+    <Content Include="eaccount\js\bootstrap-tooltip.js" />
+    <Content Include="eaccount\js\bootstrap-tour.js" />
+    <Content Include="eaccount\js\bootstrap-transition.js" />
+    <Content Include="eaccount\js\bootstrap-typeahead.js" />
+    <Content Include="eaccount\js\charisma.js" />
+    <Content Include="eaccount\js\emed.js" />
+    <Content Include="eaccount\js\excanvas.js" />
+    <Content Include="eaccount\js\fullcalendar.min.js" />
+    <Content Include="eaccount\js\jquery-1.7.2.min.js" />
+    <Content Include="eaccount\js\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="eaccount\js\jquery.autogrow-textarea.js" />
+    <Content Include="eaccount\js\jquery.chosen.min.js" />
+    <Content Include="eaccount\js\jquery.cleditor.min.js" />
+    <Content Include="eaccount\js\jquery.colorbox.min.js" />
+    <Content Include="eaccount\js\jquery.cookie.js" />
+    <Content Include="eaccount\js\jquery.dataTables.min.js" />
+    <Content Include="eaccount\js\jquery.elfinder.min.js" />
+    <Content Include="eaccount\js\jquery.flot.min.js" />
+    <Content Include="eaccount\js\jquery.flot.pie.min.js" />
+    <Content Include="eaccount\js\jquery.flot.resize.min.js" />
+    <Content Include="eaccount\js\jquery.flot.stack.js" />
+    <Content Include="eaccount\js\jquery.history.js" />
+    <Content Include="eaccount\js\jquery.iphone.toggle.js" />
+    <Content Include="eaccount\js\jquery.js" />
+    <Content Include="eaccount\js\jquery.noty.js" />
+    <Content Include="eaccount\js\jquery.raty.min.js" />
+    <Content Include="eaccount\js\jquery.uniform.min.js" />
+    <Content Include="eaccount\js\jquery.uploadify-3.1.min.js" />
+    <Content Include="eaccount\uctl\left-menu.ascx" />
+    <Content Include="eaccount\UserManagement.aspx" />
+    <Content Include="ecorporate\AddUser.aspx" />
+    <Content Include="ecorporate\Default.aspx" />
+    <Content Include="AccountManager\ECUScheduling.aspx" />
+    <Content Include="ecorporate\EditPlans.aspx" />
+    <Content Include="ecorporate\EditUser.aspx" />
+    <Content Include="ecorporate\js\bootstrap-alert.js" />
+    <Content Include="ecorporate\js\bootstrap-button.js" />
+    <Content Include="ecorporate\js\bootstrap-carousel.js" />
+    <Content Include="ecorporate\js\bootstrap-collapse.js" />
+    <Content Include="ecorporate\js\bootstrap-dropdown.js" />
+    <Content Include="ecorporate\js\bootstrap-modal.js" />
+    <Content Include="ecorporate\js\bootstrap-popover.js" />
+    <Content Include="ecorporate\js\bootstrap-scrollspy.js" />
+    <Content Include="ecorporate\js\bootstrap-tab.js" />
+    <Content Include="ecorporate\js\bootstrap-toggle.js" />
+    <Content Include="ecorporate\js\bootstrap-tooltip.js" />
+    <Content Include="ecorporate\js\bootstrap-tour.js" />
+    <Content Include="ecorporate\js\bootstrap-transition.js" />
+    <Content Include="ecorporate\js\bootstrap-typeahead.js" />
+    <Content Include="ecorporate\js\charisma.js" />
+    <Content Include="ecorporate\js\emed.js" />
+    <Content Include="ecorporate\js\excanvas.js" />
+    <Content Include="ecorporate\js\fullcalendar.min.js" />
+    <Content Include="ecorporate\js\jquery-1.7.2.min.js" />
+    <Content Include="ecorporate\js\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="ecorporate\js\jquery.autogrow-textarea.js" />
+    <Content Include="ecorporate\js\jquery.chosen.min.js" />
+    <Content Include="ecorporate\js\jquery.cleditor.min.js" />
+    <Content Include="ecorporate\js\jquery.colorbox.min.js" />
+    <Content Include="ecorporate\js\jquery.cookie.js" />
+    <Content Include="ecorporate\js\jquery.dataTables.min.js" />
+    <Content Include="ecorporate\js\jquery.elfinder.min.js" />
+    <Content Include="ecorporate\js\jquery.fancybox-1.3.4.js" />
+    <Content Include="ecorporate\js\jquery.flot.min.js" />
+    <Content Include="ecorporate\js\jquery.flot.pie.min.js" />
+    <Content Include="ecorporate\js\jquery.flot.resize.min.js" />
+    <Content Include="ecorporate\js\jquery.flot.stack.js" />
+    <Content Include="ecorporate\js\jquery.history.js" />
+    <Content Include="ecorporate\js\jquery.iphone.toggle.js" />
+    <Content Include="ecorporate\js\jquery.js" />
+    <Content Include="ecorporate\js\jquery.noty.js" />
+    <Content Include="ecorporate\js\jquery.raty.min.js" />
+    <Content Include="ecorporate\js\jquery.uniform.min.js" />
+    <Content Include="ecorporate\js\jquery.uploadify-3.1.min.js" />
+    <Content Include="ecorporate\Profile.aspx" />
+    <Content Include="ecorporate\uctl\left-menu.ascx" />
+    <Content Include="ecorporate\uctl\user-information.ascx" />
+    <Content Include="ecorporate\UserManager.aspx" />
+    <Content Include="emember\Availments.aspx" />
+    <Content Include="emember\ConsultationDetails.aspx" />
+    <Content Include="emember\Default.aspx" />
+    <Content Include="emember\DepDetails.aspx" />
+    <Content Include="emember\dependentinfo.aspx" />
+    <Content Include="emember\EnrollDependent.aspx" />
+    <Content Include="emember\js\bootstrap-alert.js" />
+    <Content Include="emember\js\bootstrap-button.js" />
+    <Content Include="emember\js\bootstrap-carousel.js" />
+    <Content Include="emember\js\bootstrap-collapse.js" />
+    <Content Include="emember\js\bootstrap-dropdown.js" />
+    <Content Include="emember\js\bootstrap-modal.js" />
+    <Content Include="emember\js\bootstrap-popover.js" />
+    <Content Include="emember\js\bootstrap-scrollspy.js" />
+    <Content Include="emember\js\bootstrap-tab.js" />
+    <Content Include="emember\js\bootstrap-toggle.js" />
+    <Content Include="emember\js\bootstrap-tooltip.js" />
+    <Content Include="emember\js\bootstrap-tour.js" />
+    <Content Include="emember\js\bootstrap-transition.js" />
+    <Content Include="emember\js\bootstrap-typeahead.js" />
+    <Content Include="emember\js\charisma.js" />
+    <Content Include="emember\js\excanvas.js" />
+    <Content Include="emember\js\fullcalendar.min.js" />
+    <Content Include="emember\js\jquery-1.7.2.min.js" />
+    <Content Include="emember\js\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="emember\js\jquery.autogrow-textarea.js" />
+    <Content Include="emember\js\jquery.chosen.min.js" />
+    <Content Include="emember\js\jquery.cleditor.min.js" />
+    <Content Include="emember\js\jquery.colorbox.min.js" />
+    <Content Include="emember\js\jquery.cookie.js" />
+    <Content Include="emember\js\jquery.dataTables.min.js" />
+    <Content Include="emember\js\jquery.elfinder.min.js" />
+    <Content Include="emember\js\jquery.flot.min.js" />
+    <Content Include="emember\js\jquery.flot.pie.min.js" />
+    <Content Include="emember\js\jquery.flot.resize.min.js" />
+    <Content Include="emember\js\jquery.flot.stack.js" />
+    <Content Include="emember\js\jquery.history.js" />
+    <Content Include="emember\js\jquery.iphone.toggle.js" />
+    <Content Include="emember\js\jquery.js" />
+    <Content Include="emember\js\jquery.noty.js" />
+    <Content Include="emember\js\jquery.raty.min.js" />
+    <Content Include="emember\js\jquery.uniform.min.js" />
+    <Content Include="emember\js\jquery.uploadify-3.1.min.js" />
+    <Content Include="emember\OnlineConsultation.aspx" />
+    <Content Include="emember\PaymentMade.aspx" />
+    <Content Include="emember\Profile.aspx" />
+    <Content Include="emember\Reimbursements.aspx" />
+    <Content Include="emember\uctl\BasicInfo.ascx" />
+    <Content Include="emember\uctl\emember_left_menu.ascx" />
+    <Content Include="emember\uctl\MemberConsultationList.ascx" />
+    <Content Include="fancybox\blank.gif" />
+    <Content Include="fancybox\fancybox-x.png" />
+    <Content Include="fancybox\fancybox-y.png" />
+    <Content Include="fancybox\fancybox.png" />
+    <Content Include="fancybox\fancy_close.png" />
+    <Content Include="fancybox\fancy_loading.png" />
+    <Content Include="fancybox\fancy_nav_left.png" />
+    <Content Include="fancybox\fancy_nav_right.png" />
+    <Content Include="fancybox\fancy_shadow_e.png" />
+    <Content Include="fancybox\fancy_shadow_n.png" />
+    <Content Include="fancybox\fancy_shadow_ne.png" />
+    <Content Include="fancybox\fancy_shadow_nw.png" />
+    <Content Include="fancybox\fancy_shadow_s.png" />
+    <Content Include="fancybox\fancy_shadow_se.png" />
+    <Content Include="fancybox\fancy_shadow_sw.png" />
+    <Content Include="fancybox\fancy_shadow_w.png" />
+    <Content Include="fancybox\fancy_title_left.png" />
+    <Content Include="fancybox\fancy_title_main.png" />
+    <Content Include="fancybox\fancy_title_over.png" />
+    <Content Include="fancybox\fancy_title_right.png" />
+    <Content Include="fancybox\jquery.easing-1.3.pack.js" />
+    <Content Include="fancybox\jquery.fancybox-1.3.4.css" />
+    <Content Include="fancybox\jquery.fancybox-1.3.4.js" />
+    <Content Include="fancybox\jquery.fancybox-1.3.4.pack.js" />
+    <Content Include="fancybox\jquery.mousewheel-3.0.4.pack.js" />
+    <Content Include="ForgotPassword.aspx" />
+    <Content Include="img\add.png" />
+    <Content Include="img\ajax-loaders\ajax-loader-1.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-2.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-3.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-4.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-5.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-6.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-7.gif" />
+    <Content Include="img\ajax-loaders\ajax-loader-8.gif" />
+    <Content Include="img\arrows-active.png" />
+    <Content Include="img\arrows-normal.png" />
+    <Content Include="img\Arrow_Left.png" />
+    <Content Include="img\bg-input-focus.png" />
+    <Content Include="img\bg-input.png" />
+    <Content Include="img\border.png" />
+    <Content Include="img\buttons.gif" />
+    <Content Include="img\cancel-off.png" />
+    <Content Include="img\cancel-on.png" />
+    <Content Include="img\chosen-sprite.png" />
+    <Content Include="img\controls.png" />
+    <Content Include="img\crop.gif" />
+    <Content Include="img\default.jpg" />
+    <Content Include="img\dialogs.png" />
+    <Content Include="img\eAccount.png" />
+    <Content Include="img\eCorporate.png" />
+    <Content Include="img\eMedicard-01.png" />
+    <Content Include="img\eMember.png" />
+    <Content Include="img\error_bg.png" />
+    <Content Include="img\favicon.ico" />
+    <Content Include="img\gallery\.tmb\l1_Mi5qcGc1344290242.png" />
+    <Content Include="img\gallery\.tmb\l1_MjAuanBn1344290232.png" />
+    <Content Include="img\gallery\.tmb\l1_MjEuanBn1344290232.png" />
+    <Content Include="img\gallery\.tmb\l1_MjIuanBn1344290236.png" />
+    <Content Include="img\gallery\.tmb\l1_MjMuanBn1344290238.png" />
+    <Content Include="img\gallery\.tmb\l1_MjQuanBn1344290240.png" />
+    <Content Include="img\gallery\.tmb\l1_MS5qcGc1344290228.png" />
+    <Content Include="img\gallery\.tmb\l1_MTAuanBn1344290212.png" />
+    <Content Include="img\gallery\.tmb\l1_MTcuanBn1344290224.png" />
+    <Content Include="img\gallery\.tmb\l1_MTEuanBn1344290212.png" />
+    <Content Include="img\gallery\.tmb\l1_MTguanBn1344290226.png" />
+    <Content Include="img\gallery\.tmb\l1_MTIuanBn1344290216.png" />
+    <Content Include="img\gallery\.tmb\l1_MTkuanBn1344290228.png" />
+    <Content Include="img\gallery\.tmb\l1_MTMuanBn1344290218.png" />
+    <Content Include="img\gallery\.tmb\l1_MTQuanBn1344290218.png" />
+    <Content Include="img\gallery\.tmb\l1_MTUuanBn1344290220.png" />
+    <Content Include="img\gallery\.tmb\l1_MTYuanBn1344290222.png" />
+    <Content Include="img\gallery\.tmb\l1_My5qcGc1344290244.png" />
+    <Content Include="img\gallery\.tmb\l1_NC5qcGc1344290246.png" />
+    <Content Include="img\gallery\.tmb\l1_Ni5qcGc1344290248.png" />
+    <Content Include="img\gallery\.tmb\l1_NS5qcGc1344290246.png" />
+    <Content Include="img\gallery\.tmb\l1_Ny5qcGc1344290252.png" />
+    <Content Include="img\gallery\.tmb\l1_OC5qcGc1344290254.png" />
+    <Content Include="img\gallery\.tmb\l1_OS5qcGc1344290254.png" />
+    <Content Include="img\gallery\1.jpg" />
+    <Content Include="img\gallery\10.jpg" />
+    <Content Include="img\gallery\11.jpg" />
+    <Content Include="img\gallery\12.jpg" />
+    <Content Include="img\gallery\13.jpg" />
+    <Content Include="img\gallery\14.jpg" />
+    <Content Include="img\gallery\15.jpg" />
+    <Content Include="img\gallery\16.jpg" />
+    <Content Include="img\gallery\17.jpg" />
+    <Content Include="img\gallery\18.jpg" />
+    <Content Include="img\gallery\19.jpg" />
+    <Content Include="img\gallery\2.jpg" />
+    <Content Include="img\gallery\20.jpg" />
+    <Content Include="img\gallery\21.jpg" />
+    <Content Include="img\gallery\22.jpg" />
+    <Content Include="img\gallery\23.jpg" />
+    <Content Include="img\gallery\24.jpg" />
+    <Content Include="img\gallery\3.jpg" />
+    <Content Include="img\gallery\4.jpg" />
+    <Content Include="img\gallery\5.jpg" />
+    <Content Include="img\gallery\6.jpg" />
+    <Content Include="img\gallery\7.jpg" />
+    <Content Include="img\gallery\8.jpg" />
+    <Content Include="img\gallery\9.jpg" />
+    <Content Include="img\gallery\thumbs\1.jpg" />
+    <Content Include="img\gallery\thumbs\10.jpg" />
+    <Content Include="img\gallery\thumbs\11.jpg" />
+    <Content Include="img\gallery\thumbs\12.jpg" />
+    <Content Include="img\gallery\thumbs\13.jpg" />
+    <Content Include="img\gallery\thumbs\14.jpg" />
+    <Content Include="img\gallery\thumbs\15.jpg" />
+    <Content Include="img\gallery\thumbs\16.jpg" />
+    <Content Include="img\gallery\thumbs\17.jpg" />
+    <Content Include="img\gallery\thumbs\18.jpg" />
+    <Content Include="img\gallery\thumbs\19.jpg" />
+    <Content Include="img\gallery\thumbs\2.jpg" />
+    <Content Include="img\gallery\thumbs\20.jpg" />
+    <Content Include="img\gallery\thumbs\21.jpg" />
+    <Content Include="img\gallery\thumbs\22.jpg" />
+    <Content Include="img\gallery\thumbs\23.jpg" />
+    <Content Include="img\gallery\thumbs\24.jpg" />
+    <Content Include="img\gallery\thumbs\3.jpg" />
+    <Content Include="img\gallery\thumbs\4.jpg" />
+    <Content Include="img\gallery\thumbs\5.jpg" />
+    <Content Include="img\gallery\thumbs\6.jpg" />
+    <Content Include="img\gallery\thumbs\7.jpg" />
+    <Content Include="img\gallery\thumbs\8.jpg" />
+    <Content Include="img\gallery\thumbs\9.jpg" />
+    <Content Include="img\glyphicons-halflings-white.png" />
+    <Content Include="img\glyphicons-halflings.png" />
+    <Content Include="img\icons-big.png" />
+    <Content Include="img\icons-small.png" />
+    <Content Include="img\iphone-style-checkboxes\off.png" />
+    <Content Include="img\iphone-style-checkboxes\on.png" />
+    <Content Include="img\iphone-style-checkboxes\slider.png" />
+    <Content Include="img\iphone-style-checkboxes\slider_center.png" />
+    <Content Include="img\iphone-style-checkboxes\slider_left.png" />
+    <Content Include="img\iphone-style-checkboxes\slider_right.png" />
+    <Content Include="img\loading.gif" />
+    <Content Include="img\loading_background.png" />
+    <Content Include="img\loginbannerOld.png" />
+    <Content Include="img\logo.png" />
+    <Content Include="img\logo20.png" />
+    <Content Include="img\med_logo3.png" />
+    <Content Include="img\oldlogo.jpg" />
+    <Content Include="img\opa-icons-black16.png" />
+    <Content Include="img\opa-icons-black32.png" />
+    <Content Include="img\opa-icons-blue16.png" />
+    <Content Include="img\opa-icons-blue32.png" />
+    <Content Include="img\opa-icons-color16.png" />
+    <Content Include="img\opa-icons-color32.png" />
+    <Content Include="img\opa-icons-darkgray16.png" />
+    <Content Include="img\opa-icons-darkgray32.png" />
+    <Content Include="img\opa-icons-gray16.png" />
+    <Content Include="img\opa-icons-gray32.png" />
+    <Content Include="img\opa-icons-green16.png" />
+    <Content Include="img\opa-icons-green32.png" />
+    <Content Include="img\opa-icons-orange16.png" />
+    <Content Include="img\opa-icons-orange32.png" />
+    <Content Include="img\opa-icons-red16.png" />
+    <Content Include="img\opa-icons-red32.png" />
+    <Content Include="img\opa-icons-white16.png" />
+    <Content Include="img\opa-icons-white32.png" />
+    <Content Include="img\progress.gif" />
+    <Content Include="img\qrcode.png" />
+    <Content Include="img\qrcode136.png" />
+    <Content Include="img\quicklook-bg.png" />
+    <Content Include="img\quicklook-icons.png" />
+    <Content Include="img\resize.png" />
+    <Content Include="img\spinner-mini.gif" />
+    <Content Include="img\sprite.png" />
+    <Content Include="img\star-half.png" />
+    <Content Include="img\star-off.png" />
+    <Content Include="img\star-on.png" />
+    <Content Include="img\thumb.png" />
+    <Content Include="img\toolbar.gif" />
+    <Content Include="img\toolbar.png" />
+    <Content Include="img\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="img\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="img\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="img\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="img\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="img\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="img\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="img\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="img\ui-icons_222222_256x240.png" />
+    <Content Include="img\ui-icons_2e83ff_256x240.png" />
+    <Content Include="img\ui-icons_454545_256x240.png" />
+    <Content Include="img\ui-icons_888888_256x240.png" />
+    <Content Include="img\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="img\uploadify-cancel.png" />
+    <Content Include="js\bootstrap-alert.js" />
+    <Content Include="js\bootstrap-button.js" />
+    <Content Include="js\bootstrap-carousel.js" />
+    <Content Include="js\bootstrap-collapse.js" />
+    <Content Include="js\bootstrap-dropdown.js" />
+    <Content Include="js\bootstrap-modal.js" />
+    <Content Include="js\bootstrap-popover.js" />
+    <Content Include="js\bootstrap-scrollspy.js" />
+    <Content Include="js\bootstrap-tab.js" />
+    <Content Include="js\bootstrap-toggle.js" />
+    <Content Include="js\bootstrap-tooltip.js" />
+    <Content Include="js\bootstrap-tour.js" />
+    <Content Include="js\bootstrap-transition.js" />
+    <Content Include="js\bootstrap-typeahead.js" />
+    <Content Include="js\charisma.js" />
+    <Content Include="js\emed.js" />
+    <Content Include="js\excanvas.js" />
+    <Content Include="js\fullcalendar.min.js" />
+    <Content Include="js\init.js" />
+    <Content Include="js\jquery-1.7.2.min.js" />
+    <Content Include="js\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="js\jquery.autogrow-textarea.js" />
+    <Content Include="js\jquery.chosen.min.js" />
+    <Content Include="js\jquery.cleditor.min.js" />
+    <Content Include="js\jquery.colorbox.min.js" />
+    <Content Include="js\jquery.cookie.js" />
+    <Content Include="js\jquery.dataTables.min.js" />
+    <Content Include="js\jquery.elfinder.min.js" />
+    <Content Include="js\jquery.flot.min.js" />
+    <Content Include="js\jquery.flot.pie.min.js" />
+    <Content Include="js\jquery.flot.resize.min.js" />
+    <Content Include="js\jquery.flot.stack.js" />
+    <Content Include="js\jquery.history.js" />
+    <Content Include="js\jquery.iphone.toggle.js" />
+    <Content Include="js\jquery.js" />
+    <Content Include="js\jquery.noty.js" />
+    <Content Include="js\jquery.raty.min.js" />
+    <Content Include="js\jquery.uniform.min.js" />
+    <Content Include="js\jquery.uploadify-3.1.min.js" />
+    <Content Include="js\jquery.validate.min.js" />
+    <Content Include="js\md5.js" />
+    <Content Include="Login.aspx" />
+    <Content Include="Logout.aspx" />
+    <Content Include="MemberRegistration.aspx" />
+    <Content Include="Methods.aspx" />
+    <Content Include="misc\elfinder-connector\MySQLStorage.sql" />
+    <Content Include="misc\fancybox\blank.gif" />
+    <Content Include="misc\fancybox\fancybox-x.png" />
+    <Content Include="misc\fancybox\fancybox-y.png" />
+    <Content Include="misc\fancybox\fancybox.png" />
+    <Content Include="misc\fancybox\fancy_close.png" />
+    <Content Include="misc\fancybox\fancy_loading.png" />
+    <Content Include="misc\fancybox\fancy_nav_left.png" />
+    <Content Include="misc\fancybox\fancy_nav_right.png" />
+    <Content Include="misc\fancybox\fancy_shadow_e.png" />
+    <Content Include="misc\fancybox\fancy_shadow_n.png" />
+    <Content Include="misc\fancybox\fancy_shadow_ne.png" />
+    <Content Include="misc\fancybox\fancy_shadow_nw.png" />
+    <Content Include="misc\fancybox\fancy_shadow_s.png" />
+    <Content Include="misc\fancybox\fancy_shadow_se.png" />
+    <Content Include="misc\fancybox\fancy_shadow_sw.png" />
+    <Content Include="misc\fancybox\fancy_shadow_w.png" />
+    <Content Include="misc\fancybox\fancy_title_left.png" />
+    <Content Include="misc\fancybox\fancy_title_main.png" />
+    <Content Include="misc\fancybox\fancy_title_over.png" />
+    <Content Include="misc\fancybox\fancy_title_right.png" />
+    <Content Include="misc\fancybox\jquery.easing-1.3.pack.js" />
+    <Content Include="misc\fancybox\jquery.fancybox-1.3.4.css" />
+    <Content Include="misc\fancybox\jquery.fancybox-1.3.4.js" />
+    <Content Include="misc\fancybox\jquery.fancybox-1.3.4.pack.js" />
+    <Content Include="misc\fancybox\jquery.mousewheel-3.0.4.pack.js" />
+    <Content Include="misc\thickbox\Styles\thickbox.css" />
+    <Content Include="misc\thickbox\thickbox-compressed.js" />
+    <Content Include="misc\thickbox\thickbox.js" />
+    <Content Include="misc\uploadify.swf" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountManager\ActionMemos.aspx.designer.vb">
+      <DependentUpon>ActionMemos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\ActionMemos.aspx.vb">
+      <DependentUpon>ActionMemos.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\ActiveMembers.aspx.designer.vb">
+      <DependentUpon>ActiveMembers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\ActiveMembers.aspx.vb">
+      <DependentUpon>ActiveMembers.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\BenfitsExclusions.aspx.designer.vb">
+      <DependentUpon>BenfitsExclusions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\BenfitsExclusions.aspx.vb">
+      <DependentUpon>BenfitsExclusions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\Default.aspx.designer.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\Default.aspx.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\eCorporateUsers.aspx.designer.vb">
+      <DependentUpon>eCorporateUsers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\eCorporateUsers.aspx.vb">
+      <DependentUpon>eCorporateUsers.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\Endorsement.aspx.designer.vb">
+      <DependentUpon>Endorsement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\Endorsement.aspx.vb">
+      <DependentUpon>Endorsement.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\MembershipCancelConfirmation.aspx.designer.vb">
+      <DependentUpon>MembershipCancelConfirmation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\MembershipCancelConfirmation.aspx.vb">
+      <DependentUpon>MembershipCancelConfirmation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\MemCancelation.aspx.designer.vb">
+      <DependentUpon>MemCancelation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\MemCancelation.aspx.vb">
+      <DependentUpon>MemCancelation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\OnSiteAPE.aspx.designer.vb">
+      <DependentUpon>OnSiteAPE.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\OnSiteAPE.aspx.vb">
+      <DependentUpon>OnSiteAPE.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\RequestIDReplace.aspx.designer.vb">
+      <DependentUpon>RequestIDReplace.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\RequestIDReplace.aspx.vb">
+      <DependentUpon>RequestIDReplace.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\Resigned.aspx.designer.vb">
+      <DependentUpon>Resigned.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\Resigned.aspx.vb">
+      <DependentUpon>Resigned.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\uctl\AccountInformation.ascx.designer.vb">
+      <DependentUpon>AccountInformation.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\uctl\AccountInformation.ascx.vb">
+      <DependentUpon>AccountInformation.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\uctl\AccountList.ascx.designer.vb">
+      <DependentUpon>AccountList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\uctl\AccountList.ascx.vb">
+      <DependentUpon>AccountList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\uctl\left-menu.ascx.designer.vb">
+      <DependentUpon>left-menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\uctl\left-menu.ascx.vb">
+      <DependentUpon>left-menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\Utilization.aspx.designer.vb">
+      <DependentUpon>Utilization.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\Utilization.aspx.vb">
+      <DependentUpon>Utilization.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Activate.aspx.designer.vb">
+      <DependentUpon>Activate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Activate.aspx.vb">
+      <DependentUpon>Activate.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="ActivationSent.aspx.designer.vb">
+      <DependentUpon>ActivationSent.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ActivationSent.aspx.vb">
+      <DependentUpon>ActivationSent.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="ChangeEmail.aspx.designer.vb">
+      <DependentUpon>ChangeEmail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ChangeEmail.aspx.vb">
+      <DependentUpon>ChangeEmail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Default2.aspx.designer.vb">
+      <DependentUpon>Default2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default2.aspx.vb">
+      <DependentUpon>Default2.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="eaccount\AddAgentUser.aspx.designer.vb">
+      <DependentUpon>AddAgentUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eaccount\AddAgentUser.aspx.vb">
+      <DependentUpon>AddAgentUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eaccount\Default.aspx.designer.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eaccount\Default.aspx.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="eaccount\EditProfile.aspx.designer.vb">
+      <DependentUpon>EditProfile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eaccount\EditProfile.aspx.vb">
+      <DependentUpon>EditProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eaccount\EditUser.aspx.designer.vb">
+      <DependentUpon>EditUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eaccount\EditUser.aspx.vb">
+      <DependentUpon>EditUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eaccount\uctl\left-menu.ascx.designer.vb">
+      <DependentUpon>left-menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="eaccount\uctl\left-menu.ascx.vb">
+      <DependentUpon>left-menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eaccount\UserManagement.aspx.designer.vb">
+      <DependentUpon>UserManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eaccount\UserManagement.aspx.vb">
+      <DependentUpon>UserManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\AddUser.aspx.designer.vb">
+      <DependentUpon>AddUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\AddUser.aspx.vb">
+      <DependentUpon>AddUser.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\Default.aspx.designer.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\Default.aspx.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="AccountManager\ECUScheduling.aspx.designer.vb">
+      <DependentUpon>ECUScheduling.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccountManager\ECUScheduling.aspx.vb">
+      <DependentUpon>ECUScheduling.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\EditPlans.aspx.designer.vb">
+      <DependentUpon>EditPlans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\EditPlans.aspx.vb">
+      <DependentUpon>EditPlans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\EditUser.aspx.designer.vb">
+      <DependentUpon>EditUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\EditUser.aspx.vb">
+      <DependentUpon>EditUser.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\Profile.aspx.designer.vb">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\Profile.aspx.vb">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\uctl\left-menu.ascx.designer.vb">
+      <DependentUpon>left-menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\uctl\left-menu.ascx.vb">
+      <DependentUpon>left-menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\uctl\user-information.ascx.designer.vb">
+      <DependentUpon>user-information.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\uctl\user-information.ascx.vb">
+      <DependentUpon>user-information.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ecorporate\UserManager.aspx.designer.vb">
+      <DependentUpon>UserManager.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ecorporate\UserManager.aspx.vb">
+      <DependentUpon>UserManager.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emedicard.Master.designer.vb">
+      <DependentUpon>emedicard.Master</DependentUpon>
+    </Compile>
+    <Compile Include="emedicard.Master.vb">
+      <DependentUpon>emedicard.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="emember\Availments.aspx.designer.vb">
+      <DependentUpon>Availments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\Availments.aspx.vb">
+      <DependentUpon>Availments.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\BLL\DepInfo.vb" />
+    <Compile Include="emember\BLL\emember.properties.vb" />
+    <Compile Include="emember\BLL\ememberBLL.vb" />
+    <Compile Include="emember\ConsultationDetails.aspx.designer.vb">
+      <DependentUpon>ConsultationDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\ConsultationDetails.aspx.vb">
+      <DependentUpon>ConsultationDetails.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\Default.aspx.designer.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\Default.aspx.vb">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\DepDetails.aspx.designer.vb">
+      <DependentUpon>DepDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\DepDetails.aspx.vb">
+      <DependentUpon>DepDetails.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\dependentinfo.aspx.designer.vb">
+      <DependentUpon>dependentinfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\dependentinfo.aspx.vb">
+      <DependentUpon>dependentinfo.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\Doctors.vb" />
+    <Compile Include="emember\EnrollDependent.aspx.designer.vb">
+      <DependentUpon>EnrollDependent.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\EnrollDependent.aspx.vb">
+      <DependentUpon>EnrollDependent.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\OnlineConsultation.aspx.designer.vb">
+      <DependentUpon>OnlineConsultation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\OnlineConsultation.aspx.vb">
+      <DependentUpon>OnlineConsultation.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\PaymentMade.aspx.designer.vb">
+      <DependentUpon>PaymentMade.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\PaymentMade.aspx.vb">
+      <DependentUpon>PaymentMade.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\Profile.aspx.designer.vb">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\Profile.aspx.vb">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\Reimbursements.aspx.designer.vb">
+      <DependentUpon>Reimbursements.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\Reimbursements.aspx.vb">
+      <DependentUpon>Reimbursements.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="emember\uctl\BasicInfo.ascx.designer.vb">
+      <DependentUpon>BasicInfo.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\uctl\BasicInfo.ascx.vb">
+      <DependentUpon>BasicInfo.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="emember\uctl\emember_left_menu.ascx.designer.vb">
+      <DependentUpon>emember_left_menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\uctl\emember_left_menu.ascx.vb">
+      <DependentUpon>emember_left_menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="emember\uctl\MemberConsultationList.ascx.designer.vb">
+      <DependentUpon>MemberConsultationList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="emember\uctl\MemberConsultationList.ascx.vb">
+      <DependentUpon>MemberConsultationList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.designer.vb">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ForgotPassword.aspx.vb">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.designer.vb">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Login.aspx.vb">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Logout.aspx.designer.vb">
+      <DependentUpon>Logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Logout.aspx.vb">
+      <DependentUpon>Logout.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="MemberRegistration.aspx.designer.vb">
+      <DependentUpon>MemberRegistration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MemberRegistration.aspx.vb">
+      <DependentUpon>MemberRegistration.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Methods.aspx.designer.vb">
+      <DependentUpon>Methods.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Methods.aspx.vb">
+      <DependentUpon>Methods.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\MyExtensions\MyWebExtension.vb">
+      <VBMyExtensionTemplateID>Microsoft.VisualBasic.Web.MyExtension</VBMyExtensionTemplateID>
+      <VBMyExtensionTemplateVersion>1.0.0.0</VBMyExtensionTemplateVersion>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Settings.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="emedicard.Master" />
+    <None Include="fonts\Gotham-Black.ttf" />
+    <None Include="fonts\Gotham-BlackItalic.ttf" />
+    <None Include="fonts\Gotham-Bold.ttf" />
+    <None Include="fonts\Gotham-BoldItalic.ttf" />
+    <None Include="fonts\Gotham-Light.ttf" />
+    <None Include="fonts\Gotham-LightItalic.ttf" />
+    <None Include="fonts\Gotham-Medium.ttf" />
+    <None Include="fonts\Gotham-MediumItalic.ttf" />
+    <None Include="fonts\Gotham-Thin.ttf" />
+    <None Include="fonts\Gotham-ThinItalic.ttf" />
+    <None Include="fonts\Gotham-Ultra.ttf" />
+    <None Include="fonts\Gotham-UltraItalic.ttf" />
+    <None Include="fonts\Gotham-XLight.ttf" />
+    <None Include="fonts\Gotham-XLightItalic.ttf" />
+    <None Include="js\md5.inc" />
+    <None Include="misc\check-exists.php" />
+    <None Include="misc\elfinder-connector\connector.php" />
+    <None Include="misc\elfinder-connector\elFinder.class.php" />
+    <None Include="misc\elfinder-connector\elFinderConnector.class.php" />
+    <None Include="misc\elfinder-connector\elFinderVolumeDriver.class.php" />
+    <None Include="misc\elfinder-connector\elFinderVolumeLocalFileSystem.class.php" />
+    <None Include="misc\elfinder-connector\elFinderVolumeMySQL.class.php" />
+    <None Include="misc\elfinder-connector\mime.types" />
+    <None Include="misc\uploadify.php" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\RxCardOnline\RxCardOnline_1\EncryptDecrypt\EncryptDecrypt.vbproj">
+      <Project>{03FEF964-2258-4986-BF19-45416301400B}</Project>
+      <Name>EncryptDecrypt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\emedicardBLL\emedicardBLL.vbproj">
+      <Project>{86EE3090-B078-471B-801B-BB71B19855F9}</Project>
+      <Name>emedicardBLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\emedicard_DAL\emedicard_DAL.vbproj">
+      <Project>{7B682506-D8AC-43E2-8E4B-80AAD94D5809}</Project>
+      <Name>emedicard_DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RxCardOnline\RxCardOnline_1\Mailhelper\Mailhelper.vbproj">
+      <Project>{724D2EB5-ACB3-4515-BDA3-E905A51C8B2F}</Project>
+      <Name>Mailhelper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50947</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

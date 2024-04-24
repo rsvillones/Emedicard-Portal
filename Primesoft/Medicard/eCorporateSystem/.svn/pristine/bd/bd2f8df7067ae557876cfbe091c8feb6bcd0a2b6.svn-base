@@ -1,0 +1,172 @@
+@model PagedList.IPagedList<EndorsementBatch>
+@{
+    ViewBag.Title = "Receiving Entries";
+    var model = new EndorsementBatch();
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="title">Receiving Entries</h2>
+    </div>
+    @using (Html.BeginForm("Index", "MembershipEndorsements", FormMethod.Get, new { sortOrder = ViewBag.CompanyNameSortParam, currentFilter = ViewBag.CurrentFilter }))
+    { 
+    <div class="col-lg-4">
+        <div class="input-group" >
+           <input type="text" value="@ViewBag.SearchValue" id="click" class="form-control space-cr" placeholder="Search & Filter">
+            <div class="input-group-btn">
+              <button type="button" class="dropdown-toggle btn-dd btn-default" data-toggle="dropdown" tabindex="-1">
+                 <span class="caret"></span>
+                 <span class="sr-only">Toggle Dropdown</span>
+              </button>
+                <div class="rightMenu dropdown-menu">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-12">Control No.</label>
+                                <div class="col-lg-12">
+                                    <input type="text" value="@ViewBag.ControlNumber" name="controlNumber" onclick="return false;" class="form-control input-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-12">Reference No.</label>
+                                <div class="col-lg-12">
+                                    <input type="text" value="@ViewBag.ReferenceNumber" name="referenceNumber" onclick="return false;" class="form-control input-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-12">Company Name</label>
+                                <div class="col-lg-12">
+                                    <input type="text" value="@ViewBag.CompanyName" name="companyName" onclick="return false;" class="form-control input-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-12">Endorsement Type</label>
+                                <div class="col-lg-12">
+                                    @Html.DropDownList("EndorsementType", (IEnumerable<SelectListItem>)ViewBag.EndorsementType, "-- Select --", new { @class = "form-control last-input" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div><!-- /btn-group -->
+            <button type="submit" class="btn btn-primary btn-grp btn-search"  
+                 tabindex="-1">Search
+              </button>
+        </div><!-- /input-group -->
+        
+    </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">&nbsp;</div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ControlNumberSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ControlNumber) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ReferenceNumberSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ReferenceNumber) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.CompanyNameSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.CompanyName) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.EndorsementTypeSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.EndorsementType) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DateEndorsedSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.DateEndorsed) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DeadlineSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.Deadline) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @if(!String.IsNullOrEmpty(@item.ControlNumber))
+                {
+                    foreach (var controlNumber in item.ControlNumber.Split(','))
+                    {
+                        @Html.ActionLink(controlNumber, "DownloadReceivingEntry", new { guid = item.Guid, controlNumber = controlNumber })
+                        <br />
+                    }
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReferenceNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndorsementType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateEndorsed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Deadline)
+            </td>
+            <td>
+                @if (item.CanBeReceived)
+                {
+                    @Html.ActionLink("Receive", "ReceiveEndorsementBatch", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @if (item.EndorsementType == "New" || item.EndorsementType == "Renewal")
+                {
+                    @Html.ActionLink("Details", "Members", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                }
+                @Html.ActionLink("Download", "DownloadNewApplication", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+            
+            $(function () {
+            $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                event.stopPropagation();
+            });
+        });
+            $(function(){
+  //$(".dropdown-toggle").dropdown('toggle'); // this works
+  $('#click').click(function(e){
+      e.stopPropagation();
+    $(".dropdown-toggle").dropdown('toggle');// this doesn't
+  });
+});
+        });
+    </script>
+    @Html.Partial("_Message")
+}

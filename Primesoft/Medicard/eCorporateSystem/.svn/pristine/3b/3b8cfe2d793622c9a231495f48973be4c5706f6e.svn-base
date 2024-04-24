@@ -1,0 +1,12 @@
+﻿@model CancelledMemberWrapper
+@using HtmlHelpers.BeginCollectionItem
+
+@using (Html.BeginCollectionItem("CancelledMembers"))
+{
+    @Html.HiddenFor(model => model.MemberCode)
+    @Html.HiddenFor(model => model.LastName)
+    @Html.HiddenFor(model => model.FirstName)
+    @Html.HiddenFor(model => model.EndorsementBatchId)
+    @Html.HiddenFor(model => model.DateCancelled);
+    @Html.HiddenFor(model => model.AccountCode);
+}

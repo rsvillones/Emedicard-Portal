@@ -1,0 +1,96 @@
+
+@model CancelledMember
+@using HtmlHelpers.BeginCollectionItem
+@{
+    var genderList = new SelectList(ViewBag.Genders, Model.Gender);
+    var civilStatusList = new SelectList(ViewBag.CivilStatuses, Model.CivilStatus);
+    SelectList appliedPlanList;
+    if (Model.Type == "Principal")
+    {
+        appliedPlanList = new SelectList(ViewBag.PrincipalPlans, "Id", "LongDescription", Model.AppliedPlan);
+    }
+    else
+    {
+        appliedPlanList = new SelectList(ViewBag.DependentPlans, "Id", "LongDescription", Model.AppliedPlan);
+    }
+}
+<tr>
+    @using (Html.BeginCollectionItem("CancelledMembers"))
+    {
+        <th class="vtop">
+            @Html.DisplayFor(model => model.FullName)
+        </th>
+        <td class="vtop">
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.Guid)
+            @Html.HiddenFor(model => model.CrById)
+            @Html.HiddenFor(model => model.EndorsementBatchId)
+            @Html.HiddenFor(model => model.Timestamp)
+            @Html.HiddenFor(model => model.DateCancelled);
+            @Html.EditorFor(model => model.LastName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.MiddleName, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.MemberCode, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.MemberCode, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.EmailAddress, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.DateOfBirth, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.Area, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.Area, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.EmployeeNumber, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.EmployeeNumber, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("AppliedPlan", (IEnumerable<SelectListItem>)appliedPlanList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.AppliedPlan, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+            @Html.ValidationMessageFor(model => model.Type, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("Gender", (IEnumerable<SelectListItem>)genderList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.Gender, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.DropDownList("CivilStatus", (IEnumerable<SelectListItem>)civilStatusList, ViewBag.HtmlDropDownAttributes as object)
+            @Html.ValidationMessageFor(model => model.CivilStatus, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.EffectivityDate, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.ValidityDate, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.ValidityDate, null, new { @class = "table-error" })
+        </td>
+        <td class="vtop">
+            @Html.EditorFor(model => model.Remarks, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+            @Html.ValidationMessageFor(model => model.Remarks, null, new { @class = "table-error" })
+        </td>
+        if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+        {
+            <td class="vtop">
+                <a href="javascript:void(0);" onclick="deleteMember(this);" class="btn btn-danger">Delete</a>
+            </td>
+        }
+    }
+</tr>

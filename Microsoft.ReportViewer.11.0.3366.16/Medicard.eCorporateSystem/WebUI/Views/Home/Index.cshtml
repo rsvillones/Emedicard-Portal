@@ -1,0 +1,263 @@
+@{
+    ViewBag.Title = "Home Page";
+}
+@if (Helper.IsMember())
+    {
+        <div class="row">
+            <div class="col-lg-5">
+                <div id="panel-title">Account Information</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-4">
+                                                <label>Employee No.:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>EMP00002&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Employee Name:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>Jose Lee Edward D. Carandang&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Email Address:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>edward_carandang@yahoo.com&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Area:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>MAKATI&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Effectivity Date:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>07/01/2014&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Validity Date:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>06/30/2015&nbsp;</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div id="panel-title">My Action Memos</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div id="panel-title">Medical and Dental Availments</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div id="panel-title">Reimbursement Status</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="panel-title">My Requests</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <br />
+                                <div class="row spacing">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-12">
+                                                <ul class="nav nav-tabs" role="tablist">
+                                                    <li class="active"><a href="#Amendments" role="tab" data-toggle="tab">Amendments</a></li>
+                                                    <li><a href="#IDReplacement" role="tab" data-toggle="tab">ID Replacement</a></li>
+                                                    <li><a href="#AdditionalDependents" role="tab" data-toggle="tab">Additional Dependents</a></li>
+                                                    <li><a href="#CancellationOfDependents" role="tab" data-toggle="tab">Cancellation of Dependents</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="Amendments">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                    <div class="tab-pane" id="IDReplacement">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                    <div class="tab-pane" id="AdditionalDependents">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                    <div class="tab-pane" id="CancellationOfDependents">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    } else if (Helper.IsCorporateAdmin()){
+                        
+        <div class="row">
+            <div class="col-lg-5">
+                <div id="panel-title">Account Information</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-4">
+                                                <label>Employee No.:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>EMP00002&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Employee Name:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>Jose Lee Edward D. Carandang&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Email Address:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>edward_carandang@yahoo.com&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Area:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>MAKATI&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Effectivity Date:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>07/01/2014&nbsp;</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label>Validity Date:</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <label>06/30/2015&nbsp;</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div id="panel-title">My Action Memos</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="panel-title">My Accounts</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-fixed-left">
+                            <thead>
+                                <tr>
+                                    <th style="width:50%">
+                                        Account Name
+                                    </th>
+                                    <th style="width:40%">
+                                        Account Code
+                                    </th>
+                                    <th style="width:10%">
+                                        &nbsp;
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="scrollable-tables" style="margin-top: -3px !important;height: 130px !important;margin-bottom: 0 !important">
+                            <table class="table table-custom">
+                                <tbody>
+                                    <tr>
+                                        <td style="width:51%">
+                                            PRIMESOFT PHILIPPINES, INC. 
+                                        </td>
+                                        <td style="width:39%">
+                                            02202003-000260 
+                                        </td>
+                                        <td style="width:10%">
+                                            <a href="#" class="btn btn-primary btn-xs">Manage Account</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="panel-title">My Approvals</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="panel-container">
+                            <form class="form-horizontal">
+                                <br />
+                                <div class="row spacing">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="col-lg-12">
+                                                <ul class="nav nav-tabs" role="tablist">
+                                                    <li class="active"><a href="#Amendments" role="tab" data-toggle="tab">Amendments</a></li>
+                                                    <li><a href="#IDReplacement" role="tab" data-toggle="tab">ID Replacement</a></li>
+                                                    <li><a href="#AdditionalDependents" role="tab" data-toggle="tab">Additional Dependents</a></li>
+                                                    <li><a href="#CancellationOfDependents" role="tab" data-toggle="tab">Cancellation of Dependents</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="Amendments">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                    <div class="tab-pane" id="IDReplacement">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                    <div class="tab-pane" id="AdditionalDependents">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                    <div class="tab-pane" id="CancellationOfDependents">@Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+}     

@@ -1,0 +1,284 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewApplicationManagement")]
+    public class DependentCancellationsController : BaseAccountController
+    {
+        #region -- Action Results --
+
+        public ActionResult Index(string accountCode, int? page, string messageType, string message, string memberName, string dependentName, DateTime? requestDate, string requestReason)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.DependentCancellations
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Reason)
+                .Include(t => t.DocumentType)
+                .Where(t => t.AccountCode == this.LegacyAccount.Code && !t.Deleted &&
+                    t.Status != RequestStatus.Saved && t.Status != RequestStatus.CancelledRequest)
+                .OrderByDescending(t => t.RequestDate).ToList();
+
+            if (!string.IsNullOrEmpty(requestReason)) model = model.Where(t => t.Reason.Description.Contains(requestReason)).ToList();
+            if (!string.IsNullOrEmpty(memberName)) model = model.Where(t => t.MemberName.Contains(memberName)).ToList();
+            if (!string.IsNullOrEmpty(dependentName)) model = model.Where(t => t.DependentName.Contains(dependentName)).ToList();
+
+            var requestDateString = "";
+            if (requestDate != null)
+            {
+                model = model.Where(t => t.RequestDate.Date == requestDate.Value.Date).ToList();
+                requestDateString = requestDate.Value.ToString("MM/dd/yyyy");
+            }
+
+            ViewBag.MemberName = memberName;
+            ViewBag.DependentName = dependentName;
+            ViewBag.RequestDate = requestDateString;
+            ViewBag.RequestReason = requestReason;
+            ViewBag.SearchValue = String.Format("{0} {1} {2} {3}", requestDateString, memberName, dependentName, requestReason).Trim();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult Create(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = new DependentCancellation()
+            {
+                AccountCode = accountCode,
+                Status = RequestStatus.Submitted
+            };
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, accountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Name);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(DependentCancellation model, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                if (model.FileWrapper != null)
+                {
+                    using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                    {
+                        model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                        model.DocumentFileName = model.FileWrapper.FileName;
+                        model.DocumentContentType = model.FileWrapper.ContentType;
+                    }
+                }
+
+                var endorsementBatch = new EndorsementBatch()
+                {
+                    Deadline = DateTime.Now,
+                    //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                    Date = DateTime.Now,
+                    EndorsementType = Constants.DEPENDENT_CANCELLATION_ENDORSEMENT_TYPE,
+                    BatchType = Constants.DEPENDENT_CANCELLATION_ENDORSEMENT_TYPE,
+                    EndorsementCount = 1,
+                    AccountCode = model.AccountCode,
+                    Status = Corelib.Enums.EndorsementBatchStatus.New
+                };
+                db.EndorsementBatches.Add(endorsementBatch);
+
+                model.EndorsementBatch = endorsementBatch;
+                if (submit == "Submit Request")
+                {
+                    model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    endorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                    Emailer.Emailer.SendSubmitDependentCancellationCorporateAdminEmailInstant(model);
+                }
+                db.DependentCancellations.Add(model);
+                db.SaveChanges();
+
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        public ActionResult Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.DependentCancellations.FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(DependentCancellation model, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                if (model.FileWrapper != null)
+                {
+                    using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                    {
+                        model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                        model.DocumentFileName = model.FileWrapper.FileName;
+                        model.DocumentContentType = model.FileWrapper.ContentType;
+                    }
+                }
+
+                var dependentCancellation = db.DependentCancellations.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                db.Entry(dependentCancellation).CurrentValues.SetValues(model);
+                if (submit == "Submit Request")
+                {
+                    dependentCancellation.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    dependentCancellation.EndorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                    Emailer.Emailer.SendSubmitDependentCancellationCorporateAdminEmailInstant(model);
+                }
+                db.Entry(dependentCancellation).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            //ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        public ActionResult CancelDependentCancellation(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.DependentCancellations.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            model.Status = Corelib.Enums.RequestStatus.CancelledRequest;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendCancelledDependentCancellationCorporateAdminToMemberEmailInstant(model);
+            return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Success!", message = "Cancellation of dependent's membership successfully cancelled." });
+        }
+
+        public ActionResult ApproveDependentCancellation(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.DependentCancellations.Include(t => t.EndorsementBatch).FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+            model.EndorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendSubmitDependentCancellationCorporateAdminEmailInstant(model);
+            return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Success!", message = "Cancellation of dependent's membership successfully approved." });
+        }
+
+        public ActionResult DisapproveDependentCancellation(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.DependentCancellations.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            model.Status = Corelib.Enums.RequestStatus.CorporateAdminDisapproved;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendDisapproveDependentCancellationCorporateAdminToMemberEmailInstant(model);
+            return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Success!", message = "Cancellation of dependent's membership successfully disapproved." });
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public string GetDependents(string memberCode, string accountCode, int? modelId)
+        {
+            var member = LegacyHelper.GetActiveMembers(legacyDb, accountCode).FirstOrDefault(t => t.Code == memberCode) ?? new LegacyMember();
+            var dependents = LegacyHelper.GetActiveDependents(legacyDb, accountCode, member.Code);
+            var dependentCancellation = db.DependentCancellations.FirstOrDefault(t => t.Id == modelId && !t.Deleted) ?? new DependentCancellation();
+            var sb = new System.Text.StringBuilder();
+            if (!string.IsNullOrEmpty(memberCode))
+            {
+                sb.Append(string.Format(@"<option value=''>-- Select Dependent --</option>"));
+                foreach (var dependent in dependents)
+                {
+                    if (dependent.Code == dependentCancellation.DependentCode)
+                    {
+                        sb.Append(string.Format(@"<option value='{0}' selected='selected'>{1}</option>", dependent.Code, dependent.FullName));
+                    }
+                    else
+                    {
+                        sb.Append(string.Format(@"<option value='{0}'>{1}</option>", dependent.Code, dependent.FullName));
+                    }
+                }
+            }
+            else
+            {
+                sb.Append(string.Format(@"<option value=''>-- Select Member --</option>"));
+            }
+
+            return sb.ToString();
+        }
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.DependentCancellations.Any(t => t.Guid == guid))
+            {
+                var model = db.DependentCancellations.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            return null;
+        }
+
+        #endregion
+    }
+}

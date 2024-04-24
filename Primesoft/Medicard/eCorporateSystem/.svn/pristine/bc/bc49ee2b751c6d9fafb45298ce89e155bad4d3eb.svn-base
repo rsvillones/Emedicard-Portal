@@ -1,0 +1,161 @@
+@model Amendment
+
+@{
+    var resonList = new SelectList(ViewBag.Reasons, "Id", "Description", Model.ReasonId);
+    var dependentList = new SelectList(ViewBag.Dependents, "Code", "FullName", Model.DependentCode);
+    var documentList = new SelectList(ViewBag.DocumentTypes, "Id", "Name", Model.DocumentTypeId);
+    //var memberList = new SelectList(ViewBag.Members, "Code", "FullName", Model.MemberCode);
+}
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Guid)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.CrBy)
+@Html.HiddenFor(model => model.CrById)
+@Html.HiddenFor(model => model.CrDate)
+@Html.HiddenFor(model => model.AccountCode)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.RequestDate)
+@Html.HiddenFor(model => model.Status)
+@Html.HiddenFor(model => model.DocumentFileName)
+@Html.HiddenFor(model => model.DocumentFile)
+@Html.HiddenFor(model => model.DocumentContentType)
+
+<div class="row form-space">
+    <div class="col-lg-12" id="MemberContainer">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.Label("MemberCode", "Member Name:")</label>
+            <div class="col-lg-8">
+                @Html.HiddenFor(t => t.MemberCode, ViewBag.HtmlMemberAttributes as object)
+                @Html.HiddenFor(t => t.MemberName, ViewBag.HtmlControlReadOnlyAttributes as object)
+                @Html.ValidationMessageFor(model => model.MemberCode)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.EffectivityDate):</label>
+            <div class="col-lg-8">
+                @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                @Html.ValidationMessageFor(model => model.EffectivityDate)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.RequestFor):</label>
+            <div class="col-lg-8">
+                @Html.EnumDropDownListFor(model => model.RequestFor, ViewBag.HtmlRequestForAttributes as object)
+                @Html.ValidationMessageFor(model => model.RequestFor)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.DependentCode):</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("DependentCode", (IEnumerable<SelectListItem>)dependentList, "-- Select --", ViewBag.HtmlDependentAttributes as object)
+                @Html.ValidationMessageFor(model => model.DependentCode)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.DataType):</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("DataType", (IEnumerable<SelectListItem>)ViewBag.EnumList, "-- Select --", ViewBag.HtmlDataTypeAttributes as object)
+                @Html.ValidationMessageFor(model => model.DataType)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.ChangeDataFrom):</label>
+            <div class="col-lg-8">
+                @Html.EditorFor(model => model.ChangeDataFrom, new { htmlAttributes = new { @class = "form-control  white-readonly", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.ChangeDataFrom)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.ChangeDataTo):</label>
+            <div class="col-lg-8" id="DataToContainer">
+                @if (Model.DataType == Corelib.Enums.RequestDataType.AppliedPlan)
+                {
+                    @Html.DropDownList("ChangeDataTo", (IEnumerable<SelectListItem>)ViewBag.PlanList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)                
+                }
+                else
+                {
+                    if (Model.ChangeDataTo == "Please fill up remarks for other reason.")
+                    {
+                        <input id="ChangeDataTo" class="form-control text-box single-line valid white-readonly" readonly="readonly" type="text" value="Please fill up remarks for other reason." name="ChangeDataTo" data-val-required="The Change Data To field is required." data-val="true">
+                    }
+                    else
+                    {
+                       @Html.EditorFor(model => model.ChangeDataTo, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes }) 
+                    }                    
+                }
+                @Html.ValidationMessageFor(model => model.ChangeDataTo)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.ReasonId):</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("ReasonId", (IEnumerable<SelectListItem>)resonList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.ReasonId)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.DocumentTypeId):</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("DocumentTypeId", (IEnumerable<SelectListItem>)documentList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.DocumentTypeId)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <div class="col-lg-3">
+                @Html.Label("FileUploaded", "File Upload:")
+            </div>
+            <div class="col-lg-4" id="FileInput">
+                <label class="inline">Allowed file extension: .doc, .pdf, .jpeg, .png, .jpg</label>
+                @Html.TextBoxFor(model => model.FileWrapper, new { @Type = "file" })
+                <input id="ClearFile" onclick="clearFileInput()" type="button" value="Clear File" class="btn btn-primary btn-xs" />
+                @Html.ValidationMessageFor(model => model.FileWrapper)
+            </div>
+            @if (Model.Id != 0)
+            {
+                <div class="col-lg-5">
+                    @Html.Label("CurrentUploaded", "Existing File:", new { @Id = "labelFileExist" })
+                    @if (!string.IsNullOrEmpty(Model.DocumentFileName))
+                    {
+                        @Html.ActionLink(Model.DocumentFileName, "DownloadFile", new { guid = Model.Guid }, new { @class = "" })
+                    }
+                    else
+                    {
+                        <label for="NoFile">No file exist.</label>
+                    }
+                    <br />
+                    <input style="margin-top:10px" id="ClearExistingFile" onclick="clearExistingFileInput($(this))" type="button" value="Clear Existing File" class="btn btn-primary btn-xs" />
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-3">@Html.LabelFor(model => model.Remarks):</label>
+            <div class="col-lg-8">
+                @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                @Html.ValidationMessageFor(model => model.Remarks)
+            </div>
+        </div>
+    </div>
+</div>
+
+

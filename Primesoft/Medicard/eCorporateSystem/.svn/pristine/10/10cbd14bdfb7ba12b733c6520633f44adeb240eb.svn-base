@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  For more information on how to configure your ASP.NET application, please visit
+  http://go.microsoft.com/fwlink/?LinkId=301880
+  -->
+<configuration>
+  <configSections>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+  </configSections>
+  <connectionStrings>
+    <!--<add name="Medicard.eCorporateSystem" connectionString="Data Source=192.168.1.26;Initial Catalog=eCorporateSystem;User Id=sa;Password=psi2004;" providerName="System.Data.SqlClient" />
+    <add name="Medicard.LegacySystem" connectionString="Data Source=192.168.1.26;Initial Catalog=MedicardDb;User Id=sa;Password=psi2004;" providerName="System.Data.SqlClient" />-->
+    <add name="Medicard.eCorporateSystem" connectionString="Data Source=RBSYSSERVER;Initial Catalog=eCorporateSystem;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />
+    <add name="Medicard.LegacySystem" connectionString="Data Source=RBSYSSERVER;Initial Catalog=MedicardDb;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  <appSettings>
+    <add key="webpages:Version" value="3.0.0.0" />
+    <add key="webpages:Enabled" value="false" />
+    <add key="ClientValidationEnabled" value="true" />
+    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+    <add key="RecordCountPerPage" value="20" />
+
+    <add key="NotificationFromEmail" value="no-reply@medicardphils.com" />
+  <add key="MvcMailer.BaseURL" value="" /></appSettings>
+  <system.net>
+    <mailSettings>
+      <smtp deliveryMethod="Network">
+        <network host="mail.primesoft.com" userName="edcarandang@primesoft.com" password="ys@0319" />
+      </smtp>
+    </mailSettings>
+  </system.net>
+  <system.web>
+    <customErrors defaultRedirect="GenericError.htm" mode="Off">
+    </customErrors>
+    <authentication mode="Forms">
+      <forms loginUrl="~/Account/Login" timeout="2880" />
+    </authentication>
+    <authorization>
+      <deny users="?" />
+      <allow users="*" />
+    </authorization>
+    <compilation debug="true" targetFramework="4.5" />
+    <httpRuntime targetFramework="4.5" />
+  </system.web>
+  <system.webServer>
+    <modules runAllManagedModulesForAllRequests="true">
+      <remove name="FormsAuthenticationModule" />
+    </modules>
+  </system.webServer>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-5.1.0.0" newVersion="5.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-1.5.2.14234" newVersion="1.5.2.14234" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <entityFramework>
+    <defaultConnectionFactory type="System.Data.Entity.Infrastructure.LocalDbConnectionFactory, EntityFramework">
+      <parameters>
+        <parameter value="v11.0" />
+      </parameters>
+    </defaultConnectionFactory>
+    <providers>
+      <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+    </providers>
+  </entityFramework>
+  <location path="Content">
+    <system.web>
+      <authorization>
+        <allow users="*" />
+      </authorization>
+    </system.web>
+  </location>
+</configuration>

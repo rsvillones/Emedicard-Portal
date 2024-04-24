@@ -1,0 +1,41 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Principal;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+
+namespace WebUI
+{
+    public class PasswordExpiredAttribute : AuthorizeAttribute
+    {
+        private static readonly int _passwordExpirationDays = Config.PasswordExpirationDays;
+
+        public override void OnAuthorization(AuthorizationContext filterContext)
+        {
+            IPrincipal user = filterContext.HttpContext.User;
+            if (user != null && user.Identity.IsAuthenticated)
+            {
+                using (var db = new IdentityDataContext())
+                {
+                    var membershipUser = db.Users.FirstOrDefault(t => t.UserName == user.Identity.Name);
+                    // If true, that means the user's password expired 
+                    // Let's force him to change his password before using the application
+                    if ((!membershipUser.LastPasswordChangedDate.HasValue || (DateTime.Today - membershipUser.LastPasswordChangedDate.Value).TotalDays > _passwordExpirationDays) && !membershipUser.UseActiveDirectory)
+                    {
+                        filterContext.Controller.TempData["PasswordExpired"] = true;
+                        filterContext.HttpContext.Response.Redirect("~/Profile");
+                    }
+                    else if (!membershipUser.AcceptedMemorandumOfAgreement)
+                    {
+                        filterContext.Controller.TempData["ShowMemorandumOfAgreement"] = true;
+                    }
+                }
+            }
+
+            base.OnAuthorization(filterContext);
+        }
+    }
+}

@@ -1,0 +1,1123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="eMEDICardModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="eMEDICardModelStoreContainer">
+          <EntitySet Name="EMC_APE_REQUESTS" EntityType="eMEDICardModel.Store.EMC_APE_REQUESTS" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_BOOKED_DATES" EntityType="eMEDICardModel.Store.EMC_BOOKED_DATES" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_CORPORATE_ID_REQUEST" EntityType="eMEDICardModel.Store.EMC_CORPORATE_ID_REQUEST" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_EACCOUNT_USERS" EntityType="eMEDICardModel.Store.EMC_EACCOUNT_USERS" store:Type="Tables" store:Schema="dbo" store:Name="EMC_EACCOUNT_USERS">
+            <DefiningQuery>SELECT 
+      [EMC_EACCOUNT_USERS].[UserID] AS [UserID], 
+      [EMC_EACCOUNT_USERS].[Username] AS [Username], 
+      [EMC_EACCOUNT_USERS].[Pword] AS [Pword], 
+      [EMC_EACCOUNT_USERS].[FirstName] AS [FirstName], 
+      [EMC_EACCOUNT_USERS].[LastName] AS [LastName], 
+      [EMC_EACCOUNT_USERS].[BrokerName] AS [BrokerName], 
+      [EMC_EACCOUNT_USERS].[Type] AS [Type], 
+      [EMC_EACCOUNT_USERS].[EmailAddress] AS [EmailAddress], 
+      [EMC_EACCOUNT_USERS].[AgentCode] AS [AgentCode], 
+      [EMC_EACCOUNT_USERS].[AccessLevel] AS [AccessLevel], 
+      [EMC_EACCOUNT_USERS].[MainUserID] AS [MainUserID], 
+      [EMC_EACCOUNT_USERS].[Access_APE] AS [Access_APE], 
+      [EMC_EACCOUNT_USERS].[Access_Utilization] AS [Access_Utilization], 
+      [EMC_EACCOUNT_USERS].[Access_Endorsement] AS [Access_Endorsement], 
+      [EMC_EACCOUNT_USERS].[Access_Benefits] AS [Access_Benefits], 
+      [EMC_EACCOUNT_USERS].[Access_ID] AS [Access_ID], 
+      [EMC_EACCOUNT_USERS].[Access_ECU] AS [Access_ECU], 
+      [EMC_EACCOUNT_USERS].[Access_ActiveMembers] AS [Access_ActiveMembers], 
+      [EMC_EACCOUNT_USERS].[Access_ResignedMembers] AS [Access_ResignedMembers], 
+      [EMC_EACCOUNT_USERS].[Access_ActionMemos] AS [Access_ActionMemos], 
+      [EMC_EACCOUNT_USERS].[DateRegistered] AS [DateRegistered]
+      FROM [dbo].[EMC_EACCOUNT_USERS] AS [EMC_EACCOUNT_USERS]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EMC_EACCOUNT_USERS_ACCOUNTS" EntityType="eMEDICardModel.Store.EMC_EACCOUNT_USERS_ACCOUNTS" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_ECU_REQUESTS" EntityType="eMEDICardModel.Store.EMC_ECU_REQUESTS" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_EMEMBER_USERS" EntityType="eMEDICardModel.Store.EMC_EMEMBER_USERS" store:Type="Tables" store:Schema="dbo" store:Name="EMC_EMEMBER_USERS">
+            <DefiningQuery>SELECT 
+      [EMC_EMEMBER_USERS].[UserID] AS [UserID], 
+      [EMC_EMEMBER_USERS].[Username] AS [Username], 
+      [EMC_EMEMBER_USERS].[Pword] AS [Pword], 
+      [EMC_EMEMBER_USERS].[Firstname] AS [Firstname], 
+      [EMC_EMEMBER_USERS].[Lastname] AS [Lastname], 
+      [EMC_EMEMBER_USERS].[Birthday] AS [Birthday], 
+      [EMC_EMEMBER_USERS].[HomeAddress] AS [HomeAddress], 
+      [EMC_EMEMBER_USERS].[TelNo] AS [TelNo], 
+      [EMC_EMEMBER_USERS].[MobileNo] AS [MobileNo], 
+      [EMC_EMEMBER_USERS].[EmailAddress] AS [EmailAddress], 
+      [EMC_EMEMBER_USERS].[MemberCode] AS [MemberCode], 
+      [EMC_EMEMBER_USERS].[AccountCode] AS [AccountCode], 
+      [EMC_EMEMBER_USERS].[AccountName] AS [AccountName], 
+      [EMC_EMEMBER_USERS].[AccessLevel] AS [AccessLevel], 
+      [EMC_EMEMBER_USERS].[DateRegistered] AS [DateRegistered]
+      FROM [dbo].[EMC_EMEMBER_USERS] AS [EMC_EMEMBER_USERS]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EMC_MEMBERS_TO_CANCEL" EntityType="eMEDICardModel.Store.EMC_MEMBERS_TO_CANCEL" store:Type="Tables" store:Schema="dbo" store:Name="EMC_MEMBERS_TO_CANCEL">
+            <DefiningQuery>SELECT 
+      [EMC_MEMBERS_TO_CANCEL].[id] AS [id], 
+      [EMC_MEMBERS_TO_CANCEL].[UserID] AS [UserID], 
+      [EMC_MEMBERS_TO_CANCEL].[AccountCode] AS [AccountCode], 
+      [EMC_MEMBERS_TO_CANCEL].[CompanyName] AS [CompanyName], 
+      [EMC_MEMBERS_TO_CANCEL].[MemberCode] AS [MemberCode], 
+      [EMC_MEMBERS_TO_CANCEL].[AppNum] AS [AppNum], 
+      [EMC_MEMBERS_TO_CANCEL].[MemberType] AS [MemberType], 
+      [EMC_MEMBERS_TO_CANCEL].[LastName] AS [LastName], 
+      [EMC_MEMBERS_TO_CANCEL].[FirstName] AS [FirstName], 
+      [EMC_MEMBERS_TO_CANCEL].[Birthday] AS [Birthday], 
+      [EMC_MEMBERS_TO_CANCEL].[Status] AS [Status], 
+      [EMC_MEMBERS_TO_CANCEL].[Remarks] AS [Remarks], 
+      [EMC_MEMBERS_TO_CANCEL].[EffectivityDate] AS [EffectivityDate], 
+      [EMC_MEMBERS_TO_CANCEL].[RequestedDate] AS [RequestedDate], 
+      [EMC_MEMBERS_TO_CANCEL].[RequestedBy] AS [RequestedBy], 
+      [EMC_MEMBERS_TO_CANCEL].[UserType] AS [UserType], 
+      [EMC_MEMBERS_TO_CANCEL].[UpdatedBy] AS [UpdatedBy], 
+      [EMC_MEMBERS_TO_CANCEL].[UpdatedDate] AS [UpdatedDate]
+      FROM [dbo].[EMC_MEMBERS_TO_CANCEL] AS [EMC_MEMBERS_TO_CANCEL]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EMC_NEW_APPLICATION_DEPENDENT" EntityType="eMEDICardModel.Store.EMC_NEW_APPLICATION_DEPENDENT" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_NEW_APPLICATION_PRINCIPAL" EntityType="eMEDICardModel.Store.EMC_NEW_APPLICATION_PRINCIPAL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_REQUESTED_UTILIZATION" EntityType="eMEDICardModel.Store.EMC_REQUESTED_UTILIZATION" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_USERS" EntityType="eMEDICardModel.Store.EMC_USERS" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EMC_USERS_ACCOUNTS" EntityType="eMEDICardModel.Store.EMC_USERS_ACCOUNTS" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="EMC_APE_REQUESTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="HeadCount" Type="numeric" Nullable="false" />
+          <Property Name="Address" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="CityCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="ProvinceCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Region" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="ReasonDisapproved" Type="text" />
+          <Property Name="StatusBy" Type="varchar" MaxLength="50" />
+          <Property Name="StatusDate" Type="datetime" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="EMC_BOOKED_DATES">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="BookedDates" Type="datetime" Nullable="false" />
+          <Property Name="Special" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EMC_CORPORATE_ID_REQUEST">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="PaymentMode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserID" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedDate" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'eMEDICard.dbo.EMC_EACCOUNT_USERS' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="EMC_EACCOUNT_USERS">
+          <Key>
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="Username" />
+            <PropertyRef Name="Pword" />
+            <PropertyRef Name="AccessLevel" />
+            <PropertyRef Name="MainUserID" />
+            <PropertyRef Name="Access_APE" />
+            <PropertyRef Name="Access_Utilization" />
+            <PropertyRef Name="Access_Endorsement" />
+            <PropertyRef Name="Access_Benefits" />
+            <PropertyRef Name="Access_ID" />
+            <PropertyRef Name="Access_ECU" />
+            <PropertyRef Name="Access_ActiveMembers" />
+            <PropertyRef Name="Access_ResignedMembers" />
+            <PropertyRef Name="Access_ActionMemos" />
+          </Key>
+          <Property Name="UserID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Pword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="BrokerName" Type="varchar" MaxLength="255" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="255" />
+          <Property Name="AgentCode" Type="varchar" MaxLength="50" />
+          <Property Name="AccessLevel" Type="numeric" Nullable="false" />
+          <Property Name="MainUserID" Type="numeric" Nullable="false" />
+          <Property Name="Access_APE" Type="numeric" Nullable="false" />
+          <Property Name="Access_Utilization" Type="numeric" Nullable="false" />
+          <Property Name="Access_Endorsement" Type="numeric" Nullable="false" />
+          <Property Name="Access_Benefits" Type="numeric" Nullable="false" />
+          <Property Name="Access_ID" Type="numeric" Nullable="false" />
+          <Property Name="Access_ECU" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActiveMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ResignedMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActionMemos" Type="numeric" Nullable="false" />
+          <Property Name="DateRegistered" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EMC_EACCOUNT_USERS_ACCOUNTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountCategory" Type="varchar" MaxLength="50" />
+          <Property Name="MotherCode" Type="varchar" MaxLength="50" />
+          <Property Name="Plans" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EMC_ECU_REQUESTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="MemberCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberLName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberFName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberMInitial" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberDesignation" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="PreferredDate" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="HospitalCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="HospitalName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="StatusBy" Type="varchar" MaxLength="50" />
+          <Property Name="ReasonDisapproved" Type="text" />
+          <Property Name="StatusDate" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'eMEDICard.dbo.EMC_EMEMBER_USERS' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="EMC_EMEMBER_USERS">
+          <Key>
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="Username" />
+            <PropertyRef Name="Pword" />
+            <PropertyRef Name="Firstname" />
+            <PropertyRef Name="Lastname" />
+            <PropertyRef Name="Birthday" />
+            <PropertyRef Name="HomeAddress" />
+            <PropertyRef Name="TelNo" />
+            <PropertyRef Name="MobileNo" />
+            <PropertyRef Name="EmailAddress" />
+            <PropertyRef Name="MemberCode" />
+            <PropertyRef Name="AccountCode" />
+            <PropertyRef Name="AccountName" />
+            <PropertyRef Name="AccessLevel" />
+            <PropertyRef Name="DateRegistered" />
+          </Key>
+          <Property Name="UserID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Pword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Firstname" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Lastname" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="HomeAddress" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="TelNo" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MobileNo" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MemberCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="AccessLevel" Type="numeric" Nullable="false" />
+          <Property Name="DateRegistered" Type="datetime" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'eMEDICard.dbo.EMC_MEMBERS_TO_CANCEL' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="EMC_MEMBERS_TO_CANCEL">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="AccountCode" />
+            <PropertyRef Name="CompanyName" />
+            <PropertyRef Name="MemberCode" />
+            <PropertyRef Name="MemberType" />
+            <PropertyRef Name="LastName" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="Birthday" />
+            <PropertyRef Name="Status" />
+            <PropertyRef Name="EffectivityDate" />
+            <PropertyRef Name="RequestedDate" />
+            <PropertyRef Name="RequestedBy" />
+            <PropertyRef Name="UserType" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="MemberCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AppNum" Type="varchar" MaxLength="50" />
+          <Property Name="MemberType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="EffectivityDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EMC_NEW_APPLICATION_DEPENDENT">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AppNum" Type="decimal" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MiddleInitial" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="Gender" Type="int" Nullable="false" />
+          <Property Name="CivilStatus" Type="int" Nullable="false" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="MemberType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="PlanCode" Type="int" />
+          <Property Name="PlanDetails" Type="varchar" MaxLength="255" />
+          <Property Name="PlanRNBFor" Type="varchar" MaxLength="255" />
+          <Property Name="RelationshipCode" Type="varchar" MaxLength="50" />
+          <Property Name="RelationShipDetail" Type="varchar" MaxLength="50" />
+          <Property Name="Prin_ID" Type="numeric" />
+          <Property Name="Prin_AppNum" Type="int" />
+          <Property Name="Prin_MemCode" Type="varchar" MaxLength="50" />
+          <Property Name="Prin_LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Prin_FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="Prin_MiddleInitial" Type="varchar" MaxLength="50" />
+          <Property Name="Prin_Birthday" Type="datetime" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EndorsedTo" Type="varchar" MaxLength="50" />
+          <Property Name="DateEndorsed" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="50" />
+          <Property Name="Updated_Date" Type="datetime" />
+          <Property Name="Eff_Date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EMC_NEW_APPLICATION_PRINCIPAL">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AppNum" Type="decimal" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="MiddleInitial" Type="varchar" Nullable="false" MaxLength="3" />
+          <Property Name="Birthday" Type="datetime" Nullable="false" />
+          <Property Name="Gender" Type="int" Nullable="false" />
+          <Property Name="CivilStatus" Type="int" Nullable="false" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Prin_CompID" Type="varchar" MaxLength="50" />
+          <Property Name="MemberType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="PlanCode" Type="int" />
+          <Property Name="PlanDetails" Type="varchar" MaxLength="255" />
+          <Property Name="PlanRNBFor" Type="varchar" MaxLength="255" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="EndorsedTo" Type="varchar" MaxLength="50" />
+          <Property Name="DateEndorsed" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="50" />
+          <Property Name="Updated_Date" Type="datetime" />
+          <Property Name="Email_Address" Type="varchar" MaxLength="50" />
+          <Property Name="Eff_Date" Type="datetime" />
+          <Property Name="AreaCode" Type="varchar" MaxLength="20" />
+          <Property Name="AreaDescription" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="EMC_REQUESTED_UTILIZATION">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="text" Nullable="false" />
+          <Property Name="Remarks" Type="text" Nullable="false" />
+          <Property Name="RequestedDate" Type="datetime" Nullable="false" />
+          <Property Name="RequestedBy" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EMC_USERS">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Pword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="CompanyName" Type="varchar" MaxLength="255" />
+          <Property Name="Designation" Type="varchar" MaxLength="50" />
+          <Property Name="CompanyAddress" Type="varchar" MaxLength="255" />
+          <Property Name="TelNo" Type="varchar" MaxLength="50" />
+          <Property Name="FaxNo" Type="varchar" MaxLength="50" />
+          <Property Name="MobileNo" Type="varchar" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="255" />
+          <Property Name="RegAccountCode" Type="varchar" MaxLength="50" />
+          <Property Name="RegMotherCode" Type="varchar" MaxLength="50" />
+          <Property Name="RegAcctCategory" Type="varchar" MaxLength="50" />
+          <Property Name="AccessLevel" Type="numeric" Nullable="false" />
+          <Property Name="MainUserID" Type="numeric" Nullable="false" />
+          <Property Name="Access_APE" Type="numeric" Nullable="false" />
+          <Property Name="Access_Utilization" Type="numeric" Nullable="false" />
+          <Property Name="Access_Endorsement" Type="numeric" Nullable="false" />
+          <Property Name="Access_Benefits" Type="numeric" Nullable="false" />
+          <Property Name="Access_ID" Type="numeric" Nullable="false" />
+          <Property Name="Access_ECU" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActiveMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ResignedMembers" Type="numeric" Nullable="false" />
+          <Property Name="Access_ActionMemos" Type="numeric" Nullable="false" />
+          <Property Name="DateRegistered" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EMC_USERS_ACCOUNTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="numeric" Nullable="false" />
+          <Property Name="AccountCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="AccountCategory" Type="varchar" MaxLength="50" />
+          <Property Name="MotherCode" Type="varchar" MaxLength="50" />
+          <Property Name="Plans" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="eMEDICardModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="eMEDICardOldEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EMC_APE_REQUESTS" EntityType="eMEDICardModel.EMC_APE_REQUESTS" />
+          <EntitySet Name="EMC_BOOKED_DATES" EntityType="eMEDICardModel.EMC_BOOKED_DATES" />
+          <EntitySet Name="EMC_CORPORATE_ID_REQUEST" EntityType="eMEDICardModel.EMC_CORPORATE_ID_REQUEST" />
+          <EntitySet Name="EMC_EACCOUNT_USERS" EntityType="eMEDICardModel.EMC_EACCOUNT_USERS" />
+          <EntitySet Name="EMC_EACCOUNT_USERS_ACCOUNTS" EntityType="eMEDICardModel.EMC_EACCOUNT_USERS_ACCOUNTS" />
+          <EntitySet Name="EMC_EMEMBER_USERS" EntityType="eMEDICardModel.EMC_EMEMBER_USERS" />
+          <EntitySet Name="EMC_MEMBERS_TO_CANCEL" EntityType="eMEDICardModel.EMC_MEMBERS_TO_CANCEL" />
+          <EntitySet Name="EMC_NEW_APPLICATION_DEPENDENT" EntityType="eMEDICardModel.EMC_NEW_APPLICATION_DEPENDENT" />
+          <EntitySet Name="EMC_NEW_APPLICATION_PRINCIPAL" EntityType="eMEDICardModel.EMC_NEW_APPLICATION_PRINCIPAL" />
+          <EntitySet Name="EMC_USERS" EntityType="eMEDICardModel.EMC_USERS" />
+          <EntitySet Name="EMC_USERS_ACCOUNTS" EntityType="eMEDICardModel.EMC_USERS_ACCOUNTS" />
+          <EntitySet Name="EMC_ECU_REQUESTS" EntityType="eMEDICardModel.EMC_ECU_REQUESTS" />
+          <EntitySet Name="EMC_REQUESTED_UTILIZATION" EntityType="eMEDICardModel.EMC_REQUESTED_UTILIZATION" />
+        </EntityContainer>
+        <EntityType Name="EMC_APE_REQUESTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="RequestedDate" Type="DateTime" Nullable="false" />
+          <Property Name="HeadCount" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="CityCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="ProvinceCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Region" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="ReasonDisapproved" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="StatusBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="StatusDate" Type="DateTime" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="EMC_BOOKED_DATES">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BookedDates" Type="DateTime" Nullable="false" />
+          <Property Name="Special" Type="Byte" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EMC_CORPORATE_ID_REQUEST">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="PaymentMode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="RequestedDate" Type="DateTime" Nullable="false" />
+          <Property Name="RequestedBy" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UpdatedDate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="EMC_EACCOUNT_USERS">
+          <Key>
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="Username" />
+            <PropertyRef Name="Pword" />
+            <PropertyRef Name="AccessLevel" />
+            <PropertyRef Name="MainUserID" />
+            <PropertyRef Name="Access_APE" />
+            <PropertyRef Name="Access_Utilization" />
+            <PropertyRef Name="Access_Endorsement" />
+            <PropertyRef Name="Access_Benefits" />
+            <PropertyRef Name="Access_ID" />
+            <PropertyRef Name="Access_ECU" />
+            <PropertyRef Name="Access_ActiveMembers" />
+            <PropertyRef Name="Access_ResignedMembers" />
+            <PropertyRef Name="Access_ActionMemos" />
+          </Key>
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Pword" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="BrokerName" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Type" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="AgentCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccessLevel" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="MainUserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_APE" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_Utilization" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_Endorsement" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_Benefits" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ECU" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ActiveMembers" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ResignedMembers" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ActionMemos" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="DateRegistered" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="EMC_EACCOUNT_USERS_ACCOUNTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountCategory" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MotherCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Plans" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EMC_EMEMBER_USERS">
+          <Key>
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="Username" />
+            <PropertyRef Name="Pword" />
+            <PropertyRef Name="Firstname" />
+            <PropertyRef Name="Lastname" />
+            <PropertyRef Name="Birthday" />
+            <PropertyRef Name="HomeAddress" />
+            <PropertyRef Name="TelNo" />
+            <PropertyRef Name="MobileNo" />
+            <PropertyRef Name="EmailAddress" />
+            <PropertyRef Name="MemberCode" />
+            <PropertyRef Name="AccountCode" />
+            <PropertyRef Name="AccountName" />
+            <PropertyRef Name="AccessLevel" />
+            <PropertyRef Name="DateRegistered" />
+          </Key>
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Pword" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Firstname" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Lastname" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" />
+          <Property Name="HomeAddress" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="TelNo" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MobileNo" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="EmailAddress" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MemberCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="AccessLevel" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="DateRegistered" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EMC_MEMBERS_TO_CANCEL">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="AccountCode" />
+            <PropertyRef Name="CompanyName" />
+            <PropertyRef Name="MemberCode" />
+            <PropertyRef Name="MemberType" />
+            <PropertyRef Name="LastName" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="Birthday" />
+            <PropertyRef Name="Status" />
+            <PropertyRef Name="EffectivityDate" />
+            <PropertyRef Name="RequestedDate" />
+            <PropertyRef Name="RequestedBy" />
+            <PropertyRef Name="UserType" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="MemberCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AppNum" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MemberType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="EffectivityDate" Type="DateTime" Nullable="false" />
+          <Property Name="RequestedDate" Type="DateTime" Nullable="false" />
+          <Property Name="RequestedBy" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UpdatedDate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="EMC_NEW_APPLICATION_DEPENDENT">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="AppNum" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MiddleInitial" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" />
+          <Property Name="Gender" Type="Int32" Nullable="false" />
+          <Property Name="CivilStatus" Type="Int32" Nullable="false" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="MemberType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="PlanCode" Type="Int32" />
+          <Property Name="PlanDetails" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="PlanRNBFor" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="RelationshipCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="RelationShipDetail" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Prin_ID" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Prin_AppNum" Type="Int32" />
+          <Property Name="Prin_MemCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Prin_LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Prin_FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Prin_MiddleInitial" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Prin_Birthday" Type="DateTime" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="RequestedDate" Type="DateTime" Nullable="false" />
+          <Property Name="RequestedBy" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="EndorsedTo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="DateEndorsed" Type="DateTime" />
+          <Property Name="Updated_By" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Updated_Date" Type="DateTime" />
+          <Property Name="Eff_Date" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="EMC_NEW_APPLICATION_PRINCIPAL">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="AppNum" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MiddleInitial" Type="String" Nullable="false" MaxLength="3" Unicode="false" FixedLength="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" />
+          <Property Name="Gender" Type="Int32" Nullable="false" />
+          <Property Name="CivilStatus" Type="Int32" Nullable="false" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Prin_CompID" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MemberType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="PlanCode" Type="Int32" />
+          <Property Name="PlanDetails" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="PlanRNBFor" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="RequestedDate" Type="DateTime" Nullable="false" />
+          <Property Name="RequestedBy" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="EndorsedTo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="DateEndorsed" Type="DateTime" />
+          <Property Name="Updated_By" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Updated_Date" Type="DateTime" />
+          <Property Name="Email_Address" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Eff_Date" Type="DateTime" />
+          <Property Name="AreaCode" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="AreaDescription" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="EMC_USERS">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Pword" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyName" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Designation" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyAddress" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="TelNo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FaxNo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MobileNo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="RegAccountCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="RegMotherCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="RegAcctCategory" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccessLevel" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="MainUserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_APE" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_Utilization" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_Endorsement" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_Benefits" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ECU" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ActiveMembers" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ResignedMembers" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Access_ActionMemos" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="DateRegistered" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="EMC_USERS_ACCOUNTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="AccountCategory" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="MotherCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Plans" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EMC_ECU_REQUESTS">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberLName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberFName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberMInitial" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MemberDesignation" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PreferredDate" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="HospitalCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="HospitalName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Remarks" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="StatusBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ReasonDisapproved" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="StatusDate" />
+        </EntityType>
+        <EntityType Name="EMC_REQUESTED_UTILIZATION">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="UserID" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="AccountCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccountName" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Remarks" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="RequestedDate" Nullable="false" />
+          <Property Type="String" Name="RequestedBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UpdatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UpdatedDate" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="eMEDICardModelStoreContainer" CdmEntityContainer="eMEDICardOldEntities">
+          <EntitySetMapping Name="EMC_APE_REQUESTS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_APE_REQUESTS">
+              <MappingFragment StoreEntitySet="EMC_APE_REQUESTS">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="HeadCount" ColumnName="HeadCount" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CityCode" ColumnName="CityCode" />
+                <ScalarProperty Name="ProvinceCode" ColumnName="ProvinceCode" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ReasonDisapproved" ColumnName="ReasonDisapproved" />
+                <ScalarProperty Name="StatusBy" ColumnName="StatusBy" />
+                <ScalarProperty Name="StatusDate" ColumnName="StatusDate" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_BOOKED_DATES">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_BOOKED_DATES">
+              <MappingFragment StoreEntitySet="EMC_BOOKED_DATES">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="BookedDates" ColumnName="BookedDates" />
+                <ScalarProperty Name="Special" ColumnName="Special" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_CORPORATE_ID_REQUEST">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_CORPORATE_ID_REQUEST">
+              <MappingFragment StoreEntitySet="EMC_CORPORATE_ID_REQUEST">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="PaymentMode" ColumnName="PaymentMode" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_EACCOUNT_USERS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_EACCOUNT_USERS">
+              <MappingFragment StoreEntitySet="EMC_EACCOUNT_USERS">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Pword" ColumnName="Pword" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="BrokerName" ColumnName="BrokerName" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="AgentCode" ColumnName="AgentCode" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+                <ScalarProperty Name="MainUserID" ColumnName="MainUserID" />
+                <ScalarProperty Name="Access_APE" ColumnName="Access_APE" />
+                <ScalarProperty Name="Access_Utilization" ColumnName="Access_Utilization" />
+                <ScalarProperty Name="Access_Endorsement" ColumnName="Access_Endorsement" />
+                <ScalarProperty Name="Access_Benefits" ColumnName="Access_Benefits" />
+                <ScalarProperty Name="Access_ID" ColumnName="Access_ID" />
+                <ScalarProperty Name="Access_ECU" ColumnName="Access_ECU" />
+                <ScalarProperty Name="Access_ActiveMembers" ColumnName="Access_ActiveMembers" />
+                <ScalarProperty Name="Access_ResignedMembers" ColumnName="Access_ResignedMembers" />
+                <ScalarProperty Name="Access_ActionMemos" ColumnName="Access_ActionMemos" />
+                <ScalarProperty Name="DateRegistered" ColumnName="DateRegistered" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_EACCOUNT_USERS_ACCOUNTS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_EACCOUNT_USERS_ACCOUNTS">
+              <MappingFragment StoreEntitySet="EMC_EACCOUNT_USERS_ACCOUNTS">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+                <ScalarProperty Name="MotherCode" ColumnName="MotherCode" />
+                <ScalarProperty Name="Plans" ColumnName="Plans" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_EMEMBER_USERS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_EMEMBER_USERS">
+              <MappingFragment StoreEntitySet="EMC_EMEMBER_USERS">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Pword" ColumnName="Pword" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="HomeAddress" ColumnName="HomeAddress" />
+                <ScalarProperty Name="TelNo" ColumnName="TelNo" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+                <ScalarProperty Name="DateRegistered" ColumnName="DateRegistered" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_MEMBERS_TO_CANCEL">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_MEMBERS_TO_CANCEL">
+              <MappingFragment StoreEntitySet="EMC_MEMBERS_TO_CANCEL">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="EffectivityDate" ColumnName="EffectivityDate" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_NEW_APPLICATION_DEPENDENT">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_NEW_APPLICATION_DEPENDENT">
+              <MappingFragment StoreEntitySet="EMC_NEW_APPLICATION_DEPENDENT">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="PlanCode" ColumnName="PlanCode" />
+                <ScalarProperty Name="PlanDetails" ColumnName="PlanDetails" />
+                <ScalarProperty Name="PlanRNBFor" ColumnName="PlanRNBFor" />
+                <ScalarProperty Name="RelationshipCode" ColumnName="RelationshipCode" />
+                <ScalarProperty Name="RelationShipDetail" ColumnName="RelationShipDetail" />
+                <ScalarProperty Name="Prin_ID" ColumnName="Prin_ID" />
+                <ScalarProperty Name="Prin_AppNum" ColumnName="Prin_AppNum" />
+                <ScalarProperty Name="Prin_MemCode" ColumnName="Prin_MemCode" />
+                <ScalarProperty Name="Prin_LastName" ColumnName="Prin_LastName" />
+                <ScalarProperty Name="Prin_FirstName" ColumnName="Prin_FirstName" />
+                <ScalarProperty Name="Prin_MiddleInitial" ColumnName="Prin_MiddleInitial" />
+                <ScalarProperty Name="Prin_Birthday" ColumnName="Prin_Birthday" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="EndorsedTo" ColumnName="EndorsedTo" />
+                <ScalarProperty Name="DateEndorsed" ColumnName="DateEndorsed" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Updated_Date" ColumnName="Updated_Date" />
+                <ScalarProperty Name="Eff_Date" ColumnName="Eff_Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_NEW_APPLICATION_PRINCIPAL">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_NEW_APPLICATION_PRINCIPAL">
+              <MappingFragment StoreEntitySet="EMC_NEW_APPLICATION_PRINCIPAL">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AppNum" ColumnName="AppNum" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="CivilStatus" ColumnName="CivilStatus" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="Prin_CompID" ColumnName="Prin_CompID" />
+                <ScalarProperty Name="MemberType" ColumnName="MemberType" />
+                <ScalarProperty Name="PlanCode" ColumnName="PlanCode" />
+                <ScalarProperty Name="PlanDetails" ColumnName="PlanDetails" />
+                <ScalarProperty Name="PlanRNBFor" ColumnName="PlanRNBFor" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="EndorsedTo" ColumnName="EndorsedTo" />
+                <ScalarProperty Name="DateEndorsed" ColumnName="DateEndorsed" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Updated_Date" ColumnName="Updated_Date" />
+                <ScalarProperty Name="Email_Address" ColumnName="Email_Address" />
+                <ScalarProperty Name="Eff_Date" ColumnName="Eff_Date" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+                <ScalarProperty Name="AreaDescription" ColumnName="AreaDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_USERS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_USERS">
+              <MappingFragment StoreEntitySet="EMC_USERS">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Pword" ColumnName="Pword" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="Designation" ColumnName="Designation" />
+                <ScalarProperty Name="CompanyAddress" ColumnName="CompanyAddress" />
+                <ScalarProperty Name="TelNo" ColumnName="TelNo" />
+                <ScalarProperty Name="FaxNo" ColumnName="FaxNo" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="RegAccountCode" ColumnName="RegAccountCode" />
+                <ScalarProperty Name="RegMotherCode" ColumnName="RegMotherCode" />
+                <ScalarProperty Name="RegAcctCategory" ColumnName="RegAcctCategory" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+                <ScalarProperty Name="MainUserID" ColumnName="MainUserID" />
+                <ScalarProperty Name="Access_APE" ColumnName="Access_APE" />
+                <ScalarProperty Name="Access_Utilization" ColumnName="Access_Utilization" />
+                <ScalarProperty Name="Access_Endorsement" ColumnName="Access_Endorsement" />
+                <ScalarProperty Name="Access_Benefits" ColumnName="Access_Benefits" />
+                <ScalarProperty Name="Access_ID" ColumnName="Access_ID" />
+                <ScalarProperty Name="Access_ECU" ColumnName="Access_ECU" />
+                <ScalarProperty Name="Access_ActiveMembers" ColumnName="Access_ActiveMembers" />
+                <ScalarProperty Name="Access_ResignedMembers" ColumnName="Access_ResignedMembers" />
+                <ScalarProperty Name="Access_ActionMemos" ColumnName="Access_ActionMemos" />
+                <ScalarProperty Name="DateRegistered" ColumnName="DateRegistered" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_USERS_ACCOUNTS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_USERS_ACCOUNTS">
+              <MappingFragment StoreEntitySet="EMC_USERS_ACCOUNTS">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AccountCategory" ColumnName="AccountCategory" />
+                <ScalarProperty Name="MotherCode" ColumnName="MotherCode" />
+                <ScalarProperty Name="Plans" ColumnName="Plans" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_ECU_REQUESTS">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_ECU_REQUESTS">
+              <MappingFragment StoreEntitySet="EMC_ECU_REQUESTS">
+                <ScalarProperty Name="StatusDate" ColumnName="StatusDate" />
+                <ScalarProperty Name="ReasonDisapproved" ColumnName="ReasonDisapproved" />
+                <ScalarProperty Name="StatusBy" ColumnName="StatusBy" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="HospitalName" ColumnName="HospitalName" />
+                <ScalarProperty Name="HospitalCode" ColumnName="HospitalCode" />
+                <ScalarProperty Name="PreferredDate" ColumnName="PreferredDate" />
+                <ScalarProperty Name="MemberDesignation" ColumnName="MemberDesignation" />
+                <ScalarProperty Name="MemberMInitial" ColumnName="MemberMInitial" />
+                <ScalarProperty Name="MemberFName" ColumnName="MemberFName" />
+                <ScalarProperty Name="MemberLName" ColumnName="MemberLName" />
+                <ScalarProperty Name="MemberCode" ColumnName="MemberCode" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EMC_REQUESTED_UTILIZATION">
+            <EntityTypeMapping TypeName="eMEDICardModel.EMC_REQUESTED_UTILIZATION">
+              <MappingFragment StoreEntitySet="EMC_REQUESTED_UTILIZATION">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestedBy" ColumnName="RequestedBy" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="eMedicardOld" ZoomLevel="77">
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_APE_REQUESTS" Width="1.5" PointX="0.75" PointY="0.75" Height="4.2879036458333326" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_BOOKED_DATES" Width="1.5" PointX="2.75" PointY="0.75" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_CORPORATE_ID_REQUEST" Width="1.5" PointX="2.75" PointY="3.75" Height="3.7109993489583335" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_EACCOUNT_USERS" Width="1.5" PointX="4.75" PointY="0.75" Height="5.057109375" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_EACCOUNT_USERS_ACCOUNTS" Width="1.5" PointX="6.75" PointY="0.75" Height="2.7494921874999996" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_EMEMBER_USERS" Width="1.5" PointX="8.75" PointY="0.75" Height="3.9033007812499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_MEMBERS_TO_CANCEL" Width="1.5" PointX="0.75" PointY="8.75" Height="4.480205078125" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_NEW_APPLICATION_DEPENDENT" Width="1.5" PointX="2.75" PointY="8.75" Height="7.5570279947916674" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_NEW_APPLICATION_PRINCIPAL" Width="1.5" PointX="8.75" PointY="5.75" Height="6.5955208333333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_USERS" Width="1.5" PointX="10.75" PointY="4.75" Height="6.2109179687500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_USERS_ACCOUNTS" Width="1.5" PointX="4.75" PointY="10.75" Height="2.7494921875000031" IsExpanded="true" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_ECU_REQUESTS" Width="1.5" PointX="11.375" PointY="11.75" Height="4.8648079427083388" />
+        <EntityTypeShape EntityType="eMEDICardModel.EMC_REQUESTED_UTILIZATION" Width="1.5" PointX="5.375" PointY="6.75" Height="2.9417936197916674" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

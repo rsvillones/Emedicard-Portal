@@ -1,0 +1,8 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Additional Dependent Request Cancelled</p>
+<p class="greetings">Dear @Model.Member.FirstName,</p>
+<p class="details">Your Additional Dependent request has been cancelled by your Corporate Administrator.</p>
+<br />

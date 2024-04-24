@@ -1,0 +1,68 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model Corelib.Models.ApplicationVerification
+@using (Html.BeginCollectionItem("ApplicationVerifications"))
+{
+    <td>
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.FileName)
+        @Html.HiddenFor(model => model.Row)
+        @Html.HiddenFor(model => model.EmailAddress)
+        @Html.HiddenFor(model => model.OptionalPlan)
+        @Html.HiddenFor(model => model.Dependent)
+        @Html.HiddenFor(model => model.DependentAppliedPlan)
+        @Html.HiddenFor(model => model.DependentOptionalPlan)
+
+        @Html.EditorFor(model => model.MemberCode)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MemberType)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.EmployeeNumber)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Area)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.CostCenter)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.LastName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.FirstName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MiddleName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Suffix)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Gender)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.DateOfBirth)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Age)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.CivilStatus)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MembershipStatus)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.EffectivityDate)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.ValidityDate)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.AppliedPlan)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.DateHired)
+    </td>
+}

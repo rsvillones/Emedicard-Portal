@@ -1,0 +1,625 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.Web;
+using System.Web.Mvc;
+using System.IO;
+using Corelib.Models;
+using Corelib.Classes;
+using Corelib;
+using System.Threading;
+using WebUI.Models;
+using WebUI.Areas.CorporateAdministrator.Models;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class MembershipEndorsementController : BaseAccountController
+    {
+        #region -- Action Results --
+
+        // GET: CorporateAdministrator/MembershipEndorsement 
+        public override ActionResult Index(string accountCode)
+        {
+            var returnValue = base.Index(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var application = new Application() { AccountCode = accountCode };
+            var batches = db.Batches.Where(t => !t.Deleted && t.AccountCode == accountCode && t.Status == "Pending").ToList();
+
+            var viewModel = new MembershipEndorsementViewModel()
+            {
+                Application = application,
+                Batches = batches
+            };
+            Helper.MemberEmailNotification(System.Web.HttpContext.Current,3,"mmedidas@rbsysinc.com","aaaaa123");
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult UploadApplication(ImportViewModel importViewModel)
+        {         
+
+            var secondOptions = new List<string>();
+            secondOptions.Add("Male");
+            secondOptions.Add("Female");
+            ViewBag.SecondOptions = secondOptions;
+
+            var nextOption = new List<string>();
+            nextOption.Add("Single");
+            nextOption.Add("Married");
+            nextOption.Add("Divorced");
+            nextOption.Add("Widowed");
+            ViewBag.NextOption = nextOption;
+
+            if (ModelState.IsValid)
+            {
+                var listApplication = db.Applications.Where(t => !t.Deleted).ToList();
+                var appVerifications = new List<ApplicationVerification>();
+                var numberOfErrors = 0;
+                var accountCode = string.Empty;
+                string fileName = "";
+                var batchId = 0;
+
+                if (importViewModel.ApplicationVerifications != null)
+                {
+                    foreach (var item in importViewModel.ApplicationVerifications)
+                    {
+                        item.IsError = false;
+
+                        if (importViewModel.IsUpload)
+                        {
+                            ValidationForNewApplication(item, listApplication, ref numberOfErrors);
+                        }
+                        else
+                        {
+                            ValidationForEditApplication(item, listApplication, ref numberOfErrors);
+                        }
+
+                        appVerifications.Add(item);
+                        fileName = item.FileName;
+                        accountCode = item.AccountCode;
+                    }
+
+                    var options = Options(true, accountCode);
+                    ViewBag.Options = options;
+
+                    var dependentOptions = Options(false, accountCode);
+                    ViewBag.DependentOptions = dependentOptions;
+
+
+                    if (appVerifications.Any(t => t.IsError))
+                    {
+                        if (importViewModel.UploadSummary != null) importViewModel.UploadSummary.NumberOfErrors = numberOfErrors;
+                        if (!importViewModel.IsUpload) importViewModel.UploadSummary = null;
+                        var viewModel = new ImportViewModel()
+                        {
+                            ApplicationVerifications = appVerifications,
+                            UploadSummary = importViewModel.UploadSummary,
+                            IsUpload = importViewModel.IsUpload,
+                            ShowAllError = true
+                        };
+                        return PartialView("_NewApplicationVerification", viewModel);
+                    }
+                    else
+                    {
+                        if (appVerifications != null)
+                        {
+                            if (importViewModel.IsUpload)
+                            {
+                                batchId = ExcelTools.GenerateBatchUpload(db, accountCode);
+                                foreach (var item in appVerifications)
+                                {
+                                    var application = new Application(item);
+                                    application.BatchId = batchId;
+                                    db.Applications.Add(application);
+                                }
+                            }
+                            else
+                            {
+                                foreach (var item in appVerifications)
+                                {
+                                    var application = db.Applications.FirstOrDefault(t => !t.Deleted && t.Guid == item.Guid);
+                                    application.EmailAddress = item.EmailAddress;
+                                    application.EmployeeNumber = item.EmployeeNumber;
+                                    application.Area = item.Area;
+                                    application.CostCenter = item.CostCenter;
+                                    application.LastName = item.LastName;
+                                    application.FirstName = item.FirstName;
+                                    application.MiddleName = item.MiddleName;
+                                    application.Suffix = item.Suffix;
+                                    application.Gender = item.Gender;
+                                    application.DateOfBirth = Convert.ToDateTime(item.DateOfBirth);
+                                    application.Age = Convert.ToInt32(item.Age);
+                                    application.CivilStatus = item.CivilStatus;
+                                    application.EffectivityDate = Convert.ToDateTime(item.EffectivityDate);
+                                    application.ValidityDate = Convert.ToDateTime(item.ValidityDate);
+                                    application.DateHired = Convert.ToDateTime(item.DateHired);
+                                    application.AppliedPlan = Convert.ToInt32(item.AppliedPlan.Split('|').Last().Trim());
+                                    application.Dependent = Convert.ToInt32(item.Dependent);
+                                    application.DependentAppliedPlan = Convert.ToInt32(item.DependentAppliedPlan.Split('|').Last().Trim());
+                                    db.Entry(application).State = EntityState.Modified;
+                                }
+                            }
+                        }
+                    }
+
+                    var removeAppVerification = db.ApplicationVerifications.Where(t => !t.Deleted && t.FileName == fileName).ToList();
+                    db.ApplicationVerifications.RemoveRange(removeAppVerification);
+                }
+
+                db.SaveChanges();
+                return null;
+            }
+            var errors = ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList().Count();
+            if (importViewModel.UploadSummary != null) importViewModel.UploadSummary.NumberOfErrors = errors;
+            importViewModel.ApplicationVerifications.ToList().ForEach(a => { a.IsError = false; });
+            return PartialView("_NewApplicationVerification", importViewModel);
+        }
+
+        [HttpPost]
+        public ActionResult UploadRenewal(ImportViewModel importViewModel)
+        {
+            var secondOptions = new List<string>();
+            secondOptions.Add("Male");
+            secondOptions.Add("Female");
+            ViewBag.SecondOptions = secondOptions;
+
+            var thirdOptions = new List<string>();
+            thirdOptions.Add("Type One");
+            thirdOptions.Add("Type Two");
+            ViewBag.ThirdOptions = thirdOptions;
+
+            var forthOptions = new List<string>();
+            forthOptions.Add("Active");
+            forthOptions.Add("Inactive");
+            ViewBag.ForthOptions = forthOptions;
+
+            var nextOption = new List<string>();
+            nextOption.Add("Single");
+            nextOption.Add("Married");
+            nextOption.Add("Divorced");
+            nextOption.Add("Widowed");
+            ViewBag.NextOption = nextOption;
+
+            if (ModelState.IsValid)
+            {
+                var listApplication = db.Applications.Where(t => !t.Deleted).ToList();
+                var appVerifications = new List<ApplicationVerification>();
+                var numberOfErrors = 0;
+                string fileName = "";
+                var accountCode = string.Empty;
+
+                if (importViewModel.ApplicationVerifications != null)
+                {
+                    foreach (var item in importViewModel.ApplicationVerifications)
+                    {
+                        item.IsError = false;
+                        ValidationForEditApplication(item, listApplication, ref numberOfErrors, "Renewal");
+                        appVerifications.Add(item);
+                        fileName = item.FileName;
+                        accountCode = item.AccountCode;
+                    }
+
+                    var options = Options(true, accountCode);
+                    ViewBag.Options = options;
+
+                    var dependentOptions = Options(false, accountCode);
+                    ViewBag.DependentOptions = dependentOptions;
+
+                    if (appVerifications.Any(t => t.IsError))
+                    {
+                        importViewModel.UploadSummary.NumberOfErrors = numberOfErrors;
+                        var viewModel = new ImportViewModel()
+                        {
+                            ApplicationVerifications = appVerifications,
+                            UploadSummary = importViewModel.UploadSummary
+                        };
+                        return PartialView("_RenewalVerification", viewModel);
+                    }
+                    else
+                    {
+                        if (appVerifications != null)
+                        {
+                            foreach (var item in appVerifications)
+                            {
+                                var application = db.Applications.FirstOrDefault(t => !t.Deleted && t.Guid == item.Guid);
+                                application.EmailAddress = item.EmailAddress;
+                                application.EmployeeNumber = item.EmployeeNumber;
+                                application.Area = item.Area;
+                                application.CostCenter = item.CostCenter;
+                                application.LastName = item.LastName;
+                                application.FirstName = item.FirstName;
+                                application.MiddleName = item.MiddleName;
+                                application.Suffix = item.Suffix;
+                                application.Gender = item.Gender;
+                                application.DateOfBirth = Convert.ToDateTime(item.DateOfBirth);
+                                application.Age = Convert.ToInt32(item.Age);
+                                application.CivilStatus = item.CivilStatus;
+                                application.EffectivityDate = Convert.ToDateTime(item.EffectivityDate);
+                                application.ValidityDate = Convert.ToDateTime(item.ValidityDate);
+                                application.DateHired = Convert.ToDateTime(item.DateHired);
+                                application.AppliedPlan = Convert.ToInt32(item.AppliedPlan.Split('|').Last().Trim());
+                                application.OptionalPlan = Convert.ToInt32(item.OptionalPlan.Split('|').Last().Trim());
+                                application.Dependent = Convert.ToInt32(item.Dependent);
+                                application.DependentAppliedPlan = Convert.ToInt32(item.DependentAppliedPlan.Split('|').Last().Trim());
+                                application.DependentOptionalPlan = Convert.ToInt32(item.DependentOptionalPlan.Split('|').Last().Trim());
+                                application.MemberCode = item.MemberCode;
+                                application.MembershipStatus = item.MembershipStatus;
+                                application.MemberType = item.MemberType;
+                                db.Entry(application).State = System.Data.Entity.EntityState.Modified;
+                            }
+                        }
+                    }
+
+                    var removeAppVerification = db.ApplicationVerifications.Where(t => !t.Deleted && t.FileName == fileName).ToList();
+                    db.ApplicationVerifications.RemoveRange(removeAppVerification);
+                }
+
+                db.SaveChanges();
+                return null;
+            }
+            var errors = ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList().Count();
+            importViewModel.UploadSummary.NumberOfErrors = errors;
+            importViewModel.ApplicationVerifications.ToList().ForEach(a => { a.IsError = false; });
+            return PartialView("_RenewalVerification", importViewModel);
+        }
+
+        public ActionResult EditBatchApplication(string batchGuid)
+        {
+            var guid = new Guid(batchGuid);
+            var batch = db.Batches.Include(t => t.Applications).FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (batch == null) return HttpNotFound();
+            var applications = db.Applications.Where(t => !t.Deleted && t.BatchId == batch.Id).ToList();
+            var applicationVerifications = new List<ApplicationVerification>();
+
+            foreach (var application in applications)
+            {
+                var appVerification = new ApplicationVerification(application);
+                appVerification.Guid = application.Guid;
+                appVerification.BatchGuid = batch.Guid;
+                applicationVerifications.Add(appVerification);
+            }
+
+            var viewModel = new ImportViewModel()
+            {
+                ApplicationVerifications = applicationVerifications,
+                UploadSummary = null,
+                IsUpload = false,
+                ShowAllError = false
+            };
+
+            ViewBag.BatchGuid = batch.Guid;
+
+            var options = Options(true, batch.AccountCode);
+            ViewBag.Options = options;
+
+            var dependentOptions = Options(false, batch.AccountCode);
+            ViewBag.DependentOptions = dependentOptions;
+
+            var secondOptions = new List<string>();
+            secondOptions.Add("Male");
+            secondOptions.Add("Female");
+            ViewBag.SecondOptions = secondOptions;
+
+            var nextOption = new List<string>();
+            nextOption.Add("Single");
+            nextOption.Add("Married");
+            nextOption.Add("Divorced");
+            nextOption.Add("Widowed");
+            ViewBag.NextOption = nextOption;
+
+            return PartialView("NewApplicationImport", viewModel);
+        }
+
+        public void ProcessBatch(string batchGuid)
+        {
+            var guid = new Guid(batchGuid);
+            var batch = db.Batches.Include(t => t.Applications).FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (batch == null) throw new Exception("Batch Not Found!.");
+            Helper.CreateUserForBatch(batch.Id);
+
+            batch.Status = "Processed";
+            db.Entry(batch).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public FileResult RenewalApplicationExcelDownload()
+        {
+            return File(ExcelTools.RenewalApplicationExcelDownload(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Renewal.xlsx");
+        }
+
+        public FileResult NewApplicationExcelDownload(string accountCode)
+        {
+            return File(ExcelTools.NewApplicationExcelDownload(accountCode), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "New Application.xlsx");
+        }
+
+        public String UploadExcel(HttpPostedFileBase fileData)
+        {
+            var fileExtension = fileData.FileName.Substring(fileData.FileName.LastIndexOf(".") + 1);
+            if (fileExtension != "xlsx") throw new Exception("File Not Valid");
+            var filename = String.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
+            var filepath = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", filename));
+            fileData.SaveAs(filepath);
+
+            return filename;
+        }
+
+        [HttpPost]
+        public JsonResult StartThreading(string filePath, string applicationType, string accountCode)
+        {
+            var path = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/Uploads/{0}", filePath));
+            if (applicationType == "New Application")
+            {
+                var thread = new Thread(new ParameterizedThreadStart(ExcelTools.ImportNewApplication));
+                thread.Start(new ExcelTools.ImportParameter()
+                {
+                    Path = path,
+                    Username = Config.CurrentUser,
+                    AccountCode = accountCode
+                });
+            }
+            else if (applicationType == "Renewal")
+            {
+                var thread = new Thread(new ParameterizedThreadStart(ExcelTools.ImportRenewalApplication));
+                thread.Start(new ExcelTools.ImportParameter()
+                {
+                    Path = path,
+                    Username = Config.CurrentUser,
+                    AccountCode = accountCode
+                });
+            }
+            return Json(new { Type = applicationType });
+        }
+
+        [HttpPost]
+        public JsonResult ExcelValidation(string fileName, string applicationType)
+        {
+            var filePath = Path.GetFileName(fileName);
+
+            var excelValidation = fileName != null ? db.UploadLogs.FirstOrDefault(t => t.FileName == filePath) : null;
+
+            if (excelValidation != null)
+            {
+                return Json(new
+                {
+                    currentRow = excelValidation.CurrentRow,
+                    rowCompleted = excelValidation.RowsCompleted,
+                    numberOfItems = excelValidation.NumberOfItems,
+                    status = (int)excelValidation.UploadStatus,
+                    type = applicationType
+                });
+            }
+            return Json(new
+            {
+                currentRow = 0,
+                rowCompleted = 0,
+                numberOfItems = 0,
+                status = 0,
+                type = applicationType
+            });
+        }
+
+        [HttpPost]
+        public ActionResult ImportComfirmation(string filePath, string applicationType,string accountCode)
+        {
+            var fileName = Path.GetFileName(filePath);
+            var errors = db.ExcelErrors.Where(t => t.FileName == fileName && !t.Deleted).Select(t => t.RowNumber).Distinct().ToList();
+            var employee = db.ApplicationVerifications.Where(t => !t.Deleted && t.FileName == fileName).OrderBy(t => t.Row).ToList();
+            ViewBag.FilePath = filePath;
+            var errorMessage = "";
+            if (db.ExcelErrors.Any(t => t.FileName == fileName && !t.Deleted && t.ErrorMessage == "Invalid Excel Format."))
+            {
+                errorMessage = "Invalid Excel Format.";
+            }
+            var summary = new UploadSummary()
+            {
+                RowCompleted = employee.Count,
+                FileName = fileName,
+                NumberOfErrors = errors.Count,
+                ErrorMessage = errorMessage
+            };
+            var model = new ImportViewModel()
+            {
+                UploadSummary = summary,
+                ApplicationVerifications = employee,
+                IsUpload = true,
+                ShowAllError = true
+            };
+
+            var options = Options(true, accountCode);
+            ViewBag.Options = options;
+
+            var dependentOptions = Options(false, accountCode);
+            ViewBag.DependentOptions = dependentOptions;
+
+            var secondOptions = new List<string>();
+            secondOptions.Add("Male");
+            secondOptions.Add("Female");
+            ViewBag.SecondOptions = secondOptions;
+
+            var thirdOptions = new List<string>();
+            thirdOptions.Add("Type One");
+            thirdOptions.Add("Type Two");
+            ViewBag.ThirdOptions = thirdOptions;
+
+            var forthOptions = new List<string>();
+            forthOptions.Add("Active");
+            forthOptions.Add("Inactive");
+            ViewBag.ForthOptions = forthOptions;
+
+            var nextOption = new List<string>();
+            nextOption.Add("Single");
+            nextOption.Add("Married");
+            nextOption.Add("Divorced");
+            nextOption.Add("Widowed");
+            ViewBag.NextOption = nextOption;
+
+            if (applicationType == "New Application") return PartialView("NewApplicationImport", model);
+
+            return PartialView("RenewalImport", model);
+        }
+
+        private List<string> Options(bool principle,string accountCode)
+        {
+            var legacyRoomRates = ExcelTools.GetLegacyRoomRates(accountCode, principle);
+
+            var options = new List<string>();
+            foreach (var legacyRoomRate in legacyRoomRates)
+            {
+                var addValue = String.Format("{1} - {2} ({3:Php 0,0.00} Limit)|{0}", legacyRoomRate.Id, legacyRoomRate.LegacyPlan.Description, legacyRoomRate.For, legacyRoomRate.Limit);
+                options.Add(addValue);
+            }
+
+            return options;
+        }
+
+        private void ValidationForNewApplication(ApplicationVerification item, List<Application> applications, ref int numberOfErrors)
+        {
+            bool isExist;
+            try
+            {
+                var newDate = DateTime.Parse(item.DateOfBirth);
+                isExist = applications.Any(t => (t.DateOfBirth == newDate && t.LastName == item.LastName && t.FirstName == item.FirstName && t.MiddleName == item.MiddleName) && !t.Deleted);
+            }
+            catch
+            {
+                isExist = false;
+            }
+
+            if (isExist)
+            {
+                item.IsError = true;
+                item.ErrorMessage = "Application already exist in the database.";
+                numberOfErrors++;
+            }
+            ValidateExcel(item, ref numberOfErrors);
+
+        }
+
+        private void ValidationForEditApplication(ApplicationVerification item, List<Application> applications, ref int numberOfErrors, string process = "")
+        {
+            bool isExist;
+            try
+            {
+                var newDate = DateTime.Parse(item.DateOfBirth);
+                isExist = applications.Any(t => (t.DateOfBirth == newDate && t.LastName == item.LastName && t.FirstName == item.FirstName && t.MiddleName == item.MiddleName && t.Guid != item.Guid) && !t.Deleted);
+            }
+            catch
+            {
+                isExist = false;
+            }
+
+            var isGuidExist = applications.Any(t => t.Guid == item.Guid && !t.Deleted);
+            if (!isGuidExist)
+            {
+                item.IsError = true;
+                item.ErrorMessage = "GUID does'nt exist or has been editted.";
+                numberOfErrors++;
+            }
+            else if (isExist)
+            {
+                item.IsError = true;
+                item.ErrorMessage = "Application already exist in the database.";
+                numberOfErrors++;
+            }
+
+            ValidateExcel(item, ref numberOfErrors, process);
+        }
+
+        #endregion
+
+        #region -- Excel Validation --
+
+        private bool IsValidString(string propertyValue)
+        {
+            if (!string.IsNullOrEmpty(propertyValue)) return true;
+            return false;
+        }
+
+        private bool IsValidDateTime(string dateTime)
+        {
+            DateTime newDateTime;
+            return DateTime.TryParse(dateTime, out newDateTime);
+        }
+
+        private bool IsValidInteger(string interger)
+        {
+            int newInteger;
+            return int.TryParse(interger, out newInteger);
+        }
+
+        private bool IsValidDecimal(string decimalValue)
+        {
+            decimal newDecimal;
+            return decimal.TryParse(decimalValue, out newDecimal);
+        }
+
+        private void ValidateExcel(ApplicationVerification model, ref int numberOfErrors, string process = "")
+        {
+            if (!IsValidString(model.LastName))
+            {
+                CheckError(model, ref numberOfErrors, "Last Name", model.LastName);
+            }
+            if (!IsValidString(model.FirstName))
+            {
+                CheckError(model, ref numberOfErrors, "First Name", model.FirstName);
+            }
+            if (!IsValidDateTime(model.DateOfBirth))
+            {
+                CheckError(model, ref numberOfErrors, "Date of Birth", model.DateOfBirth);
+            }
+            if (!IsValidInteger(model.Age))
+            {
+                CheckError(model, ref numberOfErrors, "Age", model.Age);
+            }
+            if (!IsValidDateTime(model.EffectivityDate) && !string.IsNullOrEmpty(model.EffectivityDate))
+            {
+                CheckError(model, ref numberOfErrors, "Effectivity Date", model.EffectivityDate);
+            }
+            if (!IsValidDateTime(model.ValidityDate) && !string.IsNullOrEmpty(model.ValidityDate))
+            {
+                CheckError(model, ref numberOfErrors, "Validity Date", model.ValidityDate);
+            }
+            if (!IsValidDateTime(model.DateHired) && !string.IsNullOrEmpty(model.DateHired))
+            {
+                CheckError(model, ref numberOfErrors, "Date Hired", model.DateHired);
+            }
+            if (!IsValidString(model.AppliedPlan))
+            {
+                CheckError(model, ref numberOfErrors, "Applied Plan", model.AppliedPlan);
+            }
+            if (!IsValidInteger(model.Dependent))
+            {
+                CheckError(model, ref numberOfErrors, "Number of allowed dependents", model.Dependent);
+            }
+
+            if (process == "Renewal")
+            {
+                if (!IsValidString(model.MemberCode))
+                {
+                    CheckError(model, ref numberOfErrors, "Member Code", model.MemberCode);
+                }
+                if (!IsValidString(model.MemberType))
+                {
+                    CheckError(model, ref numberOfErrors, "Member Code", model.MemberCode);
+                }
+            }
+        }
+
+        private void CheckError(ApplicationVerification model, ref int numberOfErrors, string propertyName = "", string propertyValue = "")
+        {
+            var message = string.Format("{0} Input value is invalid.", propertyName);
+            model.IsError = true;
+            numberOfErrors = numberOfErrors + 1;
+            if (string.IsNullOrEmpty(propertyValue)) message = string.Format("{0} field is required.", propertyName);
+            model.ErrorMessage = model.ErrorMessage == null ? message : string.Format("{0}, {1}", model.ErrorMessage, message);
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,70 @@
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class ApplicationUser : IdentityUser, IValidatableObject
+    {
+        #region -- Constructor --
+
+        public ApplicationUser()
+        {
+            this.Groups = new Collection<Group>();
+            this.Guid = Guid.NewGuid();
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [Required]
+        [StringLength(128)]
+        public string Name { get; set; }
+
+        [Index]
+        public Guid Guid { get; set; }
+
+        public bool IsMember { get; set; }
+
+        public bool IsAccountOfficer { get; set; }
+
+        public bool IsCorporateAdmin { get; set; }
+
+        public ICollection<Group> Groups { get; set; }
+
+        #endregion
+
+        #region -- Functions --
+
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
+        {
+            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
+            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            // Add custom user claims here
+            return userIdentity;
+        }
+        
+        #endregion
+
+        #region -- IValidatableObject Members --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (String.IsNullOrEmpty(this.UserName))
+            {
+                yield return new ValidationResult("UserName is required", new List<string>() { "UserName" });
+            }
+        }
+        
+        #endregion
+    }
+}

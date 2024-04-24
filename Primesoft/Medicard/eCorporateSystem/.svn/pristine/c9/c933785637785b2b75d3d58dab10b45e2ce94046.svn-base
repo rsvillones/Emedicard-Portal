@@ -1,0 +1,560 @@
+﻿using Corelib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib.Models;
+using System.Net;
+using System.Data.Entity;
+using Corelib.Enums;
+using System.IO;
+
+namespace WebUI.Controllers
+{
+    public class ItemsController : BaseDbController
+    {
+        #region -- Action Results --
+
+        public ActionResult GetMyAccounts(int? page, string searchAccount)
+        {
+            var model = LegacyHelper.GetLegacyAccounts(db, legacyDb, User);
+
+            if (!string.IsNullOrWhiteSpace(searchAccount)) model = model.Where(t => t.Name.Contains(searchAccount) || t.Code.Contains(searchAccount));
+
+            ViewBag.SearchValue = searchAccount;
+
+            return PartialView("_MyLegacyAccounts", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyActionMemos(int? page, string accountCode, string username)
+        {
+            ViewBag.AccountCode = accountCode;
+            ViewBag.Username = username;
+
+            IEnumerable<IActionMemo> model;
+            if (!string.IsNullOrEmpty(username))
+            {
+                var member = db.Members.FirstOrDefault(t => t.UserName == username) ?? new Member();
+                model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, member.Code, null, null);
+            }
+            else if (!string.IsNullOrEmpty(accountCode))
+            {
+                model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, null, accountCode, null);
+            }
+            else
+            {
+                if (User.IsInRole("SysAd"))
+                {
+                    model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, null, null, null);
+                }
+                else
+                {
+                    model = LegacyHelper.GetLegacyActionMemos(db, legacyDb, null, null, Helper.GetLegacyAccountCodes(db, legacyDb));
+                }
+            }
+
+            model = model.OrderByDescending(t => t.ActionMemoDate);
+
+            return PartialView("_MyLegacyActionMemos", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyEmedActionMemos(int? page, string accountCode, string username)
+        {
+            ViewBag.AccountCode = accountCode;
+            ViewBag.Username = username;
+
+            IEnumerable<ActionMemo> model;
+            if (!string.IsNullOrEmpty(username))
+            {
+                if (username != User.Identity.Name) return null;
+                var member = db.Members.FirstOrDefault(t => t.UserName == username) ?? new Member();
+                model = db.ActionMemos
+                    .Include(t => t.Member)
+                    .Include(t => t.Dependent)
+                    .Where(t => t.MemberId == member.Id);
+
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == member.AccountCode) ?? new AccountSetting();
+                ViewBag.AccountSetting = accountSetting;
+            }
+            else if (!string.IsNullOrEmpty(accountCode))
+            {
+                model = db.ActionMemos
+                    .Include(t => t.EndorsementBatch)
+                    .Include(t => t.Member)
+                    .Include(t => t.Dependent)
+                    .Where(t => t.EndorsementBatch.AccountCode == accountCode);
+                
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+                ViewBag.AccountSetting = accountSetting;
+            }
+            else
+            {
+                if (User.IsInRole("SysAd"))
+                {
+                    model = db.ActionMemos
+                        .Include(t => t.Member)
+                        .Include(t => t.Dependent)
+                        .Include(t => t.EndorsementBatch) as IQueryable<ActionMemo>;
+                }
+                else
+                {
+                    var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+                    model = db.ActionMemos
+                        .Include(t => t.Member)
+                        .Include(t => t.Dependent)
+                        .Include(t => t.EndorsementBatch)
+                        .Where(t => accountCodes.Contains(t.EndorsementBatch.AccountCode));
+                }
+            }
+
+            model = model.OrderByDescending(t => t.DateIssued);
+
+            return PartialView("_MyActionMemos", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyEndorsementApprovals(int? page, string accountCode)
+        {
+            LegacyAccount legacyAccount;
+            IEnumerable<string> accountCodes;
+
+
+            if (!String.IsNullOrEmpty(accountCode))
+            {
+                if (Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                accountCodes = new List<string>() { accountCode };
+            }
+            else
+            {
+                accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            }
+
+            var model = db.Members.Include(t => t.Dependents).Where(t => t.Status == MembershipStatus.SubmittedToCorporateAdmin);
+
+            if (!User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => accountCodes.Contains(t.AccountCode));
+            }
+
+            model = model
+                .OrderBy(t => t.LastName)
+                .ThenBy(t => t.FirstName)
+                .ThenBy(t => t.MiddleName);
+
+            return PartialView("_MyEndorsementApprovals", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public JsonResult ApproveEndorsementApprovals(string accountCode, Guid guid)
+        {
+            LegacyAccount legacyAccount;
+            var returnValue = new Dictionary<string, object>();
+
+            if (!Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount))
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            var model = db.Members.FirstOrDefault(t => t.Guid == guid);
+            if (model == null || model.AccountCode != accountCode)
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+            model.Status = MembershipStatus.CorporateAdminApproved;
+            model.DateSubmittedToUrg = DateTime.Now;
+            if (String.IsNullOrEmpty(model.UserId))
+            {
+                Helper.CreateUserForMember(db, accountSetting, model);
+            }
+            db.SaveChanges();
+
+            var eb = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId);
+            if (eb != null)
+            {
+                if (db.Members.Any(t => (t.Status == MembershipStatus.New || t.Status == MembershipStatus.Saved) && t.EndorsementBatchId == eb.Id))
+                {
+                }
+                else if (db.Members.Where(t=>t.EndorsementBatchId == eb.Id).All(t => t.Status == MembershipStatus.CorporateAdminApproved))
+                {
+                    eb.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                    db.SaveChanges();
+                }
+            }
+            Emailer.Emailer.SendApproveMembershipCorporateAdminToMemberEmailInstant(model);
+
+            returnValue.Add("Success", true);
+            returnValue.Add("Message", "Successfully approved endorsement.");
+
+            return this.Json(returnValue);
+        }
+
+        public ActionResult GetMyAmendmentApprovals(int? page, string accountCode)
+        {
+            LegacyAccount legacyAccount;
+            IEnumerable<string> accountCodes;
+
+
+            if (!String.IsNullOrEmpty(accountCode))
+            {
+                if (Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                accountCodes = new List<string>() { accountCode };
+            }
+            else
+            {
+                accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            }
+
+            var model = db.Amendments
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Reason)
+                .Where(t => t.Status == RequestStatus.Submitted);
+
+            if (!User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => accountCodes.Contains(t.AccountCode));
+            }
+
+            model = model
+                .OrderByDescending(t => t.RequestDate);
+
+            return PartialView("_MyAmendmentApprovals", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public JsonResult ApproveAmendmentApprovals(string accountCode, Guid guid)
+        {
+            LegacyAccount legacyAccount;
+            var returnValue = new Dictionary<string, object>();
+
+            if (!Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount))
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            var model = db.Amendments.FirstOrDefault(t => t.Guid == guid);
+            if (model == null || model.AccountCode != accountCode)
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            model.Status = RequestStatus.CorporateAdminApproved;
+            var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId);
+            endorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+            db.SaveChanges();
+
+            Emailer.Emailer.SendSubmitAmendmentCorporateAdminEmailInstant(model);
+
+            returnValue.Add("Success", true);
+            returnValue.Add("Message", "Successfully approved amendment.");
+
+            return this.Json(returnValue);
+        }
+
+        public ActionResult GetMyIdReplacementApprovals(int? page, string accountCode)
+        {
+            LegacyAccount legacyAccount;
+            IEnumerable<string> accountCodes;
+
+
+            if (!String.IsNullOrEmpty(accountCode))
+            {
+                if (Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                accountCodes = new List<string>() { accountCode };
+            }
+            else
+            {
+                accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            }
+
+            var model = db.IdReplacements
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Reason)
+                .Where(t => t.Status == RequestStatus.Submitted);
+
+            if (!User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => accountCodes.Contains(t.AccountCode));
+            }
+
+            model = model
+                .OrderByDescending(t => t.RequestDate);
+
+            return PartialView("_MyIdReplacementApprovals", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public JsonResult ApproveIdReplacementApprovals(string accountCode, Guid guid)
+        {
+            LegacyAccount legacyAccount;
+            var returnValue = new Dictionary<string, object>();
+
+            if (!Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount))
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            var model = db.IdReplacements.FirstOrDefault(t => t.Guid == guid);
+            if (model == null || model.AccountCode != accountCode)
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            model.Status = RequestStatus.CorporateAdminApproved;
+            var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId);
+            endorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+            db.SaveChanges();
+
+            Emailer.Emailer.SendSubmitIdReplacementCorporateAdminEmailInstant(model);
+
+            returnValue.Add("Success", true);
+            returnValue.Add("Message", "Successfully approved idReplacement.");
+
+            return this.Json(returnValue);
+        }
+
+        public ActionResult GetMyAdditionalDependentApprovals(int? page, string accountCode)
+        {
+            LegacyAccount legacyAccount;
+            IEnumerable<string> accountCodes;
+
+            if (!String.IsNullOrEmpty(accountCode))
+            {
+                if (Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                accountCodes = new List<string>() { accountCode };
+            }
+            else
+            {
+                accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            }
+
+            var model = db.AdditionalDependents
+                .Include(t => t.Relationship)
+                .Include(t => t.EndorsementBatch)
+                .Where(t => t.Status == RequestStatus.Submitted);
+
+            if (!User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => accountCodes.Contains(t.AccountCode));
+            }
+
+            model = model
+                .OrderByDescending(t => t.ApplicationDate);
+
+            return PartialView("_MyAdditionalDependentApprovals", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public JsonResult ApproveAdditionalDependentApprovals(string accountCode, Guid guid)
+        {
+            LegacyAccount legacyAccount;
+            var returnValue = new Dictionary<string, object>();
+
+            if (!Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount))
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid);
+            if (model == null || model.AccountCode != accountCode)
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            model.Status = RequestStatus.CorporateAdminApproved;
+            var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId);
+            endorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+            db.SaveChanges();
+
+            Emailer.Emailer.SendSubmitAdditionalDependentCorporateAdminEmailInstant(model);
+
+            returnValue.Add("Success", true);
+            returnValue.Add("Message", "Successfully approved additionalDependent.");
+
+            return this.Json(returnValue);
+        }
+
+        public ActionResult GetMyDependentCancellationApprovals(int? page, string accountCode)
+        {
+            LegacyAccount legacyAccount;
+            IEnumerable<string> accountCodes;
+            
+            if (!String.IsNullOrEmpty(accountCode))
+            {
+                if (Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                accountCodes = new List<string>() { accountCode };
+            }
+            else
+            {
+                accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            }
+
+            var model = db.DependentCancellations
+                //.Include(t => t.Dependent.RelationshipClass)
+                .Include(t => t.EndorsementBatch)
+                .Where(t => t.Status == RequestStatus.Submitted);
+
+            if (!User.IsInRole("SysAd"))
+            {
+                model = model.Where(t => accountCodes.Contains(t.AccountCode));
+            }
+
+            model = model
+                .OrderByDescending(t => t.RequestDate);
+
+            return PartialView("_MyDependentCancellationApprovals", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public JsonResult ApproveDependentCancellationApprovals(string accountCode, Guid guid)
+        {
+            LegacyAccount legacyAccount;
+            var returnValue = new Dictionary<string, object>();
+
+            if (!Helper.IsAccountCodeValid(db, legacyDb, User, accountCode, out legacyAccount))
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            var model = db.DependentCancellations.FirstOrDefault(t => t.Guid == guid);
+            if (model == null || model.AccountCode != accountCode)
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Message", "Bad Request");
+                return this.Json(returnValue);
+            }
+
+            model.Status = RequestStatus.CorporateAdminApproved;
+            var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId);
+            endorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+            db.SaveChanges();
+
+            Emailer.Emailer.SendSubmitDependentCancellationCorporateAdminEmailInstant(model);
+
+            returnValue.Add("Success", true);
+            returnValue.Add("Message", "Successfully approved Dependent Cancellation.");
+
+            return this.Json(returnValue);
+        }
+
+        public ActionResult GetMyUtilization(int? page)
+        {
+            var member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = LegacyHelper.GetUtilization(legacyDb, member.AccountCode, member.Code, User.Identity.Name);
+            model = model.OrderByDescending(t => t.AvailmentDate);
+
+            return PartialView("_MyUtilization", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyReimbursement(int? page)
+        {
+            var member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = LegacyHelper.GetReimbursement(legacyDb, member.AccountCode, member.Code);
+            model = model.OrderByDescending(t => t.ReceivedDate);
+
+            return PartialView("_MyReimbursement", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyAmendments(int? page)
+        {
+            var member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Amendments.Where(t => t.MemberCode == member.Code).OrderByDescending(t => t.RequestDate);
+
+            ViewBag.MemberDisplay = true;
+            return PartialView("_MyAmendments", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyIdReplacements(int? page)
+        {
+            var member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.IdReplacements.Where(t => t.MemberCode == member.Code).OrderByDescending(t => t.RequestDate);
+
+            ViewBag.MemberDisplay = true;
+            return PartialView("_MyIdReplacements", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyAdditionalDependents(int? page)
+        {
+            var member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.AdditionalDependents.Include(t => t.Relationship).Where(t => t.MemberCode == member.Code).OrderByDescending(t => t.ApplicationDate);
+
+            ViewBag.MemberDisplay = true;
+            return PartialView("_MyAdditionalDependents", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        public ActionResult GetMyDependentCancellations(int? page)
+        {
+            var member = db.Members.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (member == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.DependentCancellations
+                //.Include(t => t.Dependent.RelationshipClass)
+                .Where(t => t.MemberCode == member.Code).OrderByDescending(t => t.RequestDate);
+
+            ViewBag.MemberDisplay = true;
+            return PartialView("_MyDependentCancellations", model.ToPagedList(page ?? 1, Config.ItemsPerPage));
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public ActionResult GetReimbursementDetailModel(string controlCode, string memberCode, string status)
+        {
+            status = status.ToLower();
+            switch (status)
+            {
+                case "disapproved":
+                    var disapproved = LegacyHelper.GetReimbursementDisapproved(controlCode).FirstOrDefault();
+                    if (disapproved == null){
+                        return null;
+                    }
+                    return PartialView("_ReimbursementDisapproved",disapproved);
+                case "with lacking documents":
+                    var withLackingDocument = LegacyHelper.GetReimbursementWithLackingDocument(controlCode).FirstOrDefault();
+                    if (withLackingDocument == null){
+                        return null;
+                    }
+                    return PartialView("_ReimbursementWithLackingDocument", withLackingDocument);
+                case "waiting for hospital bills":
+                    var waitingForHospitalBills = LegacyHelper.GetReimbursementWaitingForHospitalBill(controlCode).FirstOrDefault();
+                    if (waitingForHospitalBills == null){
+                        return null;
+                    }
+                    return PartialView("_ReimbursementWaitingForHospitalBill",waitingForHospitalBills);
+                default:
+                    var details = LegacyHelper.GetReimbursementDetail(controlCode, memberCode).FirstOrDefault();
+                    if (details == null){
+                        return null;
+                    }
+                    return PartialView("_ReimbursementDetail", details);
+            }
+        }
+
+        #endregion
+    }
+}

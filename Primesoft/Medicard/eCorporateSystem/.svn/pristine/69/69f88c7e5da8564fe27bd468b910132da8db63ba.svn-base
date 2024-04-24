@@ -1,0 +1,45 @@
+﻿@model PagedList.IPagedList<LegacyAccount>
+
+<div id="MyAccountsContainer">
+    @if (Model.PageCount > 1)
+    {
+        @Html.PagedListPager(Model, page => Url.Action("GetMyAccounts", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.ClassicPlusFirstAndLast, new AjaxOptions() { UpdateTargetId = "MyAccountsContainer" }))
+        <br /><br /><br />
+    }
+    <table class="table table-fixed-left">
+        <thead>
+            <tr>
+                <th style="width:50%">
+                    Account Name
+                </th>
+                <th style="width:40%">
+                    Account Code
+                </th>
+                <th style="width:10%">
+                    &nbsp;
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="scrollable-tables" style="margin-top: -3px !important;height: 230px !important;margin-bottom: 0 !important">
+        <table class="table table-custom">
+            <tbody>
+                @foreach (var legacyAccount in Model)
+                {
+                    <tr>
+                        <td style="width:51%">
+                            @legacyAccount.Name
+                        </td>
+                        <td style="width:39%">
+                            @legacyAccount.Code
+                        </td>
+                        <td style="width:10%">
+                            <a href="@(Url.Action("Index", "AccountInformation", new { area = "CorporateAdministrator", accountCode = legacyAccount.Code }))" class="btn btn-primary btn-xs">Manage Account</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

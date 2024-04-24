@@ -1,0 +1,142 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Models;
+using System.Data;
+
+namespace Corelib
+{
+    public class ReportHelper
+    {
+        #region -- Active Members --
+
+        public static IEnumerable<emed_active_membersResult> ActivePrincipalMembers(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_active_members(accountCode).ToList();
+            }
+        }
+
+        public static IEnumerable<emed_active_member_dependentResult> ActiveDependentMembers(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_active_member_dependent(accountCode).ToList();
+            }
+        }
+
+        #endregion
+
+        #region -- Resigned Members --
+
+        public static IEnumerable<emed_resigned_members_principalResult> ResignedMembersPrincipal(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_resigned_members_principal(accountCode).ToList();
+            }
+        }
+
+        public static IEnumerable<emed_resigned_members_dependentResult> ResignedMembersDependent(string accountCode)
+        {
+            using (var db = new StoredProceduresDataContext(Config.LegacyConnectionString))
+            {
+                return db.emed_resigned_members_dependent(accountCode).ToList();
+            }
+        }
+
+        #endregion
+
+        #region -- Utilization Reporting --
+
+        #region -- In-Patient --
+
+        public static IEnumerable<UtilizationInPatient> UtilizationReportInPatient(string accountCode, DateTime startDate, DateTime endDate, string lastName)
+        {
+            using (var db = new UtilizationDataContext())
+            {
+                return UtilizationHelper.GetUtilizationInPatients(db, accountCode, startDate, endDate, lastName);
+            }
+        }
+
+        #endregion
+
+        #region -- Out-Patient --
+
+        public static IEnumerable<UtilizationOutPatient> UtilizationReportOutPatient(string accountCode, DateTime startDate, DateTime endDate, string lastName)
+        {
+            using (var db = new UtilizationDataContext())
+            {
+                return UtilizationHelper.GetUtilizationOutPatients(db, accountCode, startDate, endDate, lastName);
+            }
+        }
+
+        #endregion
+
+        #region -- Medical Services --
+
+        public static IEnumerable<UtilizationMedicalService> UtilizationReportMedicalService(string accountCode, DateTime startDate, DateTime endDate, string lastName)
+        {
+            using (var db = new UtilizationDataContext())
+            {
+                return UtilizationHelper.GetUtilizationMedicalServices(db, accountCode, startDate, endDate, lastName);
+            }
+        }
+
+        #endregion
+
+        #region -- Reimbursement --
+
+        ////public static IEnumerable> UtilizationReportMedicalService(string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        ////{
+        ////    using (var db = new StoredProceduresDataContext(Config.UtilizationConnectionString))
+        ////    {
+        ////        return db.SP_Intra_ActiveAccount_Utilization_ER(accountCode, startDate, endDate, lastName).ToList();
+        ////    }
+        ////}
+
+        #endregion
+
+        #region -- Dental --
+
+        public static IEnumerable<UtilizationDental> UtilizationReportDental(string accountCode, DateTime startDate, DateTime endDate, string lastName)
+        {
+            using (var db = new UtilizationDataContext())
+            {
+                return UtilizationHelper.GetUtilizationDentals(db, accountCode, startDate, endDate, lastName);
+            }
+        }
+
+        #endregion
+
+        #region -- Report by not yet billed (Medical Services)
+
+        ////public static IEnumerable<SP_Intra_ActiveAccount_Utilization_ERResult> UtilizationReportMedicalService(string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        ////{
+        ////    using (var db = new StoredProceduresDataContext(Config.UtilizationConnectionString))
+        ////    {
+        ////        return db.SP_Intra_ActiveAccount_Utilization_ER(accountCode, startDate, endDate, lastName).ToList();
+        ////    }
+        ////}
+
+        #endregion
+
+        #region -- Report by not yet billed (In-Patient)
+
+        ////public static IEnumerable<SP_Intra_ActiveAccount_Utilization_ERResult> UtilizationReportMedicalService(string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        ////{
+        ////    using (var db = new StoredProceduresDataContext(Config.UtilizationConnectionString))
+        ////    {
+        ////        return db.SP_Intra_ActiveAccount_Utilization_ER(accountCode, startDate, endDate, lastName).ToList();
+        ////    }
+        ////}
+
+        #endregion
+
+        #endregion
+
+    }
+}

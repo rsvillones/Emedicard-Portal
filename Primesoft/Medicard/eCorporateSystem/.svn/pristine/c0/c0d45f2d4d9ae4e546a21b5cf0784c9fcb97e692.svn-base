@@ -1,0 +1,42 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">@Model.IdReplacement.EndorsementBatch.CompanyName - REQUEST FOR LOST ID</p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">ID Replacement application has been submitted for your approval:</p>
+<br />
+<table>
+    <thead>
+        <tr>
+            <th>Request Date</th>
+            <th>Request For</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>@Model.IdReplacement.RequestDate</td>
+                <td>@Model.IdReplacement.RequestFor</td>
+                <td>
+                    @if (Model.IdReplacement.RequestFor == Corelib.Enums.RequestFor.Dependent)
+                    {
+                        @Model.IdReplacement.DependentName
+                    }
+                    else
+                    {
+                        @Model.IdReplacement.MemberName
+                    }
+                </td>
+            </tr>
+    </tbody>
+</table>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.IdReplacement.EndorsementBatch.ReferenceNumber)">here</a> to login and view the endorsement.
+</p>
+<br />
+<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />

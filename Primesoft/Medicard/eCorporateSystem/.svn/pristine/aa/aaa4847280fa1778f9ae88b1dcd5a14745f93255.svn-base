@@ -1,0 +1,38 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+
+    string name = "";
+    string code = "";
+    if (Model.Amendment.RequestFor == Corelib.Enums.RequestFor.Dependent)
+    {
+        name = Model.Amendment.DependentName;
+        code = Model.Amendment.DependentCode;
+    }
+    else
+    {
+        name = Model.Amendment.MemberName;
+        code = Model.Amendment.MemberCode;
+    }
+}
+<p class="title">FOR CORRECTION @Model.SubjectAmendment </p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">Amendment application has been declined by MediCard.</p>
+<br />
+<p class="details">Reference Number: @Model.Amendment.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Request Date: @Model.Amendment.RequestDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Effectivity of Amendment: @Model.Amendment.EffectivityDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Request For: @Model.Amendment.RequestFor</p>
+<p class="details">Name: @name</p>
+<p class="details">Member Code: @code</p>
+<p class="details">Data Type: @Model.Amendment.DataType</p>
+<p class="details">Change Data From: @Model.Amendment.ChangeDataFrom</p>
+@if (Model.Amendment.ChangeDataTo != "Please fill up remarks for other reason.")
+{
+    <p class="details">Change Data To: @Model.Amendment.ChangeDataTo</p>
+}
+<p class="details">Reason: @Model.Amendment.Reason.Description</p>
+<p class="details">Remarks: @Model.Amendment.Remarks</p>
+<br />
+<p class="details">MediCard Remarks:</p>
+<p class="details">@Model.Remarks</p>

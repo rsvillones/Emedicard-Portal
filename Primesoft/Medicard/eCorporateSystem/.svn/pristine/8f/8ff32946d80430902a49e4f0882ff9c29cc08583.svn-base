@@ -1,0 +1,138 @@
+﻿@model ActionMemo
+
+@{
+    ViewBag.Title = String.Format("Action Memo for {0}", (Model.Dependent != null ? Model.Dependent.FullName : Model.Member.FullName));
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">@String.Format("Action Memo for {0}", (Model.Dependent != null ? Model.Dependent.FullName : Model.Member.FullName))</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="ActionMemoDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => Model.DateIssued)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => Model.DateIssued, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                        </div>
+                                                        <label class="control-label col-lg-2">&nbsp;</label>
+                                                        <div class="col-lg-4">&nbsp;</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">Member Name</label>
+                                                        <div class="col-lg-4">
+                                                            @if (Model.Dependent != null)
+                                                            {
+                                                                @Html.EditorFor(model => Model.Dependent.FullName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.EditorFor(model => Model.Member.FullName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            }
+                                                        </div>
+
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => Model.MemberType)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => Model.MemberType, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => Model.MemberType)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => Model.Details)</label>
+                                                        <div class="col-lg-10">
+                                                            @Html.TextAreaFor(model => Model.Details, new { @class = "form-control white-readonly", @readonly = "readonly" })
+                                                            @Html.ValidationMessageFor(model => Model.Details)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row space">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.MemberReply)</label>
+                                                        <div class="col-lg-10">
+                                                            @Html.TextAreaFor(model => model.MemberReply, new { @class = "form-control white-readonly", @readonly = "readonly" })
+                                                            @Html.ValidationMessageFor(model => model.MemberReply)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row space">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">&nbsp;</label>
+                                                        <div class="col-lg-10">
+                                                            <table id="DocumentsTable" class="table table-white" style="margin-bottom: 0 !important;">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>
+                                                                            Filename
+                                                                        </th>
+                                                                        <th>
+                                                                            Document Type
+                                                                        </th>
+                                                                        <th>
+                                                                            Date Uploaded
+                                                                        </th>
+                                                                        <th>
+                                                                            &nbsp;
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach (var document in Model.Documents)
+                                                                    {
+                                                                        @Html.Partial("_Document", document)
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[value="Delete"]').parent('td').empty();
+        });
+    </script>
+}
+
+
+
+

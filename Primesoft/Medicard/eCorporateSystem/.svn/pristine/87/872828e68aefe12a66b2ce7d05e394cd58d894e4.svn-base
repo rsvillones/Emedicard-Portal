@@ -1,0 +1,50 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+
+}
+
+<p class="title">APPROVED MEMBERS</p>
+
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">Endorsement was approved with the following details:</p>
+<p class="details">Endorsement Type:@Model.EndorsementBatch.EndorsementType</p>
+@if (Model.EndorsementBatch.EndorsementType != Corelib.Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE)
+{
+    <p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+}
+<p class="details">Number of Records:  @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Control Number: @Model.EndorsementBatch.ControlNumber</p>
+<br />
+@if (Model.EndorsementBatch.EndorsementType != Corelib.Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE)
+{
+    <table border="1" style="border-collapse:collapse;width:70%">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Date of Birth</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Corelib.Models.Member eb in Model.EndorsementBatch.Members)
+            {
+                if (eb.Status == Corelib.Enums.MembershipStatus.Approved)
+                {
+                    <tr>
+                        <td>@eb.LastName</td>
+                        <td>@eb.FirstName</td>
+                        <td>@eb.MiddleName</td>
+                        <td>@eb.DateOfBirth.ToString("MM/dd/yyyy")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <br />
+}
+<p class="details">Thank you for using eMedicard!</p>

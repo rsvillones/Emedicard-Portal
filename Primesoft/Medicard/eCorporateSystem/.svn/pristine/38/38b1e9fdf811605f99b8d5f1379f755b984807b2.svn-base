@@ -1,0 +1,61 @@
+﻿@model LegacyAccount
+@{
+    var legacyAgent = ViewBag.LegacyAgent as LegacyAgent;
+}
+
+@if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountInformation"))
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="panel-title">Account Information</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="form-group">
+                                        <div class="col-lg-3">
+                                            <label>@Html.DisplayNameFor(model => Model.Code):</label>
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <label>@Html.DisplayFor(model => Model.Code)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <label>@Html.DisplayNameFor(model => model.Name):</label>
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <label>@Model.Name&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <label>@Html.DisplayNameFor(model => legacyAgent.FullName):</label>
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <label>@(legacyAgent != null ? legacyAgent.FullName : "")&nbsp;</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <div class="col-lg-4">
+                                            <label>@Html.DisplayNameFor(model => model.LegacySob.EffectivityDate):</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.LegacySob.EffectivityDate)&nbsp;</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label>@Html.DisplayNameFor(model => model.LegacySob.ValidityDate):</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <label>@Html.DisplayFor(model => model.LegacySob.ValidityDate)&nbsp;</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

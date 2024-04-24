@@ -1,0 +1,9 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Request For ID Replacement By Member Sent to URG</p>
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following has submitted their request for id replacement for your approval:</p>
+<p class="details">Member Code: @Model.IdReplacement.MemberCode</p>
+<p class="details">Member Name: @Model.IdReplacement.MemberName</p>

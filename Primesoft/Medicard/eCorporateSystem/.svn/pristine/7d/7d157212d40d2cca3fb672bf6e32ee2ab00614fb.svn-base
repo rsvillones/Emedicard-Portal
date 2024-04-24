@@ -1,0 +1,79 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class BaseAccountController : Controller
+    {
+        #region -- Variable Declarations --
+
+        protected IdentityDataContext db = new IdentityDataContext();
+        protected LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public BaseAccountController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        protected LegacyAccount LegacyAccount { get; set; }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public virtual ActionResult Index(string accountCode)
+        {
+            if (string.IsNullOrEmpty(accountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccounts = Helper.GetLegacyAccounts(null, legacyDb);
+            if (!legacyAccounts.Any(t => t.Code == accountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+            if (legacyAccount == null) return HttpNotFound();
+
+            this.LegacyAccount = legacyAccount;
+            ViewBag.AccountCode = legacyAccount.Code;
+
+            return null;
+        }
+
+        [ChildActionOnly]
+        public ActionResult AccountInformation(string accountCode)
+        {
+            var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+            return PartialView("_AccountInformation", legacyAccount);
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

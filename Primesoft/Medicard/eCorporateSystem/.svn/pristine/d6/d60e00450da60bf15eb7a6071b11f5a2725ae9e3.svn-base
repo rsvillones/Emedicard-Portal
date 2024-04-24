@@ -1,0 +1,44 @@
+﻿@model Member
+
+<div class="row">
+    <div class="col-lg-12">
+
+        <form class="form-horizontal">
+            @foreach (var questionGroup in Model.MedicalHistories.Select(t => t.Question.QuestionGroup).Distinct())
+            {
+                <div class="row form-padding">
+                    <div class="col-lg-12">
+                        <label>@questionGroup.Question</label>
+                        <table class="table" style="margin-bottom: 0 !important;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%">
+                                        &nbsp;
+                                    </th>
+                                    <th style="width: 5%">
+                                        Yes
+                                    </th>
+                                    <th style="width: 5%">
+                                        No
+                                    </th>
+                                    <th style="width: 50%">
+                                        Remarks
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var medicalHistory in Model.MedicalHistories.Where(t => t.Question.QuestionGroupId == questionGroup.Id).OrderBy(t => t.Question.DisplayOrder).ThenBy(t => t.Question.Description))
+                                {
+                                    using (Html.BeginCollectionItem("MedicalHistories"))
+                                    {
+                                        Html.RenderPartial("_MemberQuestion", medicalHistory);
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">@Model.EndorsementBatch.CompanyName - ADDITIONAL MEMBERS</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">The following was enrolled with the following details:</p>
+<br />
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count:  @Model.Count</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.EndorsementBatch.ReferenceNumber)">here</a> and login to receive the endorsement.
+</p>

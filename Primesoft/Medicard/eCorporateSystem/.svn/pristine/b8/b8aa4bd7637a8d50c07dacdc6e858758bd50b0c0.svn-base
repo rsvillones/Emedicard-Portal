@@ -1,0 +1,108 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceProcess;
+using System.Text;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Data.Entity;
+
+namespace WindowsService
+{
+    public partial class MainService : ServiceBase
+    {
+        #region -- Constructor --
+
+        public MainService()
+        {
+            InitializeComponent();
+
+            _timer.Elapsed += QueryActionMemos;
+        }
+
+        #endregion
+
+        #region -- Variable Declarations --
+
+        private Timer _timer = new Timer();
+
+        #endregion
+
+        #region -- Event Handlers --
+
+        protected override void OnStart(string[] args)
+        {
+            _timer.Enabled = true;
+        }
+
+        protected override void OnStop()
+        {
+            _timer.Enabled = false;
+        }
+
+        void QueryActionMemos(object sender, ElapsedEventArgs e)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                db.User = new ApplicationUser() { UserName = "eMedicardWindowsService", Id = Guid.NewGuid().ToString() };
+
+                var actionMemoProcessDate = db.ActionMemoProcessDates.OrderByDescending(t => t.Date).FirstOrDefault();
+                var dateTo = DateTime.Now;
+                IEnumerable<IActionMemo> legacyActionMemos;
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    legacyActionMemos = LegacyHelper.GetLegacyActionMemos(legacyDb, actionMemoProcessDate.Date, dateTo);
+                }
+
+                foreach (var legacyActionMemo in legacyActionMemos)
+                {
+                    var endorsementBatch = new EndorsementBatch()
+                    {
+                        Date = legacyActionMemo.ActionMemoDate.Value,
+                        Deadline = legacyActionMemo.ActionMemoDate.Value.AddDays(3),
+                        Status = EndorsementBatchStatus.New,
+                        EndorsementType = "Action Memo",
+                        EndorsementCount = 1,
+                        AccountCode = legacyActionMemo.AccountCode,
+                        ReferenceNumber = Config.GenerateLegacyMapCode(db)
+                    };
+
+                    var actionMemo = new ActionMemo()
+                    {
+                    };
+                    
+                    actionMemo.EndorsementBatch = endorsementBatch;
+                    db.ActionMemos.Add(actionMemo);
+
+                    break;
+                }
+
+                db.SaveChanges();
+            }
+        }
+        
+        #endregion
+
+        #region -- Functions --
+
+        private void MapProperties(object source, object destination, bool mapId = true, params string[] propertiesToExclude)
+        {
+            foreach (var pi in destination.GetType().GetProperties())
+            {
+                if (!pi.CanWrite || source.GetType().GetProperty(pi.Name) == null || (!mapId && pi.Name == "Id") || (propertiesToExclude != null && propertiesToExclude.Contains(pi.Name)))
+                    continue;
+
+                destination.GetType().GetProperty(pi.Name).SetValue(destination, source.GetType().GetProperty(pi.Name).GetValue(source));
+            }
+        }
+
+        #endregion
+    }
+}

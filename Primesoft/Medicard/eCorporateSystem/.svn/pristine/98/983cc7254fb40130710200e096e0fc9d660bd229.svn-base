@@ -1,0 +1,49 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit New Member By Member Sent to URG</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">The following was enrolled with the following details:</p>
+<br />
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Number or Records:  @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<table border="1" style="border-collapse:collapse;width:70%">
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Birthday</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Corelib.Models.Member member in Model.EndorsementBatch.Members)
+        {
+            if (!(member.DateSubmittedToUrg >= Model.From && member.DateSubmittedToUrg <= Model.To)) { continue; }
+
+            <tr>
+                <td>@member.LastName</td>
+                <td>@member.FirstName</td>
+                <td>@member.MiddleName</td>
+                <td>@member.DateOfBirth.ToString("MM/dd/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.EndorsementBatch.ReferenceNumber)">here</a> and login to receive the endorsement.
+</p>
+<br />
+<p class="details">Disclaimer:</p>
+<br />
+<p class="body">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.
+</p>

@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    [Table("SYS_UWDEPENDENT_ACTIVE_MTBL")]
+    public class LegacyDependentProcess : IMemberProcess
+    {
+        #region -- Properties --
+
+        [Column("PRIN_APPNUM")]
+        public decimal PrinAppNum { get; set; }
+
+        [Key]
+        [Column("DEP_APPNUM")]
+        public decimal? DepAppNum { get; set; }
+
+        [Column("PRIN_CODE")]
+        public string PrincipalCode { get; set; }
+
+        [Column("DEP_CODE")]
+        public string DependentCode { get; set; }
+
+        [Column("MEM_OSTAT_CODE")]
+        public int? StatCode { get; set; }
+
+        [Column("UPDATED_DATE")]
+        public DateTime? UpdatedDate { get; set; }
+
+        [Column("ALTERED_DATE")]
+        public DateTime? AlteredDate { get; set; }
+
+        [Column("DATE_AMEND")]
+        public DateTime? AmendedDate { get; set; }
+
+        [NotMapped]
+        public string PrincipalOrDependent
+        {
+            get { return "Dependent"; }
+        }
+
+        #endregion
+    }
+}

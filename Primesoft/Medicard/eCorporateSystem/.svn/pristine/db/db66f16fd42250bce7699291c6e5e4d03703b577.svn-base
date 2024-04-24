@@ -1,0 +1,53 @@
+﻿using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles="Member")]
+    public class SubmitForApprovalController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        [HttpGet]
+        public ActionResult Index()
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(SubmitForApprovalViewModel model)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                var currentMember = db.Members.FirstOrDefault(t => t.Id == this.Member.Id);
+                var accountSettings = db.AccountSettings.FirstOrDefault(t => t.AccountCode == currentMember.AccountCode) ?? new AccountSetting();
+
+                if (accountSettings.BypassHRManagerApproval)
+                {
+                    currentMember.Status = MembershipStatus.ForProcessing;
+                }
+                else
+                {
+                    currentMember.Status = MembershipStatus.SubmittedToCorporateAdmin;
+                }
+            }
+
+            return View();
+        }
+
+        #endregion
+    }
+}

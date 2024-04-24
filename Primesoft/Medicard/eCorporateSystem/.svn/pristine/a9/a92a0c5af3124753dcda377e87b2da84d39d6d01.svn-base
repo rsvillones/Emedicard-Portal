@@ -1,0 +1,275 @@
+@model PagedList.IPagedList<EndorsementBatch>
+
+@{
+    ViewBag.Title = "Membership Endorsements";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+@Html.Action("AccountInformation", "BaseAccount")
+<div class="row">
+    <div class="col-lg-12">
+        <div id="panel-title">
+            Membership Endorsement
+
+            @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddNewMemberships") || User.IsInRole("CanAddMembershipRenewals") || User.IsInRole("CanAddMembershipCancellations"))))
+            {
+                <div class="btn-group" style="float: right">
+                    <button type="button" class="btn btn-primary action btn-sm btn-margin dropdown-toggle" data-toggle="dropdown">
+                        Actions <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu right-dropdown" role="menu">
+                        @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddNewMemberships")))
+                        {
+                            <li>@Html.ActionLink("Single Endorsement", "SingleEndorsement", new { accountCode = ViewBag.AccountCode })</li>
+                            <li>@Html.ActionLink("Batch Upload", "BatchUpload", new { accountCode = ViewBag.AccountCode })</li>
+                        }
+                        @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddMembershipRenewals")))
+                        {
+                            <li>@Html.ActionLink("Renewal", "Renewal", new { accountCode = ViewBag.AccountCode })</li>
+                        }
+
+                        @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddMembershipCancellations")))
+                        {
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Batch Cancellation", "BatchUploadCancellation", new { accountCode = ViewBag.AccountCode })</li>
+                            <li>@Html.ActionLink("Single Cancellation", "CancelledMember", new { accountCode = ViewBag.AccountCode })</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-6 pageList-margin">
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+                                <p class="pager-padding" style="float: right">
+                                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                                </p>
+                            </div>
+                            @using (Html.BeginForm("Index", "Endorsement", FormMethod.Get, new { accountCode = ViewBag.AccountCode }))
+                            {
+                                <div class="col-lg-2">&nbsp;</div>
+                                <div class="col-lg-4">
+                                    <div class="input-group input-group-search">
+                                        <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="dropdown-toggle btn-dd btn-default search-dropdown" data-toggle="dropdown" tabindex="-1">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="rightMenu dropdown-menu">
+                                                <div class="col-sm-12">
+                                                    <div class="row"><div class="col-sm-12 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Endorsement Type:</label>
+                                                        <div class="col-lg-12">
+                                                            @Html.DropDownList("endorsementType", (IEnumerable<SelectListItem>)ViewBag.EndorsementType, "-- Select --", new { @class = "form-control input-sm" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">File Name:</label>
+                                                        <div class="col-lg-12">
+                                                            <input type="text" value="@ViewBag.FileName" name="fileName" onclick="return false;" class="form-control input-sm" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Date:</label>
+                                                        <div class="col-lg-12">
+                                                            <input type="text" value="@ViewBag.DateSting" name="dateCreated" onclick="return false;" class="form-control last-input" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-grp btn-search"
+                                                tabindex="-1">
+                                            Search
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+
+                        <table class="table table-custom">
+                            <tr>
+                                <th>
+                                    Date
+                                </th>
+                                <th>
+                                    Filename
+                                </th>
+                                <th>
+                                    Endorsement Type
+                                </th>
+                                <th>
+                                    Deadline
+                                </th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(model => item.Date)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.Filename)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.EndorsementType)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.Deadline)
+                                    </td>
+                                    <td>
+
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                                                Actions
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                                                @if (item.Status == Corelib.Enums.EndorsementBatchStatus.New)
+                                                {
+                                                    switch (item.EndorsementType)
+                                                    {
+                                                        case Constants.NEW_ENDORSEMENT_TYPE:
+                                                            switch (item.BatchType)
+                                                            {
+                                                                case "Single":
+                                                                    if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddNewMemberships") || User.IsInRole("CanEditNewMemberships") || User.IsInRole("CanDeleteNewMemberships"))))
+                                                                    {
+                                                                        <li>
+                                                                            <a href="javascript:void(0)" onclick="processEndorsement('@Url.Action("ProcessBatch", "Endorsement", new { area = "CorporateAdministrator", accountCode = ViewBag.AccountCode, guid = item.Guid })')">Process</a>
+                                                                        </li>
+                                                                    }
+                                                                    <li>@Html.ActionLink("View Data", "SingleEndorsement", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                                case "Batch Upload":
+                                                                    if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddNewMemberships") || User.IsInRole("CanEditNewMemberships") || User.IsInRole("CanDeleteNewMemberships"))))
+                                                                    {
+                                                                        <li>
+                                                                            <a href="javascript:void(0)" onclick="processEndorsement('@Url.Action("ProcessBatch", "Endorsement", new { area = "CorporateAdministrator", accountCode = ViewBag.AccountCode, guid = item.Guid })')">Process</a>
+                                                                        </li>
+                                                                    }
+                                                                    <li>@Html.ActionLink("View Data", "BatchUpload", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                            }
+                                                            break;
+                                                        case Constants.RENEWAL_ENDORSEMENT_TYPE:
+                                                            if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddMembershipRenewals") || User.IsInRole("CanEditMembershipRenewals") || User.IsInRole("CanDeleteMembershipRenewals"))))
+                                                            {
+                                                                <li>
+                                                                    <a href="javascript:void(0)" onclick="processEndorsement('@Url.Action("ProcessBatch", "Endorsement", new { area = "CorporateAdministrator", accountCode = ViewBag.AccountCode, guid = item.Guid })')">Process</a>
+                                                                </li>
+                                                            }
+                                                            <li>@Html.ActionLink("View Data", "Renewal", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                            break;
+                                                        case Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE:
+                                                            switch (item.BatchType)
+                                                            {
+                                                                case "Single":
+                                                                    if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddMembershipCancellations")))
+                                                                    {
+                                                                        <li>
+                                                                            <a href="javascript:void(0)" onclick="processEndorsement('@Url.Action("ProcessBatch", "Endorsement", new { area = "CorporateAdministrator", accountCode = ViewBag.AccountCode, guid = item.Guid })')">Process</a>
+                                                                        </li>
+                                                                    }
+                                                                    <li>@Html.ActionLink("View Data", "CancelledMember", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                                case "Batch Upload":
+                                                                    if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddMembershipCancellations")))
+                                                                    {
+                                                                        <li>
+                                                                            <a href="javascript:void(0)" onclick="processEndorsement('@Url.Action("ProcessBatch", "Endorsement", new { area = "CorporateAdministrator", accountCode = ViewBag.AccountCode, guid = item.Guid })')">Process</a>
+                                                                        </li>
+                                                                    }
+                                                                    <li>@Html.ActionLink("View Data", "BatchUploadCancellation", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                            }
+                                                            break;
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    switch (item.EndorsementType)
+                                                    {
+                                                        case Constants.NEW_ENDORSEMENT_TYPE:
+                                                            switch (item.BatchType)
+                                                            {
+                                                                case "Single":
+                                                                    <li>@Html.ActionLink("View Data", "SingleEndorsement", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                                case "Batch Upload":
+                                                                <li>@Html.ActionLink("View Data", "BatchUpload", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                            }
+                                                            break;
+                                                        case Constants.RENEWAL_ENDORSEMENT_TYPE:
+                                                        <li>@Html.ActionLink("View Data", "Renewal", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                            break;
+                                                        case Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE:
+                                                            switch (item.BatchType)
+                                                            {
+                                                                case "Single":
+                                                                    <li>@Html.ActionLink("View Data", "CancelledMember", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                                case "Batch Upload":
+                                                                <li>@Html.ActionLink("View Data", "BatchUploadCancellation", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                                    break;
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+
+                                                @if (item.Status == Corelib.Enums.EndorsementBatchStatus.New || item.Status == Corelib.Enums.EndorsementBatchStatus.ForEmployeeUpdating)
+                                                {
+                                                    <li>@Html.ActionLink("Cancel", "CancelEndorsementBatch", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @onclick = "if(!confirm('Are you sure you want to cancel selected endorsement?')) return false;" })</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+            $('input[name="dateCreated"]').datepicker();
+            $(function () {
+                $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                    event.stopPropagation();
+                });
+            });
+            $(function () {
+                //$(".dropdown-toggle").dropdown('toggle'); // this works
+                $('#click').click(function (e) {
+                    e.stopPropagation();
+                    $(".search-dropdown").dropdown('toggle');// this doesn't
+                });
+            });
+        });
+        function processEndorsement(url) {
+            confirmPrompt('Process Endorsement', 'You are about to process this item<br />Press OK to continue.', url);
+        }
+    </script>
+}
+
+

@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using Corelib.Models;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class MedicalHistoryController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        public override ActionResult Index()
+        {
+            var returnValue = base.Index();
+            if (returnValue != null) return returnValue;
+
+            Helper.IsMedicalHistoryComplete(db, this.Application.Id);
+
+            var model = new MedicalHistoryViewModel()
+            {
+                MedicalHistories = db.MedicalHistories.Include(t => t.Question).Where(t => t.ApplicationId == this.Application.Id).OrderBy(t => t.Question.DisplayOrder).ThenBy(t => t.Question.Description).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Index(MedicalHistoryViewModel model)
+        {
+            var returnValue = base.Index();
+            if (returnValue != null) return returnValue;
+
+            return null;
+
+       }
+        #endregion
+    }
+}

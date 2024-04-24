@@ -1,0 +1,312 @@
+@{
+    ViewBag.Title = "Excel Import";
+}
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Membership Endorsement (Add New Member)</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                        <input type="hidden" value="@ViewBag.AccountCode" id="MembershipAccountCode">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"><a data-toggle="tab" href="#SingleEndoresment">Single Endoresment</a></li>
+                                            <li class=""><a data-toggle="tab" href="#BatchUploadNewApplication">Batch Upload for New Application</a></li>
+                                            <li class=""><a data-toggle="tab" href="#BatchUploadRenewal">Batch Upload for Renewal</a></li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div id="SingleEndoresment" class="tab-pane fade active in">   
+                                            </div>
+                                            <div id="BatchUploadNewApplication" class="tab-pane fade">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                            <h4 class="form-title">Batch Upload for New Application</h4>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-12">
+                                                                            
+                                                                            <input type="file" id="uploadNewApplication" name="uploadNewApplication" style="background-color:blue" />
+                                                                            <input type="hidden" id="uploadStringNewApplication" name="uploadStringNewApplication" />
+                                                                            <label class="inline">Allowed file extension: xlsx.</label>
+                                                                            <div id="ImportBodyNewApplication"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="BatchUploadRenewal" class="tab-pane fade">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                            <h4 class="form-title">Batch Upload Renewal of Application</h4>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-12">
+                                                                            
+                                                                            <input type="file" id="uploadRenewalApplication" name="uploadRenewalApplication" style="background-color:blue" />
+                                                                            <input type="hidden" id="uploadStringRenewalApplication" name="uploadStringRenewalApplication" />
+                                                                            <label class="inline">Allowed file extension: xlsx.</label>
+                                                                            <div id="ImportBodyRenewalApplication"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $("#uploadNewApplication").uploadifive({
+            'method': 'post',
+            'uploadScript': '/CorporateAdministrator/MembershipEndorsement/UploadExcel',
+            'fileObjName': 'fileData',
+            'buttonText': 'Select File',
+            'multi': false,
+            'auto': true,
+            'height': 40,
+            'width': 60,
+            'removeCompleted': true,
+            'onUploadComplete': function (file, data) {
+                var uploadString = data;
+                var type = 'New Application';
+                $('#uploadStringNewApplication').val(uploadString);
+                var accountCode = $('#MembershipAccountCode').val();
+                startThreading(data, type, accountCode);
+            }
+        });
+
+        $("#uploadRenewalApplication").uploadifive({
+            'method': 'post',
+            'uploadScript': '/CorporateAdministrator/MembershipEndorsement/UploadExcel',
+            'fileObjName': 'fileData',
+            'buttonText': 'Select File',
+            'multi': false,
+            'auto': true,
+            'height': 40,
+            'width': 60,
+            'removeCompleted': true,
+            'onError': function () {
+                alert("b");
+            },
+            'onUploadComplete': function (file, data) {
+                var uploadString = data;
+                var type = 'Renewal';
+                $('#uploadStringRenewalApplication').val(uploadString);
+                var accountCode = $('#MembershipAccountCode').val();
+                startThreading(data, type, accountCode);
+            }
+        });
+
+        function startThreading(path, type,accountCode) {
+            var option = {
+                url: '@Url.Action("StartThreading")',
+                type: 'post',
+                data: {
+                    filePath: path,
+                    applicationType: type,
+                    accountCode: accountCode
+                }
+            };
+            $.ajax(option).done(function (htmlValue) {
+                if (type == 'New Application') {
+                    $('#ImportBodyNewApplication').empty();
+                    excelValidation(path, type);
+                }
+                else {
+                    $('#ImportBodyRenewalApplication').empty();
+                    excelValidation(path, type);
+                }
+            });
+        }
+
+        function excelValidation(fileName, type) {
+            var status;
+            var isPaused = false;
+            var interval = setInterval(function () {
+                if (!isPaused) {
+                    var option = {
+                        url: '@Url.Action("ExcelValidation")',
+                        type: 'post',
+                        data: {
+                            fileName: fileName,
+                            applicationType: type
+                        }
+                    };
+                    isPaused = true;
+                    $.ajax(option).done(function (htmlValue) {
+                        var status;
+                        var statusType;
+                        if (htmlValue.status == 1) {
+                            status = "Completed";
+
+                            statusType = "progress-bar-success";
+                        } else {
+                            status = "Loading";
+
+                            statusType = "progress-bar-danger";
+                        }
+                        if (type == 'New Application') {
+                            $('#ImportBodyNewApplication').empty();
+                            $('#ImportBodyNewApplication').append('<div class="col-lg-8 col-centered progress-bar ' + statusType + ' " style="height:20px;width: ' + parseFloat(Math.round((htmlValue.rowCompleted / htmlValue.numberOfItems) * 100).toFixed(2)) + '%"><span class="sr-only"></span></div>');
+                            $('#ImportBodyNewApplication').append('<h5 class="subheader text-center">' + 'Validating Excel File ' + htmlValue.rowCompleted + ' out of ' + htmlValue.numberOfItems + ' items, ' + parseFloat(Math.round((htmlValue.rowCompleted / htmlValue.numberOfItems) * 100).toFixed(2)) + '%' + ' ' + status + ' </h5>');
+
+                        } else {
+                            $('#ImportBodyRenewalApplication').empty();
+                            $('#ImportBodyRenewalApplication').append('<div class="col-lg-8 col-centered progress-bar ' + statusType + ' " style="height:20px;width: ' + parseFloat(Math.round((htmlValue.rowCompleted / htmlValue.numberOfItems) * 100).toFixed(2)) + '%"><span class="sr-only"></span></div>');
+                            $('#ImportBodyRenewalApplication').append('<h5 class="subheader text-center">' + 'Validating Excel File ' + htmlValue.rowCompleted + ' out of ' + htmlValue.numberOfItems + ' items, ' + parseFloat(Math.round((htmlValue.rowCompleted / htmlValue.numberOfItems) * 100).toFixed(2)) + '%' + ' ' + status + ' </h5>');
+
+                        }
+                        status = htmlValue.status;
+                        isPaused = false;
+                        if (status == 1) {
+                            clearInterval(interval);
+                            importComfirmation(fileName, type);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+
+        function importComfirmation(path, type) {
+            var option = {
+                url: '@Url.Action("ImportComfirmation")',
+                type: 'post',
+                data: {
+                    filePath: path,
+                    applicationType: type
+                }
+            };
+            $.ajax(option).done(function (htmlValue) {
+                if (type == 'New Application') {
+                    $('#ImportBodyNewApplication').empty();
+                    window.setTimeout(
+                        function () {
+                            $('#ImportBodyNewApplication').html(htmlValue); //happens 3 secs later\
+                            showAllErrors($('#ShowAllError'), $('#ApplicationVerificationBody'));
+                            $('#ShowAllError').click(function () {
+                                showAllErrors($(this), $('#ApplicationVerificationBody'));
+                            });
+                           scrollableTable(); generateDatePicker('input[name*="dateOfBirth"],input[name*="dateHired"],input[name*="effectivityDate"],input[name*="validityDate"]');
+                        },
+                        3000
+                    );
+                    $('#filePath').val(path);
+
+                } else {
+                    $('#ImportBodyRenewalApplication').empty();
+                    window.setTimeout(
+                        function () {
+                            $('#ImportBodyRenewalApplication').html(htmlValue); //happens 3 secs later\
+                            showAllErrors($('#ShowRenewalError'), $('#RenewalVerificationBody'));
+                            $('#ShowRenewalError').click(function () {
+                                showAllErrors($(this), $('#RenewalVerificationBody'));
+                            });
+                           scrollableTable(); generateDatePicker('input[name*="dateOfBirth"],input[name*="dateHired"],input[name*="effectivityDate"],input[name*="validityDate"]');
+                        },
+                        3000
+                    );
+                    $('#filePath').val(path);
+                }
+
+            });
+        }
+
+        function showAllErrors(selector, body) {
+            if (selector.is(':checked')) {
+                body.children('tr').each(function () {
+                    $(this).hide();
+                });
+                $('.withError').show();
+            } else {
+                body.children('tr').each(function () {
+                    $(this).show();
+                });
+            }
+        }
+
+        function saveApplication() {
+            var option = {
+                type: "POST",
+                url: '@Url.Action("UploadApplication")',
+                traditional: true,
+                data: $('#uploadNewAppSerialize').serializeArray()
+            };
+            $.ajax(option).done(function (data) {
+                $('#NewApplicationMainContent').empty();
+                $('#NewApplicationMainContent').html(data);
+                showAllErrors($('#ShowAllError'), $('#ApplicationVerificationBody'));
+                $('#ShowAllError').click(function () {
+                    showAllErrors($(this), $('#ApplicationVerificationBody'));
+                });
+                generateDatePicker('input[name*="dateOfBirth"],input[name*="dateHired"],input[name*="effectivityDate"],input[name*="validityDate"]');
+                scrollableTable();
+            });
+        }
+
+        function saveRenewal() {
+            var option = {
+                type: "POST",
+                url: '@Url.Action("UploadRenewal")',
+                traditional: true,
+                data: $('#uploadRenewal').serializeArray()
+            };
+            $.ajax(option).done(function (data) {
+                $('#RenewalMainContent').empty();
+                $('#RenewalMainContent').html(data);
+                showAllErrors($('#ShowRenewalError'), $('#RenewalVerificationBody'));
+                $('#ShowRenewalError').click(function () {
+                    showAllErrors($(this), $('#RenewalVerificationBody'));
+                });
+                generateDatePicker('input[name*="dateOfBirth"],input[name*="dateHired"],input[name*="effectivityDate"],input[name*="validityDate"]');
+            scrollableTable();
+            });
+        }
+        function generateDatePicker(selector) {
+            $(selector).datepicker();
+        }
+        
+        function scrollableTable()
+                {
+                    setTableBody();
+                    $(window).resize(setTableBody);
+                    $(".table-body").scroll(function ()
+                    {
+                        
+                        //$(".table-header").offset({ left: -1*this.scrollLeft });
+                        //var position = $(".table-header").position();
+                        $(".table-header").animate({
+                            left: -1*this.scrollLeft        
+                        },0)
+                        
+                        //var position = $(".table-header").position();
+                        //$(".table-header").offset({ left: -1*this.scrollLeft });
+                        
+                        //var offsetpos = $(".table-header").offsetParent();
+                       // $(".table-header").offset({ left: -1*this.scrollLeft });
+                        //$(".table-header").html( 
+                        // offsetpos.offset({left: -1*this.scrollLeft }) );
+                    });
+                }
+
+                function setTableBody()
+                {
+                    $(".table-body").height($(".inner-container").height() - $(".table-header").height());
+                }
+            </script>
+        }

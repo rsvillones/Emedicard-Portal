@@ -1,0 +1,113 @@
+﻿using Corelib.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib
+{
+    public class IdentityDataContext : IdentityDbContext<ApplicationUser>
+    {
+        #region -- Constructor --
+
+        public IdentityDataContext()
+            : base("Medicard.eCorporateSystem", throwIfV1Schema: false)
+        {
+        }
+        
+        #endregion
+
+        #region -- DbSets --
+
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<AccountOfficer> AccountOfficers { get; set; }
+
+        public DbSet<CorporateAdmin> CorporateAdmins { get; set; }
+
+        public DbSet<UploadLog> UploadLogs { get; set; }
+
+        public DbSet<Application> Applications { get; set; }
+
+        public DbSet<ApplicationVerification> ApplicationVerifications { get; set; }
+
+        public DbSet<ExcelError> ExcelErrors { get; set; }
+
+        public DbSet<Account> Accounts { get; set; }
+
+        #endregion
+
+        #region -- Overrides --
+
+        public override int SaveChanges()
+        {
+            ProcessChanges();
+
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public override Task<int> SaveChangesAsync()
+        {
+            ProcessChanges();
+
+            try
+            {
+                return base.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public static IdentityDataContext Create()
+        {
+            return new IdentityDataContext();
+        }
+
+        private void ProcessChanges()
+        {
+            foreach (var entry in this.ChangeTracker.Entries().Where(t => t.Entity is BaseModel && (t.State == EntityState.Added || t.State == EntityState.Modified || t.State == EntityState.Deleted)))
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        ((BaseModel)entry.Entity).CrBy = Config.CurrentUser;
+                        ((BaseModel)entry.Entity).CrDate = DateTime.Now;
+                        break;
+                    case EntityState.Modified:
+                        ((BaseModel)entry.Entity).ModBy = Config.CurrentUser;
+                        ((BaseModel)entry.Entity).ModDate = DateTime.Now;
+                        break;
+                    case EntityState.Deleted:
+                        if(!(entry.Entity is Account))
+                        {
+                            entry.State = EntityState.Modified;
+                            ((BaseModel)entry.Entity).Deleted = true;
+                            ((BaseModel)entry.Entity).ModBy = Config.CurrentUser;
+                            ((BaseModel)entry.Entity).ModDate = DateTime.Now;
+                        }
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
+    }
+}

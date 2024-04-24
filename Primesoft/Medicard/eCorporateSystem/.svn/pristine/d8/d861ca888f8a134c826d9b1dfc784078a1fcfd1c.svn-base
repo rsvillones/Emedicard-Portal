@@ -1,0 +1,109 @@
+﻿@model Amendment
+@{
+    ViewBag.Title = "_Amendment";
+}
+
+@using (Html.BeginForm())
+{    
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Member Request</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="PersonalDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title">Amendment</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.EffectivityDate)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = new { } })
+                                                                @Html.ValidationMessageFor(model => model.EffectivityDate)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.RequestFor)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.DropDownListFor(model => model.RequestFor, new SelectList(Enum.GetValues(typeof(Corelib.Enums.RequestFor)), Model.RequestFor), new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.RequestFor)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DataType)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.DropDownListFor(model => model.DataType, new SelectList(Enum.GetValues(typeof(Corelib.Enums.AmendmentDataType)), Model.DataType), new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.RequestFor)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.ChangeDataFrom)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.EditorFor(model => model.ChangeDataFrom, new { htmlAttributes = new { } })
+                                                                @Html.ValidationMessageFor(model => model.ChangeDataFrom)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.ChangeDataTo)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.EditorFor(model => model.ChangeDataTo, new { htmlAttributes = new { } })
+                                                                @Html.ValidationMessageFor(model => model.ChangeDataTo)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.ReasonId)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.EditorFor(model => model.ReasonId, new { htmlAttributes = new { } })
+                                                                @Html.ValidationMessageFor(model => model.ReasonId)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DependentId)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.EditorFor(model => model.DependentId, new { htmlAttributes = new { } })
+                                                                @Html.ValidationMessageFor(model => model.DependentId)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Remarks)</label>
+                                                            <div class="col-lg-8">
+                                                                @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { } })
+                                                                @Html.ValidationMessageFor(model => model.Remarks)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+

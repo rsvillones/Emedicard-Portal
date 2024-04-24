@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Data;
+using System.Data.Entity;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewAccountSettings, CanEditAccountSettings")]
+    public class AccountSettingsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+        
+        #region -- Action Results --
+        
+        [Authorize(Roles = "SysAd, CanViewAccountSettings")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var legacyAccounts = Helper.GetLegacyAccounts(db, legacyDb);
+            var listAccountSettings = db.AccountSettings.Where(t=>!t.Deleted).ToList();
+            foreach (var legacyAccount in legacyAccounts){
+                if (!listAccountSettings.Any(t => t.AccountCode == legacyAccount.Code)){
+                    var accountSetting = new AccountSetting(){
+                        AccountCode = legacyAccount.Code
+                    };
+                    listAccountSettings.Add(accountSetting);
+                }
+            }
+            var accountSettings = AccountSettings(listAccountSettings);
+
+            if (!string.IsNullOrEmpty(currentFilter)){
+                accountSettings = accountSettings.Where(t => t.AccountCode.Contains(currentFilter));
+            }
+
+            Helper.SetSortParameters<AccountSetting>(this, ref accountSettings, sortOrder, currentFilter, new SortParameter() { PropertyName = "AccountCode" }, new List<SortParameter>() {});
+
+            return View(accountSettings.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private IQueryable<AccountSetting> AccountSettings(List<AccountSetting> accountSettings)
+        {
+            return accountSettings.AsQueryable();
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

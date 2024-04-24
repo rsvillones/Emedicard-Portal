@@ -1,0 +1,1009 @@
+namespace Corelib.Migrations.IdentityDataContext
+{
+    using Corelib.Models;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
+    using System.Data.SqlClient;
+    using System.Linq;
+
+    internal sealed class Configuration : DbMigrationsConfiguration<Corelib.IdentityDataContext>
+    {
+        #region -- Constructor --
+
+        public Configuration()
+        {
+            AutomaticMigrationsEnabled = true;
+            MigrationsDirectory = @"Migrations\IdentityDataContext";
+        }
+
+        #endregion
+
+        #region -- Seed Method --
+
+        protected override void Seed(Corelib.IdentityDataContext context)
+        {
+            //using (var db = new Corelib.IdentityDataContext())
+            //{
+            //    using (var connection = new SqlConnection(context.Database.Connection.ConnectionString))
+            //    {
+            //        using (var command = new SqlCommand())
+            //        {
+            //            command.Connection = connection;
+            //            command.CommandType = System.Data.CommandType.Text;
+            //            connection.Open();
+            //            var sql = "";
+            //            sql = @"IF EXISTS(SELECT * FROM sys.servers WHERE NAME = N'LEGACY') EXEC master.dbo.sp_dropserver @server=N'LEGACY', @droplogins='droplogins'";
+            //            command.CommandText = sql;
+            //            command.ExecuteNonQuery();
+            //            sql = @"EXEC master.dbo.sp_addlinkedserver @server = N'LEGACY', @srvproduct=N'sql_server', @provider=N'SQLNCLI11', @datasrc=N'(local)'";
+            //            command.CommandText = sql;
+            //            command.ExecuteNonQuery();
+            //            sql = @"EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname=N'LEGACY',@useself=N'False',@locallogin=NULL,@rmtuser=N'sa',@rmtpassword='P@ssw0rd'";
+            //            command.CommandText = sql;
+            //            command.ExecuteNonQuery();
+            //        }
+            //    }
+            //}
+
+            AddRole(context, "SysAd");
+            AddRole(context, "Member");
+
+            // Groups
+            AddRole(context, "CanViewGroups");
+            AddRole(context, "CanAddGroups");
+            AddRole(context, "CanEditGroups");
+            AddRole(context, "CanDeleteGroups");
+
+            // Users
+            AddRole(context, "CanViewUsers");
+            AddRole(context, "CanAddUsers");
+            AddRole(context, "CanEditUsers");
+            AddRole(context, "CanDeleteUsers");
+
+            // QuestionGroups
+            AddRole(context, "CanViewQuestionGroups");
+            AddRole(context, "CanAddQuestionGroups");
+            AddRole(context, "CanEditQuestionGroups");
+            AddRole(context, "CanDeleteQuestionGroups");
+
+            // Questions
+            AddRole(context, "CanViewQuestions");
+            AddRole(context, "CanAddQuestions");
+            AddRole(context, "CanEditQuestions");
+            AddRole(context, "CanDeleteQuestions");
+
+            // AccountSettings
+            AddRole(context, "CanViewAccountSettings");
+            AddRole(context, "CanEditAccountSettingsUseEmailAsLogin");
+            AddRole(context, "CanEditAccountSettingsUseRandomGeneratedPassword");
+            AddRole(context, "CanEditAccountSettingsBypassCorporateAdminApproval");
+            AddRole(context, "CanEditAccountSettingsBypassMedicalHistory");
+            AddRole(context, "CanEditAccountSettingsUrgSetting");
+            AddRole(context, "CanEditAccountSettingsDomainEmail");
+            AddRole(context, "CanEditAccountSettingsDirectlySubmitToUrg");
+            AddRole(context, "CanEditAccountSettingsActionMemoDueDateDays");
+            AddRole(context, "CanEditAccountSettingsShowActionMemoDueDate");
+
+            // DocumentTypes
+            AddRole(context, "CanViewDocumentTypes");
+            AddRole(context, "CanAddDocumentTypes");
+            AddRole(context, "CanEditDocumentTypes");
+            AddRole(context, "CanDeleteDocumentTypes");
+
+            // Reasons
+            AddRole(context, "CanViewReasons");
+            AddRole(context, "CanAddReasons");
+            AddRole(context, "CanEditReasons");
+            AddRole(context, "CanDeleteReasons");
+
+            // MembershipEndorsementApprovals
+            AddRole(context, "CanViewReceivingEntries");
+
+            // Reasons
+            AddRole(context, "CanViewActionMemos");
+
+            // eCorporate Services
+            AddRole(context, "CanViewAccountManager");
+            AddRole(context, "CanViewAccountInformation");
+            AddRole(context, "CanViewBenefitsAndExclusions");
+            AddRole(context, "CanViewUtilizationReporting");
+            AddRole(context, "CanViewActiveMembers");
+            AddRole(context, "CanViewResignedMembers");
+            AddRole(context, "CanViewHospitalizationAndOutPatientServices");
+            AddRole(context, "CanViewPreventiveHealthcareServices");
+            AddRole(context, "CanViewEmergencyCareServices");
+            AddRole(context, "CanViewMemberFinancialAssistance");
+            AddRole(context, "CanViewDentalCareServices");
+            AddRole(context, "CanViewPreExistingCondition");
+            AddRole(context, "CanViewPointOfService");
+            AddRole(context, "CanViewMaternity");
+            AddRole(context, "CanViewExecutiveCheckUp");
+            AddRole(context, "CanViewExclusions");
+            AddRole(context, "CanViewDreadedDisease");
+            AddRole(context, "CanViewMembershipEligibility");
+
+            AddRole(context, "CanViewMembershipEndorsements");
+            AddRole(context, "CanViewEndorsementApprovals");
+            AddRole(context, "CanViewEndorsementListings");
+            AddRole(context, "CanViewEndorsementHistories");
+            AddRole(context, "CanViewProfileManagement");
+            AddRole(context, "CanViewRequestManagement");
+            AddRole(context, "CanViewApplicationManagement");
+
+            #region -- Utilization Report Exceptions --
+
+            // Utilization Report Exception For User
+            AddRole(context, "CanViewUtilizationReportExceptionForUser");
+            AddRole(context, "CanAddUtilizationReportExceptionForUser");
+            AddRole(context, "CanEditUtilizationReportExceptionForUser");
+            AddRole(context, "CanDeleteUtilizationReportExceptionForUser");
+
+            // Utilization Report Exception For Plan
+            AddRole(context, "CanViewUtilizationReportExceptionForPlan");
+            AddRole(context, "CanAddUtilizationReportExceptionForPlan");
+            AddRole(context, "CanEditUtilizationReportExceptionForPlan");
+            AddRole(context, "CanDeleteUtilizationReportExceptionForPlan");
+
+            #endregion
+
+            #region -- Request Management --
+
+            //Amendments
+            AddRole(context, "CanViewAmendments");
+            AddRole(context, "CanAddAmendments");
+            AddRole(context, "CanEditAmendments");
+            AddRole(context, "CanDeleteAmendments");
+
+            //IdReplacements
+            AddRole(context, "CanViewIdReplacements");
+            AddRole(context, "CanAddIdReplacements");
+            AddRole(context, "CanEditIdReplacements");
+            AddRole(context, "CanDeleteIdReplacements");
+
+            #endregion
+
+            #region -- Application Management --
+
+            //AdditionalDependents
+            AddRole(context, "CanViewAdditionalDependents");
+            AddRole(context, "CanAddAdditionalDependents");
+            AddRole(context, "CanEditAdditionalDependents");
+            AddRole(context, "CanDeleteAdditionalDependents");
+
+            //DependentCancellations
+            AddRole(context, "CanViewDependentCancellations");
+            AddRole(context, "CanAddDependentCancellations");
+            AddRole(context, "CanEditDependentCancellations");
+            AddRole(context, "CanDeleteDependentCancellations");
+
+            #endregion
+
+            #region -- Action Memo Management --
+
+            AddRole(context, "CanViewActionMemoManagement");
+            AddRole(context, "CanEditActionMemoManagement");
+
+            #endregion
+
+            #region -- Membership Endorsement --
+
+            //MembershipCancellations
+            AddRole(context, "CanViewMembershipCancellations");
+            AddRole(context, "CanAddMembershipCancellations");
+            AddRole(context, "CanEditMembershipCancellations");
+            AddRole(context, "CanDeleteMembershipCancellations");
+
+            //MembershipRenewals
+            AddRole(context, "CanViewMembershipRenewals");
+            AddRole(context, "CanAddMembershipRenewals");
+            AddRole(context, "CanEditMembershipRenewals");
+            AddRole(context, "CanDeleteMembershipRenewals");
+
+            //NewMemberships
+            AddRole(context, "CanViewNewMemberships");
+            AddRole(context, "CanAddNewMemberships");
+            AddRole(context, "CanEditNewMemberships");
+            AddRole(context, "CanDeleteNewMemberships");
+
+            #endregion
+
+            //Special Functions
+            AddRole(context, "ViewOnlyCreatedUsers");
+            AddRole(context, "ViewOnlyCreatedGroups");
+            AddRole(context, "CanCreateUserFromLegacySystem");
+            AddRole(context, "CanAssignAllAccounts");
+            AddRole(context, "CanOnlyAssignAssignedPermissions");
+
+            AddGroup(context, "Administrator", "SysAd");
+
+            AddUser(context, "Administrator", "admin", "edcarandang@primesoft.com", "+639175321763", "SysAd");
+
+            GenerateStoredProcedures(context);
+            GenerateTriggers(context);
+
+            //var questionGroup = new QuestionGroup()
+            //{
+            //    Question = "Have you ever been treated for or ever had any known indication of:",
+            //    DisplayOrder = 1
+            //};
+
+            //context.Questions.AddOrUpdate(t => t.Description, new Question[]
+            //{
+            //    new Question(){ DisplayOrder = 1, Description = "a. Disorder of eyes, ears, nose or throat?", QuestionGroup = questionGroup },
+            //    new Question(){ DisplayOrder = 2, Description = "b. Dizziness, fainting, convulsions, headache, speech defect, paralysis or stroke, mental or nervous disorder?", QuestionGroup = questionGroup }
+            //});
+
+            context.DocumentTypes.AddOrUpdate(t => t.Name, new DocumentType[]
+            {
+                new DocumentType(){ DisplayOrder = 1, Name = "Birth Certificate",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 2, Name = "Marriage Contract",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 3, Name = "Identification Card",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 4, Name = "Result of Medical Exam",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 5, Name = "Medical Certification",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 6, Name = "Death Certificate",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 7, Name = "Annulment Papers",Classification = Enums.DocumentClassification.Amendment },
+                new DocumentType(){ DisplayOrder = 8, Name = "Member List",Classification = Enums.DocumentClassification.Amendment },
+            });
+
+            context.Reasons.AddOrUpdate(t => t.Description, new Reason[]
+            {
+                new Reason(){ DisplayOrder = 1, Description = "Annulment" },
+                new Reason(){ DisplayOrder = 2, Description = "Newly Wed" },
+                new Reason(){ DisplayOrder = 3, Description = "Promotion" },
+                new Reason(){ DisplayOrder = 4, Description = "Death" },
+                new Reason(){ DisplayOrder = 5, Description = "Transfer Location" },
+                new Reason(){ DisplayOrder = 6, Description = "Wrong Entry" }
+            });
+
+            context.Relationships.AddOrUpdate(t => t.Code, new Relationship[]
+            {
+                new Relationship(){ Code = "DEP0000002", Description = "AUNT", Gender = 2},
+                new Relationship(){ Code = "DEP0000003", Description = "BROTHER", Gender = 1},
+                new Relationship(){ Code = "DEP0000004", Description = "BROTHER-IN-LAW", Gender = 1},
+                new Relationship(){ Code = "DEP0000007", Description = "COUSIN", Gender = 0},
+                new Relationship(){ Code = "DEP0000008", Description = "DAUGHTER", Gender = 2},
+                new Relationship(){ Code = "DEP0000009", Description = "DAUGHTER-IN-LAW", Gender = 2},
+                new Relationship(){ Code = "DEP0000010", Description = "EMPLOYEE", Gender = 0},
+                new Relationship(){ Code = "DEP0000011", Description = "FATHER", Gender = 1},
+                new Relationship(){ Code = "DEP0000013", Description = "FIANCE", Gender = 1},
+                new Relationship(){ Code = "DEP0000016", Description = "FATHER-IN-LAW", Gender = 1},
+                new Relationship(){ Code = "DEP0000017", Description = "GRANDCHILD", Gender = 0},
+                new Relationship(){ Code = "DEP0000018", Description = "GRANDDAUGHTER", Gender = 2},
+                new Relationship(){ Code = "DEP0000021", Description = "GUARDIAN", Gender = 0},
+                new Relationship(){ Code = "DEP0000022", Description = "GRANDSON", Gender = 1},
+                new Relationship(){ Code = "DEP0000023", Description = "HALF-BROTHER", Gender = 1},
+                new Relationship(){ Code = "DEP0000025", Description = "HALF-SISTER", Gender = 2},
+                new Relationship(){ Code = "DEP0000026", Description = "HUSBAND", Gender = 1},
+                new Relationship(){ Code = "DEP0000028", Description = "MOTHER", Gender = 2},
+                new Relationship(){ Code = "DEP0000029", Description = "MOTHER-IN-LAW", Gender = 2},
+                new Relationship(){ Code = "DEP0000030", Description = "NEPHEW", Gender = 1},
+                new Relationship(){ Code = "DEP0000031", Description = "NIECE", Gender = 2},
+                new Relationship(){ Code = "DEP0000033", Description = "SISTER-IN-LAW", Gender = 2},
+                new Relationship(){ Code = "DEP0000034", Description = "SISTER", Gender = 2},
+                new Relationship(){ Code = "DEP0000036", Description = "SON", Gender = 1},
+                new Relationship(){ Code = "DEP0000038", Description = "SPOUSE", Gender = 0},
+                new Relationship(){ Code = "DEP0000040", Description = "STEPDAUGHTER", Gender = 2},
+                new Relationship(){ Code = "DEP0000041", Description = "STEPFATHER", Gender = 1},
+                new Relationship(){ Code = "DEP0000043", Description = "STEPSON", Gender = 1},
+                new Relationship(){ Code = "DEP0000044", Description = "UNCLE", Gender = 1},
+                new Relationship(){ Code = "DEP0000047", Description = "WIFE", Gender = 2},
+                new Relationship(){ Code = "DEP0000057", Description = "COMMON LAW-WIFE", Gender = 2},
+                new Relationship(){ Code = "DEP0000060", Description = "ADOPTED SON", Gender = 1},
+                new Relationship(){ Code = "DEP0000061", Description = "ADOPTED CHILD", Gender = 0},
+                new Relationship(){ Code = "DEP0000138", Description = "EXT. DEPENDENT", Gender = 0},
+                new Relationship(){ Code = "DEP0000164", Description = "ADOPTED DAUGHTER", Gender = 1},
+                new Relationship(){ Code = "DEP0000178", Description = "HOUSEHOLD HELPERS (NANNY/MAID/", Gender = 0},
+                new Relationship(){ Code = "DEP0000214", Description = "DOMESTIC PARTNER", Gender = 0}
+            });
+
+            context.ActionMemoProcessDates.RemoveRange(context.ActionMemoProcessDates);
+            context.ActionMemoProcessDates.Add(new ActionMemoProcessDate() { Date = new DateTime(2014, 09, 10) });
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private void AddRole(Corelib.IdentityDataContext context, string rolename)
+        {
+            if (!context.Roles.Any(t => t.Name == rolename))
+            {
+                var store = new RoleStore<ApplicationRole>(context);
+                var manager = new RoleManager<ApplicationRole>(store);
+                var role = new ApplicationRole { Name = rolename };
+
+                manager.Create(role);
+            }
+        }
+
+        private void AddUser(Corelib.IdentityDataContext context, string name, string username, string email, string phone, params string[] roles)
+        {
+            if (!context.Users.Any(t => t.UserName == username))
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                var user = new ApplicationUser
+                {
+                    Name = name,
+                    UserName = username,
+                    Email = email,
+                    PhoneNumber = phone
+                };
+
+                manager.Create(user, "P@ssw0rd");
+
+                foreach (var role in roles)
+                {
+                    AddRole(context, role);
+                    manager.AddToRole(user.Id, role);
+                }
+            }
+        }
+
+        private void AddGroup(Corelib.IdentityDataContext context, string name, params string[] roles)
+        {
+
+            var store = new RoleStore<ApplicationRole>(context);
+            var manager = new RoleManager<ApplicationRole>(store);
+
+            var groupRoles = new Collection<ApplicationRole>();
+            foreach (var role in roles)
+            {
+                var groupRole = manager.FindByName(role);
+                if (groupRole != null)
+                {
+                    groupRoles.Add(groupRole);
+                }
+            }
+
+            if (!context.Groups.Any(t => t.Name == name))
+            {
+                context.Groups.Add(new Group()
+                {
+                    Name = name,
+                    Roles = groupRoles,
+                    IsSystemGroup = true
+                });
+            }
+
+        }
+
+        private void GenerateStoredProcedures(Corelib.IdentityDataContext context)
+        {
+            string sql;
+
+            sql = @"IF OBJECT_ID('SpCore_ProcessMedicalHistoryQuestions') IS NOT NULL DROP PROCEDURE SpCore_ProcessMedicalHistoryQuestions";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE PROCEDURE [dbo].[SpCore_ProcessMedicalHistoryQuestions] (
+	                @MemberId INT
+                )
+                AS
+                BEGIN
+	                SET NOCOUNT ON
+
+	                INSERT INTO MedicalHistories (
+		                QuestionId, 
+		                MemberId, 
+		                Guid, 
+		                Deleted
+	                )
+	                SELECT 
+		                Id, 
+		                @MemberId, 
+		                NEWID(), 
+		                0 
+	                FROM 
+		                Questions 
+	                WHERE 
+		                Id NOT IN (
+			                SELECT 
+				                QuestionId 
+			                FROM 
+				                MedicalHistories 
+			                WHERE 
+				                MemberId = @MemberId
+		                )
+
+	                DELETE FROM MedicalHistories WHERE QuestionId NOT IN (SELECT Id from Questions WHERE Deleted = 0) AND MemberId = @MemberId
+
+	                SET NOCOUNT OFF
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('SpCore_ProcessDependentMedicalHistoryQuestions') IS NOT NULL DROP PROCEDURE SpCore_ProcessDependentMedicalHistoryQuestions";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE PROCEDURE [dbo].[SpCore_ProcessDependentMedicalHistoryQuestions] (
+	                @DependentId INT
+                )
+                AS
+                BEGIN
+	                SET NOCOUNT ON
+
+	                INSERT INTO DependentMedicalHistories (
+		                QuestionId, 
+		                DependentId, 
+		                Guid, 
+		                Deleted
+	                )
+	                SELECT 
+		                Id, 
+		                @DependentId, 
+		                NEWID(), 
+		                0 
+	                FROM 
+		                Questions 
+	                WHERE 
+		                Id NOT IN (
+			                SELECT 
+				                QuestionId 
+			                FROM 
+				                DependentMedicalHistories 
+			                WHERE 
+				                DependentId = @DependentId
+		                )
+
+	                DELETE FROM DependentMedicalHistories WHERE QuestionId NOT IN (SELECT Id from Questions WHERE Deleted = 0) AND DependentId = @DependentId
+
+	                SET NOCOUNT OFF
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('SpCore_SaveUploadedEndorsementBatch') IS NOT NULL DROP PROCEDURE SpCore_SaveUploadedEndorsementBatch";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+				CREATE PROCEDURE SpCore_SaveUploadedEndorsementBatch (
+					@EndorsementBatchGuid UNIQUEIDENTIFIER
+				)
+				AS
+				BEGIN
+					DELETE FROM Members WHERE EndorsementBatchId IN (SELECT Id FROM EndorsementBatches WHERE Guid = @EndorsementBatchGuid)
+
+					INSERT INTO Members (
+						EmailAddress,
+						EmployeeNumber,
+						Area,
+						CostCenter,
+						LastName,
+						FirstName,
+						MiddleName,
+                        Designation,
+                        Level,
+						Suffix,
+						Gender,
+						DateOfBirth,
+						CivilStatus,
+						EffectivityDate,
+						ValidityDate,
+						DateHired,
+						AppliedPlan,
+						AllowedPlans,
+						Dependent,
+						DependentAppliedPlan,
+						AllowedDependentPlans,
+						EndorsementBatchId,
+						AccountCode,
+						Row,
+						AppliedPlanFromExcel,
+						AllowedPlansFromExcel,
+						DependentAppliedPlanFromExcel,
+						AllowedDependentPlansFromExcel,
+						Status,
+						Guid,
+						Deleted,
+                        EndorsementType,
+                        DependentStringValue
+					)
+					SELECT
+						EmailAddress,
+						EmployeeNumber,
+						Area,
+						CostCenter,
+						LastName,
+						FirstName,
+						MiddleName,
+                        Designation,
+                        Level,
+						Suffix,
+						Gender,
+						DateOfBirth,
+						CivilStatus,
+						EffectivityDate,
+						ValidityDate,
+						DateHired,
+						AppliedPlan,
+						AllowedPlans,
+						Dependent,
+						DependentAppliedPlan,
+						AllowedDependentPlans,
+						T2.Id,
+						T1.AccountCode,
+						Row,
+						AppliedPlanFromExcel,
+						AllowedPlansFromExcel,
+						DependentAppliedPlanFromExcel,
+						AllowedDependentPlansFromExcel,
+						0,
+						NEWID(),
+						0,
+                        T1.EndorsementType,
+                        DependentStringValue
+					FROM
+						MemberWrappers T1
+						INNER JOIN EndorsementBatches T2 ON T1.EndorsementBatchGuid = T2.Guid
+					WHERE
+						EndorsementBatchGuid = @EndorsementBatchGuid
+
+                    UPDATE EndorsementBatches SET EndorsementCount = (SELECT COUNT(*) FROM Members T1 INNER JOIN EndorsementBatches T2 ON T1.EndorsementBatchId = T2.Id WHERE T2.Guid = @EndorsementBatchGuid) WHERE Guid = @EndorsementBatchGuid
+				END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('SpCore_ViewEndorsementBatch') IS NOT NULL DROP PROCEDURE SpCore_ViewEndorsementBatch";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+			    CREATE PROCEDURE SpCore_ViewEndorsementBatch (
+				    @EndorsementBatchGuid UNIQUEIDENTIFIER
+			    )
+			    AS
+			    BEGIN
+				    DELETE FROM MemberWrappers WHERE EndorsementBatchGuid = @EndorsementBatchGuid
+
+				    INSERT INTO MemberWrappers (
+					    EmailAddress,
+					    EmployeeNumber,
+					    Area,
+					    CostCenter,
+					    LastName,
+					    FirstName,
+					    MiddleName,
+                        Designation,
+                        Level,
+					    Suffix,
+					    Gender,
+					    DateOfBirth,
+					    CivilStatus,
+					    EffectivityDate,
+					    ValidityDate,
+					    DateHired,
+					    AppliedPlan,
+					    AllowedPlans,
+					    Dependent,
+					    DependentAppliedPlan,
+					    AllowedDependentPlans,
+					    AccountCode,
+					    Row,
+					    AppliedPlanFromExcel,
+					    AllowedPlansFromExcel,
+					    DependentAppliedPlanFromExcel,
+					    AllowedDependentPlansFromExcel,
+					    Guid,
+					    Deleted,
+						EndorsementBatchGuid,
+						IsValid,
+                        EndorsementType,
+                        DependentStringValue
+				    )
+				    SELECT
+					    EmailAddress,
+					    EmployeeNumber,
+					    Area,
+					    CostCenter,
+					    LastName,
+					    FirstName,
+					    MiddleName,
+                        Designation,
+                        Level,
+					    Suffix,
+					    Gender,
+					    DateOfBirth,
+					    CivilStatus,
+					    EffectivityDate,
+					    ValidityDate,
+					    DateHired,
+					    AppliedPlan,
+					    AllowedPlans,
+					    Dependent,
+					    DependentAppliedPlan,
+					    AllowedDependentPlans,
+					    T1.AccountCode,
+					    Row,
+					    AppliedPlanFromExcel,
+					    AllowedPlansFromExcel,
+					    DependentAppliedPlanFromExcel,
+					    AllowedDependentPlansFromExcel,
+					    NEWID(),
+					    0,
+						T2.Guid,
+						1,
+                        T1.EndorsementType,
+                        T1.DependentStringValue
+				    FROM
+					    Members T1
+						INNER JOIN EndorsementBatches T2 ON T1.EndorsementBatchId = T2.Id
+				    WHERE 
+					    EndorsementBatchId = (SELECT Id FROM EndorsementBatches WHERE Guid = @EndorsementBatchGuid)
+			    END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            #region -- Renewal Member --
+
+            sql = @"IF OBJECT_ID('SpCore_SaveUploadedRenewalEndorsementBatch') IS NOT NULL DROP PROCEDURE SpCore_SaveUploadedRenewalEndorsementBatch";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+				CREATE PROCEDURE SpCore_SaveUploadedRenewalEndorsementBatch (
+					@EndorsementBatchGuid UNIQUEIDENTIFIER
+				)
+				AS
+				BEGIN
+					DELETE FROM RenewalMembers WHERE EndorsementBatchId IN (SELECT Id FROM EndorsementBatches WHERE Guid = @EndorsementBatchGuid)
+
+					INSERT INTO RenewalMembers (
+						Row,
+						Code,
+						LastName,
+						FirstName,
+						MiddleName,
+						EmailAddress,
+						DateOfBirth,
+						Area,
+						EmployeeNumber,
+						AppliedPlan,
+						AllowedPlans,
+						Type,
+						PrincipalMemberCode,
+						Relationship,
+						Gender,
+						CivilStatus,
+						Waiver,
+						EffectivityDate,
+						ValidityDate,
+						Remarks,
+						EndorsementBatchId,
+						AccountCode,
+						AppliedPlanFromExcel,
+						AllowedPlansFromExcel,
+						Guid,
+						Deleted,
+                        EndorsementType,
+                        DependentStringValue,
+                        RelationshipExcel
+					)
+					SELECT
+						T1.Row,
+						T1.Code,
+						T1.LastName,
+						T1.FirstName,
+						T1.MiddleName,
+						T1.EmailAddress,
+						T1.DateOfBirth,
+						T1.Area,
+						T1.EmployeeNumber,
+						T1.AppliedPlan,
+						T1.AllowedPlans,
+						T1.Type,
+						T1.PrincipalMemberCode,
+						T1.Relationship,
+						T1.Gender,
+						T1.CivilStatus,
+						T1.Waiver,
+						T1.EffectivityDate,
+						T1.ValidityDate,
+						T1.Remarks,
+						T2.Id,
+						T1.AccountCode,
+						T1.AppliedPlanFromExcel,
+						T1.AllowedPlansFromExcel,
+						NEWID(),
+						0,
+                        T1.EndorsementType,
+                        T1.DependentStringValue,
+                        T1.RelationshipExcel
+					FROM
+						RenewalMemberWrappers T1
+						INNER JOIN EndorsementBatches T2 ON T1.EndorsementBatchGuid = T2.Guid
+					WHERE
+						EndorsementBatchGuid = @EndorsementBatchGuid
+
+                    UPDATE EndorsementBatches SET EndorsementCount = (SELECT COUNT(*) FROM RenewalMembers T1 INNER JOIN EndorsementBatches T2 ON T1.EndorsementBatchId = T2.Id WHERE T2.Guid = @EndorsementBatchGuid) WHERE Guid = @EndorsementBatchGuid
+				END            
+            ";
+
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('SpCore_ViewRenewalEndorsementBatch') IS NOT NULL DROP PROCEDURE SpCore_ViewRenewalEndorsementBatch";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+				CREATE PROCEDURE SpCore_ViewRenewalEndorsementBatch (
+				    @EndorsementBatchGuid UNIQUEIDENTIFIER
+			    )
+			    AS
+			    BEGIN
+				    DELETE FROM RenewalMemberWrappers WHERE EndorsementBatchGuid = @EndorsementBatchGuid
+
+				    INSERT INTO RenewalMemberWrappers (
+					    Row,
+						Code,
+						LastName,
+						FirstName,
+						MiddleName,
+						EmailAddress,
+						DateOfBirth,
+						Area,
+						EmployeeNumber,
+						AppliedPlan,
+						AllowedPlans,
+						Type,
+						PrincipalMemberCode,
+						Relationship,
+						Gender,
+						CivilStatus,
+						Waiver,
+						EffectivityDate,
+						ValidityDate,
+						Remarks,
+						AccountCode,
+						AppliedPlanFromExcel,
+						AllowedPlansFromExcel,
+					    Guid,
+					    Deleted,
+						EndorsementBatchGuid,
+						IsValid,
+                        EndorsementType,
+                        DependentStringValue,
+                        RelationshipExcel
+				    )
+				    SELECT
+					    T1.Row,
+						T1.Code,
+						T1.LastName,
+						T1.FirstName,
+						T1.MiddleName,
+						T1.EmailAddress,
+						T1.DateOfBirth,
+						T1.Area,
+						T1.EmployeeNumber,
+						T1.AppliedPlan,
+						T1.AllowedPlans,
+						T1.Type,
+						T1.PrincipalMemberCode,
+						T1.Relationship,
+						T1.Gender,
+						T1.CivilStatus,
+						T1.Waiver,
+						T1.EffectivityDate,
+						T1.ValidityDate,
+						T1.Remarks,
+						T1.AccountCode,
+						T1.AppliedPlanFromExcel,
+						T1.AllowedPlansFromExcel,
+					    NEWID(),
+					    0,
+						T2.Guid,
+                        1,
+						T1.EndorsementType,
+                        T1.DependentStringValue,
+                        T1.RelationshipExcel
+				    FROM
+					    RenewalMembers T1
+						INNER JOIN EndorsementBatches T2 ON T1.EndorsementBatchId = T2.Id
+				    WHERE 
+					    EndorsementBatchId = (SELECT Id FROM EndorsementBatches WHERE Guid = @EndorsementBatchGuid)
+			    END                      
+            ";
+
+            context.Database.ExecuteSqlCommand(sql);
+            #endregion
+        }
+
+        private void GenerateTriggers(Corelib.IdentityDataContext context)
+        {
+            string sql;
+            sql = @"IF OBJECT_ID('TrGrOnInsert_EndorsementBatch') IS NOT NULL DROP TRIGGER TrGrOnInsert_EndorsementBatch";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE TRIGGER TrGrOnInsert_EndorsementBatch
+                   ON  EndorsementBatches
+                   AFTER INSERT
+                AS 
+                BEGIN
+	                SET NOCOUNT ON
+
+	                DECLARE 
+		                @CurrentDateFrom DATETIME,
+		                @CurrentDateTo DATETIME
+
+	                SELECT 
+		                @CurrentDateFrom = CAST(YEAR(GETDATE()) AS NVARCHAR(4)) + '-' + CAST(MONTH(GETDATE()) AS NVARCHAR(2)) + '-' + CAST(DAY(GETDATE()) AS NVARCHAR(2))
+
+	                SELECT
+		                @CurrentDateTo = DATEADD(SECOND, -1, DATEADD(DAY, 1, @CurrentDateFrom))
+
+	                UPDATE T1 SET
+		                ReferenceNumber = 	CASE
+								                WHEN T2.EndorsementType = 'New' THEN 'ME'
+								                WHEN T2.EndorsementType = 'Renewal' THEN 'ME'
+                                                WHEN T2.EndorsementType = 'Action Memo' THEN 'AM'
+                                                WHEN T2.EndorsementType = 'Amendment' THEN 'AP'
+                                                WHEN T2.EndorsementType = 'ID Replacement' THEN 'AP'
+                                                WHEN T2.EndorsementType = 'Additional Dependent' THEN 'AP'
+                                                WHEN T2.EndorsementType = 'Dependent Cancellation' THEN 'AP'
+                                                WHEN T2.EndorsementType = 'Cancel Membership' THEN 'ME'
+							                END
+							                + RIGHT(CONVERT(char(8), GetDate(), 112), 6)
+							                + RIGHT('00000' + CAST(ISNULL((SELECT COUNT(*) FROM EndorsementBatches WHERE [Date] BETWEEN @CurrentDateFrom AND @CurrentDateTo), 0) AS NVARCHAR(5)), 5)
+	                FROM
+		                EndorsementBatches T1
+		                INNER JOIN INSERTED T2 ON T1.Id = T2.Id
+
+	                SET NOCOUNT OFF
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('TrGrOnDelete_ApplicationRoleGroups') IS NOT NULL DROP TRIGGER TrGrOnDelete_ApplicationRoleGroups";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE TRIGGER [dbo].[TrGrOnDelete_ApplicationRoleGroups]
+                ON  [dbo].[ApplicationRoleGroups]
+                AFTER DELETE
+                AS
+                BEGIN
+                    SET NOCOUNT ON;
+ 
+                    DELETE T1
+                    FROM
+                        AspNetUserRoles T1
+                        INNER JOIN GroupApplicationUsers T2 ON T1.UserId = T2.ApplicationUser_Id
+                        INNER JOIN Groups T3 ON T2.Group_Id = T3.Id
+                        INNER JOIN DELETED T4 ON T3.Id = T4.Group_Id AND T1.RoleId = T4.ApplicationRole_Id
+                    WHERE
+                        NOT EXISTS
+                        (
+                            SELECT
+                                *
+                            FROM
+                                GroupApplicationUsers T101
+                                INNER JOIN Groups T102 ON T101.Group_Id = T102.Id
+                                INNER JOIN ApplicationRoleGroups T103 ON T102.Id = T103.Group_Id
+                            WHERE
+                                T101.ApplicationUser_Id = T1.UserId
+                                AND T103.ApplicationRole_Id = T4.ApplicationRole_Id
+                        )
+ 
+                    SET NOCOUNT OFF;
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('TrGrOnInserted_ApplicationRoleGroup') IS NOT NULL DROP TRIGGER TrGrOnInserted_ApplicationRoleGroup";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE TRIGGER [dbo].[TrGrOnInserted_ApplicationRoleGroup]
+                   ON  [dbo].[ApplicationRoleGroups]
+                   AFTER INSERT
+                AS 
+                BEGIN
+                      SET NOCOUNT ON;
+
+                      INSERT INTO AspNetUserRoles (UserId, RoleId)
+                      SELECT DISTINCT
+                            T3.ApplicationUser_Id,
+                            T1.ApplicationRole_Id
+                      FROM
+                            INSERTED T1
+                            INNER JOIN Groups T2 ON T1.Group_Id = T2.Id
+                            INNER JOIN GroupApplicationUsers T3 ON T2.Id = T3.Group_Id
+							LEFT OUTER JOIN AspNetUserRoles T4 ON T3.ApplicationUser_Id = T4.UserId AND T1.ApplicationRole_Id = T4.RoleId
+					  WHERE
+							T4.UserId IS NULL
+							AND T4.RoleId IS NULL
+
+                      SET NOCOUNT OFF;
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('TrGrOnDelete_GroupApplicationUsers') IS NOT NULL DROP TRIGGER TrGrOnDelete_GroupApplicationUsers";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE TRIGGER [dbo].[TrGrOnDelete_GroupApplicationUsers]
+                   ON  [dbo].[GroupApplicationUsers]
+                   AFTER DELETE
+                AS
+                BEGIN
+                      SET NOCOUNT ON;
+ 
+                      DELETE T1
+                      FROM
+                          AspNetUserRoles T1
+                          INNER JOIN DELETED T2 ON T1.UserId = ApplicationUser_Id
+                          INNER JOIN Groups T3 ON T2.Group_Id = T3.Id
+                          INNER JOIN ApplicationRoleGroups T4 ON T3.Id = T4.Group_Id AND T1.RoleId = T4.ApplicationRole_Id
+                     WHERE
+                           NOT EXISTS (
+                              SELECT
+                                 *
+                              FROM
+                                 GroupApplicationUsers T101
+                                 INNER JOIN Groups T102 ON T101.Group_Id = T102.Id
+                                 INNER JOIN ApplicationRoleGroups T103 ON T102.Id = T103.Group_Id
+                                 WHERE
+                                    T101.ApplicationUser_Id = T1.UserId
+                                    AND T103.ApplicationRole_Id = T1.RoleId
+                          )
+                      SET NOCOUNT OFF;
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('TrGrOnInserted_GroupApplicationUsers') IS NOT NULL DROP TRIGGER TrGrOnInserted_GroupApplicationUsers";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE TRIGGER [dbo].[TrGrOnInserted_GroupApplicationUsers]
+                   ON  [dbo].[GroupApplicationUsers]
+                   AFTER INSERT
+                AS 
+                BEGIN
+                      SET NOCOUNT ON;
+
+                      INSERT INTO AspNetUserRoles (UserId, RoleId)
+                      SELECT DISTINCT
+                            T1.ApplicationUser_Id,
+                            T3.ApplicationRole_Id
+                      FROM
+                            INSERTED T1
+                            INNER JOIN Groups T2 ON T1.Group_Id = T2.Id
+                            INNER JOIN ApplicationRoleGroups T3 ON T2.Id = T3.Group_Id
+							LEFT OUTER JOIN AspNetUserRoles T4 ON T1.ApplicationUser_Id = T4.UserId AND T3.ApplicationRole_Id = T4.RoleId
+					  WHERE
+							T4.UserId IS NULL
+							AND T4.RoleId IS NULL
+
+                      SET NOCOUNT OFF;
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+            sql = @"IF OBJECT_ID('TrGrOnDelete_AspNetUserRoles') IS NOT NULL DROP TRIGGER TrGrOnDelete_AspNetUserRoles";
+            context.Database.ExecuteSqlCommand(sql);
+            sql = @"
+                CREATE TRIGGER [dbo].[TrGrOnDelete_AspNetUserRoles]
+                   ON  [dbo].[AspNetUserRoles]
+                   AFTER DELETE
+                AS 
+                BEGIN
+                      SET NOCOUNT ON;
+
+                      DELETE T
+                      FROM
+                            AspNetUserRoles T
+                            INNER JOIN (SELECT
+                                        T3.ApplicationUser_Id,
+                                        T1.RoleId
+                                  FROM
+                                        DELETED T1
+                                        INNER JOIN Groups T2 ON T1.UserId = T2.CrById
+                                        INNER JOIN GroupApplicationUsers T3 ON T2.Id = T3.Group_Id
+                            ) TT1 ON TT1.ApplicationUser_Id = T.UserId AND TT1.RoleId = T.RoleId
+            
+
+                      SET NOCOUNT OFF;
+                END
+            ";
+            context.Database.ExecuteSqlCommand(sql);
+
+        }
+
+        #endregion
+
+    }
+}

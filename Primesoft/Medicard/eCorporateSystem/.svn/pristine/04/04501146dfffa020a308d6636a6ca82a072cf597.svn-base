@@ -1,0 +1,50 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Endorsement Received for Review and Processing</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">Endorsement was received with the following details:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+@if (Model.EndorsementBatch.EndorsementType == Corelib.Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE ||
+    Model.EndorsementBatch.EndorsementType == Corelib.Constants.NEW_ENDORSEMENT_TYPE)
+{
+    <p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+}
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count: @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Control Number: @Model.EndorsementBatch.ControlNumber</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+@if (Model.EndorsementBatch.EndorsementType == Corelib.Constants.AMENDMENT_ENDORSEMENT_TYPE)
+{
+    foreach (var amendment in Model.EndorsementBatch.Amendments)
+    {
+        <p class="details">
+            @if (
+                amendment.DataType == Corelib.Enums.RequestDataType.LastName ||
+                amendment.DataType == Corelib.Enums.RequestDataType.LastName ||
+                amendment.DataType == Corelib.Enums.RequestDataType.MiddleName ||
+                amendment.DataType == Corelib.Enums.RequestDataType.DateOfBirth ||
+                amendment.DataType == Corelib.Enums.RequestDataType.Gender ||
+                amendment.DataType == Corelib.Enums.RequestDataType.Address ||
+                amendment.DataType == Corelib.Enums.RequestDataType.Telephone)
+            {
+                @:Processing Time : 30 mins.
+            }
+            else if (amendment.DataType == Corelib.Enums.RequestDataType.DateResign)
+            {
+                @:Processing Time : 1 Day
+            }
+            else
+            {
+                @:Processing Time : 3 working days.
+            }
+        </p>
+    }
+}
+@*<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />*@

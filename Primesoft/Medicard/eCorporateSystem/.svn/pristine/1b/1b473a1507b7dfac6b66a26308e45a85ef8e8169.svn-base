@@ -1,0 +1,11 @@
+﻿@model MembershipEndorsementViewModel
+<div class="row">
+    <div class="col-lg-12">
+        @Html.Partial("_Batches", Model.Batches)
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div id="ImportBodyNewApplication"></div>
+    </div>
+</div>

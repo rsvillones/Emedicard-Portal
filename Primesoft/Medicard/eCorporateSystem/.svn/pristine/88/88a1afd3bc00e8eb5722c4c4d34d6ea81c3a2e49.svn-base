@@ -1,0 +1,46 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Action Memo Reply By Member To Urg</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">The following Action Memo reply was submitted for your approval:</p>
+<br />
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date Issued</th>
+            <th>Details</th>
+            <th>Member Reply</th>
+            <th>Endorsement Reference Number</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var actionMemo in Model.ActionMemos)
+        {
+            <tr>
+                <td>
+                    @if (actionMemo.DependentId.HasValue)
+                    {
+                        actionMemo.Dependent.FullName;
+                    }
+                    else if (Model.ActionMemo.MemberId.HasValue)
+                    {
+                        actionMemo.Member.FullName;
+                    }
+                </td>
+                <td>@actionMemo.DateIssued</td>
+                <td>@actionMemo.Details</td>
+                <td>@actionMemo.MemberReply</td>
+                <td>@actionMemo.EndorsementBatch.ReferenceNumber</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />

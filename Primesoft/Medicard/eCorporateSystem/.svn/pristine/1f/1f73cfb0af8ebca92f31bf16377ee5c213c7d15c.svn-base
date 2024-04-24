@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Areas.CorporateAdministrator.Models;
+
+namespace WebUI.Controllers
+{
+    public class ProfileController : BaseDbController
+    {
+        #region -- Action Results --
+
+        public ActionResult Index(string messageType, string message)
+        {
+            var user = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            if (user == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = new ProfileIndexViewModel();
+            Helper.MapProperties(user, model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Index([Bind(Include = "Id, Name, Email, PhoneNumber, UserId, UserName, IsMember, OldPassword, Password, ConfirmPassword, Designation, Mobile, Fax, Address, CrById, AgentCode")] ProfileIndexViewModel applicationUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var entity = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+                if (entity != null)
+                {
+                    var currentPasswordHash = entity.PasswordHash;
+                    var currentSecurityStamp = entity.SecurityStamp;
+
+                    db.Entry(entity).CurrentValues.SetValues(applicationUser);
+
+                    if (string.IsNullOrEmpty(applicationUser.Password))
+                    {
+                        entity.PasswordHash = currentPasswordHash;
+                        entity.SecurityStamp = currentSecurityStamp;
+                    }
+
+                    db.Entry(entity).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    if (!string.IsNullOrEmpty(applicationUser.Password))
+                    {
+                        await Helper.UpdateUserPasswordAsync(entity.Id, applicationUser.UserName, applicationUser.Password);
+                    }
+                    await Helper.LoginUser(entity.Id);
+
+                    var member = db.Members.FirstOrDefault(t => t.UserId == entity.Id);
+                    if (member != null)
+                    {
+                        member.UserName = entity.UserName;
+                        db.SaveChanges();
+                    }
+
+                    return RedirectToAction("Index", new { messageType = "Success", message = "Successfully updated user profile." });
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+
+            return View(applicationUser);
+        }
+
+        #endregion
+    }
+}

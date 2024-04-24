@@ -1,0 +1,82 @@
+﻿@model MemberRequest
+@{
+    var resonList = new SelectList(ViewBag.Reasons, "Id", "Description", Model.ReasonId);
+    var dependentList = new SelectList(ViewBag.Dependents, "Id", "FullName", Model.DependentId);
+}
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Guid)
+@Html.HiddenFor(model => model.CrBy)
+@Html.HiddenFor(model => model.CrById)
+@Html.HiddenFor(model => model.CrDate)
+@Html.HiddenFor(model => model.MemberId)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.RequestType)
+@Html.HiddenFor(model => model.RequestDate)
+@Html.HiddenFor(model => model.AccountCode)
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Member Request</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            <h4 class="form-title">ID Replacement</h4>
+                                            <div class="row">                                                
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.RequestFor)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EnumDropDownListFor(model => model.RequestFor, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.RequestFor)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ReasonId)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("ReasonId", (IEnumerable<SelectListItem>)resonList, "-- Select --", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.ReasonId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DependentId)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("DependentId", (IEnumerable<SelectListItem>)dependentList, "-- Select --", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.DependentId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.Remarks)</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Remarks)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

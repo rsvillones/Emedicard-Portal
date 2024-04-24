@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "ProcessBatchNotification";
+}
+
+<h2>ProcessBatchNotification</h2>
+

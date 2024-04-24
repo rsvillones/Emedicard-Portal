@@ -1,0 +1,95 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@using Corelib.Classes;
+@model Corelib.Models.ApplicationVerification
+@{
+    var option = new List<string>(ViewBag.Options);
+    ViewBag.AppliedPlan = new SelectList(option.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.AppliedPlan);
+
+    var secondOptions = new List<string>(ViewBag.SecondOptions);
+    ViewBag.Gender = new SelectList(secondOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.Gender);
+
+    var thirdOptions = new List<string>(ViewBag.ThirdOptions);
+    ViewBag.MemberType = new SelectList(thirdOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.MemberType);
+
+    var forthOptions = new List<string>(ViewBag.ForthOptions);
+    ViewBag.MembershipStatus = new SelectList(forthOptions.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.MembershipStatus);
+
+    var nextOption = new List<string>(ViewBag.NextOption);
+    ViewBag.CivilStatus = new SelectList(nextOption.Select(x => new KeyValuePair<string, string>(x, x)), "Key", "Value", Model.CivilStatus);
+        
+    var dateOfBirth = ExcelTools.GetDateFormat(Model.DateOfBirth);
+    var effectivityDate = ExcelTools.GetDateFormat(Model.EffectivityDate);
+    var validityDate = ExcelTools.GetDateFormat(Model.ValidityDate);
+    var dateHired = ExcelTools.GetDateFormat(Model.DateHired);
+}
+
+@using (Html.BeginCollectionItem("ApplicationVerifications"))
+{
+    <td>
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.FileName)
+        @Html.HiddenFor(model => model.Row)
+        @Html.HiddenFor(model => model.EmailAddress)
+        @Html.HiddenFor(model => model.OptionalPlan)
+        @Html.HiddenFor(model => model.Dependent)
+        @Html.HiddenFor(model => model.DependentAppliedPlan)
+        @Html.HiddenFor(model => model.DependentOptionalPlan)
+
+        @Html.EditorFor(model => model.MemberCode)
+    </td>
+    <td>
+        @*@Html.EditorFor(model => model.MemberType)*@
+        @Html.DropDownList("MemberType", "-- Select --")
+    </td>
+    <td>
+        @Html.EditorFor(model => model.EmployeeNumber)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Area)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.CostCenter)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.LastName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.FirstName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MiddleName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Suffix)
+    </td>
+    <td>
+        @*@Html.EditorFor(model => model.Gender)*@
+        @Html.DropDownList("Gender", "-- Select --")
+    </td>
+    <td>
+        @Html.EditorFor(model => dateOfBirth)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Age)
+    </td>
+    <td>
+        @*@Html.EditorFor(model => model.CivilStatus)*@
+        @Html.DropDownList("CivilStatus", "-- Select --")
+    </td>
+    <td>
+        @*@Html.EditorFor(model => model.MembershipStatus)*@
+        @Html.DropDownList("MembershipStatus", "-- Select --")
+    </td>
+    <td>
+        @Html.EditorFor(model => effectivityDate)
+    </td>
+    <td>
+        @Html.EditorFor(model => validityDate)
+    </td>
+    <td>
+        @Html.DropDownList("AppliedPlan", "-- Select --")
+    </td>
+    <td>
+        @Html.EditorFor(model => dateHired)
+    </td>
+}

@@ -1,0 +1,146 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Data;
+using System.Data.Entity;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+using Corelib.Enums;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewAccountSettings, CanEditAccountSettings")]
+    public class AccountSettingsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+        
+        #region -- Action Results --
+        
+        [Authorize(Roles = "SysAd, CanViewAccountSettings")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var legacyAccounts = Helper.GetLegacyAccounts(db, legacyDb);
+            var listAccountSettings = db.AccountSettings.Where(t=>!t.Deleted).ToList();
+            foreach (var legacyAccount in legacyAccounts){
+                if (!listAccountSettings.Any(t => t.AccountCode == legacyAccount.Code)){
+                    var accountSetting = new AccountSetting(){
+                        AccountCode = legacyAccount.Code
+                    };
+                    listAccountSettings.Add(accountSetting);
+                }
+            }
+            var accountSettings = AccountSettings(listAccountSettings);
+
+            if (!string.IsNullOrEmpty(currentFilter)){
+                accountSettings = accountSettings.Where(t => t.AccountCode.Contains(currentFilter));
+            }
+
+            Helper.SetSortParameters<AccountSetting>(this, ref accountSettings, sortOrder, currentFilter, new SortParameter() { PropertyName = "AccountCode" }, new List<SortParameter>() {});
+
+            return View(accountSettings.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+                
+        [Authorize(Roles = "SysAd, CanEditAccountSettings")]
+        public ActionResult EditUrgSetting(Guid guid, string accountCode, string propertyValue)
+        {
+            AccountSetting accountSetting;
+            accountSetting = db.AccountSettings.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            var urgSetting = (UrgSetting)Enum.Parse(typeof(UrgSetting), propertyValue);
+            if (accountSetting != null)
+            {
+                accountSetting.UrgSetting = urgSetting;
+                db.Entry(accountSetting).State = EntityState.Modified;
+            }
+            else
+            {
+                accountSetting = new AccountSetting() { AccountCode = accountCode };
+                accountSetting.UrgSetting = urgSetting;
+                db.AccountSettings.Add(accountSetting);
+            }
+            db.SaveChanges();
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_AccountSetting", accountSetting);
+            }
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "SysAd, CanEditAccountSettings")]
+        public ActionResult Edit(Guid guid, bool propertyValue, string propertyName, string accountCode)
+        {
+            AccountSetting accountSetting;
+            accountSetting = db.AccountSettings.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (accountSetting != null)
+            {
+                SetAccountSetting(ref accountSetting, propertyValue, propertyName);
+                db.Entry(accountSetting).State = EntityState.Modified;
+            }
+            else
+            {
+                accountSetting = new AccountSetting() { AccountCode = accountCode };
+                SetAccountSetting(ref accountSetting, propertyValue, propertyName);
+                db.AccountSettings.Add(accountSetting);
+            }
+            db.SaveChanges();
+            return PartialView("_AccountSetting", accountSetting);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private IQueryable<AccountSetting> AccountSettings(List<AccountSetting> accountSettings)
+        {
+            return accountSettings.AsQueryable();
+        }
+
+        private void SetAccountSetting(ref AccountSetting accountSetting, bool propertyValue, string propertyName)
+        {
+            switch (propertyName)
+            {
+                case "UseEmailAsLogin":
+                    accountSetting.UseEmailAsLogin = propertyValue;
+                    break;
+                case "UseRandomGeneratedPassword":
+                    accountSetting.UseRandomGeneratedPassword = propertyValue;
+                    break;
+                case "BypassHRManagerApproval":
+                    accountSetting.BypassHRManagerApproval = propertyValue;
+                    break;
+                case "BypassMedicalHistory":
+                    accountSetting.BypassMedicalHistory = propertyValue;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

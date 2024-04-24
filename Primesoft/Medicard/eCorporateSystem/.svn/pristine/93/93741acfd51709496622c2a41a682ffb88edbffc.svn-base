@@ -1,0 +1,180 @@
+﻿@model PagedList.IPagedList<EndorsementBatch>
+
+@{
+    ViewBag.Title = "Endorsements History";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+@Html.Action("AccountInformation", "BaseAccount")
+<div class="row">
+    <div class="col-lg-12">
+        <div id="panel-title">
+            Endorsement History
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-6 pageList-margin">
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, accountCode = ViewBag.AccountCode, endorsementType = ViewBag.EndorsementType, dateCreated = ViewBag.DateSting }))
+                                <p class="pager-padding" style="float: right">
+                                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                                </p>
+                            </div>
+                            @using (Html.BeginForm("Index", "EndorsementHistory", FormMethod.Get, new { accountCode = ViewBag.AccountCode }))
+                            {
+                                <div class="col-lg-2">&nbsp;</div>
+                                <div class="col-lg-4">
+                                    <div class="input-group input-group-search">
+                                        <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="dropdown-toggle btn-dd btn-default search-dropdown" data-toggle="dropdown" tabindex="-1">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="rightMenu dropdown-menu">
+                                                <div class="col-sm-12">
+                                                    <div class="row"><div class="col-sm-12 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Endorsement Type:</label>
+                                                        <div class="col-lg-12">
+                                                            @Html.DropDownList("endorsementType", (IEnumerable<SelectListItem>)ViewBag.EndorsementTypes, "-- Select --", new { @class = "form-control input-sm" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12">Date:</label>
+                                                        <div class="col-lg-12">
+                                                            <input type="text" value="@ViewBag.DateSting" name="dateCreated" onclick="return false;" class="form-control last-input" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-grp btn-search"
+                                                tabindex="-1">
+                                            Search
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+
+                        <table class="table table-custom">
+                            <tr>
+                                <th>
+                                    Date
+                                </th>
+                                <th>
+                                    Control Number
+                                </th>
+                                <th>
+                                    Reference Number
+                                </th>
+                                <th>
+                                    Endorsement Type
+                                </th>
+                                <th>
+                                    Date Receive
+                                </th>
+                                <th>
+                                    Endorsement Count
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(model => item.Date)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.ControlNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.ReferenceNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.EndorsementType)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.DateReceived)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.EndorsementCount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.Status)
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                                                Actions
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                                                @switch (item.EndorsementType)
+                                                {
+                                                case Constants.ACTION_MEMO_ENDORSEMENT_TYPE:
+                                                <li>@Html.ActionLink("Details", "ActionMemos", "EndorsementHistory", new { area = "CorporateAdministrator", replyTo = item.ReplyTo, accountCode = ViewBag.AccountCode } , new { })</li>
+                                                break;
+                                                case Constants.AMENDMENT_ENDORSEMENT_TYPE:
+                                                <li>@Html.ActionLink("Details", "Amendment", "EndorsementHistory", new { area = "CorporateAdministrator", guid = item.Guid, accountCode = ViewBag.AccountCode }, new { })</li>
+                                                break;
+                                                case Constants.ID_REPLACEMENT_ENDORSEMENT_TYPE:
+                                                <li>@Html.ActionLink("Details", "IdReplacement", "EndorsementHistory", new { area = "CorporateAdministrator", guid = item.Guid, accountCode = ViewBag.AccountCode }, new { })</li>
+                                                break;
+                                                case Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE:
+                                                <li>@Html.ActionLink("Details", "AdditionalDependent", "EndorsementHistory", new { area = "CorporateAdministrator", guid = item.Guid, accountCode = ViewBag.AccountCode }, new { })</li>
+                                                break;
+                                                case Constants.DEPENDENT_CANCELLATION_ENDORSEMENT_TYPE:
+                                                <li>@Html.ActionLink("Details", "DependentCancellation", "EndorsementHistory", new { area = "CorporateAdministrator", guid = item.Guid, accountCode = ViewBag.AccountCode }, new { })</li>
+                                                break;
+                                                case Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE:
+                                                <li>@Html.ActionLink("Details", "CancelledMembers", "EndorsementHistory", new { area = "CorporateAdministrator", guid = item.Guid, accountCode = ViewBag.AccountCode }, new { })</li>
+                                                break;
+                                                default:
+                                                <li>@Html.ActionLink("Details", "Members", new { guid = item.Guid, accountCode = ViewBag.AccountCode }, new { })</li>
+                                                break;
+                                                }
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+            $('input[name="dateCreated"]').datepicker();
+            $(function () {
+                $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                    event.stopPropagation();
+                });
+            });
+            $(function () {
+                //$(".dropdown-toggle").dropdown('toggle'); // this works
+                $('#click').click(function (e) {
+                    e.stopPropagation();
+                    $(".search-dropdown").dropdown('toggle');// this doesn't
+                });
+            });
+        });
+    </script>
+}
+
+

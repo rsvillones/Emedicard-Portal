@@ -1,0 +1,20 @@
+﻿
+<p>Dear @Model.Application.FirstName,</p>
+<br />
+<p>    Greetings!!</p>
+<p>    We would like to inform you that we have some questions to ask. It is for your account registion in our system.</p>
+<p>    Please click the given URL to login in our website. Username and password are given below.</p>
+<br />
+<p>    URL : <a href="@Model.Url">@Model.Url</a></p>
+<p>    Username : @Model.UserName</p>
+<p>    Password : @Model.Password</p>
+<br />
+<p>    Thank you and more power!!!.</p>
+
+
+
+
+
+
+
+

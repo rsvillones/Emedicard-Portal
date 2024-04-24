@@ -1,0 +1,25 @@
+@model Member
+@{
+    int counter = 1;
+}
+<div class="col-lg-12 form-group">
+    <ul class="nav nav-tabs">
+        @{ counter = 1; }
+        @foreach (var dependent in Model.Dependents)
+        {
+            <li @(counter == 1 ? "class=active" : "")><a data-toggle="tab" href="#Dependent@(counter)">Dependent @(counter)</a></li>
+            counter++;
+        }
+    </ul>
+    <div class="tab-content">
+        @{ counter = 1; }
+        @foreach (var dependent in Model.Dependents)
+        {
+            <div id="Dependent@(counter)" class="tab-pane fade @(counter == 1 ? "active in" : "")">
+                @Html.Partial("_DependentProfile", dependent)
+            </div>
+            counter++;
+        }
+    </div>
+</div>
+

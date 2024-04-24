@@ -1,0 +1,85 @@
+﻿@model Corelib.Models.EndorsementBatch
+
+@{
+    ViewBag.Title = "Single Endorement";
+}
+
+@using (Html.BeginForm("SingleEndorsement", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(true)
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Guid)
+    @Html.HiddenFor(model => model.Filename)
+    @Html.HiddenFor(model => model.GuidFilename)
+    @Html.HiddenFor(model => model.Timestamp)
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Membership Endorsement (Add New Member)</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadNewApplication" class="tab-pane fade active in">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title" style="margin-bottom: 1em">Batch Detail</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Submission Deadline:</label>
+                                                        <div class="col-lg-8 editor-form-control">
+                                                            @Html.EditorFor(model => model.Deadline)
+                                                            @Html.ValidationMessage("DeadLineError", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Remarks:</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">&nbsp;</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    @Html.Partial("_SingleMember", new Corelib.Models.Member() { AccountCode = ViewBag.AccountCode })
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+        function OnDateOfBirthChange() {
+            var options = {
+                url: '@Url.Action("ComputeAge", "Utilities", new { area = "" })',
+                type: 'POST',
+                data: {
+                    dateOfBirth: $('input[name*="DateOfBirth"]').val()
+                },
+                success: function (age) {
+                    $('input[name*="Age"]').val(age);
+                }
+            };
+            $.ajax(options);
+        }
+    </script>
+}

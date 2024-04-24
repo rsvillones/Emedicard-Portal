@@ -1,0 +1,288 @@
+@model Corelib.Models.Group
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-3" })
+    <div class="col-lg-9">
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Roles, htmlAttributes: new { @class = "control-label col-lg-3" })
+    <div class="col-lg-9">
+
+        <table class="table table-fixed">
+            <thead>
+                <tr>
+                    <th style="width: 46%">
+                        Modules
+                    </th>
+                    <th style="width: 10%">
+                        View
+                    </th>
+                    <th style="width: 10%">
+                        Add
+                    </th>
+                    <th style="width: 10%">
+                        Edit
+                    </th>
+                    <th style="width: 10%">
+                        Delete
+                    </th>
+                    <th style="width: 2%">&nbsp;</th>
+                </tr>
+            </thead>
+        </table>
+
+        <div class="scrollable-table-fixed" style="margin-top: -3px !important;">
+            <table class="table table-fixed">
+                <tbody>
+                    @if (User.IsInRole("SysAd") || User.IsInRole("CanViewGroups") || User.IsInRole("CanAddGroups") || User.IsInRole("CanEditGroups") || User.IsInRole("CanDeleteGroups"))
+                    {
+                        <tr>
+                            <td style="width: 48%">
+                                <label class="control-label col-lg-3">Groups</label>
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewGroups"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanViewGroups" value="CanViewGroups" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanViewGroups") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanAddGroups"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanAddGroups" value="CanAddGroups" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanAddGroups") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanEditGroups"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanEditGroups" value="CanEditGroups" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanEditGroups") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanDeleteGroups"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanDeleteGroups" value="CanDeleteGroups" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanDeleteGroups") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 2%">&nbsp;</td>
+                        </tr>
+                    }
+                    @if (User.IsInRole("SysAd") || User.IsInRole("CanViewUsers") || User.IsInRole("CanAddUsers") || User.IsInRole("CanEditUsers") || User.IsInRole("CanDeleteUsers"))
+                    {
+                        <tr>
+                            <td style="width: 48%">
+                                <label class="control-label col-lg-3">Users</label>
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewUsers"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanViewUsers" value="CanViewUsers" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanViewUsers") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanAddUsers"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanAddUsers" value="CanAddUsers" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanAddUsers") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanEditUsers"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanEditUsers" value="CanEditUsers" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanEditUsers") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanDeleteUsers"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanDeleteUsers" value="CanDeleteUsers" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanDeleteUsers") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 2%">&nbsp;</td>
+                        </tr>
+                    }
+                    @if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountManager") || User.IsInRole("CanViewProfileManagement"))
+                    {
+                        <tr>
+                            <td style="width: 48%">
+                                <label class="control-label col-lg-3">eCorporate Services</label>
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 2%">&nbsp;</td>
+                        </tr>
+                    }
+                    @if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountManager"))
+                    {
+                        <tr>
+                            <td style="width: 48%">
+                                <label class="control-label col-lg-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Account Manager</label>
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountManager"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanViewAccountManager" value="CanViewAccountManager" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanViewAccountManager") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 2%">&nbsp;</td>
+                        </tr>
+                    }
+                    @if (User.IsInRole("SysAd") || User.IsInRole("CanViewProfileManagement"))
+                    {
+                        <tr>
+                            <td style="width: 48%">
+                                <label class="control-label col-lg-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Profile Management</label>
+                            </td>
+                            <td style="width: 10%">
+                                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewProfileManagement"))
+                                {
+                                    <input type="checkbox" name="RoleId" id="CanViewProfileManagement" value="CanViewProfileManagement" @(Model.Roles != null && Model.Roles.Any(t => t.Name == "CanViewProfileManagement") ? "checked='checked'" : "") />
+                                }
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 10%">
+                                &nbsp;
+                            </td>
+                            <td style="width: 2%">&nbsp;</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @Html.ValidationMessageFor(model => model.Roles, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-lg-3">Special Permissions</label>
+    <div class="col-lg-9">
+        <table class="table table-fixed">
+            <thead>
+                <tr>
+                    <th style="width: 98%">
+                        Permission
+                    </th>
+                    <th style="width: 2%">&nbsp;</th>
+                </tr>
+            </thead>
+        </table>
+
+        <div class="scrollable-table-fixed" style="margin-top: -3px !important;">
+            <table class="table table-fixed">
+                <tbody>
+                    <tr>
+                        <td style="width: 98%">
+                            <input type="checkbox" name="RoleId" id="ViewOnlyCreatedUsers" value="ViewOnlyCreatedUsers" @(!User.IsInRole("SysAd") ? "disabled='disabled'" : "") @((!User.IsInRole("SysAd") && User.IsInRole("ViewOnlyCreatedUsers")) || (Model.Roles != null && Model.Roles.Any(t => t.Name == "ViewOnlyCreatedUsers")) ? "checked='checked'" : "") />
+                            <label class="control-label" for="ViewOnlyCreatedUsers">View Only Created User</label>
+                        </td>
+                        <td style="width: 2%">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 98%">
+                            <input type="checkbox" name="RoleId" id="ViewOnlyCreatedGroups" value="ViewOnlyCreatedGroups" @(!User.IsInRole("SysAd") ? "disabled='disabled'" : "") @((!User.IsInRole("SysAd") && User.IsInRole("ViewOnlyCreatedGroups")) || (Model.Roles != null && Model.Roles.Any(t => t.Name == "ViewOnlyCreatedGroups")) ? "checked='checked'" : "") />
+                            <label class="control-label" for="ViewOnlyCreatedGroups">View Only Created Groups</label>
+                        </td>
+                        <td style="width: 2%">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 98%">
+                            <input type="checkbox" name="RoleId" id="CanCreateUserFromLegacySystem" value="CanCreateUserFromLegacySystem" @(!User.IsInRole("SysAd") ? "disabled='disabled'" : "") @((!User.IsInRole("SysAd") && User.IsInRole("CanCreateUserFromLegacySystem")) || (Model.Roles != null && Model.Roles.Any(t => t.Name == "CanCreateUserFromLegacySystem")) ? "checked='checked'" : "") />
+                            <label class="control-label" for="CanCreateUserFromLegacySystem">Can Create User from Legacy System</label>
+                        </td>
+                        <td style="width: 2%">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 98%">
+                            <input type="checkbox" name="RoleId" id="CanAssignAllAccounts" value="CanAssignAllAccounts" @(!User.IsInRole("SysAd") ? "disabled='disabled'" : "") @((!User.IsInRole("SysAd") && User.IsInRole("CanAssignAllAccounts")) || (Model.Roles != null && Model.Roles.Any(t => t.Name == "CanAssignAllAccounts")) ? "checked='checked'" : "") />
+                            <label class="control-label" for="CanAssignAllAccounts">Can Assign All Accounts</label>
+                        </td>
+                        <td style="width: 2%">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 98%">
+                            <input type="checkbox" name="RoleId" id="CanOnlyAssignAssignedPermissions" value="CanOnlyAssignAssignedPermissions" @(!User.IsInRole("SysAd") ? "disabled='disabled'" : "") @((!User.IsInRole("SysAd") && User.IsInRole("CanOnlyAssignAssignedPermissions")) || (Model.Roles != null && Model.Roles.Any(t => t.Name == "CanOnlyAssignAssignedPermissions")) ? "checked='checked'" : "") />
+                            <label class="control-label" for="CanOnlyAssignAssignedPermissions">Can Only Assign Assigned Permissions</label>
+                        </td>
+                        <td style="width: 2%">&nbsp;</td>
+                    </tr>
+
+                </tbody>
+            </table>
+            @Html.ValidationMessageFor(model => model.Roles, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.AccessibleGroups, htmlAttributes: new { @class = "control-label col-lg-3" })
+    <div class="col-lg-9">
+
+        <table class="table table-fixed">
+            <thead>
+                <tr>
+                    <th style="width: 98%">
+                        &nbsp;
+                    </th>
+                    <th style="width: 2%">&nbsp;</th>
+                </tr>
+            </thead>
+        </table>
+
+        <div class="scrollable-table-fixed" style="margin-top: -3px !important;">
+            <table class="table table-fixed">
+                <tbody>
+                    @foreach (Group group in ViewBag.Groups)
+                    {
+                        <tr>
+                            <td style="width: 98%">
+                                <input type="checkbox" name="GroupGuid" id="Group_@(group.Id)" value="@group.Guid" @(Model.AccessibleGroups != null && Model.AccessibleGroups.Any(t => t.GroupGuid == group.Guid) ? "checked='checked'" : "") /> <label for="Group_@(group.Id)">@group.Name</label>
+                            </td>
+                            <td style="width: 2%">&nbsp;</td>
+                        </tr>
+
+                    }
+                    @Html.ValidationMessageFor(model => model.AccessibleGroups, "", new { @class = "text-danger" })
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+@model PagedList.IPagedList<IActionMemo>
+
+@if (Model.PageCount > 1)
+{
+    @Html.PagedListPager(Model, page => Url.Action("GetMyActionMemos", new { page, accountCode = ViewBag.AccountCode, username = ViewBag.Username }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.ClassicPlusFirstAndLast, new AjaxOptions() { UpdateTargetId = "MyActionMemosAjaxContainer", OnBegin = "OnMyLegacyActionMemoBegin()" }))
+    <br /><br /><br />
+}
+
+<table class="table table-fixed-left">
+    <thead>
+        <tr>
+            <th style="width:18%">
+                <label>Date Issued</label>
+            </th>
+            <th style="width:13%">
+                <label>Type</label>
+            </th>
+            <th style="width:30%">
+                <label>Issued To</label>
+            </th>
+            <th style="width:37%">
+                <label>Details</label>
+            </th>
+            <th style="width:2%">
+                &nbsp;
+            </th>
+        </tr>
+    </thead>
+</table>
+<div class="scrollable-tables" style="margin-top: -3px !important;height: 130px !important;margin-bottom: 0 !important">
+    <table class="table table-fixed-left">
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="width:18%">
+                            <p class="box">
+                                @Html.DisplayFor(model => item.ActionMemoDate)
+                            </p>
+                        </td>
+                        <td style="width:13%" >
+                            @Html.DisplayFor(model => item.Type)
+                        </td>
+                        <td style="width:30%">
+                            @Html.DisplayFor(model => item.FullName)
+                        </td>
+                        <td style="width:39%">
+                            @Html.DisplayFor(model => item.ActionMemoRemarks)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                @Html.Partial("_NoData", 5)
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+    function OnMyLegacyActionMemoBegin() {
+        $('#MyActionMemosAjaxContainer').html('<div id="fountainG"><div id="fountainG_1" class="fountainG"></div><div id="fountainG_2" class="fountainG"></div><div id="fountainG_3" class="fountainG"></div><div id="fountainG_4" class="fountainG"></div><div id="fountainG_5" class="fountainG"></div><div id="fountainG_6" class="fountainG"></div><div id="fountainG_7" class="fountainG"></div><div id="fountainG_8" class="fountainG"></div></div>');
+    }
+</script>

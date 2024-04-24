@@ -1,0 +1,190 @@
+﻿using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Linq.Mapping;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib
+{
+    public static class LegacyHelper
+    {
+        #region -- Public Functions --
+
+        public static IQueryable<LegacyAccount> GetLegacyAccounts(LegacyDataContext legacyDb, string agentCode)
+        {
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = !String.IsNullOrEmpty(agentCode) ? legacyDb.LegacyAccounts.Where(t => t.AgentCode == agentCode).OrderBy(t => t.Name) : new List<LegacyAccount>() as IQueryable<LegacyAccount>;
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IQueryable<LegacyAccount> GetLegacyAccounts(IdentityDataContext db, LegacyDataContext legacyDb, IPrincipal user)
+        {
+            var disposeDb = false;
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            IQueryable<LegacyAccount> returnValue;
+
+            var activeStatus = "ASC0000003";
+
+            if (user.IsInRole("SysAd") || user.IsInRole("CanAssignAllAccounts"))
+            {
+                returnValue = legacyDb.LegacyAccounts.Where(t => t.AccountStatusCode == activeStatus).OrderBy(t => t.Name);
+            }
+            else
+            {
+                var username = user.Identity.Name;
+
+                var accountCodes = new List<string>();
+                var applicationUser = db.Users.FirstOrDefault(t => t.UserName == user.Identity.Name) ?? new ApplicationUser();
+                var agentCode = applicationUser.AgentCode;
+                if (user != null && !string.IsNullOrEmpty(agentCode))
+                {
+                    returnValue = legacyDb.LegacyAccounts.Where(t => t.AgentCode == agentCode && t.AccountStatusCode == activeStatus).OrderBy(t => t.Name);
+                }
+                else
+                {
+                    accountCodes = db.Accounts.Where(t => t.ApplicationUser.UserName == username).Select(t => t.Code).ToList();
+                    returnValue = legacyDb.LegacyAccounts.Where(t => accountCodes.Contains(t.Code)).OrderBy(t => t.Name);
+                }
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyMember> GetActiveMembers(LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = ExecuteSp<LegacyMember>(legacyDb, "emed_active_member_prin_and_dep",
+                new List<string>() { "accountCode" },
+                new List<object>() { accountCode }
+            );
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+        
+        #endregion
+
+        #region -- Private Functions --
+
+        private static IEnumerable<T> ExecuteSp<T>(LegacyDataContext db, string sp, List<string> parameterNames, List<object> parameterValues) where T : new()
+        {
+            var returnValue = new List<T>();
+
+            var connection = db.Database.Connection as SqlConnection;
+            using (var command = new SqlCommand(sp, connection))
+            {
+                connection.Open();
+                command.CommandType = CommandType.StoredProcedure;
+
+
+                for (var index = 0; index <= parameterNames.Count - 1; index++)
+                {
+                    command.Parameters.Add(new SqlParameter(parameterNames[index], parameterValues[index]));
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    MapSpResult<T>(returnValue, reader);
+
+                    reader.Close();
+                }
+
+            }
+
+            return returnValue;
+        }
+
+        private static void MapSpResult<T>(List<T> list, SqlDataReader reader) where T : new()
+        {
+            while (reader.Read())
+            {
+                var entity = new T();
+                foreach (var property in entity.GetType().GetProperties())
+                {
+                    string columnName;
+                    var attribute = property.CustomAttributes.FirstOrDefault(t => t.AttributeType == typeof(ColumnAttribute));
+                    if (attribute != null)
+                    {
+                        columnName = attribute.ConstructorArguments[0].Value.ToString();
+                    }
+                    else
+                    {
+                        columnName = property.Name;
+                    }
+
+                    if (HasColumn(reader, columnName))
+                    {
+                        if (reader[columnName].GetType() != typeof(DBNull)) property.SetValue(entity, reader[columnName]);
+                    }
+                }
+                list.Add(entity);
+            }
+
+        }
+
+        public static bool HasColumn(IDataRecord dr, string columnName)
+        {
+            for (int i = 0; i < dr.FieldCount; i++)
+            {
+                if (dr.GetName(i).Equals(columnName, StringComparison.InvariantCultureIgnoreCase)) return true;
+            }
+            return false;
+        }
+        
+        #endregion
+    }
+}

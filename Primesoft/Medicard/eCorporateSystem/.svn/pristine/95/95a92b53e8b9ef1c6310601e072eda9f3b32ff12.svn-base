@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+namespace Corelib.Models
+{
+    public class ApplicationVerification : BaseModel
+    {
+        public string FileName { get; set; }
+
+        public int Row { get; set; }
+
+        public bool IsError { get; set; }
+
+        public string ErrorMessage { get; set; }
+
+        #region -- Properties --
+
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+
+        [Required]
+        [StringLength(64)]
+        public string EmployeeNumber { get; set; }
+
+        public string Area { get; set; }
+
+        [StringLength(64)]
+        public string CostCenter { get; set; }
+
+        [Required]
+        [StringLength(64)]
+        public string LastName { get; set; }
+
+        [Required]
+        [StringLength(64)]
+        public string FirstName { get; set; }
+
+        [StringLength(64)]
+        public string MiddleName { get; set; }
+
+        public string Suffix { get; set; }
+
+        public string Gender { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        public int Age { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime ValidityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateHired { get; set; }
+
+        public string AppliedPlan { get; set; }
+
+        public string OptionalPlan { get; set; }
+
+        public int Dependent { get; set; }
+
+        public string DependentAppliedPlan { get; set; }
+
+        public string DependentOptionalPlan { get; set; }
+
+        #endregion
+
+        public string MemberCode { get; set; }
+
+        public string MemberType { get; set; }
+        
+        public string MembershipStatus { get; set; }
+
+        public bool IsResigned { get; set; }
+
+        public DateTime? ResignationDate { get; set; }
+
+        public string AccountNumber { get; set; }
+
+        #region -- IValidatableObject --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (db.Applications.Any(t => (t.DateOfBirth == DateOfBirth && t.LastName == LastName && t.FirstName == FirstName && t.MiddleName == MiddleName && t.Id != Id) && !t.Deleted))
+                {
+                    yield return new ValidationResult("Application already exist in database.");
+                }
+
+            }
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,218 @@
+
+@model EndorsementBatch
+
+@{
+    ViewBag.Title = "Cancellation of Membership";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("BatchUploadCancellation", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(false);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.ReferenceNumber);
+    @Html.HiddenFor(model => model.Filename);
+    @Html.HiddenFor(model => model.GuidFilename);
+    @Html.HiddenFor(model => model.Timestamp);
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Cancellation of Membership</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadRenewal">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title" style="margin-bottom: 1em">Batch Upload for Cancellation of Membership</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Submission Deadline:</label>
+                                                        <div class="col-lg-8 editor-form-control">
+                                                            @Html.EditorFor(model => model.Deadline, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessage("DeadLineError", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Remarks:</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">&nbsp;</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <label class="inline">Allowed file extension: xlsx.</label>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <input id="DownloadActiveMembersButton" type="button" class="btn-download-active" value="Download Active Members" />
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <input type="file" id="uploadNewApplication" name="uploadNewApplication" style="background-color:blue" />
+                                                                    <input type="hidden" id="uploadStringNewApplication" name="uploadStringNewApplication" />
+
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div id="RowsContainer">
+                                                            @if (Model.CancelledMembers != null && Model.CancelledMembers.Count > 0)
+                                                            {
+                                                                <div class="fixedColumn">
+                                                                    <table>
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="headcol">Last Name</th>
+                                                                                <th>First Name</th>
+                                                                                <th>Middle Name</th>
+                                                                                <th>Member Code</th>
+                                                                                <th>Email Address</th>
+                                                                                <th>Date Of Birth</th>
+                                                                                <th>Area</th>
+                                                                                <th>Employee Number</th>
+                                                                                <th>Applied Plan</th>
+                                                                                <th>Type</th>
+                                                                                <th>Gender</th>
+                                                                                <th>Civil Status</th>
+                                                                                <th>Effectivity Date</th>
+                                                                                <th>Validity Date</th>
+                                                                                <th>Remarks</th>
+                                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                                {
+                                                                                    <th>&nbsp;</th>
+                                                                                }
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="ApplicationVerificationBody">
+                                                                            @foreach (var cancelledMembers in Model.CancelledMembers)
+                                                                            {
+                                                                                @Html.Partial("_CancelledMembers", cancelledMembers)
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="form-actions no-color" style="text-align: right">
+                                                                            &nbsp;
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="no-color" style="text-align: right">
+                                                                            @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                            {
+                                                                                <input type="submit" value="Cancel" class="btn btn-danger" />
+                                                                            }
+                                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function deleteMember(button) {
+            var tr = $(button).parent().parent();
+            tr.remove();
+        }
+        $(document).ready(function () {
+            $("#uploadNewApplication").uploadifive({
+                'method': 'post',
+                'formData': {
+                    'accountCode': '@ViewBag.AccountCode',
+                    'endorsementBatchId': '@Model.Id'
+                },
+                'uploadScript': '/CorporateAdministrator/Endorsement/UploadCancellationExcel',
+                'fileObjName': 'fileData',
+                'buttonText': 'Select File',
+                'multi': false,
+                'auto': true,
+                'height': 40,
+                'width': 60,
+                'removeCompleted': true,
+                'onError': function (file, data) {
+                    alert('There was a problem uploading the file selected');
+                },
+                'onUploadComplete': function (file, data) {
+                    var json = $.parseJSON(data);
+                    $('#Filename').val(json.Filename);
+                    $('#GuidFilename').val(json.GuidFilename);
+                    $('#RowsContainer').html(json.TableData);
+                    $('form').attr('action', '@Url.Action("ValidateUploadedCancellationExcel", new { accountCode = @ViewBag.AccountCode })');
+                    $('form').submit();
+                }
+            });
+
+            $('#DownloadActiveMembersButton').click(function (e) {
+                e.preventDefault();
+                window.location.href = '@(Url.Action("DownloadCancellationTemplate", new { @accountCode = ViewBag.AccountCode }))';
+            });
+
+            $('.selectpicker').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectpicker').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+
+            $('#ApplicationVerificationBody:contains("exists"),#ApplicationVerificationBody:contains("required")').each(function () {
+                $("#ApplicationVerificationBody").find("td").css({"height":"64px"});
+            });
+
+
+            @if (ViewBag.Validate != null && ViewBag.Validate)
+            {
+                @:$('form').valid();
+            }
+
+        });
+    </script>
+}

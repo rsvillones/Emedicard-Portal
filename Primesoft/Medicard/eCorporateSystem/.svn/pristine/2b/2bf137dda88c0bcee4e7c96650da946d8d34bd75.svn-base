@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Batch>
+
+<div class="outer-container">
+    <div class="inner-container">
+        <div class="table-header">
+            <table id="headertable">
+                <thead>
+                    <tr>
+                        <th class="header-cell col">Account Code</th>
+                        <th class="header-cell col">Date Uploaded</th>
+                        <th class="header-cell col">Uploaded By</th>
+                        <th class="header-cell col">Status</th>
+                        <th class="header-cell col">&nbsp;</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="table-body">
+            <table id="bodytable">
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="body-cell col">
+                                @Html.HiddenFor(modelItem => item.Guid)
+                                @Html.DisplayFor(modelItem => item.AccountCode)
+                            </td>
+                            <td class="body-cell col">
+                                @item.DateUploaded.ToString("MM/dd/yyyy hh:mm tt")
+                            </td>
+                            <td class="body-cell col">
+                                @Html.DisplayFor(modelItem => item.UploadBy)
+                            </td>
+                            <td class="body-cell col">
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                            <td class="body-cell col">
+                                <a href="javascript:void(0);" onclick="findBatch($(this));" id="findBatch" class="btn btn-primary pull-right btn-xs">Apply</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

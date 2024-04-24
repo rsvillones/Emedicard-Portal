@@ -1,0 +1,2 @@
+@model int
+<tr><td colspan="@Model" style="text-align: center !important">No data available</td></tr>

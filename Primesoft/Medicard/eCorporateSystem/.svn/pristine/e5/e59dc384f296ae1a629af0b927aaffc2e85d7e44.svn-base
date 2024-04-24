@@ -1,0 +1,133 @@
+@model Amendment
+
+@{
+    var resonList = new SelectList(ViewBag.Reasons, "Id", "Description", Model.ReasonId);
+    var dependentList = new SelectList(ViewBag.Dependents, "Id", "FullName", Model.DependentId);
+    var documentList = new SelectList(ViewBag.DocumentTypes, "Id", "Name", Model.DocumentTypeId);
+    var memberList = new SelectList(ViewBag.Members, "Id", "FullName", Model.MemberId);
+}
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Guid)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.CrBy)
+@Html.HiddenFor(model => model.CrById)
+@Html.HiddenFor(model => model.CrDate)
+@Html.HiddenFor(model => model.AccountCode)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.RequestDate)
+@Html.HiddenFor(model => model.Status)
+@Html.HiddenFor(model => model.DocumentFileName)
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Amendment Detail</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-lg-12" id="MemberContainer">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.Label("MemberId","Member Name:")</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("MemberId", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlMemberAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.MemberId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.EffectivityDate):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessageFor(model => model.EffectivityDate)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.RequestFor):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EnumDropDownListFor(model => model.RequestFor, ViewBag.HtmlRequestForAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.RequestFor)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DataType):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EnumDropDownListFor(model => model.DataType, ViewBag.HtmlDataTypeAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.DataType)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ChangeDataFrom):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EditorFor(model => model.ChangeDataFrom, new { htmlAttributes = new { @class = "form-control  white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.ChangeDataFrom)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ChangeDataTo):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.EditorFor(model => model.ChangeDataTo, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessageFor(model => model.ChangeDataTo)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ReasonId):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("ReasonId", (IEnumerable<SelectListItem>)resonList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.ReasonId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DependentId):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.DropDownList("DependentId", (IEnumerable<SelectListItem>)dependentList, "-- Select --", ViewBag.HtmlDependentAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.DependentId)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DocumentTypeId):</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.DropDownList("DocumentTypeId", (IEnumerable<SelectListItem>)documentList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.DocumentTypeId)
+                                                        </div>
+                                                        <div class="col-lg-6" id="FileInput">
+                                                            @Html.TextBoxFor(model => model.FileWrapper, new { @Type = "file" })
+                                                            <input onclick="clearFileInput()" type="button" value="Clear" /> 
+                                                            @Html.ValidationMessageFor(model => model.FileWrapper)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.Remarks):</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                                                            @Html.ValidationMessageFor(model => model.Remarks)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+
+

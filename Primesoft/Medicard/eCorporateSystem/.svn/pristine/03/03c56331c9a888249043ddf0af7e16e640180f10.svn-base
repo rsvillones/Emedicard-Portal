@@ -1,0 +1,8 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Membership Profile Submission Cancelled</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+<p class="details">Your Membership Infomation application has been cancelled by Corporate Administrator, you may click <a href="@(Corelib.Config.BaseUrl)">here</a> and login to the system to update and resubmit your application.</p>
+

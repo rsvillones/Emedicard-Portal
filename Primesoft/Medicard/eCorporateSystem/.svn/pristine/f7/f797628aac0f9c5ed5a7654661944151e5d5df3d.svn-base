@@ -1,0 +1,523 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewRequestManagement, CanViewAmendments, CanAddAmendments, CanEditAmendments")]
+    public class AmendmentsController : BaseAccountController
+    {
+        #region -- Struct --
+
+        private struct MemberJson
+        {
+            public string id { get; set; }
+            public string text { get; set; }
+        }
+
+        #endregion
+
+        #region  -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewRequestManagement, CanViewAmendments, CanAddAmendments, CanEditAmendments")]
+        public ActionResult Index(string accountCode, int? page, string messageType, string message, DateTime? requestDate, string memberName, int? requestForId, string requestReason)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.Amendments
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Reason)
+                .Include(t => t.DocumentType)
+                .Where(t => t.AccountCode == this.LegacyAccount.Code && !t.Deleted && t.Status != RequestStatus.Saved)
+                .OrderByDescending(t => t.RequestDate).ToList();
+
+            var requestDateString = "";
+            var requestForString = "";
+            if (requestDate != null)
+            {
+                model = model.Where(t => t.RequestDate.Date == requestDate.Value.Date).ToList();
+                requestDateString = requestDate.Value.ToString("MM/dd/yyyy");
+            }
+            if (requestReason != null)
+            {
+                model = model.Where(t => t.Reason.Description.Contains(requestReason)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(memberName))
+            {
+                model = model.Where(t => t.MemberName.Contains(memberName)).ToList();
+            }
+
+            if (requestForId != null)
+            {
+                var requestFor = (Corelib.Enums.RequestFor)requestForId;
+                requestForString = ((Corelib.Enums.RequestFor)requestForId).ToString();
+                model = model.Where(t => t.RequestFor == requestFor).ToList();
+            }
+
+            ViewBag.RequestDate = requestDateString;
+            ViewBag.MemberName = memberName;
+            ViewBag.RequestForId = requestForId;
+            ViewBag.RequestReason = requestReason;
+            ViewBag.EnumSelectList = new SelectList(Enum.GetValues(typeof(RequestFor)).Cast<RequestFor>().Select(t => new SelectListItem
+            {
+                Text = t.ToString(),
+                Value = ((int)t).ToString()
+            }).ToList(), "Value", "Text", requestForId.ToString());
+            ViewBag.SearchValue = String.Format("{0} {1} {2} {3}", requestDateString, memberName, requestReason, requestForString).Trim();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        #endregion
+
+        #region -- Amendment --
+
+        [Authorize(Roles = "SysAd, CanAddAmendments, CanEditAmendments")]
+        public ActionResult Amendment(string accountCode, Guid? guid, Guid? memberGuid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            string memberCode = "";
+            if (memberGuid != null && db.Members.Any(t => t.Guid == memberGuid)) memberCode = db.Members.FirstOrDefault(t => !t.Deleted && t.Guid == memberGuid).Code;
+
+            Amendment model;
+            if (guid != null && db.Amendments.Any(t => t.Guid == guid))
+            {
+                model = db.Amendments.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                model = new Amendment()
+                {
+                    MemberCode = memberCode,
+                    AccountCode = accountCode,
+                    Status = Corelib.Enums.RequestStatus.Submitted
+                };
+            }
+
+            base.AmendmentReadOnlyAttribute(model);
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.Amendment).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            bool isPrincipal = model.RequestFor == RequestFor.Principal ? true : false;
+            ViewBag.PlanList = new SelectList(Helper.GetLegacyRoomRates(accountCode, isPrincipal), "LongDescription", "LongDescription", model.ChangeDataTo);
+            ViewBag.EnumList = GetEnumSelectList(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddAmendments, CanEditAmendments")]
+        public ActionResult Amendment(Amendment model, string accountCode, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (model.FileWrapper != null)
+            {
+                using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                {
+                    model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                    model.DocumentFileName = model.FileWrapper.FileName;
+                    model.DocumentContentType = model.FileWrapper.ContentType;
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (submit == "Submit Request")
+                {
+                    model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                }
+
+                if (model.Id == 0)
+                {
+                    var endorsementBatch = new EndorsementBatch()
+                    {
+                        Deadline = DateTime.Now,
+                        //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                        Date = DateTime.Now,
+                        EndorsementType = Constants.AMENDMENT_ENDORSEMENT_TYPE,
+                        BatchType = Constants.AMENDMENT_ENDORSEMENT_TYPE,
+                        EndorsementCount = 1,
+                        AccountCode = accountCode,
+                        Status = (submit == "Submit Request" ? Corelib.Enums.EndorsementBatchStatus.Processing : Corelib.Enums.EndorsementBatchStatus.New)
+                    };
+                    db.EndorsementBatches.Add(endorsementBatch);
+
+                    model.EndorsementBatchId = endorsementBatch.Id;
+                    model.AccountCode = accountCode;
+                    db.Amendments.Add(model);
+                }
+                else
+                {
+                    var currentAmendment = db.Amendments.FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                    db.Entry(currentAmendment).CurrentValues.SetValues(model);
+                    db.Entry(currentAmendment).State = EntityState.Modified;
+                    var endorsementBatch = db.EndorsementBatches.FirstOrDefault(t => t.Id == model.EndorsementBatchId);
+                    endorsementBatch.Status = EndorsementBatchStatus.Processing;
+                }
+
+                if (submit == "Submit Request")
+                {
+                    Emailer.Emailer.SendSubmitAmendmentCorporateAdminEmailInstant(model);
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode });
+            }
+
+            base.AmendmentReadOnlyAttribute(model);
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.Amendment).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        public ActionResult CancelAmendment(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var amendment = db.Amendments.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (amendment == null) throw new Exception("Amendment Not Found!.");
+
+            amendment.Status = Corelib.Enums.RequestStatus.CancelledRequest;
+            db.Entry(amendment).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendCancelledAmendmentCorporateAdminToMemberEmailInstant(amendment);
+            return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Success!", message = "Request for amendment successfully cancelled." });
+        }
+
+        public ActionResult ApproveAmendment(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var amendment = db.Amendments.Include(t => t.EndorsementBatch).FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (amendment == null) throw new Exception("Amendment Not Found!.");
+
+            amendment.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+            amendment.EndorsementBatch.Status = EndorsementBatchStatus.Processing;
+            db.Entry(amendment).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendSubmitAmendmentCorporateAdminEmailInstant(amendment);
+            return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Success!", message = "Request for amendment successfully approved." });
+        }
+
+        public ActionResult DisapproveAmendment(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var amendment = db.Amendments.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (amendment == null) throw new Exception("Amendment Not Found!.");
+
+            amendment.Status = Corelib.Enums.RequestStatus.CorporateAdminDisapproved;
+            db.Entry(amendment).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendDisapproveAmendmentCorporateAdminToMemberEmailInstant(amendment);
+            return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Success!", message = "Request for amendment successfully disapproved." });
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public string GetPropertyValue(string memberCode, int? propertyName, int? requestForId, string dependentCode, string accountCode)
+        {
+            if (propertyName == null) return "";
+            var dataType = Convert.ToString((Corelib.Enums.RequestDataType)propertyName);
+            var requestFor = (Corelib.Enums.RequestFor)requestForId;
+            //var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Code == memberCode);
+            //var dependent = db.Dependents.FirstOrDefault(t => !t.Deleted && t.Code == dependentCode);
+            var member = LegacyHelper.GetActiveMembers(legacyDb, accountCode).FirstOrDefault(t => t.Code == memberCode);
+            var dependent = LegacyHelper.GetActiveDependents(legacyDb, accountCode, member.Code).FirstOrDefault(t => t.Code == dependentCode);
+            var returnValue = "";
+            switch (requestFor)
+            {
+                case Corelib.Enums.RequestFor.Principal:
+                    if (member != null)
+                    {
+                        if (dataType == RequestDataType.Classification.ToString()) return "Principal";
+                        var propertyInfo = member.GetType().GetProperty(dataType);
+                        if (propertyInfo == null) return "Data type is not available.";
+                        if (propertyInfo.PropertyType == typeof(DateTime) || propertyInfo.PropertyType == typeof(DateTime?))
+                        {
+                            var date = Convert.ToDateTime(propertyInfo.GetValue(member, null));
+                            returnValue = date.ToString("MM/dd/yyyy");
+                        }
+                        else
+                        {
+                            returnValue = Convert.ToString(propertyInfo.GetValue(member, null));
+                            if (propertyInfo.Name == "AppliedPlan")
+                            {
+                                int planCode;
+                                if (int.TryParse(returnValue, out planCode))
+                                {
+                                    var plan = Helper.GetAllLegacyRoomRates(accountCode).FirstOrDefault(t => t.Id == planCode);
+                                    returnValue = plan != null ? plan.LongDescription : "Not Applied";
+                                }
+                                else
+                                {
+                                    returnValue = "Not Applied";
+                                }
+                            }
+                        }
+                        return returnValue;
+                    }
+                    return "Select member name.";
+                case Corelib.Enums.RequestFor.Dependent:
+                    if (dependent != null && member != null)
+                    {
+                        if (dataType == RequestDataType.Classification.ToString()) return "Dependent";
+                        var propertyInfo = dependent.GetType().GetProperty(dataType);
+                        if (propertyInfo == null) return "Data type of dependent is not available";
+                        if (propertyInfo.PropertyType == typeof(DateTime) || propertyInfo.PropertyType == typeof(DateTime?))
+                        {
+                            var date = Convert.ToDateTime(propertyInfo.GetValue(dependent, null));
+                            returnValue = date.ToString("MM/dd/yyyy");
+                        }
+                        else
+                        {
+                            returnValue = Convert.ToString(propertyInfo.GetValue(dependent, null));
+                            if (propertyInfo.Name == "AppliedPlan")
+                            {
+                                int planCode;
+                                if (int.TryParse(returnValue, out planCode))
+                                {
+                                    var plan = Helper.GetAllLegacyRoomRates(accountCode).FirstOrDefault(t => t.Id == planCode);
+                                    returnValue = plan != null ? plan.LongDescription : "Not Applied";
+                                }
+                                else
+                                {
+                                    returnValue = "Not Applied";
+                                }
+                            }
+                        }
+                        return returnValue;
+                    }
+                    return "Select dependent name.";
+                default:
+                    return returnValue;
+            }
+        }
+
+        public JsonResult PropertyTool(string memberCode, string accountCode, int? propertyName, string dependentCode, int? requestForId)
+        {
+            var returnValue = new Dictionary<string, object>();
+            if (propertyName == null)
+            {
+                returnValue.Add("Success", false);
+                returnValue.Add("Tool", "Data Type null.");
+                returnValue.Add("DataTool", GetChangeDataToTextBox());
+                return this.Json(returnValue);
+            }
+
+            var dataType = Convert.ToString((Corelib.Enums.RequestDataType)propertyName);
+            var requestFor = (Corelib.Enums.RequestFor)requestForId;
+            //var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Code == memberCode);
+            //var dependent = db.Dependents.FirstOrDefault(t => !t.Deleted && t.Code == dependentCode);
+            var member = LegacyHelper.GetActiveMembers(legacyDb, accountCode).FirstOrDefault(t => t.Code == memberCode) ?? new LegacyMember();
+            var dependent = LegacyHelper.GetActiveDependents(legacyDb, accountCode, member.Code).FirstOrDefault(t => t.Code == dependentCode) ?? new LegacyMember();
+            if (member != null || dependent != null)
+            {
+                var propertyInfo = requestFor == RequestFor.Principal ?
+                    member.GetType().GetProperty(dataType) :
+                    dependent.GetType().GetProperty(dataType);
+
+                if (propertyInfo != null)
+                {
+                    if (propertyInfo.PropertyType == typeof(DateTime) || propertyInfo.PropertyType == typeof(DateTime?))
+                    {
+                        returnValue.Add("Success", true);
+                        returnValue.Add("Tool", "DatePicker");
+                        returnValue.Add("DataTool", GetChangeDataToTextBox());
+                        return this.Json(returnValue);
+                    }
+                    else if (propertyInfo.Name == "AppliedPlan")
+                    {
+                        bool isPrincipal = requestFor == RequestFor.Principal ? true : false;
+                        returnValue.Add("Success", true);
+                        returnValue.Add("Tool", "Select");
+                        returnValue.Add("DataTool", GetLegacyRoomRates(accountCode, isPrincipal));
+                        return this.Json(returnValue);
+                    }
+                    else
+                    {
+                        returnValue.Add("Success", true);
+                        returnValue.Add("Tool", "TextBox");
+                        returnValue.Add("DataTool", GetChangeDataToTextBox());
+                        return this.Json(returnValue);
+                    }
+                }
+            }
+
+            returnValue.Add("Success", false);
+            returnValue.Add("Tool", "member is null.");
+            returnValue.Add("DataTool", GetChangeDataToTextBox());
+            return this.Json(returnValue);
+        }
+
+        public string GetDependents(string memberCode, string accountCode)
+        {
+            var member = LegacyHelper.GetActiveMembers(legacyDb, accountCode).FirstOrDefault(t => t.Code == memberCode) ?? new LegacyMember();
+            var dependents = LegacyHelper.GetActiveDependents(legacyDb, accountCode, member.Code);
+            //var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Code == memberCode);
+            //var dependent = db.Dependents.Where(t => !t.Deleted && t.MemberId == member.Id);
+            var sb = new System.Text.StringBuilder();
+            if (!string.IsNullOrEmpty(memberCode))
+            {
+                sb.Append(string.Format(@"<option value=''>-- Select Dependent --</option>"));
+                foreach (var dependent in dependents)
+                {
+                    sb.Append(string.Format(@"<option value='{0}'>{1}</option>", dependent.Code, dependent.FullName));
+                }
+            }
+            else
+            {
+                sb.Append(string.Format(@"<option value=''>-- Select Member --</option>"));
+            }
+
+            return sb.ToString();
+        }
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.Amendments.Any(t => t.Guid == guid))
+            {
+                var amendment = db.Amendments.FirstOrDefault(t => t.Guid == guid);
+                if (amendment.DocumentFile != null || !string.IsNullOrEmpty(amendment.DocumentContentType) || !string.IsNullOrEmpty(amendment.DocumentFileName))
+                { return File(amendment.DocumentFile, amendment.DocumentContentType, amendment.DocumentFileName); }
+            }
+            return null;
+        }
+
+        public string GetDataType(int requestForId)
+        {
+            var requestFor = (Corelib.Enums.RequestFor)requestForId;
+            var sb = new System.Text.StringBuilder();
+            sb.Append(string.Format(@"<option value=''>-- Select --</option>"));
+            switch (requestFor)
+            {
+                case RequestFor.Dependent:
+                    foreach (var datatype in (RequestDataType[])Enum.GetValues(typeof(RequestDataType)))
+                    {
+                        var intValue = Convert.ChangeType(datatype, datatype.GetTypeCode());
+                        var description = EnumHelper<RequestDataType>.GetDisplayValue(datatype);
+                        if (datatype != RequestDataType.CostCenter && datatype != RequestDataType.DateHired && datatype != RequestDataType.Area &&
+                            datatype != RequestDataType.Designation && datatype != RequestDataType.Level)
+                        {
+                            sb.Append(string.Format(@"<option value='{0}'>{1}</option>", intValue, description));
+                        }
+                    }
+                    break;
+                default:
+                    foreach (var datatype in (RequestDataType[])Enum.GetValues(typeof(RequestDataType)))
+                    {
+                        var intValue = Convert.ChangeType(datatype, datatype.GetTypeCode());
+                        var description = EnumHelper<RequestDataType>.GetDisplayValue(datatype);
+
+                        sb.Append(string.Format(@"<option value='{0}'>{1}</option>", intValue, description));
+
+                    }
+                    break;
+            }
+            return sb.ToString();
+        }
+
+        public string GetLegacyRoomRates(string accountCode, bool principal)
+        {
+            var sb = new System.Text.StringBuilder();
+
+            sb.Append("<select id='ChangeDataTo' class='form-control' name='ChangeDataTo'><option value=''>-- Select --</option>");
+            var plans = Helper.GetLegacyRoomRates(accountCode, principal);
+
+            foreach (var plan in plans)
+            {
+                sb.Append(string.Format(@"<option value='{0}'>{0}</option>", plan.LongDescription));
+            }
+
+            sb.Append("</select>");
+            sb.Append("<span class='field-validation-valid' data-valmsg-replace='true' data-valmsg-for='ChangeDataTo'></span>");
+            return sb.ToString();
+        }
+
+        public string GetChangeDataToTextBox()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.Append("<input type='text' name='ChangeDataTo' id='ChangeDataTo' value='' data-val-required='The Change Data To field is required.' data-val='true' class='form-control text-box single-line'>");
+            sb.Append("<span class='field-validation-valid' data-valmsg-replace='true' data-valmsg-for='ChangeDataTo'></span>");
+            return sb.ToString();
+        }
+
+        public JsonResult GetActiveMembers(string q, string accountCode)
+        {
+            var members = LegacyHelper.GetActiveMembers(legacyDb, accountCode);
+            members = members.Where(t => t.FullName.StartsWith(q));
+
+            var returnValue = new List<MemberJson>();
+            foreach (var member in members)
+            {
+                returnValue.Add(new MemberJson()
+                {
+                    id = member.Code,
+                    text = member.FullName
+                });
+            }
+
+            return this.Json(returnValue, JsonRequestBehavior.AllowGet);
+        }
+
+        public static IEnumerable<SelectListItem> GetEnumSelectList(Amendment amendment)
+        {
+            var dataTypes = Enum.GetValues(typeof(RequestDataType)).Cast<RequestDataType>();
+            if (amendment.RequestFor == RequestFor.Dependent)
+            {
+                dataTypes = Enum.GetValues(typeof(RequestDataType)).Cast<RequestDataType>()
+                    .Except(new RequestDataType[] { 
+                        RequestDataType.CostCenter, 
+                        RequestDataType.DateHired, 
+                        RequestDataType.Area, 
+                        RequestDataType.Designation, 
+                        RequestDataType.Level
+                    }).ToList();
+            }
+            var requestDataTypes = dataTypes.Select(t => new
+            {
+                Name = EnumHelper<RequestDataType>.GetDisplayValue(t),
+                ID = ((int)t).ToString()
+            }).ToList();
+            var intValue = Convert.ChangeType(amendment.DataType, amendment.DataType.Value.GetTypeCode());
+            return new SelectList(requestDataTypes, "ID", "Name", intValue.ToString());
+        }
+
+        #endregion
+    }
+}

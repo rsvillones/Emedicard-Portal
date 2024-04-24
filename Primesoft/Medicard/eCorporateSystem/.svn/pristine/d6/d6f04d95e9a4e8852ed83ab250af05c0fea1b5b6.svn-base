@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "UrgActionMemoNotification";
+}
+
+<h2>UrgActionMemoNotification</h2>
+

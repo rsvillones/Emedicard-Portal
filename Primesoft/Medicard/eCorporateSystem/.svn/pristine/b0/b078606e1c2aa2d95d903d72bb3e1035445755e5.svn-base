@@ -1,0 +1,99 @@
+﻿
+@model IEnumerable<Amendment>
+
+@{
+    ViewBag.Title = "Amendments";
+    Member member = ViewBag.Member;
+    IEnumerable<Dependent> dependents = ViewBag.Dependents;
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="title">Member Amendments (@member.FullName)</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <p class="pull-right">
+            @Html.ActionLink("Back to Members List", "Members", "MembershipEndorsements", new { guid = member.EndorsementBatch.Guid }, new { @class = "btn btn-primary" })
+        </p>
+    </div>
+</div>
+<table class="table table-custom">
+    <tr>
+        <th>Control Number</th>
+        <th>Request Date</th>
+        <th>Employee Number</th>
+        <th>Request For Name</th>
+        <th>Request For</th>
+        <th>Data Type</th>
+        <th>Change Data From</th>
+        <th>Change Data To</th>
+        <th>Request Reason</th>
+        <th>Remark</th>
+        <th>Document(attachment)</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.EndorsementBatch.ControlNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.RequestDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => member.EmployeeNumber)
+            </td>
+            <td>
+                @if (item.DependentId != null)
+                {
+                    var dependent = dependents.FirstOrDefault(t=>t.Id == item.DependentId);
+                    @Html.DisplayFor(model => dependent.FullName)
+                }
+                else
+                {
+                    
+                    @Html.DisplayFor(model => member.FullName)
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.RequestFor)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.DataType)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.ChangeDataFrom)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.ChangeDataTo)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Reason.Description)
+            </td>
+            <td>
+               @Html.DisplayFor(model => item.Remarks)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.DocumentType.Name)
+                @if (!string.IsNullOrEmpty(item.DocumentFileName))
+                {
+                   <br/>@Html.ActionLink(item.DocumentFileName, "DownloadFile", new { guid = item.Guid }, new { @class = "" }) 
+                }                
+            </td>
+            <td>
+                @Html.ActionLink("Approve", "ApproveAmendment", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                @Html.ActionLink("Disapprove", "DisapproveAmendment", new {  guid = item.Guid }, new { @class = "btn btn-danger btn-xs" })
+                @Html.ActionLink("View Data", "Amendment", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+            </td>
+        </tr>
+    }
+</table>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

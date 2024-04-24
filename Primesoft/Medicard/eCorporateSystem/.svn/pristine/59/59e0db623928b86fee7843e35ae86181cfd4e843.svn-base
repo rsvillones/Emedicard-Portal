@@ -1,0 +1,273 @@
+@model ApplicationUserViewModel
+<div class="col-lg-6 form-group">
+    @if (HttpContext.Current.User.IsInRole("SysAd") || HttpContext.Current.User.IsInRole("CanCreateUserFromLegacySystem"))
+    {
+        @Html.LabelFor(model => model.AgentCode, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.AgentCode, new { htmlAttributes = new { @class = "form-control" } })
+            <input type="button" class="btn" id="btnValidateCode" value="Validate Agent Code" />
+            @Html.ValidationMessageFor(model => model.AgentCode, "", new { @class = "text-danger" })
+        </div>
+    }
+    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+    </div>
+
+</div>
+<div class="col-lg-6 form-group">
+    <table class="table table-fixed">
+        <thead>
+            <tr>
+                <th>
+                    @Html.LabelFor(model => model.Groups)
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="scrollable-tables" style="margin-top: -3px !important;">
+        <table class="table table-fixed">
+            <tbody>
+                @foreach (Group group in ViewBag.Groups)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="GroupId" id="Group_@(group.Id)" value="@group.Id" @(Model.Groups != null && Model.Groups.Any(t => t.Id == group.Id) ? "checked='checked'" : "") /> <label for="Group_@(group.Id)">@group.Name</label>
+                        </td>
+                    </tr>
+                }
+                @Html.ValidationMessageFor(model => model.Groups, "", new { @class = "text-danger" })
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div id="LegacyAccountsContainer" class="col-lg-6 form-group @(Model.AgentCodeValidated ? "hidden" : "")">
+    <table class="table table-fixed">
+        <thead>
+            <tr>
+                <th style="width:50%">
+                    <label>Associated Accounts</label>
+                </th>
+                <th style="width:10%">
+                    <label>Use Email as Login</label>
+                </th>
+                <th style="width:10%">
+                    <label>Use Random Generated Password</label>
+                </th>
+                <th style="width:10%">
+                    <label>Readonly Access</label>
+                </th>
+                <th style="width:10%">
+                    <label>Is HR Manager</label>
+                </th>
+                <th style="width:10%">
+                    <label>Bypass HR Approval</label>
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="scrollable-tables" style="margin-top: -3px !important;">
+        <table class="table table-fixed">
+            <tbody>
+                @foreach (LegacyAccount legacyAccount in ViewBag.LegacyAccounts)
+                {
+                    var account = Model.Accounts != null ? Model.Accounts.FirstOrDefault(t => t.Code == legacyAccount.Code) : null;
+                    <tr>
+                        <td style="width:50%">
+                            <input type="hidden" name="Accounts" value="@legacyAccount.Code" />
+                            <input type="hidden" name="UseAccountCode" value="@(account != null ? "true" : "false")" />
+                            <input type="hidden" name="UseEmailAsLogin" value="@(account != null && account.UseEmailAsLogin ? "true" : "false")" />
+                            <input type="hidden" name="UseRandomGeneratedPassword" value="@(account != null && account.UseRandomGeneratedPassword ? "true" : "false")" />
+                            <input type="hidden" name="IsReadOnly" value="@(account != null && account.IsReadOnly ? "true" : "false")" />
+                            <input type="hidden" name="BypassHRManagerApproval" value="@(account != null && account.BypassHRManagerApproval ? "true" : "false")" />
+                            <input type="hidden" name="IsHRManager" value="@(account != null && account.IsHRManager ? "true" : "false")" />
+                            <input id="Account_@legacyAccount.Code" type="checkbox" name="Accounts" value="@legacyAccount.Code" class="legacy-account-checkbox" @(Model.Accounts != null && Model.Accounts.Any(t => t.Code == legacyAccount.Code) ? "checked='checked'" : "") onchange="OnAccountCheckChange(this)" />
+                            <label for="Account_@legacyAccount.Code">
+                                <span data-content="Name">@legacyAccount.Name</span>
+                            </label>
+                        </td>
+                        <td style="width:10%"><input type="checkbox" disabled="disabled" onchange="OnCheckboxCheckChanged(this, 'UseEmailAsLogin')"></td>
+                        <td style="width:10%"><input type="checkbox" disabled="disabled" onchange="OnCheckboxCheckChanged(this, 'UseRandomGeneratedPassword')"></td>
+                        <td style="width:10%"><input type="checkbox" disabled="disabled" onchange="OnCheckboxCheckChanged(this, 'IsReadOnly')"></td>
+                        <td style="width:10%"><input type="checkbox" disabled="disabled" onchange="OnCheckboxCheckChanged(this, 'BypassHRManagerApproval')"></td>
+                        <td style="width:10%"><input type="checkbox" disabled="disabled" onchange="OnCheckboxCheckChanged(this, 'IsHRManager')"></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<div id="AgentAccountsContainer" class="col-lg-6 form-group @(!Model.AgentCodeValidated ? "hidden" : "")">
+    <label>The system will automatically retrieve the accounts for the associated AGENT CODE from the legacy system. The current enrolled Accounts for the AGENT CODE ARE</label>
+    <table class="table table-fixed">
+        <thead>
+            <tr>
+                <th style="width:50%">
+                    <label>Associated Accounts</label>
+                </th>
+                <th style="width:10%">
+                    <label>Use Email as Login</label>
+                </th>
+                <th style="width:10%">
+                    <label>Use Random Generated Password</label>
+                </th>
+                <th style="width:10%">
+                    <label>Readonly Access</label>
+                </th>
+                <th style="width:10%">
+                    <label>Is HR Manager</label>
+                </th>
+                <th style="width:10%">
+                    <label>Bypass HR Approval</label>
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="scrollable-tables" style="margin-top: -3px !important;height: 166px !important">
+        <table class="table table-fixed">
+            <tbody id="AssociatedAccountsTableBody">
+                @foreach (LegacyAccount legacyAccount in ViewBag.AssociatedLegacyAccounts)
+                {
+                    var account = Model.Accounts != null ? Model.Accounts.FirstOrDefault(t => t.Code == legacyAccount.Code) : null;
+                    <tr>
+                        <td style="width:50%">
+                            <input type="hidden" name="Account" value="@legacyAccount.Code" />
+                            <input type="hidden" name="UseAccountCode" value="true" />
+                            <input type="hidden" name="UseEmailAsLogin" value="@(account != null && account.UseEmailAsLogin ? "true" : "false")" />
+                            <input type="hidden" name="UseRandomGeneratedPassword" value="@(account != null && account.UseRandomGeneratedPassword ? "true" : "false")" />
+                            <input type="hidden" name="IsReadOnly" value="@(account != null && account.IsReadOnly ? "true" : "false")" />
+                            <input type="hidden" name="BypassHRManagerApproval" value="@(account != null && account.BypassHRManagerApproval ? "true" : "false")" />
+                            <input type="hidden" name="IsHRManager" value="@(account != null && account.IsHRManager ? "true" : "false")" />
+                            <input type="checkbox" checked="checked" disabled="disabled" /> 
+                            <label><span data-content="Name">@legacyAccount.Name</span></label>
+                        </td>
+                        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'UseEmailAsLogin')"></td>
+                        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'UseRandomGeneratedPassword')"></td>
+                        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'IsReadOnly')"></td>
+                        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'BypassHRManagerApproval')"></td>
+                        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'IsHRManager')"></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function OnAccountCheckChange(checkbox) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+
+        var accountCode = tr.children('td:nth-child(1)').children('input[name="UseAccountCode"]');
+        var useEmailAsLogin = tr.children('td:nth-child(1)').children('input[name="UseEmailAsLogin"]');
+        var useRandomGeneratedPassword = tr.children('td:nth-child(1)').children('input[name="UseRandomGeneratedPassword"]');
+        var isReadOnly = tr.children('td:nth-child(1)').children('input[name="IsReadOnly"]');
+        var bypassHrManagerApproval = tr.children('td:nth-child(1)').children('input[name="BypassHRManagerApproval"]');
+        var isHRManager = tr.children('td:nth-child(1)').children('input[name="IsHRManager"]');
+
+        var useEmailAsLoginCheckbox = tr.children('td:nth-child(2)').children('input:first');
+        var useRandomGeneratedPasswordCheckbox = tr.children('td:nth-child(3)').children('input:first');
+        var isReadOnlyCheckbox = tr.children('td:nth-child(4)').children('input:first');
+        var bypassHrManagerApprovalCheckbox = tr.children('td:nth-child(5)').children('input:first');
+        var isHRManagerCheckbox = tr.children('td:nth-child(6)').children('input:first');
+
+        if (checked) {
+            useEmailAsLoginCheckbox.removeAttr('disabled');
+            useRandomGeneratedPasswordCheckbox.removeAttr('disabled');
+            isReadOnlyCheckbox.removeAttr('disabled');
+            bypassHrManagerApprovalCheckbox.removeAttr('disabled');
+            isHRManagerCheckbox.removeAttr('disabled');
+
+            accountCode.val('true');
+        }
+        else {
+            disableCheckbox(useEmailAsLoginCheckbox);
+            disableCheckbox(useRandomGeneratedPasswordCheckbox);
+            disableCheckbox(isReadOnlyCheckbox);
+            disableCheckbox(bypassHrManagerApprovalCheckbox);
+            disableCheckbox(isHRManagerCheckbox);
+
+            accountCode.val('false');
+            useEmailAsLogin.val('false');
+            useRandomGeneratedPassword.val('false');
+            isReadOnly.val('false');
+            bypassHrManagerApproval.val('false');
+            isHRManager.val('false');
+        }
+    }
+
+    function disableCheckbox(checkbox, texbox, checked) {
+        if (!checkbox.attr('disabled')) {
+            checkbox.attr('disabled', 'disabled');
+        }
+        checkbox.removeAttr('checked');
+    }
+
+    function OnCheckboxCheckChanged(checkbox, inputName) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+        var input = tr.children('td:nth-child(1)').children('input[name="' + inputName + '"]');
+        if (checked) {
+            input.val('true');
+        }
+        else {
+            input.val('false');
+        }
+    }
+</script>

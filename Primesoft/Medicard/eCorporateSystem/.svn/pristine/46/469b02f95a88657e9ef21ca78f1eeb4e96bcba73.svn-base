@@ -1,0 +1,210 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using System.Net;
+using System.Data.Entity;
+using OfficeOpenXml;
+using System.IO;
+using Corelib.Enums;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+    public class RequestDetailsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public RequestDetailsController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult Amendment(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t=>t.Amendments)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.Amendments.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.Amendment).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult IdReplacement(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.IdReplacements)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.IdReplacements.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.IdReplacement).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult AdditionalDependent(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.AdditionalDependents)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.AdditionalDependents.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            AdditionalDependentProcessOtherInfo(model);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult DependentCancellation(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.DependentCancellations)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.DependentCancellations.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region -- Function Action Results --
+
+        public ActionResult ReadOnlyAttribute()
+        {
+            ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlRequestForAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDataTypeAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDependentAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            ViewBag.HtmlOptionalPlanAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };       
+
+            return null;
+        }
+        
+        #endregion
+
+        #region -- Functions --
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.Amendments.Any(t => t.Guid == guid))
+            {
+                var amendment = db.Amendments.FirstOrDefault(t => t.Guid == guid);
+                if (amendment.DocumentFile != null || !string.IsNullOrEmpty(amendment.DocumentContentType) || !string.IsNullOrEmpty(amendment.DocumentFileName))
+                { return File(amendment.DocumentFile, amendment.DocumentContentType, amendment.DocumentFileName); }
+            }
+            if (guid != null && db.IdReplacements.Any(t => t.Guid == guid))
+            {
+                var model = db.IdReplacements.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            if (guid != null && db.DependentCancellations.Any(t => t.Guid == guid))
+            {
+                var model = db.DependentCancellations.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            return null;
+        }
+
+        private void AdditionalDependentProcessOtherInfo(AdditionalDependent model)
+        {
+            var member = db.Members.FirstOrDefault(t => t.Code == model.MemberCode) ?? new Corelib.Models.Member();
+            var dependentPlans = Helper.GetLegacyRoomRates(model.AccountCode, false);
+            var appliedPlans = dependentPlans.Where(t => t.Id == member.DependentAppliedPlan).ToList();
+            if (appliedPlans.Count == 0) appliedPlans = dependentPlans.ToList();
+
+            var allowedPlans = new List<int>();
+            if (!String.IsNullOrEmpty(member.AllowedDependentPlans))
+            {
+                foreach (var allowedPlan in member.AllowedDependentPlans.Split(','))
+                {
+                    allowedPlans.Add(int.Parse(allowedPlan));
+                }
+            }
+
+            var optionalPlans = dependentPlans.Where(t => t.Id != member.DependentAppliedPlan && allowedPlans.Contains(t.Id)).ToList();
+
+            ViewBag.AppliedPlanList = new SelectList(appliedPlans, "Id", "LongDescription", model.AppliedPlan);
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", model.OptionalPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, model.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, model.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(db.Relationships, "Code", "Description", model.RelationshipCode);
+            ViewBag.MemberList = new SelectList(LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal"), "Code", "FullName", model.MemberCode);
+            ViewBag.OptionalPlanCount = optionalPlans.Count(t => t.Id != member.DependentAppliedPlan);
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

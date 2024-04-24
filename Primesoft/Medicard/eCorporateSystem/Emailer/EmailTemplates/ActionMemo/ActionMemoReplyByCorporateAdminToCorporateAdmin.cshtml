@@ -1,0 +1,32 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Action Memo Reply for Evaluation</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<p class="details">Your Action Memo Reply has been submitted to MediCard for review and processing, details of which are as follows:</p>
+
+<p class="details">Company Name: @Model.CompanyName</p>
+<p class="details">Date Issued: @Model.ActionMemo.DateIssued</p>
+<p class="details">
+    @{
+        string name = "";
+        if (Model.ActionMemo.DependentId.HasValue)
+        {
+            name = Model.ActionMemo.Dependent.FullName;
+        }
+        else if (Model.ActionMemo.MemberId.HasValue)
+        {
+            name = Model.ActionMemo.Member.FullName;
+        }
+    }
+    Member Name: @name
+</p>
+
+<p class="details">
+    Please be advised that the processing of submitted endorsement will only commence once received by MediCard Underwriter. A separate email notification will be sent once endorsement is received.
+</p>
+<p class="details">
+    This is a system generated message, please do not reply to this email.
+</p>

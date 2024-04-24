@@ -1,0 +1,21 @@
+﻿@using System.Web.UI.WebControls
+@model Corelib.ViewModels.ImportViewModel
+
+<fieldset>
+    <legend>Verification Summary</legend>
+    <div>
+        <h5>Row Completed:</h5>
+        <label>@Model.UploadSummary.RowCompleted</label>
+    </div>
+    <div>
+        <h5>File Name:</h5>
+        <label>@Model.UploadSummary.FileName</label>
+    </div>
+    <div>
+        <h5>Row Contains Error:</h5>
+        <label>@Model.UploadSummary.NumberOfErrors</label>
+    </div>
+</fieldset>
+<div id="MainContent">
+    @Html.Partial("_ApplicationVerification", Model)
+</div>

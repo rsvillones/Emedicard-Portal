@@ -1,0 +1,76 @@
+﻿@model PagedList.IPagedList<Corelib.Models.AccountOfficer>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "AccountOfficers", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("currentFilter")
+        <input type="submit" value="Search" />
+    </p>
+}
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Code", "Index", new { sortOrder = ViewBag.CodeSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Username", "Index", new { sortOrder = ViewBag.UserNameSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Middle Initial", "Index", new { sortOrder = ViewBag.MiddleInitialSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Email", "Index", new { sortOrder = ViewBag.EmailAddressSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MiddleInitial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailAddress)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { guid = item.Guid }) |
+                @Html.ActionLink("Delete", "Delete", new { guid = item.Guid })
+            </td>
+        </tr>
+    }
+
+</table>

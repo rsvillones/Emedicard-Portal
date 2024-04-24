@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Classes
+{
+    public static class EmailTools
+    {
+        public static string SetEmailTemplate(EmailViewModel model){
+
+            var template = System.IO.File.ReadAllText(@Config.EmailTemplate);
+
+            return Razor.Parse(template, model);
+        }
+
+        public static void EmailThreading(HttpContext context,string username)
+        {
+            var userEmail = Tools.GetUserInformation(username).EmailAddress;
+            MvcMailMessage emailMessage = null;
+            emailMessage = UserMailer.SendEmail(username);
+            emailMessage.To.Add(userEmail);
+            emailMessage.SendEmailAsync(context);
+        }
+
+        #region -- UserMailer --
+
+        private static IUserMailer _userMailer = new UserMailer();
+        public static IUserMailer UserMailer
+        {
+            get { return _userMailer; }
+            set { _userMailer = value; }
+        }
+
+        #endregion
+}

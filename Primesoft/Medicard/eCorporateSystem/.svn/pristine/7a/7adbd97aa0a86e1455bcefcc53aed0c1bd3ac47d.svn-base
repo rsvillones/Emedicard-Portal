@@ -1,0 +1,7 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">ID Replacement Accepted For Evaluation</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+<p class="details">Your request for id replacement have been approved by Corporate Administrator and submitted to URG.</p>

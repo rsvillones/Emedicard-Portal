@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+namespace Corelib.Models
+{
+    public class ApplicationVerification : BaseModel
+    {
+        public string FileName { get; set; }
+
+        public int Row { get; set; }
+
+        public bool IsError { get; set; }
+
+        public string ErrorMessage { get; set; }
+
+        #region -- Properties --
+
+        public string EmailAddress { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public string Area { get; set; }
+
+        public string CostCenter { get; set; }
+
+        public string LastName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        public string Suffix { get; set; }
+
+        public string Gender { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public string DateOfBirth { get; set; }
+
+        public string Age { get; set; }
+
+        public string CivilStatus { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public string EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public string ValidityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public string DateHired { get; set; }
+
+        public string AppliedPlan { get; set; }
+
+        public string OptionalPlan { get; set; }
+
+        public string Dependent { get; set; }
+
+        public string DependentAppliedPlan { get; set; }
+
+        public string DependentOptionalPlan { get; set; }
+
+        #endregion
+
+        public string MemberCode { get; set; }
+
+        public string MemberType { get; set; }
+        
+        public string MembershipStatus { get; set; }
+
+        public string IsResigned { get; set; }
+
+        public string ResignationDate { get; set; }
+
+        public string AccountCode { get; set; }
+        
+    }
+}

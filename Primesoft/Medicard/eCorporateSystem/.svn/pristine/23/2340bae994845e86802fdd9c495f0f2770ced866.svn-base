@@ -1,0 +1,7 @@
+﻿
+@model IEnumerable<Corelib.Models.CancelledMemberWrapper>
+
+@foreach (var cmw in Model)
+{
+    Html.RenderPartial("_CancelledMemberWrapperItem", cmw);
+}

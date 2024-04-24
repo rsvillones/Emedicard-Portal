@@ -1,0 +1,191 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class DependentCancellationsController : BaseMemberController
+    {
+        #region -- Action Result --
+        
+        public ActionResult Index(string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.DependentCancellations
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Reason)
+                .Include(t => t.DocumentType)
+                .Where(t => t.MemberCode == this.Member.Code && !t.Deleted)
+                .OrderByDescending(t => t.RequestDate).ToList();
+            
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult Create()
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var model = new DependentCancellation()
+            {
+                MemberCode = this.Member.Code,
+                AccountCode = this.Member.AccountCode,
+                Status = RequestStatus.Saved
+            };
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, this.Member.AccountCode, this.Member.Code);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder).ThenBy(t=>t.Name);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(DependentCancellation model, string submit)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (model.FileWrapper != null)
+            {
+                using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                {
+                    model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                    model.DocumentFileName = model.FileWrapper.FileName;
+                    model.DocumentContentType = model.FileWrapper.ContentType;
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                var endorsementBatch = new EndorsementBatch()
+                {
+                    Deadline = DateTime.Now,
+                    ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                    Date = DateTime.Now,
+                    EndorsementType = "Dependent Cancellation",
+                    BatchType = "Dependent Cancellation",
+                    EndorsementCount = 1,
+                    AccountCode = model.AccountCode,
+                    Status = Corelib.Enums.EndorsementBatchStatus.New
+                };
+                db.EndorsementBatches.Add(endorsementBatch);
+
+                model.EndorsementBatch = endorsementBatch;
+                if (submit == "Submit Request")
+                {
+                    var setting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.Member.AccountCode) ?? new AccountSetting();
+                    if (setting.BypassHRManagerApproval)
+                    {
+                        model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    }
+                    else
+                    {
+                        model.Status = Corelib.Enums.RequestStatus.Submitted;
+                    }
+                    Helper.MemberDependentCancellation(System.Web.HttpContext.Current, model, setting.BypassHRManagerApproval);
+                }
+                db.DependentCancellations.Add(model);
+                db.SaveChanges();
+
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder).ThenBy(t=>t.Name);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        public ActionResult Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.DependentCancellations.FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Name);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(DependentCancellation model, string submit)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (model.FileWrapper != null)
+            {
+                using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                {
+                    model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                    model.DocumentFileName = model.FileWrapper.FileName;
+                    model.DocumentContentType = model.FileWrapper.ContentType;
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                var denpendentCancellation = db.DependentCancellations.FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                db.Entry(denpendentCancellation).CurrentValues.SetValues(model);
+                if (submit == "Submit Request")
+                {
+                    var setting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.Member.AccountCode) ?? new AccountSetting();
+                    if (setting.BypassHRManagerApproval){
+                        denpendentCancellation.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    }
+                    else{
+                        denpendentCancellation.Status = Corelib.Enums.RequestStatus.Submitted;
+                    }
+                    Helper.MemberDependentCancellation(System.Web.HttpContext.Current, model, setting.BypassHRManagerApproval);
+                }
+                db.Entry(denpendentCancellation).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            base.DependentCancellationReadOnlyAttribute(model);
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Name);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        #endregion
+    }
+}

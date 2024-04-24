@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class AdditionalDependent : BaseModel
+    {
+        #region -- Constructor --
+
+        public AdditionalDependent()
+        {
+            this.DateOfBirth = DateTime.MinValue;
+        }
+
+        #endregion
+
+        #region -- Property --
+        
+        [Required]
+        [Display(Name = "Last Name:")]
+        [StringLength(32)]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name:")]
+        [StringLength(32)]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name:")]
+        [StringLength(32)]
+        public string MiddleName { get; set; }
+
+        [StringLength(8)]
+        [Display(Name = "Suffix:")]
+        public string Suffix { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Relationship:")]
+        public string Relationship { get; set; }
+
+        [Required]
+        [Display(Name = "Date Of Birth:")]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age:")]
+        [NotMapped]
+        public int Age
+        {
+            get
+            {
+                DateTime today = DateTime.Today;
+                int age = today.Year - this.DateOfBirth.Year;
+                if (this.DateOfBirth > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
+
+        [StringLength(32)]
+        [Display(Name = "Gender:")]
+        public string Gender { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Civil Status:")]
+        public string CivilStatus { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Telephone:")]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Mobile:")]
+        public string Mobile { get; set; }
+
+        [StringLength(64)]
+        [Display(Name = "Email Address:")]
+        public string EmailAddress { get; set; }
+
+        [StringLength(64)]
+        [Display(Name = "Street:")]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Province:")]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "City:")]
+        public string City { get; set; }
+
+        [Display(Name = "Zip:")]
+        public string Zip { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Occupation:")]
+        public string Occupation { get; set; }
+
+        [Display(Name = "Weight:")]
+        public int? Weight { get; set; }
+
+        [Display(Name = "Applied Plan:")]
+        public int AppliedPlan { get; set; }
+
+        [Display(Name = "Optional Plan:")]
+        public int? OptionalPlan { get; set; }
+
+        public Corelib.Enums.RequestStatus Status { get; set; }
+
+        public DateTime ApplicationDate { get; set; }
+
+        public int MemberId { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }   
+
+        #endregion
+    }
+}

@@ -1,0 +1,100 @@
+﻿@model PagedList.IPagedList<DependentCancellation>
+
+<div id="MyDependentCancellationApprovalsContainer">
+    @if (Model.PageCount > 1)
+    {
+        @Html.PagedListPager(Model, page => Url.Action("GetMyDependentCancellationApprovals", "Items", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.ClassicPlusFirstAndLast, new AjaxOptions() { UpdateTargetId = "MyAdditionalDependentApprovalsContainer" }))
+        <br /><br /><br />
+    }
+
+    <table class="table table-fixed-left">
+        <thead>
+            <tr>
+                <th style="width:15%">
+                    Date of Application
+                </th>
+                <th style="width:35%">
+                    Member Name
+                </th>
+                <th style="width:35%">
+                    Dependent Name
+                </th>
+                <th style="width:10%">
+                    Relationship
+                </th>
+                <th style="width:5%">
+                    &nbsp;
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+    <div class="scrollable-tables" style="margin-top: -3px !important;height: 230px !important;margin-bottom: 0 !important">
+        <table class="table table-custom">
+            <tbody>
+                @if (Model != null && Model.Count() > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="width:15%">
+                                @Html.DisplayFor(model => item.RequestDate)
+                            </td>
+                            <td style="width:35%">
+                                @Html.DisplayFor(model => item.MemberName)
+                            </td>
+                            <td style="width:35%">
+                                @Html.DisplayFor(model => item.DependentName)
+                            </td>
+                            <td style="width:35%">
+                                @Html.DisplayFor(model => item.DependentRelationship)
+                            </td>
+                            <td style="width:5%">
+                                <a class="btn btn-primary btn-xs" href="javascript:void(0);" onclick="ApproveDependentCancellationApproval(this, '@item.AccountCode', '@item.Guid'); return false;">Approve</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    @Html.Partial("_NoData", 5)
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function ApproveDependentCancellationApproval(link, accountCode, guid) {
+        var tr = $(link).parent().parent();
+        var tbody = tr.parent();
+
+        $(link).attr('disabled', 'disabled');
+        $(link).addClass('disabled');
+
+
+        var options = {
+            url: '@Url.Action("ApproveDependentCancellationApprovals", "Items", new { area = "" })',
+            type: 'POST',
+            data: {
+                accountCode: accountCode,
+                guid: guid
+            },
+            success: function (data) {
+                var json = data;
+
+                if (json.Success) {
+                    tr.remove();
+
+                    if (tbody.children().length == 0) {
+                        tbody.html('@Html.Partial("_NoData", 3)');
+                    }
+                }
+
+                alert(json.Message);
+            }
+        };
+
+        $.ajax(options);
+    }
+</script>

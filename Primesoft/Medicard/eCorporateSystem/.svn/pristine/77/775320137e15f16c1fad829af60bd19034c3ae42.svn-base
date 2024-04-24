@@ -1,0 +1,383 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewUsers, CanAddUsers, CanEditUsers, CanDeleteUsers")]
+    public class UsersController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private ApplicationUserManager _userManager;
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+        private const string PASSWORD_DISPLAY = "###PASSWORD###";
+
+        #endregion
+
+        #region -- Constructor --
+
+        public UsersController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewUsers")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var users = from t in db.Users 
+                        select t;
+
+            if (User.IsInRole("ViewOnlyCreatedUsers"))
+            {
+                var currentUser = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+                if(currentUser != null){
+                    users = users.Where(t => t.CrById == currentUser.Id);
+                }
+                else
+                {
+                    users = users.Where(t => 1 == 2);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(currentFilter))
+            {
+                users = users.Where(t =>
+                    t.UserName.Contains(currentFilter)
+                    ||
+                    t.Email.Contains(currentFilter)
+                    ||
+                    t.Name.Contains(currentFilter)
+                );
+            }
+
+            Helper.SetSortParameters<ApplicationUser>(this, ref users, sortOrder, currentFilter, new SortParameter() { PropertyName = "Name" },
+                new List<SortParameter>()
+                {
+                    new SortParameter() { PropertyName = "Email"},
+                    new SortParameter() { PropertyName = "UserName"}
+                });
+
+            return View(users.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddUsers")]
+        public ActionResult Create()
+        {
+            var model = new ApplicationUserViewModel();
+
+            ViewBag.Groups = Helper.GetGroups(db);
+            //ViewBag.LegacyAccounts = Helper.GetLegacyAccounts(db, legacyDb);
+            //ViewBag.AssociatedLegacyAccounts = Helper.GetLegacyAccounts(legacyDb, "");
+            ViewBag.PASSWORD_DISPLAY = PASSWORD_DISPLAY;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddUsers")]
+        public ActionResult Create([Bind(Include = "Id, Guid, AgentCode, AgentCodeValidated, Email, PhoneNumber, UserName, UseActiveDirectory, Name, Password, ConfirmPassword, Designation, Address, Mobile, Fax, AcceptedMemorandumOfAgreement, IsMember, Accounts")] ApplicationUserViewModel applicationUser, int[] GroupId)
+        {
+            SetGroups(GroupId, applicationUser);
+            //SetAccount(Accounts, UseAccountCode, IsReadOnly, IsCorporateAdmin, IsUnderWriter, applicationUser);
+
+            if (ModelState.IsValid)
+            {
+                var user = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+                if (user != null)
+                {
+                    applicationUser.CrById = user.Id;
+
+                }
+                Helper.AddUser(db, applicationUser);
+
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Groups = Helper.GetGroups(db);
+            ViewBag.LegacyAccounts = LegacyHelper.GetLegacyAccounts(db, legacyDb, User);
+            ViewBag.PASSWORD_DISPLAY = PASSWORD_DISPLAY;
+
+            return View(applicationUser);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditUsers")]
+        public async Task<ActionResult> Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var applicationUser = await db.Users.Include(t => t.Groups).Include(t => t.Accounts).FirstOrDefaultAsync(t => t.Guid == guid);
+            if (applicationUser == null) return HttpNotFound();
+
+            var model = new ApplicationUserViewModel();
+            Helper.MapProperties(applicationUser, model);
+            model.Password = PASSWORD_DISPLAY;
+            model.ConfirmPassword = PASSWORD_DISPLAY;
+            model.AgentCodeValidated = !String.IsNullOrEmpty(model.AgentCode) ? true : false;
+
+            ViewBag.Groups = Helper.GetGroups(db);
+            ViewBag.LegacyAccounts = LegacyHelper.GetLegacyAccounts(db, legacyDb, User);
+            //ViewBag.AssociatedLegacyAccounts = Helper.GetLegacyAccounts(legacyDb, applicationUser.AgentCode);
+            ViewBag.PASSWORD_DISPLAY = PASSWORD_DISPLAY;
+            ViewBag.DisableDropdown = model.AgentCodeValidated;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditUsers")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Guid, AgentCode, AgentCodeValidated, Email, PhoneNumber, UserName, UseActiveDirectory, Name, Password, ConfirmPassword, CrById, Designation, Address, Mobile, Fax, AcceptedMemorandumOfAgreement, IsMember, Accounts")] ApplicationUserViewModel applicationUser, int[] GroupId)
+        {
+            SetGroups(GroupId, applicationUser as ApplicationUser);
+            //SetAccount(Accounts, UseAccountCode, IsReadOnly, IsCorporateAdmin, IsUnderWriter, applicationUser);
+
+            if (ModelState.IsValid)
+            {
+                var currentUser = db.Users
+                    .Include(t => t.Groups)
+                    .Include(t => t.Accounts)
+                    .FirstOrDefault(t => t.Guid == applicationUser.Guid);
+                var currentUserName = currentUser.UserName;
+                applicationUser.PasswordHash = currentUser.PasswordHash;
+                applicationUser.SecurityStamp = currentUser.SecurityStamp;
+
+                if (currentUser != null)
+                {
+                    db.Entry(currentUser).CurrentValues.SetValues(applicationUser);
+                    var currentAccounts = applicationUser.Accounts.Select(a => a.Id).ToList();
+                    db.Accounts.RemoveRange(db.Accounts.Where(t => t.ApplicationUser.Id == currentUser.Id && !currentAccounts.Contains(t.Id)));
+                    currentUser.Accounts = applicationUser.Accounts;
+
+                    SetGroups(GroupId, currentUser);
+                    //SetAccount(Accounts, UseAccountCode, IsReadOnly, IsCorporateAdmin, IsUnderWriter, currentUser);
+
+                    db.Entry(currentUser).State = EntityState.Modified;
+
+                    await db.SaveChangesAsync();
+
+                    if (applicationUser.Password != PASSWORD_DISPLAY)
+                    {
+                        await Helper.UpdateUserPasswordAsync(applicationUser.Id, applicationUser.UserName, applicationUser.Password);
+                    }
+
+                    return RedirectToAction("Index");
+                }
+            }
+
+            ViewBag.Groups = Helper.GetGroups(db);
+            //ViewBag.AssociatedLegacyAccounts = Helper.GetLegacyAccounts(legacyDb, applicationUser.AgentCode);
+            //ViewBag.LegacyAccounts = Helper.GetLegacyAccounts(db, legacyDb);
+            ViewBag.PASSWORD_DISPLAY = PASSWORD_DISPLAY;
+
+            return View(applicationUser);
+        }
+
+        [Authorize(Roles = "SysAd, CanDeleteUsers")]
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            if (guid == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ApplicationUser applicationUser = await db.Users.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (applicationUser == null)
+            {
+                return HttpNotFound();
+            }
+            return View(applicationUser);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanDeleteUsers")]
+        public async Task<ActionResult> DeleteConfirmed(Guid? guid)
+        {
+            ApplicationUser applicationUser = await db.Users.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.Users.Remove(applicationUser);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult AddNewAccount()
+        {
+            ViewBag.LegacyAccounts = LegacyHelper.GetLegacyAccounts(db, legacyDb, User);
+
+            var model = new Account();
+            return PartialView("_Account", model);
+        }
+
+        public async Task<ActionResult> GetAssociatedAccounts(string agentCode, string applicationUserId)
+        {
+            var legacyAccounts = await legacyDb.LegacyAccounts.Where(t => t.AgentCode == agentCode).OrderBy(t => t.Name).ToListAsync();
+            var model = new List<Account>();
+            foreach (var legacyAccount in legacyAccounts)
+            {
+                var account = db.Accounts.FirstOrDefault(t => t.Code == legacyAccount.Code && t.ApplicationUser.Id == applicationUserId) ?? new Account()
+                {
+                    Code = legacyAccount.Code
+                };
+                model.Add(account);
+            }
+
+            ViewBag.LegacyAccounts = legacyAccounts;
+            ViewBag.DisableDropdown = true;
+
+            return PartialView("_AssociatedAccountsTemplate", model);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private void SetGroups(int[] GroupId, ApplicationUser applicationUser)
+        {
+            foreach (var group in db.Groups.ToList())
+            {
+                if (applicationUser.Groups.Any(t => t.Id == group.Id) && ((GroupId != null && !GroupId.Any(t => t == group.Id)) || GroupId == null))
+                {
+                    applicationUser.Groups.Remove(group);
+                }
+            }
+
+            if (GroupId != null)
+            {
+                foreach (var groupId in GroupId)
+                {
+                    var group = db.Groups.FirstOrDefault(t => t.Id == groupId);
+
+                    if (group != null && !applicationUser.Groups.Any(t => t.Id == group.Id))
+                    {
+                        applicationUser.Groups.Add(group);
+                    }
+                }
+            }
+       }
+
+        private void SetAccount(string[] Accounts, bool[] UseAccountCode, bool[] IsReadOnly, bool[] IsCorporateAdmin, bool[] IsUnderWriter, ApplicationUser applicationUser)
+        {
+            var accountsToDelete = new List<Account>();
+            foreach (var account in applicationUser.Accounts)
+            {
+                if (Accounts != null && Accounts.Any(t => t == account.Code))
+                {
+                    for (var index = 0; index < Accounts.Length; index++)
+                    {
+                        if (Accounts[index] == account.Code && !UseAccountCode[index])
+                        {
+                            accountsToDelete.Add(account);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    accountsToDelete.Add(account);
+                }
+            }
+
+            foreach (var account in accountsToDelete)
+            {
+                applicationUser.Accounts.Remove(account);
+            }
+
+            if (Accounts != null)
+            {
+                for (var index = 0; index < Accounts.Length; index++)
+                {
+                    var accountCode = Accounts[index];
+                    if (UseAccountCode[index])
+                    {
+                        var account = applicationUser.Accounts.FirstOrDefault(t => t.Code == accountCode);
+                        if (account == null)
+                        {
+                            applicationUser.Accounts.Add(new Account()
+                            {
+                                Code = accountCode,
+                                IsReadOnly = IsReadOnly[index],
+                                IsCorporateAdmin = IsCorporateAdmin[index],
+                                IsUnderWriter = IsUnderWriter[index]
+                            });
+                        }
+                        else
+                        {
+                            account.Code = Accounts[index];
+                            account.IsReadOnly = IsReadOnly[index];
+                            account.IsCorporateAdmin = IsCorporateAdmin[index];
+                            account.IsUnderWriter = IsUnderWriter[index];
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public async Task<JsonResult> ValidateAgentCode(string code)
+        {
+            var returnValue = new Dictionary<string, object>();
+            var legacyAgent = await legacyDb.LegacyAgents.FirstOrDefaultAsync(t => t.Code == code);
+
+            if (legacyAgent != null)
+            {
+                //var legacyAccounts = await legacyDb.LegacyAccounts.Where(t => t.AgentCode == legacyAgent.Code).OrderBy(t => t.Name).ToListAsync();
+                returnValue.Add("legacyAgent", legacyAgent);
+                //returnValue.Add("legacyAccounts", legacyAccounts);
+            }
+
+            return legacyAgent != null ? this.Json(returnValue, JsonRequestBehavior.AllowGet) : null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

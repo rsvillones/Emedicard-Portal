@@ -1,0 +1,169 @@
+﻿using Corelib;
+using Corelib.Models;
+using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.EntityFramework;
+
+namespace Emailer
+{
+    public static class Emailer 
+    {
+        #region -- Functions --
+
+        public static void SendProcessNewEmailInstant(EndorsementBatch endorsementBatch) 
+        {
+            SendProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin(endorsementBatch);
+            SendProcessNewEndorsementBatchByCorporateAdminToMember(endorsementBatch);
+        }
+
+        public static void SendSubmitNewEmailInstant(Member member)
+        {
+            SendSubmitNewMemberByMemberToMember(member);
+        }
+
+        #endregion
+
+        #region -- Sending Emails --
+
+        #region -- Process New Endorsement --
+
+        private static void SendProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "New Endorsement Processed By Corporate Admin To Corporate Admin",
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendProcessNewEndorsementBatchByCorporateAdminToMember(EndorsementBatch endorsementBatch)
+        {
+            foreach (var member in endorsementBatch.Members)
+            {
+                if (string.IsNullOrEmpty(member) || string.IsNullOrEmpty(member.EmailAddress)) continue;
+
+                var body = ParseEmailTemplate(Config.ProcessNewEndorsementBatchByCorporateAdminToMember, new EmailViewModel()
+                {
+                    EndorsementBatch = endorsementBatch,
+                    Member = member
+                });
+                var mailMessage = new MailMessage()
+                {
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "New Endorsement Processed By Corporate Admin To Member",
+                    Body = body,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(member.EmailAddress);
+                SendMailMessage(mailMessage);
+            }
+        }
+        
+        #endregion
+
+        #region -- Submit New Endorsement --
+
+        private static void SendSubmitNewMemberByMemberToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitNewMemberByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                Member = member
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "Submit New Member By Member To Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region  -- Functions --
+
+        private static string ParseEmailTemplate(string path, object model)
+        {
+            var templateConfig = new TemplateServiceConfiguration();
+            templateConfig.Resolver = new DelegateTemplateResolver(name =>
+            {
+                return System.IO.File.ReadAllText(name);
+            });
+
+            Razor.SetTemplateService(new TemplateService(templateConfig));
+            var template = Razor.Resolve(path, model);
+            var returnValue = template.Run(new ExecuteContext());
+            return returnValue;
+        }
+
+        private static void SendMailMessage(MailMessage mailMessage)
+        {
+            var smtpClient = new SmtpClient(Config.SmtpServer)
+            {
+                Port = Config.SmtpPort,
+                Credentials = new NetworkCredential(Config.SmtpUsername, Config.SmtpPassword)
+            };
+
+            smtpClient.SendMailAsync(mailMessage);
+        }
+
+        private static IEnumerable<string> GetCorporateAdminEmails(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.Accounts.Where(t => t.Code == accountCode && t.IsCorporateAdmin && !string.IsNullOrEmpty(t.ApplicationUser.Email)).Select(t => t.ApplicationUser.Email).ToList();
+            }
+        }
+
+        private static IEnumerable<string> GetUnderwriterEmails(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.Accounts.Where(t => t.Code == accountCode && t.IsUnderWriter && !string.IsNullOrEmpty(t.ApplicationUser.Email)).Select(t => t.ApplicationUser.Email).ToList();
+            }
+        }
+
+        private static IEnumerable<string> GetOtherEmails(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.Accounts.Where(t => t.Code == accountCode && !t.IsCorporateAdmin && !t.IsUnderWriter && !string.IsNullOrEmpty(t.ApplicationUser.Email)).Select(t => t.ApplicationUser.Email).ToList();
+            }
+        }
+
+        #endregion
+    }
+}

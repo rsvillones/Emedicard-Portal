@@ -1,0 +1,2523 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MembershipModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="MembershipModelStoreContainer">
+          <EntitySet Name="SYS_ACCOUNT_MTBL" EntityType="MembershipModel.Store.SYS_ACCOUNT_MTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_AGENT_LTBL" EntityType="MembershipModel.Store.SYS_AGENT_LTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_CITY_LTBL" EntityType="MembershipModel.Store.SYS_CITY_LTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_PROVINCE_LTBL" EntityType="MembershipModel.Store.SYS_PROVINCE_LTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_REGION_LTBL" EntityType="MembershipModel.Store.SYS_REGION_LTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_RELATIONS_LTBL" EntityType="MembershipModel.Store.SYS_RELATIONS_LTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_SOB_INFORMATION_MTBL" EntityType="MembershipModel.Store.SYS_SOB_INFORMATION_MTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_UWDEPENDENT_ACTIVE_MTBL" EntityType="MembershipModel.Store.SYS_UWDEPENDENT_ACTIVE_MTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SYS_UWPRINCIPAL_ACTIVE_MTBL" EntityType="MembershipModel.Store.SYS_UWPRINCIPAL_ACTIVE_MTBL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="uvw_accounts" EntityType="MembershipModel.Store.uvw_accounts" store:Type="Views" store:Schema="dbo" store:Name="uvw_accounts">
+            <DefiningQuery>SELECT 
+      [uvw_accounts].[ACCOUNT_CODE] AS [ACCOUNT_CODE], 
+      [uvw_accounts].[ACCOUNT_NAME] AS [ACCOUNT_NAME], 
+      [uvw_accounts].[PROPOSAL_NAME] AS [PROPOSAL_NAME], 
+      [uvw_accounts].[AGENT_CODE] AS [AGENT_CODE], 
+      [uvw_accounts].[AGENT_FNAME] AS [AGENT_FNAME], 
+      [uvw_accounts].[AGENT_MI] AS [AGENT_MI], 
+      [uvw_accounts].[AGENT_LNAME] AS [AGENT_LNAME], 
+      [uvw_accounts].[CITY_CODE] AS [CITY_CODE], 
+      [uvw_accounts].[PROVINCE_CODE] AS [PROVINCE_CODE], 
+      [uvw_accounts].[ACCTSTATUS_CODE] AS [ACCTSTATUS_CODE], 
+      [uvw_accounts].[ACCTSTATUS_DESC] AS [ACCTSTATUS_DESC], 
+      [uvw_accounts].[INDUSTRY_CODE] AS [INDUSTRY_CODE], 
+      [uvw_accounts].[INDUSTRY_NAME] AS [INDUSTRY_NAME], 
+      [uvw_accounts].[MINDUSTRY_CODE] AS [MINDUSTRY_CODE], 
+      [uvw_accounts].[MINDUSTRY_NAME] AS [MINDUSTRY_NAME], 
+      [uvw_accounts].[MOTHER_CODE] AS [MOTHER_CODE], 
+      [uvw_accounts].[ACCOUNT CATEGORY] AS [ACCOUNT CATEGORY]
+      FROM [dbo].[uvw_accounts] AS [uvw_accounts]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+        <EntityType Name="SYS_ACCOUNT_MTBL">
+          <Key>
+            <PropertyRef Name="ACCOUNT_CODE" />
+          </Key>
+          <Property Name="ACCOUNT_CODE" Type="varchar" Nullable="false" MaxLength="25" />
+          <Property Name="ACCOUNT_NAME" Type="varchar" Nullable="false" MaxLength="150" />
+          <Property Name="PROPOSAL_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="EFF_DATE" Type="datetime" />
+          <Property Name="AGENT_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="SERIAL_NO" Type="varchar" MaxLength="25" />
+          <Property Name="ACCTTYPE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="BRANCHES" Type="varchar" MaxLength="250" />
+          <Property Name="MEMBERSHIP_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="ACCTSTATUS_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="MEMSIZE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="PACKAGE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="SETUP_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="STREET" Type="varchar" MaxLength="150" />
+          <Property Name="CITY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="PROVINCE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="PHONE_NO" Type="varchar" MaxLength="20" />
+          <Property Name="FAX_NO" Type="varchar" MaxLength="20" />
+          <Property Name="CONTACT_SALUTATION" Type="varchar" MaxLength="20" />
+          <Property Name="CONTACT_FNAME" Type="varchar" MaxLength="30" />
+          <Property Name="CONTACT_LNAME" Type="varchar" MaxLength="30" />
+          <Property Name="CONTACT_MNAME" Type="varchar" MaxLength="30" />
+          <Property Name="CONTACT_POSITION" Type="varchar" MaxLength="100" />
+          <Property Name="FRANCHISE_DATE" Type="datetime" />
+          <Property Name="FRANCHISE_EXPIRY" Type="datetime" />
+          <Property Name="EXTEND60" Type="bit" />
+          <Property Name="EXTEND150" Type="bit" />
+          <Property Name="INDUSTRY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="MINDUSTRY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="OLD_HMO_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="OLD_HMO_EXPIRY" Type="datetime" />
+          <Property Name="ADD_SALUTATION" Type="varchar" MaxLength="20" />
+          <Property Name="ADDRESSEE_FNAME" Type="varchar" MaxLength="30" />
+          <Property Name="ADDRESSEE_MNAME" Type="varchar" MaxLength="30" />
+          <Property Name="ADDRESSEE_LNAME" Type="varchar" MaxLength="30" />
+          <Property Name="ADDRESSEE_POSITION" Type="varchar" MaxLength="100" />
+          <Property Name="REQUIRE_REMARKS" Type="text" />
+          <Property Name="WITH_RC" Type="bit" />
+          <Property Name="WITH_MASTERLIST" Type="bit" />
+          <Property Name="SUBMIT_DATE_ML" Type="datetime" />
+          <Property Name="WITH_SURVEY_FORM" Type="bit" />
+          <Property Name="SUBMIT_DATE_SF" Type="datetime" />
+          <Property Name="EXTENDED_FROM" Type="datetime" />
+          <Property Name="EXTENDED_TO" Type="datetime" />
+          <Property Name="PROGRESS_REM" Type="text" />
+          <Property Name="DATE_CLOSED" Type="datetime" />
+          <Property Name="WITH_PROPOSAL" Type="varchar" MaxLength="3" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="10" />
+          <Property Name="SOB_APPROVED" Type="bit" />
+          <Property Name="MOTHER_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="MOTHER_STATUS" Type="bit" />
+          <Property Name="PROPOSAL_TYPE" Type="int" />
+          <Property Name="ACCT_CATEGORY" Type="varchar" MaxLength="15" />
+          <Property Name="AGENT_REASON" Type="varchar" MaxLength="300" />
+          <Property Name="ACCOUNT_DISPLAY" Type="varchar" MaxLength="40" />
+          <Property Name="SPLCASEID" Type="int" />
+          <Property Name="ID_TYPE" Type="int" />
+          <Property Name="TRANSMITTAL_TYPE" Type="int" />
+          <Property Name="BILLING_CTR_MO" Type="int" />
+          <Property Name="BILLING_CTR_QTR" Type="int" />
+          <Property Name="BILLING_CTR_SA" Type="int" />
+          <Property Name="BILLING_CTR_AN" Type="int" />
+          <Property Name="Other_Remarks" Type="varchar" MaxLength="500" />
+          <Property Name="GRACE_PERIOD" Type="int" />
+          <Property Name="GROUP_TOP" Type="varchar" MaxLength="25" />
+          <Property Name="TAG_TOP" Type="varchar" MaxLength="1" />
+          <Property Name="DATE_VALIDITY" Type="datetime" />
+          <Property Name="ENCODE_TYPE" Type="bit" />
+          <Property Name="TAG" Type="bit" />
+          <Property Name="FOR_RENEWAL" Type="bit" />
+          <Property Name="REN_UPDATE_DATE" Type="datetime" />
+          <Property Name="LOGIN" Type="varchar" MaxLength="12" />
+          <Property Name="USER_ASSIGN" Type="varchar" MaxLength="15" />
+          <Property Name="TIN_NO" Type="varchar" MaxLength="30" />
+          <Property Name="FROM_INTRA" Type="bit" />
+          <Property Name="WITH_RSP" Type="bit" />
+          <Property Name="VATTYPEID" Type="int" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LAST_COVERED_DATE" Type="datetime" />
+          <Property Name="EMAIL_ADD_1" Type="varchar" MaxLength="50" />
+          <Property Name="EMAIL_ADD_2" Type="varchar" MaxLength="50" />
+          <Property Name="corr_days" Type="int" />
+        </EntityType>
+        <EntityType Name="SYS_AGENT_LTBL">
+          <Key>
+            <PropertyRef Name="AGENT_CODE" />
+          </Key>
+          <Property Name="AGENT_CODE" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="AGENT_ALIAS_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="AGENT_TYPECODE" Type="varchar" MaxLength="10" />
+          <Property Name="AGENT_FNAME" Type="varchar" MaxLength="150" />
+          <Property Name="AGENT_MI" Type="varchar" MaxLength="3" />
+          <Property Name="AGENT_LNAME" Type="varchar" MaxLength="30" />
+          <Property Name="AGENT_EFFDATE" Type="datetime" />
+          <Property Name="AGENT_FAX" Type="varchar" MaxLength="20" />
+          <Property Name="AGENT_PHONE" Type="varchar" MaxLength="20" />
+          <Property Name="STREET" Type="varchar" MaxLength="50" />
+          <Property Name="CITY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="STATUS" Type="varchar" MaxLength="20" />
+          <Property Name="STATUS_DATE" Type="datetime" />
+          <Property Name="AM_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="GA_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="EXP_QUOTA" Type="varchar" MaxLength="10" />
+          <Property Name="PROVINCE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="ACCT_LIMIT" Type="int" />
+          <Property Name="AGENT_DESIGNATION" Type="varchar" MaxLength="50" />
+          <Property Name="AGENT_BROK" Type="bit" />
+          <Property Name="Email_add" Type="varchar" MaxLength="150" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SALES_GROUP" Type="varchar" MaxLength="50" />
+          <Property Name="SUB_GROUP" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SYS_CITY_LTBL">
+          <Key>
+            <PropertyRef Name="CITY_CODE" />
+          </Key>
+          <Property Name="CITY_CODE" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="CITY_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="PROVINCE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="REGION_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="COUNTRY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="COUNTRY_NAME" Type="varchar" MaxLength="200" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SYS_PROVINCE_LTBL">
+          <Key>
+            <PropertyRef Name="PROVINCE_CODE" />
+          </Key>
+          <Property Name="PROVINCE_CODE" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="PROVINCE_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="REGION_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SYS_REGION_LTBL">
+          <Key>
+            <PropertyRef Name="REGION_CODE" />
+          </Key>
+          <Property Name="REGION_CODE" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="REGION_NAME" Type="varchar" MaxLength="50" />
+          <Property Name="REGION_DESC" Type="varchar" MaxLength="100" />
+          <Property Name="COUNTRY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SYS_RELATIONS_LTBL">
+          <Key>
+            <PropertyRef Name="DEP_CODE" />
+          </Key>
+          <Property Name="DEP_CODE" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="DEPENDENT_CODE" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="DEP_ABBRE" Type="varchar" MaxLength="10" />
+          <Property Name="DEP_DESCRIPTION" Type="varchar" MaxLength="40" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="10" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="SortedOrder" Type="int" />
+          <Property Name="RelationForLandBank" Type="bit" />
+          <Property Name="CodeOfLandbank" Type="char" MaxLength="1" />
+          <Property Name="Category" Type="tinyint" />
+          <Property Name="Gender" Type="tinyint" />
+          <Property Name="fldCivilStatus" Type="int" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SYS_SOB_INFORMATION_MTBL">
+          <Key>
+            <PropertyRef Name="SOB_CODE" />
+          </Key>
+          <Property Name="SOBID" Type="decimal" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="SOB_CODE" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="ACCOUNT_CODE" Type="varchar" Nullable="false" MaxLength="25" />
+          <Property Name="CONTRACTSTAT_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="EXTENSION_NUM" Type="varchar" MaxLength="15" />
+          <Property Name="EXTENSION_DMY" Type="int" />
+          <Property Name="EFFECTIVITY_DATE" Type="datetime" />
+          <Property Name="VALIDITY_DATE" Type="datetime" />
+          <Property Name="VALIDITY_RANGE" Type="int" />
+          <Property Name="VALIDTY_DMY" Type="int" />
+          <Property Name="AE_COMM" Type="varchar" MaxLength="15" />
+          <Property Name="AM_COMM" Type="varchar" MaxLength="15" />
+          <Property Name="GA_COMM" Type="varchar" MaxLength="15" />
+          <Property Name="AE_ERCCOMM" Type="varchar" MaxLength="15" />
+          <Property Name="AM_ERCCOMM" Type="varchar" MaxLength="15" />
+          <Property Name="GA_ERCCOMM" Type="varchar" MaxLength="15" />
+          <Property Name="AGENT_COMMISSION" Type="varchar" MaxLength="50" />
+          <Property Name="MEM_REMARKS" Type="varchar" MaxLength="200" />
+          <Property Name="PREM_REMARKS" Type="varchar" MaxLength="200" />
+          <Property Name="WITH_ORC" Type="bit" />
+          <Property Name="RENEW_DATE" Type="datetime" />
+          <Property Name="AREA_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="DATESTART_BILL" Type="datetime" />
+          <Property Name="ML_RCVD_DATE" Type="datetime" />
+          <Property Name="WITH_SPETREAT" Type="bit" />
+          <Property Name="WITH_RELATION" Type="bit" />
+          <Property Name="PACCOUNT_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="WITH_MEMBERS" Type="bit" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="25" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="REF_FEE" Type="varchar" MaxLength="15" />
+          <Property Name="is_twelve_percent_vat" Type="bit" />
+        </EntityType>
+        <EntityType Name="SYS_UWDEPENDENT_ACTIVE_MTBL">
+          <Key>
+            <PropertyRef Name="DEP_APPNUM" />
+          </Key>
+          <Property Name="DEP_APPNUM" Type="numeric" Nullable="false" Precision="10" />
+          <Property Name="DEP_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="PRIN_APPNUM" Type="numeric" Precision="10" />
+          <Property Name="PRIN_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="AREA_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="ACCOUNT_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="RSPROOMRATE_ID" Type="int" />
+          <Property Name="MEM_LNAME" Type="varchar" MaxLength="50" />
+          <Property Name="MEM_FNAME" Type="varchar" MaxLength="50" />
+          <Property Name="MEM_MI" Type="varchar" MaxLength="3" />
+          <Property Name="MEM_BDAY" Type="datetime" />
+          <Property Name="MEM_AGE" Type="real" />
+          <Property Name="MEM_SEX" Type="int" />
+          <Property Name="MEM_CIVILSTAT" Type="int" />
+          <Property Name="DEP_RELCODE" Type="varchar" MaxLength="10" />
+          <Property Name="WITH_PEC" Type="bit" />
+          <Property Name="WITH_PE" Type="bit" />
+          <Property Name="WITH_WAIVER" Type="bit" />
+          <Property Name="DATE_WAIVER" Type="datetime" />
+          <Property Name="ADDL_PREM" Type="varchar" MaxLength="1" />
+          <Property Name="MED_DEC" Type="varchar" MaxLength="500" />
+          <Property Name="MED_DEC1" Type="varchar" MaxLength="100" />
+          <Property Name="MED_DEC2" Type="varchar" MaxLength="100" />
+          <Property Name="STAT_REM" Type="varchar" MaxLength="2000" />
+          <Property Name="OTHER_REM" Type="varchar" />
+          <Property Name="ID_REM" Type="varchar" MaxLength="50" />
+          <Property Name="ID_REM2" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM3" Type="varchar" MaxLength="40" />
+          <Property Name="ACTMEM_REM" Type="varchar" />
+          <Property Name="ACTMEM_DATE" Type="datetime" />
+          <Property Name="ACTMEM_COMPLIED_DATE" Type="datetime" />
+          <Property Name="ACTMEM_REPRINT" Type="datetime" />
+          <Property Name="EFF_DATE" Type="datetime" />
+          <Property Name="VAL_DATE" Type="datetime" />
+          <Property Name="MEM_TYPE" Type="int" />
+          <Property Name="MEM_STATUS_CODE" Type="int" />
+          <Property Name="MEM_OSTAT_CODE" Type="int" />
+          <Property Name="DTACARD_PRINTED" Type="datetime" />
+          <Property Name="DTACARD_ISSUED" Type="datetime" />
+          <Property Name="DTACARD_REPRINT" Type="datetime" />
+          <Property Name="DATE_ENTER" Type="datetime" />
+          <Property Name="DATE_APPRV" Type="datetime" />
+          <Property Name="DATE_DISAP" Type="datetime" />
+          <Property Name="DATE_RESGN" Type="datetime" />
+          <Property Name="DATE_REACT" Type="datetime" />
+          <Property Name="DATE_AMEND" Type="datetime" />
+          <Property Name="DATE_RENEW" Type="datetime" />
+          <Property Name="DATE_MEDICAL_APPROVED" Type="datetime" />
+          <Property Name="DATE_WAIVED_SIGNED" Type="datetime" />
+          <Property Name="RENADV_DATE" Type="datetime" />
+          <Property Name="RENADV_REM" Type="varchar" MaxLength="100" />
+          <Property Name="AMEND_BY" Type="varchar" MaxLength="50" />
+          <Property Name="RENEW_BY" Type="varchar" MaxLength="25" />
+          <Property Name="APPRVD_BY" Type="varchar" MaxLength="25" />
+          <Property Name="DATE_RCVD" Type="datetime" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="25" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="REASON_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="POSTED" Type="int" />
+          <Property Name="DTACARD_REISSUED" Type="datetime" />
+          <Property Name="AM_ISSUED" Type="datetime" />
+          <Property Name="AM_REISSUED" Type="datetime" />
+          <Property Name="WAIVER_ISSUED" Type="datetime" />
+          <Property Name="WAIVER_REISSUED" Type="datetime" />
+          <Property Name="DATE_FORWARDED" Type="datetime" />
+          <Property Name="DATE_PASTED" Type="datetime" />
+          <Property Name="PASTED_REM" Type="varchar" MaxLength="100" />
+          <Property Name="WaiverFor_Rem" Type="varchar" MaxLength="50" />
+          <Property Name="DATE_REPASTED" Type="datetime" />
+          <Property Name="ID_REM4" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM5" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM6" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM7" Type="varchar" MaxLength="40" />
+          <Property Name="NEW_PLAN" Type="varchar" MaxLength="30" />
+          <Property Name="DTRCVD_UPDATE" Type="datetime" />
+          <Property Name="RENEWAL_REM" Type="varchar" MaxLength="400" />
+          <Property Name="NEW_PREMIUM" Type="money" />
+          <Property Name="NEW_PAYFOR" Type="varchar" MaxLength="100" />
+          <Property Name="FROM_INTRA" Type="int" Nullable="false" />
+          <Property Name="PEC_Limit" Type="money" />
+          <Property Name="moss_print" Type="bit" Nullable="false" />
+          <Property Name="moss_store" Type="bit" Nullable="false" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CARDACTIVATED" Type="bit" Nullable="false" />
+          <Property Name="LAST_COVERED_DATE" Type="datetime" />
+          <Property Name="MEM_STATUS_BY" Type="varchar" MaxLength="150" />
+          <Property Name="MEM_STATUS_DATE" Type="datetime" />
+          <Property Name="PREM_COVERED_FROM" Type="datetime" />
+          <Property Name="PREM_COVERED_TO" Type="datetime" />
+          <Property Name="PREM_VALIDITY_FLAG" Type="int" />
+          <Property Name="PREM_DUE_PERIOD" Type="int" />
+          <Property Name="PREM_TAG_1" Type="int" />
+          <Property Name="PREM_TAG_2" Type="int" />
+          <Property Name="PREM_DATE_1" Type="datetime" />
+          <Property Name="PREM_DATE_2" Type="datetime" />
+          <Property Name="DEP_COMPID" Type="varchar" MaxLength="25" />
+          <Property Name="CIB_TYPE" Type="varchar" MaxLength="10" />
+          <Property Name="CIB_PLAN" Type="varchar" MaxLength="60" />
+          <Property Name="CIB_LIMIT" Type="varchar" MaxLength="60" />
+          <Property Name="EMAIL_ADDRESS" Type="nvarchar" MaxLength="50" />
+          <Property Name="STREET_ADDRESS" Type="varchar" MaxLength="150" />
+          <Property Name="MEM_PHONE" Type="varchar" MaxLength="25" />
+          <Property Name="ALTERED_BY" Type="varchar" MaxLength="25" />
+          <Property Name="ALTERED_DATE" Type="datetime" />
+          <Property Name="RFID_DATE" Type="datetime" />
+          <Property Name="dep_identifier" Type="varchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="SYS_UWPRINCIPAL_ACTIVE_MTBL">
+          <Key>
+            <PropertyRef Name="PRIN_APPNUM" />
+          </Key>
+          <Property Name="PRIN_APPNUM" Type="numeric" Nullable="false" Precision="10" />
+          <Property Name="PRIN_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="ACCOUNT_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="AREA_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="AGENT_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="RSPROOMRATE_ID" Type="int" />
+          <Property Name="PRIN_COMPID" Type="varchar" MaxLength="25" />
+          <Property Name="MEM_LNAME" Type="varchar" MaxLength="50" />
+          <Property Name="MEM_FNAME" Type="varchar" MaxLength="50" />
+          <Property Name="MEM_MI" Type="varchar" MaxLength="3" />
+          <Property Name="MEM_BDAY" Type="datetime" />
+          <Property Name="MEM_AGE" Type="real" />
+          <Property Name="MEM_SEX" Type="int" />
+          <Property Name="MEM_CIVILSTAT" Type="int" />
+          <Property Name="ADDRTYPE" Type="int" />
+          <Property Name="STREET_ADDRESS" Type="varchar" MaxLength="150" />
+          <Property Name="CITY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="PROVINCE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="MEM_PHONE" Type="varchar" MaxLength="25" />
+          <Property Name="WITH_PEC" Type="bit" />
+          <Property Name="WITH_PE" Type="bit" />
+          <Property Name="WITH_WAIVER" Type="bit" />
+          <Property Name="DATE_WAIVER" Type="datetime" />
+          <Property Name="ADDL_PREM" Type="varchar" MaxLength="1" />
+          <Property Name="MED_DEC" Type="varchar" MaxLength="500" />
+          <Property Name="MED_DEC1" Type="varchar" MaxLength="100" />
+          <Property Name="MED_DEC2" Type="varchar" MaxLength="100" />
+          <Property Name="STAT_REM" Type="varchar" MaxLength="2000" />
+          <Property Name="OTHER_REM" Type="varchar" />
+          <Property Name="ID_REM" Type="varchar" MaxLength="50" />
+          <Property Name="ID_REM2" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM3" Type="varchar" MaxLength="40" />
+          <Property Name="ACTMEM_DATE" Type="datetime" />
+          <Property Name="ACTMEM_REM" Type="varchar" />
+          <Property Name="ACTMEM_COMPLIED_DATE" Type="datetime" />
+          <Property Name="ACTMEM_REPRINT" Type="datetime" />
+          <Property Name="EFF_DATE" Type="datetime" />
+          <Property Name="VAL_DATE" Type="datetime" />
+          <Property Name="MEM_TYPE" Type="int" />
+          <Property Name="DTACARD_PRINTED" Type="datetime" />
+          <Property Name="DTACARD_ISSUED" Type="datetime" />
+          <Property Name="DTACARD_REPRINT" Type="datetime" />
+          <Property Name="DATE_ENTER" Type="datetime" />
+          <Property Name="DATE_RCVD" Type="datetime" />
+          <Property Name="DATE_APPRV" Type="datetime" />
+          <Property Name="DATE_DISAP" Type="datetime" />
+          <Property Name="DATE_RESGN" Type="datetime" />
+          <Property Name="DATE_REACT" Type="datetime" />
+          <Property Name="DATE_AMEND" Type="datetime" />
+          <Property Name="DATE_RENEW" Type="datetime" />
+          <Property Name="DATE_MEDICAL_APPROVED" Type="datetime" />
+          <Property Name="DATE_WAIVED_SIGNED" Type="datetime" />
+          <Property Name="RENADV_DATE" Type="datetime" />
+          <Property Name="RENADV_REM" Type="varchar" MaxLength="100" />
+          <Property Name="AMEND_BY" Type="varchar" MaxLength="50" />
+          <Property Name="RENEW_BY" Type="varchar" MaxLength="25" />
+          <Property Name="APPRVD_BY" Type="varchar" MaxLength="25" />
+          <Property Name="MEM_STATUS_CODE" Type="int" />
+          <Property Name="MEM_OSTAT_CODE" Type="int" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="25" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="REASON_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="POSTED" Type="int" />
+          <Property Name="PLAN_DISAPPROVED" Type="int" />
+          <Property Name="DepTreatedAsPrin" Type="int" />
+          <Property Name="DTACARD_REISSUED" Type="datetime" />
+          <Property Name="AM_ISSUED" Type="datetime" />
+          <Property Name="AM_REISSUED" Type="datetime" />
+          <Property Name="WAIVER_ISSUED" Type="datetime" />
+          <Property Name="WAIVER_REISSUED" Type="datetime" />
+          <Property Name="DATE_FORWARDED" Type="datetime" />
+          <Property Name="DATE_PASTED" Type="datetime" />
+          <Property Name="PASTED_REM" Type="varchar" MaxLength="100" />
+          <Property Name="WaiverFor_Rem" Type="varchar" MaxLength="50" />
+          <Property Name="DATE_REPASTED" Type="datetime" />
+          <Property Name="ID_REM4" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM5" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM6" Type="varchar" MaxLength="40" />
+          <Property Name="ID_REM7" Type="varchar" MaxLength="40" />
+          <Property Name="NEW_PLAN" Type="varchar" MaxLength="30" />
+          <Property Name="DTRCVD_UPDATE" Type="datetime" />
+          <Property Name="RENEWAL_REM" Type="varchar" MaxLength="400" />
+          <Property Name="NEW_PREMIUM" Type="money" />
+          <Property Name="NEW_PAYFOR" Type="varchar" MaxLength="100" />
+          <Property Name="FROM_INTRA" Type="int" Nullable="false" />
+          <Property Name="PEC_Limit" Type="money" />
+          <Property Name="moss_print" Type="bit" Nullable="false" />
+          <Property Name="moss_store" Type="bit" Nullable="false" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CARDACTIVATED" Type="bit" Nullable="false" />
+          <Property Name="LAST_COVERED_DATE" Type="datetime" />
+          <Property Name="MEM_STATUS_BY" Type="varchar" MaxLength="150" />
+          <Property Name="MEM_STATUS_DATE" Type="datetime" />
+          <Property Name="PREM_COVERED_FROM" Type="datetime" />
+          <Property Name="PREM_COVERED_TO" Type="datetime" />
+          <Property Name="PREM_VALIDITY_FLAG" Type="int" />
+          <Property Name="PREM_DUE_PERIOD" Type="int" />
+          <Property Name="PREM_TAG_1" Type="int" />
+          <Property Name="PREM_TAG_2" Type="int" />
+          <Property Name="PREM_DATE_1" Type="datetime" />
+          <Property Name="PREM_DATE_2" Type="datetime" />
+          <Property Name="CIB_TYPE" Type="varchar" MaxLength="10" />
+          <Property Name="CIB_PLAN" Type="varchar" MaxLength="60" />
+          <Property Name="CIB_LIMIT" Type="varchar" MaxLength="60" />
+          <Property Name="EMAIL_ADDRESS" Type="nvarchar" MaxLength="50" />
+          <Property Name="ALTERED_BY" Type="varchar" MaxLength="25" />
+          <Property Name="ALTERED_DATE" Type="datetime" />
+          <Property Name="RFID_DATE" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'Membership.dbo.uvw_accounts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="uvw_accounts">
+          <Key>
+            <PropertyRef Name="ACCOUNT_CODE" />
+            <PropertyRef Name="ACCOUNT_NAME" />
+          </Key>
+          <Property Name="ACCOUNT_CODE" Type="varchar" Nullable="false" MaxLength="25" />
+          <Property Name="ACCOUNT_NAME" Type="varchar" Nullable="false" MaxLength="150" />
+          <Property Name="PROPOSAL_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="AGENT_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="AGENT_FNAME" Type="varchar" MaxLength="150" />
+          <Property Name="AGENT_MI" Type="varchar" MaxLength="3" />
+          <Property Name="AGENT_LNAME" Type="varchar" MaxLength="30" />
+          <Property Name="CITY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="PROVINCE_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="ACCTSTATUS_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="ACCTSTATUS_DESC" Type="varchar" MaxLength="20" />
+          <Property Name="INDUSTRY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="INDUSTRY_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="MINDUSTRY_CODE" Type="varchar" MaxLength="10" />
+          <Property Name="MINDUSTRY_NAME" Type="varchar" MaxLength="100" />
+          <Property Name="MOTHER_CODE" Type="varchar" MaxLength="25" />
+          <Property Name="ACCOUNT CATEGORY" Type="varchar" MaxLength="15" />
+        </EntityType>
+        <Function Name="emed_account_plans" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="accountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_acctive_accounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="agent_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_action_memos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+          <Parameter Name="date_fr" Type="datetime" Mode="In" />
+          <Parameter Name="date_to" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="emed_action_memos_dependent" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+          <Parameter Name="date_fr" Type="datetime" Mode="In" />
+          <Parameter Name="date_to" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="emed_active_member_dependent" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="accountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_active_members" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="accountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_check_active_member" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemberCode" Type="varchar" Mode="In" />
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_corp_user_available_acc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+          <Parameter Name="userid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="emed_corporate_account_listing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_corporate_accounts_list" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_get_member_info" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="member_code" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_GetAPPNUM" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="EMED_GETPACKAGE_CODE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_resigned_members_dependent" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="emed_resigned_members_principal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMEDICARD_CHECKMEMBERDETAILS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountCode" Type="varchar" Mode="In" />
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMEDICARD_GETDEPDETAILS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMEDICARD_MEMDETAILS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EMEDICARD_MEMDETAILS_V2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_EMED_COMPANYCODE_BY_AGENT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="mode" Type="varchar" Mode="In" />
+          <Parameter Name="varParam1" Type="varchar" Mode="In" />
+          <Parameter Name="varAgentCode" Type="varchar" Mode="In" />
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="MainuserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_COMPANYCODE_BY_AGENT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="mode" Type="varchar" Mode="In" />
+          <Parameter Name="varParam1" Type="varchar" Mode="In" />
+          <Parameter Name="varAgentCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_DEP" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_DEP_V2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_PRIN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_INTRA_PAYMENT_HISTORY_PRIN_V2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MemCode" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECT_Company_Others" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="type" Type="varchar" Mode="In" />
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTDCS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TYPE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCOUTNCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTECS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TYPE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCOUTNCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTEXCLUSION" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="account_code" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTHCS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TYPE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCOUTNCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTMFA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TYPE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCOUTNCODE" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SELECTPHCS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TYPE" Type="varchar" Mode="In" />
+          <Parameter Name="ACCOUTNCODE" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MembershipModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="MembershipEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="GetMemberDetails" ReturnType="Collection(MembershipModel.MemberDetails)">
+            <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetDependentDetails" ReturnType="Collection(MembershipModel.DependentDetails)">
+          <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetDependentPaymentHistory" ReturnType="Collection(MembershipModel.DependentPaymentHistory)">
+          <Parameter Name="MemCode" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetPrincipalPaymentHistory" ReturnType="Collection(MembershipModel.PrinicipalPaymentHistory)">
+          <Parameter Name="MemCode" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Accounts1" EntityType="MembershipModel.Account" />
+          <EntitySet Name="Agents" EntityType="MembershipModel.Agent" />
+          <EntitySet Name="AccountLists" EntityType="MembershipModel.AccountList" />
+          <FunctionImport Name="GetActiveMembersPrincipal" ReturnType="Collection(MembershipModel.ActiveMembersPrincipal)">
+          <Parameter Name="accountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetActiveMembersDependent" ReturnType="Collection(MembershipModel.ActiveMembersDependent)">
+          <Parameter Name="accountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="SYS_CITY_LTBL" EntityType="MembershipModel.SYS_CITY_LTBL" />
+          <EntitySet Name="SYS_PROVINCE_LTBL" EntityType="MembershipModel.SYS_PROVINCE_LTBL" />
+          <EntitySet Name="SYS_REGION_LTBL" EntityType="MembershipModel.SYS_REGION_LTBL" />
+          <FunctionImport Name="emed_getpackage_code" ReturnType="Collection(MembershipModel.emed_getpackage_code_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selecthcs" ReturnType="Collection(MembershipModel.sp_selecthcs_Result)">
+            <Parameter Name="TYPE" Mode="In" Type="String" />
+            <Parameter Name="ACCOUTNCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_SELECTPHCS" ReturnType="Collection(MembershipModel.SP_SELECTPHCS_Result)">
+            <Parameter Name="TYPE" Mode="In" Type="String" />
+            <Parameter Name="ACCOUTNCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectecs" ReturnType="Collection(MembershipModel.SP_SELECTECS_Result)">
+            <Parameter Name="TYPE" Mode="In" Type="String" />
+            <Parameter Name="ACCOUTNCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectmfa" ReturnType="Collection(MembershipModel.SP_SELECTMFA_Result)">
+            <Parameter Name="TYPE" Mode="In" Type="String" />
+            <Parameter Name="ACCOUTNCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectdcs" ReturnType="Collection(MembershipModel.SP_SELECTDCS_Result)">
+            <Parameter Name="TYPE" Mode="In" Type="String" />
+            <Parameter Name="ACCOUTNCODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_selectexclusion" ReturnType="Collection(MembershipModel.sp_selectexclusion_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_intra_companycode_by_agent" ReturnType="Collection(MembershipModel.sp_intra_companycode_by_agent_Result)">
+            <Parameter Name="mode" Mode="In" Type="String" />
+            <Parameter Name="varParam1" Mode="In" Type="String" />
+            <Parameter Name="varAgentCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="MembersRelations" EntityType="MembershipModel.MembersRelation" />
+          <FunctionImport Name="GetAccountPlans" ReturnType="Collection(MembershipModel.AccountPlans)">
+          <Parameter Name="accountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_check_member_details" ReturnType="Collection(MembershipModel.emed_check_member_details_Result)">
+            <Parameter Name="AccountCode" Mode="In" Type="String" />
+            <Parameter Name="MemCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetAPPNUM" ReturnType="Collection(MembershipModel.APPNUM)" />
+          <FunctionImport Name="GetActiveMember" ReturnType="Collection(MembershipModel.ActiveMember)">
+            <Parameter Name="MemberCode" Mode="In" Type="String" />
+            <Parameter Name="AccountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetDependentResignedMembers" ReturnType="Collection(MembershipModel.DependentResignedMembers)">
+          <Parameter Name="AccountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetPrincipalResignedMembers" ReturnType="Collection(MembershipModel.ResignedMembersPrincipal)">
+          <Parameter Name="AccountCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="get_action_memos" ReturnType="Collection(MembershipModel.get_action_memos_Result)">
+            <Parameter Name="account_code" Mode="In" Type="String" />
+            <Parameter Name="date_fr" Mode="In" Type="DateTime" />
+            <Parameter Name="date_to" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="action_memos_dependent" ReturnType="Collection(MembershipModel.action_memos_dependent_Result)">
+            <Parameter Name="account_code" Mode="In" Type="String" />
+            <Parameter Name="date_fr" Mode="In" Type="DateTime" />
+            <Parameter Name="date_to" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="corporate_account_listing" ReturnType="Collection(MembershipModel.corporate_account_listing_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="SYS_SOB_INFORMATION_MTBL" EntityType="MembershipModel.SYS_SOB_INFORMATION_MTBL" />
+          <FunctionImport Name="emed_corporate_account_list" ReturnType="Collection(MembershipModel.emed_corporate_account_list_Result)">
+          <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="emed_corp_user_available_acc" ReturnType="Collection(MembershipModel.emed_corp_user_available_acc_Result)">
+            <Parameter Name="account_code" Mode="In" Type="String" />
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="emed_get_member_info" ReturnType="Collection(MembershipModel.emed_get_member_info_Result)">
+            <Parameter Name="member_code" Mode="In" Type="String" />
+            <Parameter Name="account_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_emed_company_code_by_agent" ReturnType="Collection(MembershipModel.sp_emed_company_code_by_agent_Result)">
+            <Parameter Name="mode" Mode="In" Type="String" />
+            <Parameter Name="varParam1" Mode="In" Type="String" />
+            <Parameter Name="varAgentCode" Mode="In" Type="String" />
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="MainuserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="emed_active_accounts" ReturnType="Collection(MembershipModel.emed_active_accounts_Result)">
+          <Parameter Name="agent_code" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="SYS_UWDEPENDENT_ACTIVE_MTBL" EntityType="MembershipModel.SYS_UWDEPENDENT_ACTIVE_MTBL" />
+          <EntitySet Name="SYS_UWPRINCIPAL_ACTIVE_MTBL" EntityType="MembershipModel.SYS_UWPRINCIPAL_ACTIVE_MTBL" />
+        </EntityContainer>
+        <ComplexType Name="MemberDetails">
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_NAME" Nullable="true" MaxLength="106" />
+          <Property Type="String" Name="BDAY" Nullable="true" MaxLength="12" />
+          <Property Type="Decimal" Name="AGE" Nullable="true" Precision="18" Scale="6" />
+          <Property Type="String" Name="CIVIL_STATUS" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="MEM_SEX" Nullable="true" />
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="EFF_DATE" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="VAL_DATE" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="Plan_Desc" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="DD_Reg_Limits" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="ERC_Limits" Nullable="true" Precision="19" />
+          <Property Type="String" Name="ID_REM" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ID_REM2" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="ID_REM3" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="ID_REM4" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="ID_REM5" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="ID_REM6" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="ID_REM7" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="OTHER_REM" Nullable="true" MaxLength="8000" />
+          <Property Type="String" Name="Mem_OStat_Code" Nullable="true" MaxLength="18" />
+          <Property Type="String" Name="MEM_TYPE" Nullable="true" MaxLength="19" />
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCT_TYPE" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="DependentDetails">
+          <Property Type="String" Name="MEM_NAME" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="DEP_DESCRIPTION" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="DEP_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="Decimal" Name="DEP_APPNUM" Nullable="false" Precision="10" Scale="0" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="DependentPaymentHistory">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="DateTime" Name="UPDATED_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="BILL_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="COVEREDTO" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SA_NO" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="PAYMENT_STATUS" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="COVERED_FROM" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="COVERED_TO" Nullable="true" MaxLength="12" />
+        </ComplexType>
+        <ComplexType Name="PrinicipalPaymentHistory">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="DateTime" Name="BILL_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="COVEREDTO" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SA_NO" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="PAYMENT_STATUS" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="COVERED_FROM" Nullable="false" MaxLength="8" />
+          <Property Type="String" Name="COVERED_TO" Nullable="true" MaxLength="12" />
+        </ComplexType>
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="ACCOUNT_CODE" />
+          </Key>
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROPOSAL_NAME" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="EFF_DATE" />
+          <Property Type="String" Name="AGENT_CODE" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SERIAL_NO" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCTTYPE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="BRANCHES" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEMBERSHIP_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCTSTATUS_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEMSIZE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PACKAGE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SETUP_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="STREET" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CITY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROVINCE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PHONE_NO" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FAX_NO" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CONTACT_SALUTATION" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CONTACT_FNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CONTACT_LNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CONTACT_MNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CONTACT_POSITION" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="FRANCHISE_DATE" />
+          <Property Type="DateTime" Name="FRANCHISE_EXPIRY" />
+          <Property Type="Boolean" Name="EXTEND60" />
+          <Property Type="Boolean" Name="EXTEND150" />
+          <Property Type="String" Name="INDUSTRY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MINDUSTRY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OLD_HMO_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="OLD_HMO_EXPIRY" />
+          <Property Type="String" Name="ADD_SALUTATION" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ADDRESSEE_FNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ADDRESSEE_MNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ADDRESSEE_LNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ADDRESSEE_POSITION" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="REQUIRE_REMARKS" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="WITH_RC" />
+          <Property Type="Boolean" Name="WITH_MASTERLIST" />
+          <Property Type="DateTime" Name="SUBMIT_DATE_ML" />
+          <Property Type="Boolean" Name="WITH_SURVEY_FORM" />
+          <Property Type="DateTime" Name="SUBMIT_DATE_SF" />
+          <Property Type="DateTime" Name="cc" />
+          <Property Type="DateTime" Name="EXTENDED_TO" />
+          <Property Type="String" Name="PROGRESS_REM" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DATE_CLOSED" />
+          <Property Type="String" Name="WITH_PROPOSAL" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="SOB_APPROVED" />
+          <Property Type="String" Name="MOTHER_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="MOTHER_STATUS" />
+          <Property Type="Int32" Name="PROPOSAL_TYPE" />
+          <Property Type="String" Name="ACCT_CATEGORY" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_REASON" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_DISPLAY" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="SPLCASEID" />
+          <Property Type="Int32" Name="ID_TYPE" />
+          <Property Type="Int32" Name="TRANSMITTAL_TYPE" />
+          <Property Type="Int32" Name="BILLING_CTR_MO" />
+          <Property Type="Int32" Name="BILLING_CTR_QTR" />
+          <Property Type="Int32" Name="BILLING_CTR_SA" />
+          <Property Type="Int32" Name="BILLING_CTR_AN" />
+          <Property Type="String" Name="Other_Remarks" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="GRACE_PERIOD" />
+          <Property Type="String" Name="GROUP_TOP" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TAG_TOP" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DATE_VALIDITY" />
+          <Property Type="Boolean" Name="ENCODE_TYPE" />
+          <Property Type="Boolean" Name="TAG" />
+          <Property Type="Boolean" Name="FOR_RENEWAL" />
+          <Property Type="DateTime" Name="REN_UPDATE_DATE" />
+          <Property Type="String" Name="LOGIN" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="USER_ASSIGN" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TIN_NO" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="FROM_INTRA" />
+          <Property Type="Boolean" Name="WITH_RSP" />
+          <Property Type="Int32" Name="VATTYPEID" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+          <Property Type="DateTime" Name="LAST_COVERED_DATE" />
+          <Property Type="String" Name="EMAIL_ADD_1" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EMAIL_ADD_2" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="corr_days" />
+        </EntityType>
+        <EntityType Name="Agent">
+          <Key>
+            <PropertyRef Name="AGENT_CODE" />
+          </Key>
+          <Property Type="String" Name="AGENT_CODE" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_ALIAS_CODE" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_TYPECODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_FNAME" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_MI" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_LNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="AGENT_EFFDATE" />
+          <Property Type="String" Name="AGENT_FAX" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_PHONE" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="STREET" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CITY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="STATUS" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="STATUS_DATE" />
+          <Property Type="String" Name="AM_CODE" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="GA_CODE" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EXP_QUOTA" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROVINCE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="Int32" Name="ACCT_LIMIT" />
+          <Property Type="String" Name="AGENT_DESIGNATION" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="AGENT_BROK" />
+          <Property Type="String" Name="Email_add" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+          <Property Type="String" Name="SALES_GROUP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SUB_GROUP" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AccountList">
+          <Key>
+            <PropertyRef Name="ACCOUNT_CODE" />
+            <PropertyRef Name="ACCOUNT_NAME" />
+          </Key>
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROPOSAL_NAME" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_CODE" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_FNAME" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_MI" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_LNAME" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CITY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROVINCE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCTSTATUS_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="INDUSTRY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="INDUSTRY_NAME" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MINDUSTRY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MINDUSTRY_NAME" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MOTHER_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_CATEGORY" MaxLength="15" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="ActiveMembersPrincipal">
+          <Property Type="String" Name="AREA_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Single" Name="MEM_AGE" Nullable="true" />
+          <Property Type="String" Name="SEX_DESC" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="MEMCSTAT_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="ID_REM" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM2" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM3" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM4" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM5" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM6" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM7" Nullable="true" MaxLength="1000" />
+        </ComplexType>
+        <ComplexType Name="ActiveMembersDependent">
+          <Property Type="String" Name="AREA_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="DEP_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Single" Name="MEM_AGE" Nullable="true" />
+          <Property Type="String" Name="SEX_DESC" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="MEMCSTAT_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="DEP_DESCRIPTION" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="ID_REM" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM2" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM3" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM4" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM5" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM6" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="ID_REM7" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="DEP_EMPID" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="SYS_CITY_LTBL">
+          <Key>
+            <PropertyRef Name="CITY_CODE" />
+          </Key>
+          <Property Type="String" Name="CITY_CODE" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CITY_NAME" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROVINCE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="REGION_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="COUNTRY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="COUNTRY_NAME" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SYS_PROVINCE_LTBL">
+          <Key>
+            <PropertyRef Name="PROVINCE_CODE" />
+          </Key>
+          <Property Type="String" Name="PROVINCE_CODE" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROVINCE_NAME" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="REGION_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+        </EntityType>
+        <EntityType Name="SYS_REGION_LTBL">
+          <Key>
+            <PropertyRef Name="REGION_CODE" />
+          </Key>
+          <Property Type="String" Name="REGION_CODE" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="REGION_NAME" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="REGION_DESC" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="COUNTRY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+        </EntityType>
+        <ComplexType Name="emed_getpackage_code_Result">
+          <Property Type="String" Name="PACKAGE_CODE" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="sp_selecthcs_Result">
+          <Property Type="Boolean" Name="HCS_LIST" Nullable="true" />
+          <Property Type="String" Name="HCS_COMPLEX_DIAG" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="HCS_STD" Nullable="true" />
+          <Property Type="String" Name="HCS_OPT_PRICE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="HCS_L_SURGERY_LITHO" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_CTSCAN_MRI_UTS" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_CONGENI_ILL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_CATARACT_EXT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_CHEMO_RAD_DIA" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_HUMAN_BLD_PROD" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_WRK_REL_ILL_ACCIDENT" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_ORGAN_TRANS" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCS_OPEN_HEART_SUR" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_PT_SPEECH_SESSION" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_LASER_TREAT_GLAUCOMA" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_PREPOST_NATAL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="OPCS_FDOSE_ANTI_RABIES_TETANUS" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="HCTYPE" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="HCS_EXCLUDING" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="HCS_NO_BENEFIT" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_SELECTPHCS_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="PHCSTYPE" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="PHCS_ECG" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="PHCS_EYE_REFRACT" Nullable="true" />
+          <Property Type="String" Name="PHCS_PAP_SMEAR" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="PHCS_MEDI_HO" Nullable="true" />
+          <Property Type="Boolean" Name="PHCS_CO_PREM" Nullable="true" />
+          <Property Type="Boolean" Name="PHCS_NEAREST_HOSP" Nullable="true" />
+          <Property Type="Boolean" Name="PHCS_STD" Nullable="true" />
+          <Property Type="String" Name="PHCS_OPT_PRICE" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="PHCS_NO_BENEFIT" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_SELECTECS_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="ECSTYPE" Nullable="true" MaxLength="3" />
+          <Property Type="Boolean" Name="ECS_LEAD_TO_CONFINEMENT" Nullable="true" />
+          <Property Type="String" Name="ECS_NON_ACCR_HOSP_IN_DDL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECS_WOUT_ACCR_HOSP_IN_DDL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECS_IN_FORIEGN_COUNTRY_IN_DDL" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECS_NON_ACCR_HOSP_IN_PERC" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECS_WOUT_ACCR_HOSP_IN_PERC" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="ECS_IN_FORIEGN_COUNTRY_IN_PERC" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="ECS_STD" Nullable="true" />
+          <Property Type="Boolean" Name="ECS_ACCR_HOSP" Nullable="true" />
+          <Property Type="Boolean" Name="ECS_NO_BENEFIT" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_SELECTMFA_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MFATYPE" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="MFA_NTRL_DEATH_OPT2" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_ACCI_DEATH_OPT2" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_LOSS_SIGHT_LIMBS_OPT2" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_LOSS_EYE_LIMB_OPT2" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_NTRL_DEATH_OPT1" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_ACCI_DEATH_OPT1" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_LOSS_SIGHT_LIMBS_OPT1" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MFA_LOSS_EYE_LIMB_OPT1" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="MFA_STD" Nullable="true" />
+          <Property Type="String" Name="MFA_OPT_PRICE" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="MFA_NO_BENEFIT" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_SELECTDCS_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="DCSTYPE" Nullable="true" MaxLength="3" />
+          <Property Type="String" Name="DCS_PERMA_AMALGAM" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DCS_LIGHT_CURE" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="DCS_STD" Nullable="true" />
+          <Property Type="String" Name="DCS_OPT_PRICE" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="DCS_PROP" Nullable="true" MaxLength="150" />
+          <Property Type="Boolean" Name="DCS_NO_BENEFIT" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_selectexclusion_Result">
+          <Property Type="String" Name="Account_Code" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="Account_Name" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="Exclusion_Code" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="Exclusion_Desc" Nullable="true" MaxLength="750" />
+        </ComplexType>
+        <ComplexType Name="sp_intra_companycode_by_agent_Result">
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MOTHER_NAME" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="ACCT_CATEGORY" Nullable="true" MaxLength="15" />
+          <Property Type="Boolean" Name="SOB_APPROVED" Nullable="true" />
+          <Property Type="Boolean" Name="WITH_DETAILEDSOB" Nullable="true" />
+          <Property Type="Boolean" Name="MOTHER_SOB_APPROVED" Nullable="true" />
+          <Property Type="Boolean" Name="MOTHER_WITH_DSOB" Nullable="true" />
+          <Property Type="Int32" Name="SIS_SOB_COUNT" Nullable="true" />
+          <Property Type="Int32" Name="MOTHER_SOB_COUNT" Nullable="true" />
+          <Property Type="Int32" Name="MAIN_SOB_COUNT" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="MembersRelation">
+          <Key>
+            <PropertyRef Name="DEP_CODE" />
+          </Key>
+          <Property Type="Int32" Name="DEP_CODE" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="DEPENDENT_CODE" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DEP_ABBRE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DEP_DESCRIPTION" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="Int32" Name="SortedOrder" />
+          <Property Type="Boolean" Name="RelationForLandBank" />
+          <Property Type="String" Name="CodeOfLandbank" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Type="Byte" Name="Category" />
+          <Property Type="Byte" Name="Gender" />
+          <Property Type="Int32" Name="fldCivilStatus" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="AccountPlans">
+          <Property Type="String" Name="plan" Nullable="true" MaxLength="306" />
+          <Property Type="Int32" Name="RSPROOMRATE_ID" Nullable="false" />
+          <Property Type="String" Name="PLAN_CODE" Nullable="false" MaxLength="20" />
+        </ComplexType>
+        <ComplexType Name="emed_check_member_details_Result">
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+        </ComplexType>
+        <ComplexType Name="APPNUM">
+          <Property Type="String" Name="last_id" Nullable="true" MaxLength="30" />
+        </ComplexType>
+        <ComplexType Name="ActiveMember">
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="PRIN_APPNUM" Nullable="false" Precision="10" Scale="0" />
+          </ComplexType>
+        <ComplexType Name="DependentResignedMembers">
+          <Property Type="String" Name="AREA_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="DEP_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Single" Name="MEM_AGE" Nullable="true" />
+          <Property Type="String" Name="SEX_DESC" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="MEMCSTAT_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="DEP_DESCRIPTION" Nullable="true" MaxLength="40" />
+          <Property Type="DateTime" Name="DATE_RESGN" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MEM_NAME" Nullable="true" MaxLength="106" />
+          <Property Type="String" Name="DEP_EMPID" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="ResignedMembersPrincipal">
+          <Property Type="String" Name="AREA_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Single" Name="MEM_AGE" Nullable="true" />
+          <Property Type="String" Name="SEX_DESC" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="MEMCSTAT_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="DATE_RESGN" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PRIN_COMPID" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MEM_NAME" Nullable="true" MaxLength="106" />
+        </ComplexType>
+        <ComplexType Name="get_action_memos_Result">
+          <Property Type="String" Name="AREA_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRIN_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Single" Name="MEM_AGE" Nullable="true" />
+          <Property Type="String" Name="SEX_DESC" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="MEMCSTAT_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="ACTMEM_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACTMEM_REM" Nullable="true" MaxLength="8000" />
+          <Property Type="String" Name="OTHER_REM" Nullable="true" MaxLength="8000" />
+          <Property Type="String" Name="STAT_REM" Nullable="true" MaxLength="2000" />
+          <Property Type="Int32" Name="MEM_OSTAT_CODE" Nullable="true" />
+          <Property Type="String" Name="REMARKS" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="action_memos_dependent_Result">
+          <Property Type="String" Name="AREA_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PRINCIPAL" Nullable="true" MaxLength="102" />
+          <Property Type="String" Name="DEP_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="MEM_BDAY" Nullable="true" Precision="23" />
+          <Property Type="Single" Name="MEM_AGE" Nullable="true" />
+          <Property Type="String" Name="SEX_DESC" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="MEMCSTAT_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="EFF_DATE" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="VAL_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="PLAN_DESC" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="DEP_DESCRIPTION" Nullable="true" MaxLength="40" />
+          <Property Type="DateTime" Name="ACTMEM_DATE" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ACTMEM_REM" Nullable="true" MaxLength="8000" />
+          <Property Type="String" Name="OTHER_REM" Nullable="true" MaxLength="8000" />
+          <Property Type="String" Name="STAT_REM" Nullable="true" MaxLength="2000" />
+          <Property Type="Int32" Name="MEM_OSTAT_CODE" Nullable="true" />
+          <Property Type="String" Name="REMARKS" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="corporate_account_listing_Result">
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="ACCOUNT_NAME" Nullable="false" MaxLength="150" />
+        </ComplexType>
+        <EntityType Name="SYS_SOB_INFORMATION_MTBL">
+          <Key>
+            <PropertyRef Name="SOB_CODE" />
+          </Key>
+          <Property Type="Decimal" Name="SOBID" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="SOB_CODE" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_CODE" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CONTRACTSTAT_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EXTENSION_NUM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="EXTENSION_DMY" />
+          <Property Type="DateTime" Name="EFFECTIVITY_DATE" />
+          <Property Type="DateTime" Name="VALIDITY_DATE" />
+          <Property Type="Int32" Name="VALIDITY_RANGE" />
+          <Property Type="Int32" Name="VALIDTY_DMY" />
+          <Property Type="String" Name="AE_COMM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AM_COMM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="GA_COMM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AE_ERCCOMM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AM_ERCCOMM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="GA_ERCCOMM" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_COMMISSION" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_REMARKS" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PREM_REMARKS" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="WITH_ORC" />
+          <Property Type="DateTime" Name="RENEW_DATE" />
+          <Property Type="String" Name="AREA_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DATESTART_BILL" />
+          <Property Type="DateTime" Name="ML_RCVD_DATE" />
+          <Property Type="Boolean" Name="WITH_SPETREAT" />
+          <Property Type="Boolean" Name="WITH_RELATION" />
+          <Property Type="String" Name="PACCOUNT_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="WITH_MEMBERS" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="String" Name="REF_FEE" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="is_twelve_percent_vat" />
+        </EntityType>
+        <ComplexType Name="emed_corporate_account_list_Result">
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MOTHER_NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="ACCT_CATEGORY" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="emed_corp_user_available_acc_Result">
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MOTHER_NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="ACCT_CATEGORY" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <ComplexType Name="emed_get_member_info_Result">
+          <Property Type="String" Name="account_code" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="account_name" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MEM_FNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_LNAME" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MEM_MI" Nullable="true" MaxLength="3" />
+          <Property Type="DateTime" Name="mem_bday" Nullable="true" Precision="23" />
+          <Property Type="String" Name="mem_type" Nullable="false" MaxLength="9" />
+          <Property Type="String" Name="member_code" Nullable="true" MaxLength="25" />
+          <Property Type="Decimal" Name="PRIN_APPNUM" Nullable="true" Precision="10" Scale="0" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+        </ComplexType>
+        <ComplexType Name="sp_emed_company_code_by_agent_Result">
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MOTHER_NAME" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="ACCT_CATEGORY" Nullable="true" MaxLength="15" />
+          <Property Type="Boolean" Name="SOB_APPROVED" Nullable="false" />
+          <Property Type="Boolean" Name="WITH_DETAILEDSOB" Nullable="false" />
+          <Property Type="Boolean" Name="MOTHER_SOB_APPROVED" Nullable="false" />
+          <Property Type="Boolean" Name="MOTHER_WITH_DSOB" Nullable="false" />
+          <Property Type="Int32" Name="SIS_SOB_COUNT" Nullable="true" />
+          <Property Type="Int32" Name="MOTHER_SOB_COUNT" Nullable="true" />
+          <Property Type="Int32" Name="MAIN_SOB_COUNT" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="emed_active_accounts_Result">
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="MOTHER_NAME" Nullable="false" MaxLength="150" />
+          <Property Type="String" Name="MOTHER_CODE" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="ACCTSTATUS_DESC" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="ACCT_CATEGORY" Nullable="true" MaxLength="15" />
+        </ComplexType>
+        <EntityType Name="SYS_UWDEPENDENT_ACTIVE_MTBL">
+          <Key>
+            <PropertyRef Name="DEP_APPNUM" />
+          </Key>
+          <Property Type="Decimal" Name="DEP_APPNUM" Nullable="false" Precision="10" Scale="0" />
+          <Property Type="String" Name="DEP_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="PRIN_APPNUM" Precision="10" Scale="0" />
+          <Property Type="String" Name="PRIN_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AREA_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="RSPROOMRATE_ID" />
+          <Property Type="String" Name="MEM_LNAME" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_FNAME" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_MI" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="MEM_BDAY" />
+          <Property Type="Single" Name="MEM_AGE" />
+          <Property Type="Int32" Name="MEM_SEX" />
+          <Property Type="Int32" Name="MEM_CIVILSTAT" />
+          <Property Type="String" Name="DEP_RELCODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="WITH_PEC" />
+          <Property Type="Boolean" Name="WITH_PE" />
+          <Property Type="Boolean" Name="WITH_WAIVER" />
+          <Property Type="DateTime" Name="DATE_WAIVER" />
+          <Property Type="String" Name="ADDL_PREM" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MED_DEC" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MED_DEC1" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MED_DEC2" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="STAT_REM" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OTHER_REM" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM2" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM3" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACTMEM_REM" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ACTMEM_DATE" />
+          <Property Type="DateTime" Name="ACTMEM_COMPLIED_DATE" />
+          <Property Type="DateTime" Name="ACTMEM_REPRINT" />
+          <Property Type="DateTime" Name="EFF_DATE" />
+          <Property Type="DateTime" Name="VAL_DATE" />
+          <Property Type="Int32" Name="MEM_TYPE" />
+          <Property Type="Int32" Name="MEM_STATUS_CODE" />
+          <Property Type="Int32" Name="MEM_OSTAT_CODE" />
+          <Property Type="DateTime" Name="DTACARD_PRINTED" />
+          <Property Type="DateTime" Name="DTACARD_ISSUED" />
+          <Property Type="DateTime" Name="DTACARD_REPRINT" />
+          <Property Type="DateTime" Name="DATE_ENTER" />
+          <Property Type="DateTime" Name="DATE_APPRV" />
+          <Property Type="DateTime" Name="DATE_DISAP" />
+          <Property Type="DateTime" Name="DATE_RESGN" />
+          <Property Type="DateTime" Name="DATE_REACT" />
+          <Property Type="DateTime" Name="DATE_AMEND" />
+          <Property Type="DateTime" Name="DATE_RENEW" />
+          <Property Type="DateTime" Name="DATE_MEDICAL_APPROVED" />
+          <Property Type="DateTime" Name="DATE_WAIVED_SIGNED" />
+          <Property Type="DateTime" Name="RENADV_DATE" />
+          <Property Type="String" Name="RENADV_REM" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AMEND_BY" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RENEW_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="APPRVD_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DATE_RCVD" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="String" Name="REASON_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="POSTED" />
+          <Property Type="DateTime" Name="DTACARD_REISSUED" />
+          <Property Type="DateTime" Name="AM_ISSUED" />
+          <Property Type="DateTime" Name="AM_REISSUED" />
+          <Property Type="DateTime" Name="WAIVER_ISSUED" />
+          <Property Type="DateTime" Name="WAIVER_REISSUED" />
+          <Property Type="DateTime" Name="DATE_FORWARDED" />
+          <Property Type="DateTime" Name="DATE_PASTED" />
+          <Property Type="String" Name="PASTED_REM" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="WaiverFor_Rem" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DATE_REPASTED" />
+          <Property Type="String" Name="ID_REM4" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM5" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM6" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM7" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="NEW_PLAN" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DTRCVD_UPDATE" />
+          <Property Type="String" Name="RENEWAL_REM" MaxLength="400" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="NEW_PREMIUM" Precision="19" Scale="4" />
+          <Property Type="String" Name="NEW_PAYFOR" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="FROM_INTRA" Nullable="false" />
+          <Property Type="Decimal" Name="PEC_Limit" Precision="19" Scale="4" />
+          <Property Type="Boolean" Name="moss_print" Nullable="false" />
+          <Property Type="Boolean" Name="moss_store" Nullable="false" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+          <Property Type="Boolean" Name="CARDACTIVATED" Nullable="false" />
+          <Property Type="DateTime" Name="LAST_COVERED_DATE" />
+          <Property Type="String" Name="MEM_STATUS_BY" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="MEM_STATUS_DATE" />
+          <Property Type="DateTime" Name="PREM_COVERED_FROM" />
+          <Property Type="DateTime" Name="PREM_COVERED_TO" />
+          <Property Type="Int32" Name="PREM_VALIDITY_FLAG" />
+          <Property Type="Int32" Name="PREM_DUE_PERIOD" />
+          <Property Type="Int32" Name="PREM_TAG_1" />
+          <Property Type="Int32" Name="PREM_TAG_2" />
+          <Property Type="DateTime" Name="PREM_DATE_1" />
+          <Property Type="DateTime" Name="PREM_DATE_2" />
+          <Property Type="String" Name="DEP_COMPID" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CIB_TYPE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CIB_PLAN" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CIB_LIMIT" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EMAIL_ADDRESS" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="STREET_ADDRESS" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_PHONE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ALTERED_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ALTERED_DATE" />
+          <Property Type="DateTime" Name="RFID_DATE" />
+          <Property Type="String" Name="dep_identifier" MaxLength="25" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SYS_UWPRINCIPAL_ACTIVE_MTBL">
+          <Key>
+            <PropertyRef Name="PRIN_APPNUM" />
+          </Key>
+          <Property Type="Decimal" Name="PRIN_APPNUM" Nullable="false" Precision="10" Scale="0" />
+          <Property Type="String" Name="PRIN_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ACCOUNT_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AREA_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AGENT_CODE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="RSPROOMRATE_ID" />
+          <Property Type="String" Name="PRIN_COMPID" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_LNAME" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_FNAME" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_MI" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="MEM_BDAY" />
+          <Property Type="Single" Name="MEM_AGE" />
+          <Property Type="Int32" Name="MEM_SEX" />
+          <Property Type="Int32" Name="MEM_CIVILSTAT" />
+          <Property Type="Int32" Name="ADDRTYPE" />
+          <Property Type="String" Name="STREET_ADDRESS" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CITY_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PROVINCE_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MEM_PHONE" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="WITH_PEC" />
+          <Property Type="Boolean" Name="WITH_PE" />
+          <Property Type="Boolean" Name="WITH_WAIVER" />
+          <Property Type="DateTime" Name="DATE_WAIVER" />
+          <Property Type="String" Name="ADDL_PREM" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MED_DEC" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MED_DEC1" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MED_DEC2" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="STAT_REM" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OTHER_REM" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM2" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM3" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ACTMEM_DATE" />
+          <Property Type="String" Name="ACTMEM_REM" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ACTMEM_COMPLIED_DATE" />
+          <Property Type="DateTime" Name="ACTMEM_REPRINT" />
+          <Property Type="DateTime" Name="EFF_DATE" />
+          <Property Type="DateTime" Name="VAL_DATE" />
+          <Property Type="Int32" Name="MEM_TYPE" />
+          <Property Type="DateTime" Name="DTACARD_PRINTED" />
+          <Property Type="DateTime" Name="DTACARD_ISSUED" />
+          <Property Type="DateTime" Name="DTACARD_REPRINT" />
+          <Property Type="DateTime" Name="DATE_ENTER" />
+          <Property Type="DateTime" Name="DATE_RCVD" />
+          <Property Type="DateTime" Name="DATE_APPRV" />
+          <Property Type="DateTime" Name="DATE_DISAP" />
+          <Property Type="DateTime" Name="DATE_RESGN" />
+          <Property Type="DateTime" Name="DATE_REACT" />
+          <Property Type="DateTime" Name="DATE_AMEND" />
+          <Property Type="DateTime" Name="DATE_RENEW" />
+          <Property Type="DateTime" Name="DATE_MEDICAL_APPROVED" />
+          <Property Type="DateTime" Name="DATE_WAIVED_SIGNED" />
+          <Property Type="DateTime" Name="RENADV_DATE" />
+          <Property Type="String" Name="RENADV_REM" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AMEND_BY" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RENEW_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="APPRVD_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="MEM_STATUS_CODE" />
+          <Property Type="Int32" Name="MEM_OSTAT_CODE" />
+          <Property Type="String" Name="UPDATED_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="UPDATED_DATE" />
+          <Property Type="String" Name="REASON_CODE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="POSTED" />
+          <Property Type="Int32" Name="PLAN_DISAPPROVED" />
+          <Property Type="Int32" Name="DepTreatedAsPrin" />
+          <Property Type="DateTime" Name="DTACARD_REISSUED" />
+          <Property Type="DateTime" Name="AM_ISSUED" />
+          <Property Type="DateTime" Name="AM_REISSUED" />
+          <Property Type="DateTime" Name="WAIVER_ISSUED" />
+          <Property Type="DateTime" Name="WAIVER_REISSUED" />
+          <Property Type="DateTime" Name="DATE_FORWARDED" />
+          <Property Type="DateTime" Name="DATE_PASTED" />
+          <Property Type="String" Name="PASTED_REM" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="WaiverFor_Rem" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DATE_REPASTED" />
+          <Property Type="String" Name="ID_REM4" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM5" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM6" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ID_REM7" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="NEW_PLAN" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DTRCVD_UPDATE" />
+          <Property Type="String" Name="RENEWAL_REM" MaxLength="400" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="NEW_PREMIUM" Precision="19" Scale="4" />
+          <Property Type="String" Name="NEW_PAYFOR" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="FROM_INTRA" Nullable="false" />
+          <Property Type="Decimal" Name="PEC_Limit" Precision="19" Scale="4" />
+          <Property Type="Boolean" Name="moss_print" Nullable="false" />
+          <Property Type="Boolean" Name="moss_store" Nullable="false" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+          <Property Type="Boolean" Name="CARDACTIVATED" Nullable="false" />
+          <Property Type="DateTime" Name="LAST_COVERED_DATE" />
+          <Property Type="String" Name="MEM_STATUS_BY" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="MEM_STATUS_DATE" />
+          <Property Type="DateTime" Name="PREM_COVERED_FROM" />
+          <Property Type="DateTime" Name="PREM_COVERED_TO" />
+          <Property Type="Int32" Name="PREM_VALIDITY_FLAG" />
+          <Property Type="Int32" Name="PREM_DUE_PERIOD" />
+          <Property Type="Int32" Name="PREM_TAG_1" />
+          <Property Type="Int32" Name="PREM_TAG_2" />
+          <Property Type="DateTime" Name="PREM_DATE_1" />
+          <Property Type="DateTime" Name="PREM_DATE_2" />
+          <Property Type="String" Name="CIB_TYPE" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CIB_PLAN" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CIB_LIMIT" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="EMAIL_ADDRESS" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ALTERED_BY" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ALTERED_DATE" />
+          <Property Type="DateTime" Name="RFID_DATE" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MembershipModelStoreContainer" CdmEntityContainer="MembershipEntities" >
+          <FunctionImportMapping FunctionImportName="GetMemberDetails" FunctionName="MembershipModel.Store.EMEDICARD_MEMDETAILS_V2" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.MemberDetails">
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="MEM_NAME" ColumnName="MEM_NAME" />
+                <ScalarProperty Name="BDAY" ColumnName="BDAY" />
+                <ScalarProperty Name="AGE" ColumnName="AGE" />
+                <ScalarProperty Name="CIVIL_STATUS" ColumnName="CIVIL_STATUS" />
+                <ScalarProperty Name="MEM_SEX" ColumnName="MEM_SEX" />
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="Plan_Desc" ColumnName="Plan_Desc" />
+                <ScalarProperty Name="DD_Reg_Limits" ColumnName="DD_Reg_Limits" />
+                <ScalarProperty Name="ERC_Limits" ColumnName="ERC_Limits" />
+                <ScalarProperty Name="ID_REM" ColumnName="ID_REM" />
+                <ScalarProperty Name="ID_REM2" ColumnName="ID_REM2" />
+                <ScalarProperty Name="ID_REM3" ColumnName="ID_REM3" />
+                <ScalarProperty Name="ID_REM4" ColumnName="ID_REM4" />
+                <ScalarProperty Name="ID_REM5" ColumnName="ID_REM5" />
+                <ScalarProperty Name="ID_REM6" ColumnName="ID_REM6" />
+                <ScalarProperty Name="ID_REM7" ColumnName="ID_REM7" />
+                <ScalarProperty Name="OTHER_REM" ColumnName="OTHER_REM" />
+                <ScalarProperty Name="Mem_OStat_Code" ColumnName="Mem_OStat_Code" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="ACCT_TYPE" ColumnName="ACCT_TYPE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetDependentDetails" FunctionName="MembershipModel.Store.EMEDICARD_GETDEPDETAILS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.DependentDetails">
+                <ScalarProperty Name="MEM_NAME" ColumnName="MEM_NAME" />
+                <ScalarProperty Name="DEP_DESCRIPTION" ColumnName="DEP_DESCRIPTION" />
+                <ScalarProperty Name="DEP_CODE" ColumnName="DEP_CODE" />
+                <ScalarProperty Name="DEP_APPNUM" ColumnName="DEP_APPNUM" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetDependentPaymentHistory" FunctionName="MembershipModel.Store.SP_INTRA_PAYMENT_HISTORY_DEP_V2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.DependentPaymentHistory">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="COVEREDTO" ColumnName="COVEREDTO" />
+                <ScalarProperty Name="SA_NO" ColumnName="SA_NO" />
+                <ScalarProperty Name="PAYMENT_STATUS" ColumnName="PAYMENT_STATUS" />
+                <ScalarProperty Name="COVERED_FROM" ColumnName="COVERED_FROM" />
+                <ScalarProperty Name="COVERED_TO" ColumnName="COVERED_TO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetPrincipalPaymentHistory" FunctionName="MembershipModel.Store.SP_INTRA_PAYMENT_HISTORY_PRIN_V2">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.PrinicipalPaymentHistory">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="COVEREDTO" ColumnName="COVEREDTO" />
+                <ScalarProperty Name="SA_NO" ColumnName="SA_NO" />
+                <ScalarProperty Name="PAYMENT_STATUS" ColumnName="PAYMENT_STATUS" />
+                <ScalarProperty Name="COVERED_FROM" ColumnName="COVERED_FROM" />
+                <ScalarProperty Name="COVERED_TO" ColumnName="COVERED_TO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Accounts1">
+            <EntityTypeMapping TypeName="MembershipModel.Account">
+              <MappingFragment StoreEntitySet="SYS_ACCOUNT_MTBL">
+                <ScalarProperty Name="corr_days" ColumnName="corr_days" />
+                <ScalarProperty Name="EMAIL_ADD_2" ColumnName="EMAIL_ADD_2" />
+                <ScalarProperty Name="EMAIL_ADD_1" ColumnName="EMAIL_ADD_1" />
+                <ScalarProperty Name="LAST_COVERED_DATE" ColumnName="LAST_COVERED_DATE" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="VATTYPEID" ColumnName="VATTYPEID" />
+                <ScalarProperty Name="WITH_RSP" ColumnName="WITH_RSP" />
+                <ScalarProperty Name="FROM_INTRA" ColumnName="FROM_INTRA" />
+                <ScalarProperty Name="TIN_NO" ColumnName="TIN_NO" />
+                <ScalarProperty Name="USER_ASSIGN" ColumnName="USER_ASSIGN" />
+                <ScalarProperty Name="LOGIN" ColumnName="LOGIN" />
+                <ScalarProperty Name="REN_UPDATE_DATE" ColumnName="REN_UPDATE_DATE" />
+                <ScalarProperty Name="FOR_RENEWAL" ColumnName="FOR_RENEWAL" />
+                <ScalarProperty Name="TAG" ColumnName="TAG" />
+                <ScalarProperty Name="ENCODE_TYPE" ColumnName="ENCODE_TYPE" />
+                <ScalarProperty Name="DATE_VALIDITY" ColumnName="DATE_VALIDITY" />
+                <ScalarProperty Name="TAG_TOP" ColumnName="TAG_TOP" />
+                <ScalarProperty Name="GROUP_TOP" ColumnName="GROUP_TOP" />
+                <ScalarProperty Name="GRACE_PERIOD" ColumnName="GRACE_PERIOD" />
+                <ScalarProperty Name="Other_Remarks" ColumnName="Other_Remarks" />
+                <ScalarProperty Name="BILLING_CTR_AN" ColumnName="BILLING_CTR_AN" />
+                <ScalarProperty Name="BILLING_CTR_SA" ColumnName="BILLING_CTR_SA" />
+                <ScalarProperty Name="BILLING_CTR_QTR" ColumnName="BILLING_CTR_QTR" />
+                <ScalarProperty Name="BILLING_CTR_MO" ColumnName="BILLING_CTR_MO" />
+                <ScalarProperty Name="TRANSMITTAL_TYPE" ColumnName="TRANSMITTAL_TYPE" />
+                <ScalarProperty Name="ID_TYPE" ColumnName="ID_TYPE" />
+                <ScalarProperty Name="SPLCASEID" ColumnName="SPLCASEID" />
+                <ScalarProperty Name="ACCOUNT_DISPLAY" ColumnName="ACCOUNT_DISPLAY" />
+                <ScalarProperty Name="AGENT_REASON" ColumnName="AGENT_REASON" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+                <ScalarProperty Name="PROPOSAL_TYPE" ColumnName="PROPOSAL_TYPE" />
+                <ScalarProperty Name="MOTHER_STATUS" ColumnName="MOTHER_STATUS" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER_CODE" />
+                <ScalarProperty Name="SOB_APPROVED" ColumnName="SOB_APPROVED" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="WITH_PROPOSAL" ColumnName="WITH_PROPOSAL" />
+                <ScalarProperty Name="DATE_CLOSED" ColumnName="DATE_CLOSED" />
+                <ScalarProperty Name="PROGRESS_REM" ColumnName="PROGRESS_REM" />
+                <ScalarProperty Name="EXTENDED_TO" ColumnName="EXTENDED_TO" />
+                <ScalarProperty Name="cc" ColumnName="EXTENDED_FROM" />
+                <ScalarProperty Name="SUBMIT_DATE_SF" ColumnName="SUBMIT_DATE_SF" />
+                <ScalarProperty Name="WITH_SURVEY_FORM" ColumnName="WITH_SURVEY_FORM" />
+                <ScalarProperty Name="SUBMIT_DATE_ML" ColumnName="SUBMIT_DATE_ML" />
+                <ScalarProperty Name="WITH_MASTERLIST" ColumnName="WITH_MASTERLIST" />
+                <ScalarProperty Name="WITH_RC" ColumnName="WITH_RC" />
+                <ScalarProperty Name="REQUIRE_REMARKS" ColumnName="REQUIRE_REMARKS" />
+                <ScalarProperty Name="ADDRESSEE_POSITION" ColumnName="ADDRESSEE_POSITION" />
+                <ScalarProperty Name="ADDRESSEE_LNAME" ColumnName="ADDRESSEE_LNAME" />
+                <ScalarProperty Name="ADDRESSEE_MNAME" ColumnName="ADDRESSEE_MNAME" />
+                <ScalarProperty Name="ADDRESSEE_FNAME" ColumnName="ADDRESSEE_FNAME" />
+                <ScalarProperty Name="ADD_SALUTATION" ColumnName="ADD_SALUTATION" />
+                <ScalarProperty Name="OLD_HMO_EXPIRY" ColumnName="OLD_HMO_EXPIRY" />
+                <ScalarProperty Name="OLD_HMO_CODE" ColumnName="OLD_HMO_CODE" />
+                <ScalarProperty Name="MINDUSTRY_CODE" ColumnName="MINDUSTRY_CODE" />
+                <ScalarProperty Name="INDUSTRY_CODE" ColumnName="INDUSTRY_CODE" />
+                <ScalarProperty Name="EXTEND150" ColumnName="EXTEND150" />
+                <ScalarProperty Name="EXTEND60" ColumnName="EXTEND60" />
+                <ScalarProperty Name="FRANCHISE_EXPIRY" ColumnName="FRANCHISE_EXPIRY" />
+                <ScalarProperty Name="FRANCHISE_DATE" ColumnName="FRANCHISE_DATE" />
+                <ScalarProperty Name="CONTACT_POSITION" ColumnName="CONTACT_POSITION" />
+                <ScalarProperty Name="CONTACT_MNAME" ColumnName="CONTACT_MNAME" />
+                <ScalarProperty Name="CONTACT_LNAME" ColumnName="CONTACT_LNAME" />
+                <ScalarProperty Name="CONTACT_FNAME" ColumnName="CONTACT_FNAME" />
+                <ScalarProperty Name="CONTACT_SALUTATION" ColumnName="CONTACT_SALUTATION" />
+                <ScalarProperty Name="FAX_NO" ColumnName="FAX_NO" />
+                <ScalarProperty Name="PHONE_NO" ColumnName="PHONE_NO" />
+                <ScalarProperty Name="PROVINCE_CODE" ColumnName="PROVINCE_CODE" />
+                <ScalarProperty Name="CITY_CODE" ColumnName="CITY_CODE" />
+                <ScalarProperty Name="STREET" ColumnName="STREET" />
+                <ScalarProperty Name="SETUP_CODE" ColumnName="SETUP_CODE" />
+                <ScalarProperty Name="PACKAGE_CODE" ColumnName="PACKAGE_CODE" />
+                <ScalarProperty Name="MEMSIZE_CODE" ColumnName="MEMSIZE_CODE" />
+                <ScalarProperty Name="ACCTSTATUS_CODE" ColumnName="ACCTSTATUS_CODE" />
+                <ScalarProperty Name="MEMBERSHIP_CODE" ColumnName="MEMBERSHIP_CODE" />
+                <ScalarProperty Name="BRANCHES" ColumnName="BRANCHES" />
+                <ScalarProperty Name="ACCTTYPE_CODE" ColumnName="ACCTTYPE_CODE" />
+                <ScalarProperty Name="SERIAL_NO" ColumnName="SERIAL_NO" />
+                <ScalarProperty Name="AGENT_CODE" ColumnName="AGENT_CODE" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="PROPOSAL_NAME" ColumnName="PROPOSAL_NAME" />
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Agents">
+            <EntityTypeMapping TypeName="MembershipModel.Agent">
+              <MappingFragment StoreEntitySet="SYS_AGENT_LTBL">
+                <ScalarProperty Name="SUB_GROUP" ColumnName="SUB_GROUP" />
+                <ScalarProperty Name="SALES_GROUP" ColumnName="SALES_GROUP" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="Email_add" ColumnName="Email_add" />
+                <ScalarProperty Name="AGENT_BROK" ColumnName="AGENT_BROK" />
+                <ScalarProperty Name="AGENT_DESIGNATION" ColumnName="AGENT_DESIGNATION" />
+                <ScalarProperty Name="ACCT_LIMIT" ColumnName="ACCT_LIMIT" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="PROVINCE_CODE" ColumnName="PROVINCE_CODE" />
+                <ScalarProperty Name="EXP_QUOTA" ColumnName="EXP_QUOTA" />
+                <ScalarProperty Name="GA_CODE" ColumnName="GA_CODE" />
+                <ScalarProperty Name="AM_CODE" ColumnName="AM_CODE" />
+                <ScalarProperty Name="STATUS_DATE" ColumnName="STATUS_DATE" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="CITY_CODE" ColumnName="CITY_CODE" />
+                <ScalarProperty Name="STREET" ColumnName="STREET" />
+                <ScalarProperty Name="AGENT_PHONE" ColumnName="AGENT_PHONE" />
+                <ScalarProperty Name="AGENT_FAX" ColumnName="AGENT_FAX" />
+                <ScalarProperty Name="AGENT_EFFDATE" ColumnName="AGENT_EFFDATE" />
+                <ScalarProperty Name="AGENT_LNAME" ColumnName="AGENT_LNAME" />
+                <ScalarProperty Name="AGENT_MI" ColumnName="AGENT_MI" />
+                <ScalarProperty Name="AGENT_FNAME" ColumnName="AGENT_FNAME" />
+                <ScalarProperty Name="AGENT_TYPECODE" ColumnName="AGENT_TYPECODE" />
+                <ScalarProperty Name="AGENT_ALIAS_CODE" ColumnName="AGENT_ALIAS_CODE" />
+                <ScalarProperty Name="AGENT_CODE" ColumnName="AGENT_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountLists">
+            <EntityTypeMapping TypeName="MembershipModel.AccountList">
+              <MappingFragment StoreEntitySet="uvw_accounts">
+                <ScalarProperty Name="ACCOUNT_CATEGORY" ColumnName="ACCOUNT CATEGORY" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER_CODE" />
+                <ScalarProperty Name="MINDUSTRY_NAME" ColumnName="MINDUSTRY_NAME" />
+                <ScalarProperty Name="MINDUSTRY_CODE" ColumnName="MINDUSTRY_CODE" />
+                <ScalarProperty Name="INDUSTRY_NAME" ColumnName="INDUSTRY_NAME" />
+                <ScalarProperty Name="INDUSTRY_CODE" ColumnName="INDUSTRY_CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCTSTATUS_CODE" ColumnName="ACCTSTATUS_CODE" />
+                <ScalarProperty Name="PROVINCE_CODE" ColumnName="PROVINCE_CODE" />
+                <ScalarProperty Name="CITY_CODE" ColumnName="CITY_CODE" />
+                <ScalarProperty Name="AGENT_LNAME" ColumnName="AGENT_LNAME" />
+                <ScalarProperty Name="AGENT_MI" ColumnName="AGENT_MI" />
+                <ScalarProperty Name="AGENT_FNAME" ColumnName="AGENT_FNAME" />
+                <ScalarProperty Name="AGENT_CODE" ColumnName="AGENT_CODE" />
+                <ScalarProperty Name="PROPOSAL_NAME" ColumnName="PROPOSAL_NAME" />
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetActiveMembersPrincipal" FunctionName="MembershipModel.Store.emed_active_members">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.ActiveMembersPrincipal">
+                <ScalarProperty Name="AREA_DESC" ColumnName="AREA_DESC" />
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="SEX_DESC" ColumnName="SEX_DESC" />
+                <ScalarProperty Name="MEMCSTAT_DESC" ColumnName="MEMCSTAT_DESC" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+                <ScalarProperty Name="ID_REM" ColumnName="ID_REM" />
+                <ScalarProperty Name="ID_REM2" ColumnName="ID_REM2" />
+                <ScalarProperty Name="ID_REM3" ColumnName="ID_REM3" />
+                <ScalarProperty Name="ID_REM4" ColumnName="ID_REM4" />
+                <ScalarProperty Name="ID_REM5" ColumnName="ID_REM5" />
+                <ScalarProperty Name="ID_REM6" ColumnName="ID_REM6" />
+                <ScalarProperty Name="ID_REM7" ColumnName="ID_REM7" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetActiveMembersDependent" FunctionName="MembershipModel.Store.emed_active_member_dependent">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.ActiveMembersDependent">
+                <ScalarProperty Name="AREA_DESC" ColumnName="AREA_DESC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="DEP_CODE" ColumnName="DEP_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="SEX_DESC" ColumnName="SEX_DESC" />
+                <ScalarProperty Name="MEMCSTAT_DESC" ColumnName="MEMCSTAT_DESC" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="DEP_DESCRIPTION" ColumnName="DEP_DESCRIPTION" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+                <ScalarProperty Name="ID_REM" ColumnName="ID_REM" />
+                <ScalarProperty Name="ID_REM2" ColumnName="ID_REM2" />
+                <ScalarProperty Name="ID_REM3" ColumnName="ID_REM3" />
+                <ScalarProperty Name="ID_REM4" ColumnName="ID_REM4" />
+                <ScalarProperty Name="ID_REM5" ColumnName="ID_REM5" />
+                <ScalarProperty Name="ID_REM6" ColumnName="ID_REM6" />
+                <ScalarProperty Name="ID_REM7" ColumnName="ID_REM7" />
+                <ScalarProperty Name="DEP_EMPID" ColumnName="DEP_EMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="SYS_CITY_LTBL">
+            <EntityTypeMapping TypeName="MembershipModel.SYS_CITY_LTBL">
+              <MappingFragment StoreEntitySet="SYS_CITY_LTBL">
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="COUNTRY_NAME" ColumnName="COUNTRY_NAME" />
+                <ScalarProperty Name="COUNTRY_CODE" ColumnName="COUNTRY_CODE" />
+                <ScalarProperty Name="REGION_CODE" ColumnName="REGION_CODE" />
+                <ScalarProperty Name="PROVINCE_CODE" ColumnName="PROVINCE_CODE" />
+                <ScalarProperty Name="CITY_NAME" ColumnName="CITY_NAME" />
+                <ScalarProperty Name="CITY_CODE" ColumnName="CITY_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SYS_PROVINCE_LTBL">
+            <EntityTypeMapping TypeName="MembershipModel.SYS_PROVINCE_LTBL">
+              <MappingFragment StoreEntitySet="SYS_PROVINCE_LTBL">
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="REGION_CODE" ColumnName="REGION_CODE" />
+                <ScalarProperty Name="PROVINCE_NAME" ColumnName="PROVINCE_NAME" />
+                <ScalarProperty Name="PROVINCE_CODE" ColumnName="PROVINCE_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SYS_REGION_LTBL">
+            <EntityTypeMapping TypeName="MembershipModel.SYS_REGION_LTBL">
+              <MappingFragment StoreEntitySet="SYS_REGION_LTBL">
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="COUNTRY_CODE" ColumnName="COUNTRY_CODE" />
+                <ScalarProperty Name="REGION_DESC" ColumnName="REGION_DESC" />
+                <ScalarProperty Name="REGION_NAME" ColumnName="REGION_NAME" />
+                <ScalarProperty Name="REGION_CODE" ColumnName="REGION_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_getpackage_code" FunctionName="MembershipModel.Store.EMED_GETPACKAGE_CODE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.emed_getpackage_code_Result">
+                <ScalarProperty Name="PACKAGE_CODE" ColumnName="PACKAGE_CODE" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selecthcs" FunctionName="MembershipModel.Store.SP_SELECTHCS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.sp_selecthcs_Result">
+                <ScalarProperty Name="HCS_LIST" ColumnName="HCS_LIST" />
+                <ScalarProperty Name="HCS_COMPLEX_DIAG" ColumnName="HCS_COMPLEX_DIAG" />
+                <ScalarProperty Name="HCS_STD" ColumnName="HCS_STD" />
+                <ScalarProperty Name="HCS_OPT_PRICE" ColumnName="HCS_OPT_PRICE" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="HCS_L_SURGERY_LITHO" ColumnName="HCS_L_SURGERY_LITHO" />
+                <ScalarProperty Name="HCS_CTSCAN_MRI_UTS" ColumnName="HCS_CTSCAN_MRI_UTS" />
+                <ScalarProperty Name="HCS_CONGENI_ILL" ColumnName="HCS_CONGENI_ILL" />
+                <ScalarProperty Name="HCS_CATARACT_EXT" ColumnName="HCS_CATARACT_EXT" />
+                <ScalarProperty Name="HCS_CHEMO_RAD_DIA" ColumnName="HCS_CHEMO_RAD_DIA" />
+                <ScalarProperty Name="HCS_HUMAN_BLD_PROD" ColumnName="HCS_HUMAN_BLD_PROD" />
+                <ScalarProperty Name="HCS_WRK_REL_ILL_ACCIDENT" ColumnName="HCS_WRK_REL_ILL_ACCIDENT" />
+                <ScalarProperty Name="HCS_ORGAN_TRANS" ColumnName="HCS_ORGAN_TRANS" />
+                <ScalarProperty Name="HCS_OPEN_HEART_SUR" ColumnName="HCS_OPEN_HEART_SUR" />
+                <ScalarProperty Name="OPCS_PT_SPEECH_SESSION" ColumnName="OPCS_PT_SPEECH_SESSION" />
+                <ScalarProperty Name="OPCS_LASER_TREAT_GLAUCOMA" ColumnName="OPCS_LASER_TREAT_GLAUCOMA" />
+                <ScalarProperty Name="OPCS_PREPOST_NATAL" ColumnName="OPCS_PREPOST_NATAL" />
+                <ScalarProperty Name="OPCS_FDOSE_ANTI_RABIES_TETANUS" ColumnName="OPCS_FDOSE_ANTI_RABIES_TETANUS" />
+                <ScalarProperty Name="HCTYPE" ColumnName="HCTYPE" />
+                <ScalarProperty Name="HCS_EXCLUDING" ColumnName="HCS_EXCLUDING" />
+                <ScalarProperty Name="HCS_NO_BENEFIT" ColumnName="HCS_NO_BENEFIT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_SELECTPHCS" FunctionName="MembershipModel.Store.SP_SELECTPHCS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.SP_SELECTPHCS_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PHCSTYPE" ColumnName="PHCSTYPE" />
+                <ScalarProperty Name="PHCS_ECG" ColumnName="PHCS_ECG" />
+                <ScalarProperty Name="PHCS_EYE_REFRACT" ColumnName="PHCS_EYE_REFRACT" />
+                <ScalarProperty Name="PHCS_PAP_SMEAR" ColumnName="PHCS_PAP_SMEAR" />
+                <ScalarProperty Name="PHCS_MEDI_HO" ColumnName="PHCS_MEDI_HO" />
+                <ScalarProperty Name="PHCS_CO_PREM" ColumnName="PHCS_CO_PREM" />
+                <ScalarProperty Name="PHCS_NEAREST_HOSP" ColumnName="PHCS_NEAREST_HOSP" />
+                <ScalarProperty Name="PHCS_STD" ColumnName="PHCS_STD" />
+                <ScalarProperty Name="PHCS_OPT_PRICE" ColumnName="PHCS_OPT_PRICE" />
+                <ScalarProperty Name="PHCS_NO_BENEFIT" ColumnName="PHCS_NO_BENEFIT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectecs" FunctionName="MembershipModel.Store.SP_SELECTECS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.SP_SELECTECS_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="ECSTYPE" ColumnName="ECSTYPE" />
+                <ScalarProperty Name="ECS_LEAD_TO_CONFINEMENT" ColumnName="ECS_LEAD_TO_CONFINEMENT" />
+                <ScalarProperty Name="ECS_NON_ACCR_HOSP_IN_DDL" ColumnName="ECS_NON_ACCR_HOSP_IN_DDL" />
+                <ScalarProperty Name="ECS_WOUT_ACCR_HOSP_IN_DDL" ColumnName="ECS_WOUT_ACCR_HOSP_IN_DDL" />
+                <ScalarProperty Name="ECS_IN_FORIEGN_COUNTRY_IN_DDL" ColumnName="ECS_IN_FORIEGN_COUNTRY_IN_DDL" />
+                <ScalarProperty Name="ECS_NON_ACCR_HOSP_IN_PERC" ColumnName="ECS_NON_ACCR_HOSP_IN_PERC" />
+                <ScalarProperty Name="ECS_WOUT_ACCR_HOSP_IN_PERC" ColumnName="ECS_WOUT_ACCR_HOSP_IN_PERC" />
+                <ScalarProperty Name="ECS_IN_FORIEGN_COUNTRY_IN_PERC" ColumnName="ECS_IN_FORIEGN_COUNTRY_IN_PERC" />
+                <ScalarProperty Name="ECS_STD" ColumnName="ECS_STD" />
+                <ScalarProperty Name="ECS_ACCR_HOSP" ColumnName="ECS_ACCR_HOSP" />
+                <ScalarProperty Name="ECS_NO_BENEFIT" ColumnName="ECS_NO_BENEFIT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectmfa" FunctionName="MembershipModel.Store.SP_SELECTMFA">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.SP_SELECTMFA_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="MFATYPE" ColumnName="MFATYPE" />
+                <ScalarProperty Name="MFA_NTRL_DEATH_OPT2" ColumnName="MFA_NTRL_DEATH_OPT2" />
+                <ScalarProperty Name="MFA_ACCI_DEATH_OPT2" ColumnName="MFA_ACCI_DEATH_OPT2" />
+                <ScalarProperty Name="MFA_LOSS_SIGHT_LIMBS_OPT2" ColumnName="MFA_LOSS_SIGHT_LIMBS_OPT2" />
+                <ScalarProperty Name="MFA_LOSS_EYE_LIMB_OPT2" ColumnName="MFA_LOSS_EYE_LIMB_OPT2" />
+                <ScalarProperty Name="MFA_NTRL_DEATH_OPT1" ColumnName="MFA_NTRL_DEATH_OPT1" />
+                <ScalarProperty Name="MFA_ACCI_DEATH_OPT1" ColumnName="MFA_ACCI_DEATH_OPT1" />
+                <ScalarProperty Name="MFA_LOSS_SIGHT_LIMBS_OPT1" ColumnName="MFA_LOSS_SIGHT_LIMBS_OPT1" />
+                <ScalarProperty Name="MFA_LOSS_EYE_LIMB_OPT1" ColumnName="MFA_LOSS_EYE_LIMB_OPT1" />
+                <ScalarProperty Name="MFA_STD" ColumnName="MFA_STD" />
+                <ScalarProperty Name="MFA_OPT_PRICE" ColumnName="MFA_OPT_PRICE" />
+                <ScalarProperty Name="MFA_NO_BENEFIT" ColumnName="MFA_NO_BENEFIT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectdcs" FunctionName="MembershipModel.Store.SP_SELECTDCS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.SP_SELECTDCS_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="DCSTYPE" ColumnName="DCSTYPE" />
+                <ScalarProperty Name="DCS_PERMA_AMALGAM" ColumnName="DCS_PERMA_AMALGAM" />
+                <ScalarProperty Name="DCS_LIGHT_CURE" ColumnName="DCS_LIGHT_CURE" />
+                <ScalarProperty Name="DCS_STD" ColumnName="DCS_STD" />
+                <ScalarProperty Name="DCS_OPT_PRICE" ColumnName="DCS_OPT_PRICE" />
+                <ScalarProperty Name="DCS_PROP" ColumnName="DCS_PROP" />
+                <ScalarProperty Name="DCS_NO_BENEFIT" ColumnName="DCS_NO_BENEFIT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_intra_companycode_by_agent" FunctionName="MembershipModel.Store.SP_INTRA_COMPANYCODE_BY_AGENT">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.sp_intra_companycode_by_agent_Result">
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER NAME" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+                <ScalarProperty Name="SOB_APPROVED" ColumnName="SOB_APPROVED" />
+                <ScalarProperty Name="WITH_DETAILEDSOB" ColumnName="WITH_DETAILEDSOB" />
+                <ScalarProperty Name="MOTHER_SOB_APPROVED" ColumnName="MOTHER SOB_APPROVED" />
+                <ScalarProperty Name="MOTHER_WITH_DSOB" ColumnName="MOTHER WITH_DSOB" />
+                <ScalarProperty Name="SIS_SOB_COUNT" ColumnName="SIS SOB COUNT" />
+                <ScalarProperty Name="MOTHER_SOB_COUNT" ColumnName="MOTHER SOB COUNT" />
+                <ScalarProperty Name="MAIN_SOB_COUNT" ColumnName="MAIN SOB COUNT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="MembersRelations">
+            <EntityTypeMapping TypeName="MembershipModel.MembersRelation">
+              <MappingFragment StoreEntitySet="SYS_RELATIONS_LTBL">
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="fldCivilStatus" ColumnName="fldCivilStatus" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="CodeOfLandbank" ColumnName="CodeOfLandbank" />
+                <ScalarProperty Name="RelationForLandBank" ColumnName="RelationForLandBank" />
+                <ScalarProperty Name="SortedOrder" ColumnName="SortedOrder" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="DEP_DESCRIPTION" ColumnName="DEP_DESCRIPTION" />
+                <ScalarProperty Name="DEP_ABBRE" ColumnName="DEP_ABBRE" />
+                <ScalarProperty Name="DEPENDENT_CODE" ColumnName="DEPENDENT_CODE" />
+                <ScalarProperty Name="DEP_CODE" ColumnName="DEP_CODE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_check_member_details" FunctionName="MembershipModel.Store.EMEDICARD_CHECKMEMBERDETAILS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.emed_check_member_details_Result">
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetAPPNUM" FunctionName="MembershipModel.Store.emed_GetAPPNUM">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.APPNUM">
+                <ScalarProperty Name="last_id" ColumnName="last_id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetAccountPlans" FunctionName="MembershipModel.Store.emed_account_plans">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.AccountPlans">
+                <ScalarProperty Name="plan" ColumnName="plan" />
+                <ScalarProperty Name="RSPROOMRATE_ID" ColumnName="RSPROOMRATE_ID" />
+                <ScalarProperty Name="PLAN_CODE" ColumnName="PLAN_CODE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetActiveMember" FunctionName="MembershipModel.Store.emed_check_active_member">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.ActiveMember">
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="PRIN_APPNUM" ColumnName="PRIN_APPNUM" />
+                </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetDependentResignedMembers" FunctionName="MembershipModel.Store.emed_resigned_members_dependent">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.DependentResignedMembers">
+                <ScalarProperty Name="AREA_DESC" ColumnName="AREA_DESC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="DEP_CODE" ColumnName="DEP_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="SEX_DESC" ColumnName="SEX_DESC" />
+                <ScalarProperty Name="MEMCSTAT_DESC" ColumnName="MEMCSTAT_DESC" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="DEP_DESCRIPTION" ColumnName="DEP_DESCRIPTION" />
+                <ScalarProperty Name="DATE_RESGN" ColumnName="DATE_RESGN" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+                <ScalarProperty Name="MEM_NAME" ColumnName="MEM_NAME" />
+                <ScalarProperty Name="DEP_EMPID" ColumnName="DEP_EMPID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetPrincipalResignedMembers" FunctionName="MembershipModel.Store.emed_resigned_members_principal">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.ResignedMembersPrincipal">
+                <ScalarProperty Name="AREA_DESC" ColumnName="AREA_DESC" />
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="SEX_DESC" ColumnName="SEX_DESC" />
+                <ScalarProperty Name="MEMCSTAT_DESC" ColumnName="MEMCSTAT_DESC" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="DATE_RESGN" ColumnName="DATE_RESGN" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+                <ScalarProperty Name="MEM_NAME" ColumnName="MEM_NAME" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="get_action_memos" FunctionName="MembershipModel.Store.emed_action_memos">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.get_action_memos_Result">
+                <ScalarProperty Name="AREA_DESC" ColumnName="AREA_DESC" />
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="SEX_DESC" ColumnName="SEX_DESC" />
+                <ScalarProperty Name="MEMCSTAT_DESC" ColumnName="MEMCSTAT_DESC" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="ACTMEM_DATE" ColumnName="ACTMEM_DATE" />
+                <ScalarProperty Name="ACTMEM_REM" ColumnName="ACTMEM_REM" />
+                <ScalarProperty Name="OTHER_REM" ColumnName="OTHER_REM" />
+                <ScalarProperty Name="STAT_REM" ColumnName="STAT_REM" />
+                <ScalarProperty Name="MEM_OSTAT_CODE" ColumnName="MEM_OSTAT_CODE" />
+                <ScalarProperty Name="REMARKS" ColumnName="REMARKS" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="action_memos_dependent" FunctionName="MembershipModel.Store.emed_action_memos_dependent">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.action_memos_dependent_Result">
+                <ScalarProperty Name="AREA_DESC" ColumnName="AREA_DESC" />
+                <ScalarProperty Name="PRINCIPAL" ColumnName="PRINCIPAL" />
+                <ScalarProperty Name="DEP_CODE" ColumnName="DEP_CODE" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="SEX_DESC" ColumnName="SEX_DESC" />
+                <ScalarProperty Name="MEMCSTAT_DESC" ColumnName="MEMCSTAT_DESC" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="PLAN_DESC" ColumnName="PLAN_DESC" />
+                <ScalarProperty Name="DEP_DESCRIPTION" ColumnName="DEP_DESCRIPTION" />
+                <ScalarProperty Name="ACTMEM_DATE" ColumnName="ACTMEM_DATE" />
+                <ScalarProperty Name="ACTMEM_REM" ColumnName="ACTMEM_REM" />
+                <ScalarProperty Name="OTHER_REM" ColumnName="OTHER_REM" />
+                <ScalarProperty Name="STAT_REM" ColumnName="STAT_REM" />
+                <ScalarProperty Name="MEM_OSTAT_CODE" ColumnName="MEM_OSTAT_CODE" />
+                <ScalarProperty Name="REMARKS" ColumnName="REMARKS" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="corporate_account_listing" FunctionName="MembershipModel.Store.emed_corporate_account_listing">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.corporate_account_listing_Result">
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="ACCOUNT_NAME" ColumnName="ACCOUNT_NAME" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="SYS_SOB_INFORMATION_MTBL">
+            <EntityTypeMapping TypeName="MembershipModel.SYS_SOB_INFORMATION_MTBL">
+              <MappingFragment StoreEntitySet="SYS_SOB_INFORMATION_MTBL">
+                <ScalarProperty Name="is_twelve_percent_vat" ColumnName="is_twelve_percent_vat" />
+                <ScalarProperty Name="REF_FEE" ColumnName="REF_FEE" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="WITH_MEMBERS" ColumnName="WITH_MEMBERS" />
+                <ScalarProperty Name="PACCOUNT_CODE" ColumnName="PACCOUNT_CODE" />
+                <ScalarProperty Name="WITH_RELATION" ColumnName="WITH_RELATION" />
+                <ScalarProperty Name="WITH_SPETREAT" ColumnName="WITH_SPETREAT" />
+                <ScalarProperty Name="ML_RCVD_DATE" ColumnName="ML_RCVD_DATE" />
+                <ScalarProperty Name="DATESTART_BILL" ColumnName="DATESTART_BILL" />
+                <ScalarProperty Name="AREA_CODE" ColumnName="AREA_CODE" />
+                <ScalarProperty Name="RENEW_DATE" ColumnName="RENEW_DATE" />
+                <ScalarProperty Name="WITH_ORC" ColumnName="WITH_ORC" />
+                <ScalarProperty Name="PREM_REMARKS" ColumnName="PREM_REMARKS" />
+                <ScalarProperty Name="MEM_REMARKS" ColumnName="MEM_REMARKS" />
+                <ScalarProperty Name="AGENT_COMMISSION" ColumnName="AGENT_COMMISSION" />
+                <ScalarProperty Name="GA_ERCCOMM" ColumnName="GA_ERCCOMM" />
+                <ScalarProperty Name="AM_ERCCOMM" ColumnName="AM_ERCCOMM" />
+                <ScalarProperty Name="AE_ERCCOMM" ColumnName="AE_ERCCOMM" />
+                <ScalarProperty Name="GA_COMM" ColumnName="GA_COMM" />
+                <ScalarProperty Name="AM_COMM" ColumnName="AM_COMM" />
+                <ScalarProperty Name="AE_COMM" ColumnName="AE_COMM" />
+                <ScalarProperty Name="VALIDTY_DMY" ColumnName="VALIDTY_DMY" />
+                <ScalarProperty Name="VALIDITY_RANGE" ColumnName="VALIDITY_RANGE" />
+                <ScalarProperty Name="VALIDITY_DATE" ColumnName="VALIDITY_DATE" />
+                <ScalarProperty Name="EFFECTIVITY_DATE" ColumnName="EFFECTIVITY_DATE" />
+                <ScalarProperty Name="EXTENSION_DMY" ColumnName="EXTENSION_DMY" />
+                <ScalarProperty Name="EXTENSION_NUM" ColumnName="EXTENSION_NUM" />
+                <ScalarProperty Name="CONTRACTSTAT_CODE" ColumnName="CONTRACTSTAT_CODE" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="SOB_CODE" ColumnName="SOB_CODE" />
+                <ScalarProperty Name="SOBID" ColumnName="SOBID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="emed_corporate_account_list" FunctionName="MembershipModel.Store.emed_corporate_accounts_list">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.emed_corporate_account_list_Result">
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER NAME" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_corp_user_available_acc" FunctionName="MembershipModel.Store.emed_corp_user_available_acc">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.emed_corp_user_available_acc_Result">
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER NAME" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_get_member_info" FunctionName="MembershipModel.Store.emed_get_member_info">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.emed_get_member_info_Result">
+                <ScalarProperty Name="account_code" ColumnName="account_code" />
+                <ScalarProperty Name="account_name" ColumnName="account_name" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="mem_bday" ColumnName="mem_bday" />
+                <ScalarProperty Name="mem_type" ColumnName="mem_type" />
+                <ScalarProperty Name="member_code" ColumnName="member_code" />
+                <ScalarProperty Name="PRIN_APPNUM" ColumnName="PRIN_APPNUM" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER_CODE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_emed_company_code_by_agent" FunctionName="MembershipModel.Store.SP_EMED_COMPANYCODE_BY_AGENT">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.sp_emed_company_code_by_agent_Result">
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER NAME" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+                <ScalarProperty Name="SOB_APPROVED" ColumnName="SOB_APPROVED" />
+                <ScalarProperty Name="WITH_DETAILEDSOB" ColumnName="WITH_DETAILEDSOB" />
+                <ScalarProperty Name="MOTHER_SOB_APPROVED" ColumnName="MOTHER SOB_APPROVED" />
+                <ScalarProperty Name="MOTHER_WITH_DSOB" ColumnName="MOTHER WITH_DSOB" />
+                <ScalarProperty Name="SIS_SOB_COUNT" ColumnName="SIS SOB COUNT" />
+                <ScalarProperty Name="MOTHER_SOB_COUNT" ColumnName="MOTHER SOB COUNT" />
+                <ScalarProperty Name="MAIN_SOB_COUNT" ColumnName="MAIN SOB COUNT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_selectexclusion" FunctionName="MembershipModel.Store.SP_SELECTEXCLUSION">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.sp_selectexclusion_Result">
+                <ScalarProperty Name="Account_Code" ColumnName="Account_Code" />
+                <ScalarProperty Name="Account_Name" ColumnName="Account_Name" />
+                <ScalarProperty Name="Exclusion_Code" ColumnName="Exclusion_Code" />
+                <ScalarProperty Name="Exclusion_Desc" ColumnName="Exclusion_Desc" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="emed_active_accounts" FunctionName="MembershipModel.Store.emed_acctive_accounts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MembershipModel.emed_active_accounts_Result">
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER NAME" />
+                <ScalarProperty Name="MOTHER_CODE" ColumnName="MOTHER CODE" />
+                <ScalarProperty Name="ACCTSTATUS_DESC" ColumnName="ACCTSTATUS_DESC" />
+                <ScalarProperty Name="ACCT_CATEGORY" ColumnName="ACCT_CATEGORY" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="SYS_UWDEPENDENT_ACTIVE_MTBL">
+            <EntityTypeMapping TypeName="MembershipModel.SYS_UWDEPENDENT_ACTIVE_MTBL">
+              <MappingFragment StoreEntitySet="SYS_UWDEPENDENT_ACTIVE_MTBL">
+                <ScalarProperty Name="dep_identifier" ColumnName="dep_identifier" />
+                <ScalarProperty Name="RFID_DATE" ColumnName="RFID_DATE" />
+                <ScalarProperty Name="ALTERED_DATE" ColumnName="ALTERED_DATE" />
+                <ScalarProperty Name="ALTERED_BY" ColumnName="ALTERED_BY" />
+                <ScalarProperty Name="MEM_PHONE" ColumnName="MEM_PHONE" />
+                <ScalarProperty Name="STREET_ADDRESS" ColumnName="STREET_ADDRESS" />
+                <ScalarProperty Name="EMAIL_ADDRESS" ColumnName="EMAIL_ADDRESS" />
+                <ScalarProperty Name="CIB_LIMIT" ColumnName="CIB_LIMIT" />
+                <ScalarProperty Name="CIB_PLAN" ColumnName="CIB_PLAN" />
+                <ScalarProperty Name="CIB_TYPE" ColumnName="CIB_TYPE" />
+                <ScalarProperty Name="DEP_COMPID" ColumnName="DEP_COMPID" />
+                <ScalarProperty Name="PREM_DATE_2" ColumnName="PREM_DATE_2" />
+                <ScalarProperty Name="PREM_DATE_1" ColumnName="PREM_DATE_1" />
+                <ScalarProperty Name="PREM_TAG_2" ColumnName="PREM_TAG_2" />
+                <ScalarProperty Name="PREM_TAG_1" ColumnName="PREM_TAG_1" />
+                <ScalarProperty Name="PREM_DUE_PERIOD" ColumnName="PREM_DUE_PERIOD" />
+                <ScalarProperty Name="PREM_VALIDITY_FLAG" ColumnName="PREM_VALIDITY_FLAG" />
+                <ScalarProperty Name="PREM_COVERED_TO" ColumnName="PREM_COVERED_TO" />
+                <ScalarProperty Name="PREM_COVERED_FROM" ColumnName="PREM_COVERED_FROM" />
+                <ScalarProperty Name="MEM_STATUS_DATE" ColumnName="MEM_STATUS_DATE" />
+                <ScalarProperty Name="MEM_STATUS_BY" ColumnName="MEM_STATUS_BY" />
+                <ScalarProperty Name="LAST_COVERED_DATE" ColumnName="LAST_COVERED_DATE" />
+                <ScalarProperty Name="CARDACTIVATED" ColumnName="CARDACTIVATED" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="moss_store" ColumnName="moss_store" />
+                <ScalarProperty Name="moss_print" ColumnName="moss_print" />
+                <ScalarProperty Name="PEC_Limit" ColumnName="PEC_Limit" />
+                <ScalarProperty Name="FROM_INTRA" ColumnName="FROM_INTRA" />
+                <ScalarProperty Name="NEW_PAYFOR" ColumnName="NEW_PAYFOR" />
+                <ScalarProperty Name="NEW_PREMIUM" ColumnName="NEW_PREMIUM" />
+                <ScalarProperty Name="RENEWAL_REM" ColumnName="RENEWAL_REM" />
+                <ScalarProperty Name="DTRCVD_UPDATE" ColumnName="DTRCVD_UPDATE" />
+                <ScalarProperty Name="NEW_PLAN" ColumnName="NEW_PLAN" />
+                <ScalarProperty Name="ID_REM7" ColumnName="ID_REM7" />
+                <ScalarProperty Name="ID_REM6" ColumnName="ID_REM6" />
+                <ScalarProperty Name="ID_REM5" ColumnName="ID_REM5" />
+                <ScalarProperty Name="ID_REM4" ColumnName="ID_REM4" />
+                <ScalarProperty Name="DATE_REPASTED" ColumnName="DATE_REPASTED" />
+                <ScalarProperty Name="WaiverFor_Rem" ColumnName="WaiverFor_Rem" />
+                <ScalarProperty Name="PASTED_REM" ColumnName="PASTED_REM" />
+                <ScalarProperty Name="DATE_PASTED" ColumnName="DATE_PASTED" />
+                <ScalarProperty Name="DATE_FORWARDED" ColumnName="DATE_FORWARDED" />
+                <ScalarProperty Name="WAIVER_REISSUED" ColumnName="WAIVER_REISSUED" />
+                <ScalarProperty Name="WAIVER_ISSUED" ColumnName="WAIVER_ISSUED" />
+                <ScalarProperty Name="AM_REISSUED" ColumnName="AM_REISSUED" />
+                <ScalarProperty Name="AM_ISSUED" ColumnName="AM_ISSUED" />
+                <ScalarProperty Name="DTACARD_REISSUED" ColumnName="DTACARD_REISSUED" />
+                <ScalarProperty Name="POSTED" ColumnName="POSTED" />
+                <ScalarProperty Name="REASON_CODE" ColumnName="REASON_CODE" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="DATE_RCVD" ColumnName="DATE_RCVD" />
+                <ScalarProperty Name="APPRVD_BY" ColumnName="APPRVD_BY" />
+                <ScalarProperty Name="RENEW_BY" ColumnName="RENEW_BY" />
+                <ScalarProperty Name="AMEND_BY" ColumnName="AMEND_BY" />
+                <ScalarProperty Name="RENADV_REM" ColumnName="RENADV_REM" />
+                <ScalarProperty Name="RENADV_DATE" ColumnName="RENADV_DATE" />
+                <ScalarProperty Name="DATE_WAIVED_SIGNED" ColumnName="DATE_WAIVED_SIGNED" />
+                <ScalarProperty Name="DATE_MEDICAL_APPROVED" ColumnName="DATE_MEDICAL_APPROVED" />
+                <ScalarProperty Name="DATE_RENEW" ColumnName="DATE_RENEW" />
+                <ScalarProperty Name="DATE_AMEND" ColumnName="DATE_AMEND" />
+                <ScalarProperty Name="DATE_REACT" ColumnName="DATE_REACT" />
+                <ScalarProperty Name="DATE_RESGN" ColumnName="DATE_RESGN" />
+                <ScalarProperty Name="DATE_DISAP" ColumnName="DATE_DISAP" />
+                <ScalarProperty Name="DATE_APPRV" ColumnName="DATE_APPRV" />
+                <ScalarProperty Name="DATE_ENTER" ColumnName="DATE_ENTER" />
+                <ScalarProperty Name="DTACARD_REPRINT" ColumnName="DTACARD_REPRINT" />
+                <ScalarProperty Name="DTACARD_ISSUED" ColumnName="DTACARD_ISSUED" />
+                <ScalarProperty Name="DTACARD_PRINTED" ColumnName="DTACARD_PRINTED" />
+                <ScalarProperty Name="MEM_OSTAT_CODE" ColumnName="MEM_OSTAT_CODE" />
+                <ScalarProperty Name="MEM_STATUS_CODE" ColumnName="MEM_STATUS_CODE" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="ACTMEM_REPRINT" ColumnName="ACTMEM_REPRINT" />
+                <ScalarProperty Name="ACTMEM_COMPLIED_DATE" ColumnName="ACTMEM_COMPLIED_DATE" />
+                <ScalarProperty Name="ACTMEM_DATE" ColumnName="ACTMEM_DATE" />
+                <ScalarProperty Name="ACTMEM_REM" ColumnName="ACTMEM_REM" />
+                <ScalarProperty Name="ID_REM3" ColumnName="ID_REM3" />
+                <ScalarProperty Name="ID_REM2" ColumnName="ID_REM2" />
+                <ScalarProperty Name="ID_REM" ColumnName="ID_REM" />
+                <ScalarProperty Name="OTHER_REM" ColumnName="OTHER_REM" />
+                <ScalarProperty Name="STAT_REM" ColumnName="STAT_REM" />
+                <ScalarProperty Name="MED_DEC2" ColumnName="MED_DEC2" />
+                <ScalarProperty Name="MED_DEC1" ColumnName="MED_DEC1" />
+                <ScalarProperty Name="MED_DEC" ColumnName="MED_DEC" />
+                <ScalarProperty Name="ADDL_PREM" ColumnName="ADDL_PREM" />
+                <ScalarProperty Name="DATE_WAIVER" ColumnName="DATE_WAIVER" />
+                <ScalarProperty Name="WITH_WAIVER" ColumnName="WITH_WAIVER" />
+                <ScalarProperty Name="WITH_PE" ColumnName="WITH_PE" />
+                <ScalarProperty Name="WITH_PEC" ColumnName="WITH_PEC" />
+                <ScalarProperty Name="DEP_RELCODE" ColumnName="DEP_RELCODE" />
+                <ScalarProperty Name="MEM_CIVILSTAT" ColumnName="MEM_CIVILSTAT" />
+                <ScalarProperty Name="MEM_SEX" ColumnName="MEM_SEX" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="RSPROOMRATE_ID" ColumnName="RSPROOMRATE_ID" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="AREA_CODE" ColumnName="AREA_CODE" />
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="PRIN_APPNUM" ColumnName="PRIN_APPNUM" />
+                <ScalarProperty Name="DEP_CODE" ColumnName="DEP_CODE" />
+                <ScalarProperty Name="DEP_APPNUM" ColumnName="DEP_APPNUM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SYS_UWPRINCIPAL_ACTIVE_MTBL">
+            <EntityTypeMapping TypeName="MembershipModel.SYS_UWPRINCIPAL_ACTIVE_MTBL">
+              <MappingFragment StoreEntitySet="SYS_UWPRINCIPAL_ACTIVE_MTBL">
+                <ScalarProperty Name="RFID_DATE" ColumnName="RFID_DATE" />
+                <ScalarProperty Name="ALTERED_DATE" ColumnName="ALTERED_DATE" />
+                <ScalarProperty Name="ALTERED_BY" ColumnName="ALTERED_BY" />
+                <ScalarProperty Name="EMAIL_ADDRESS" ColumnName="EMAIL_ADDRESS" />
+                <ScalarProperty Name="CIB_LIMIT" ColumnName="CIB_LIMIT" />
+                <ScalarProperty Name="CIB_PLAN" ColumnName="CIB_PLAN" />
+                <ScalarProperty Name="CIB_TYPE" ColumnName="CIB_TYPE" />
+                <ScalarProperty Name="PREM_DATE_2" ColumnName="PREM_DATE_2" />
+                <ScalarProperty Name="PREM_DATE_1" ColumnName="PREM_DATE_1" />
+                <ScalarProperty Name="PREM_TAG_2" ColumnName="PREM_TAG_2" />
+                <ScalarProperty Name="PREM_TAG_1" ColumnName="PREM_TAG_1" />
+                <ScalarProperty Name="PREM_DUE_PERIOD" ColumnName="PREM_DUE_PERIOD" />
+                <ScalarProperty Name="PREM_VALIDITY_FLAG" ColumnName="PREM_VALIDITY_FLAG" />
+                <ScalarProperty Name="PREM_COVERED_TO" ColumnName="PREM_COVERED_TO" />
+                <ScalarProperty Name="PREM_COVERED_FROM" ColumnName="PREM_COVERED_FROM" />
+                <ScalarProperty Name="MEM_STATUS_DATE" ColumnName="MEM_STATUS_DATE" />
+                <ScalarProperty Name="MEM_STATUS_BY" ColumnName="MEM_STATUS_BY" />
+                <ScalarProperty Name="LAST_COVERED_DATE" ColumnName="LAST_COVERED_DATE" />
+                <ScalarProperty Name="CARDACTIVATED" ColumnName="CARDACTIVATED" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="moss_store" ColumnName="moss_store" />
+                <ScalarProperty Name="moss_print" ColumnName="moss_print" />
+                <ScalarProperty Name="PEC_Limit" ColumnName="PEC_Limit" />
+                <ScalarProperty Name="FROM_INTRA" ColumnName="FROM_INTRA" />
+                <ScalarProperty Name="NEW_PAYFOR" ColumnName="NEW_PAYFOR" />
+                <ScalarProperty Name="NEW_PREMIUM" ColumnName="NEW_PREMIUM" />
+                <ScalarProperty Name="RENEWAL_REM" ColumnName="RENEWAL_REM" />
+                <ScalarProperty Name="DTRCVD_UPDATE" ColumnName="DTRCVD_UPDATE" />
+                <ScalarProperty Name="NEW_PLAN" ColumnName="NEW_PLAN" />
+                <ScalarProperty Name="ID_REM7" ColumnName="ID_REM7" />
+                <ScalarProperty Name="ID_REM6" ColumnName="ID_REM6" />
+                <ScalarProperty Name="ID_REM5" ColumnName="ID_REM5" />
+                <ScalarProperty Name="ID_REM4" ColumnName="ID_REM4" />
+                <ScalarProperty Name="DATE_REPASTED" ColumnName="DATE_REPASTED" />
+                <ScalarProperty Name="WaiverFor_Rem" ColumnName="WaiverFor_Rem" />
+                <ScalarProperty Name="PASTED_REM" ColumnName="PASTED_REM" />
+                <ScalarProperty Name="DATE_PASTED" ColumnName="DATE_PASTED" />
+                <ScalarProperty Name="DATE_FORWARDED" ColumnName="DATE_FORWARDED" />
+                <ScalarProperty Name="WAIVER_REISSUED" ColumnName="WAIVER_REISSUED" />
+                <ScalarProperty Name="WAIVER_ISSUED" ColumnName="WAIVER_ISSUED" />
+                <ScalarProperty Name="AM_REISSUED" ColumnName="AM_REISSUED" />
+                <ScalarProperty Name="AM_ISSUED" ColumnName="AM_ISSUED" />
+                <ScalarProperty Name="DTACARD_REISSUED" ColumnName="DTACARD_REISSUED" />
+                <ScalarProperty Name="DepTreatedAsPrin" ColumnName="DepTreatedAsPrin" />
+                <ScalarProperty Name="PLAN_DISAPPROVED" ColumnName="PLAN_DISAPPROVED" />
+                <ScalarProperty Name="POSTED" ColumnName="POSTED" />
+                <ScalarProperty Name="REASON_CODE" ColumnName="REASON_CODE" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="MEM_OSTAT_CODE" ColumnName="MEM_OSTAT_CODE" />
+                <ScalarProperty Name="MEM_STATUS_CODE" ColumnName="MEM_STATUS_CODE" />
+                <ScalarProperty Name="APPRVD_BY" ColumnName="APPRVD_BY" />
+                <ScalarProperty Name="RENEW_BY" ColumnName="RENEW_BY" />
+                <ScalarProperty Name="AMEND_BY" ColumnName="AMEND_BY" />
+                <ScalarProperty Name="RENADV_REM" ColumnName="RENADV_REM" />
+                <ScalarProperty Name="RENADV_DATE" ColumnName="RENADV_DATE" />
+                <ScalarProperty Name="DATE_WAIVED_SIGNED" ColumnName="DATE_WAIVED_SIGNED" />
+                <ScalarProperty Name="DATE_MEDICAL_APPROVED" ColumnName="DATE_MEDICAL_APPROVED" />
+                <ScalarProperty Name="DATE_RENEW" ColumnName="DATE_RENEW" />
+                <ScalarProperty Name="DATE_AMEND" ColumnName="DATE_AMEND" />
+                <ScalarProperty Name="DATE_REACT" ColumnName="DATE_REACT" />
+                <ScalarProperty Name="DATE_RESGN" ColumnName="DATE_RESGN" />
+                <ScalarProperty Name="DATE_DISAP" ColumnName="DATE_DISAP" />
+                <ScalarProperty Name="DATE_APPRV" ColumnName="DATE_APPRV" />
+                <ScalarProperty Name="DATE_RCVD" ColumnName="DATE_RCVD" />
+                <ScalarProperty Name="DATE_ENTER" ColumnName="DATE_ENTER" />
+                <ScalarProperty Name="DTACARD_REPRINT" ColumnName="DTACARD_REPRINT" />
+                <ScalarProperty Name="DTACARD_ISSUED" ColumnName="DTACARD_ISSUED" />
+                <ScalarProperty Name="DTACARD_PRINTED" ColumnName="DTACARD_PRINTED" />
+                <ScalarProperty Name="MEM_TYPE" ColumnName="MEM_TYPE" />
+                <ScalarProperty Name="VAL_DATE" ColumnName="VAL_DATE" />
+                <ScalarProperty Name="EFF_DATE" ColumnName="EFF_DATE" />
+                <ScalarProperty Name="ACTMEM_REPRINT" ColumnName="ACTMEM_REPRINT" />
+                <ScalarProperty Name="ACTMEM_COMPLIED_DATE" ColumnName="ACTMEM_COMPLIED_DATE" />
+                <ScalarProperty Name="ACTMEM_REM" ColumnName="ACTMEM_REM" />
+                <ScalarProperty Name="ACTMEM_DATE" ColumnName="ACTMEM_DATE" />
+                <ScalarProperty Name="ID_REM3" ColumnName="ID_REM3" />
+                <ScalarProperty Name="ID_REM2" ColumnName="ID_REM2" />
+                <ScalarProperty Name="ID_REM" ColumnName="ID_REM" />
+                <ScalarProperty Name="OTHER_REM" ColumnName="OTHER_REM" />
+                <ScalarProperty Name="STAT_REM" ColumnName="STAT_REM" />
+                <ScalarProperty Name="MED_DEC2" ColumnName="MED_DEC2" />
+                <ScalarProperty Name="MED_DEC1" ColumnName="MED_DEC1" />
+                <ScalarProperty Name="MED_DEC" ColumnName="MED_DEC" />
+                <ScalarProperty Name="ADDL_PREM" ColumnName="ADDL_PREM" />
+                <ScalarProperty Name="DATE_WAIVER" ColumnName="DATE_WAIVER" />
+                <ScalarProperty Name="WITH_WAIVER" ColumnName="WITH_WAIVER" />
+                <ScalarProperty Name="WITH_PE" ColumnName="WITH_PE" />
+                <ScalarProperty Name="WITH_PEC" ColumnName="WITH_PEC" />
+                <ScalarProperty Name="MEM_PHONE" ColumnName="MEM_PHONE" />
+                <ScalarProperty Name="PROVINCE_CODE" ColumnName="PROVINCE_CODE" />
+                <ScalarProperty Name="CITY_CODE" ColumnName="CITY_CODE" />
+                <ScalarProperty Name="STREET_ADDRESS" ColumnName="STREET_ADDRESS" />
+                <ScalarProperty Name="ADDRTYPE" ColumnName="ADDRTYPE" />
+                <ScalarProperty Name="MEM_CIVILSTAT" ColumnName="MEM_CIVILSTAT" />
+                <ScalarProperty Name="MEM_SEX" ColumnName="MEM_SEX" />
+                <ScalarProperty Name="MEM_AGE" ColumnName="MEM_AGE" />
+                <ScalarProperty Name="MEM_BDAY" ColumnName="MEM_BDAY" />
+                <ScalarProperty Name="MEM_MI" ColumnName="MEM_MI" />
+                <ScalarProperty Name="MEM_FNAME" ColumnName="MEM_FNAME" />
+                <ScalarProperty Name="MEM_LNAME" ColumnName="MEM_LNAME" />
+                <ScalarProperty Name="PRIN_COMPID" ColumnName="PRIN_COMPID" />
+                <ScalarProperty Name="RSPROOMRATE_ID" ColumnName="RSPROOMRATE_ID" />
+                <ScalarProperty Name="AGENT_CODE" ColumnName="AGENT_CODE" />
+                <ScalarProperty Name="AREA_CODE" ColumnName="AREA_CODE" />
+                <ScalarProperty Name="ACCOUNT_CODE" ColumnName="ACCOUNT_CODE" />
+                <ScalarProperty Name="PRIN_CODE" ColumnName="PRIN_CODE" />
+                <ScalarProperty Name="PRIN_APPNUM" ColumnName="PRIN_APPNUM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Membership" ZoomLevel="52" >
+        <EntityTypeShape EntityType="MembershipModel.Account" Width="2.125" PointX="0.75" PointY="0.75" Height="16.979798177083335" />
+        <EntityTypeShape EntityType="MembershipModel.Agent" Width="2.625" PointX="3.375" PointY="0.75" Height="5.6340136718750031" />
+        <EntityTypeShape EntityType="MembershipModel.AccountList" Width="2.125" PointX="6.25" PointY="0.75" Height="4.2879036458333317" />
+        <EntityTypeShape EntityType="MembershipModel.SYS_CITY_LTBL" Width="2.625" PointX="3.375" PointY="6.625" Height="2.7494921874999996" />
+        <EntityTypeShape EntityType="MembershipModel.SYS_PROVINCE_LTBL" Width="1.5" PointX="6.25" PointY="7.375" Height="1.9802864583333317" />
+        <EntityTypeShape EntityType="MembershipModel.SYS_REGION_LTBL" Width="1.5" PointX="6.25" PointY="5.125" Height="2.1725878906249996" />
+        <EntityTypeShape EntityType="MembershipModel.MembersRelation" Width="1.625" PointX="8.75" PointY="0.75" Height="3.5186979166666674" />
+        <EntityTypeShape EntityType="MembershipModel.SYS_SOB_INFORMATION_MTBL" Width="1.5" PointX="8.375" PointY="6.75" Height="7.1724251302083353" />
+        <EntityTypeShape EntityType="MembershipModel.SYS_UWDEPENDENT_ACTIVE_MTBL" Width="1.5" PointX="3.375" PointY="10.75" Height="21.402731119791667" />
+        <EntityTypeShape EntityType="MembershipModel.SYS_UWPRINCIPAL_ACTIVE_MTBL" Width="1.5" PointX="10.375" PointY="5.75" Height="21.787333984375003" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

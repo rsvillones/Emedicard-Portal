@@ -1,0 +1,124 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using Corelib.Enums;
+
+namespace WebUI.Controllers
+{
+    public class IdReplacementsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region  -- Properties --
+
+        private Member Member { get; set; }
+
+        private Dependent Dependent { get; set; }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public ActionResult Index(Guid? memberGuid, string message, string messageType)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (memberGuid == null && !db.Members.Any(t => t.Guid == memberGuid && accountCodes.Contains(t.AccountCode))) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            this.Member = db.Members.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Guid == memberGuid);
+            var model = db.IdReplacements
+            .Include(t => t.EndorsementBatch)
+            .Include(t => t.Reason)
+            .Where(t => accountCodes.Contains(t.EndorsementBatch.AccountCode) && t.MemberId == this.Member.Id &&
+                (t.Status == RequestStatus.Disapproved || t.Status == RequestStatus.Approved || t.Status == RequestStatus.ForProcessing))
+            .OrderByDescending(t => t.RequestDate)
+            .ToList();
+
+            ViewBag.Message = message;
+            ViewBag.MessageType = messageType;
+
+            ViewBag.Member = this.Member;
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && accountCodes.Contains(t.AccountCode)).ToList();
+            ViewBag.Dependents = db.Dependents.Include(t => t.Member).Where(t => !t.Deleted && accountCodes.Contains(t.Member.AccountCode)).ToList();
+
+            return View(model);
+        }
+
+        public ActionResult IdReplacement(Guid? guid)
+        {
+            if (guid == null && !db.IdReplacements.Any(t => t.Guid == guid)) return HttpNotFound();
+            var model = db.IdReplacements.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Guid == guid);
+            this.Member = db.Members.FirstOrDefault(t => t.Id == model.MemberId);
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+
+            ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && accountCodes.Contains(t.AccountCode)).OrderBy(t => t.LastName);
+            ViewBag.Member = this.Member;
+            return View(model);
+        }
+
+        public ActionResult ApproveIdReplacement(Guid? guid)
+        {
+            var model = db.IdReplacements.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) throw new Exception("ID Replacement Not Found!.");
+
+            model.Status = Corelib.Enums.RequestStatus.Approved;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Helper.UrgIdReplacement(System.Web.HttpContext.Current, model);
+            var member = db.Members.FirstOrDefault(t => t.Id == model.MemberId);
+            return RedirectToAction("Index", new { memberGuid = member.Guid });
+        }
+
+        public ActionResult DisapproveIdReplacement(Guid? guid)
+        {
+            var model = db.IdReplacements.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) throw new Exception("ID Replacement Not Found!.");
+
+            model.Status = Corelib.Enums.RequestStatus.Disapproved;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Helper.UrgIdReplacement(System.Web.HttpContext.Current, model);
+            var member = db.Members.FirstOrDefault(t => t.Id == model.MemberId);
+            return RedirectToAction("Index", new { memberGuid = member.Guid });
+        }
+
+        #endregion
+
+        #region -- Functions --
+                
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

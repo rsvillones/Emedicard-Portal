@@ -1,0 +1,16 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Action Memo Reply Submitted</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+@if (Model.BypassCorporateAdminApproval)
+{
+    <p class="details">Your Action Memo Reply has been submitted to Medicard for review and processing.</p>
+}
+else
+{
+    <p class="details">Your Action Memo reply has been submitted to your Corporate Admin for evaluation.</p>
+}
+<br />

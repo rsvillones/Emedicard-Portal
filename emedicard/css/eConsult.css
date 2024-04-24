@@ -1,0 +1,222 @@
+﻿body {
+}
+#tblConsult
+{
+    width: 100%;
+}
+
+#tblConsult td, #tblConsult th
+{
+    border-collapse: collapse;
+    /*border-bottom: 1px solid gray;*/
+    padding: 5px;
+   
+}
+
+#tblConsult th
+{
+ border-bottom: 2px solid gray; 
+ text-align: left;   
+}
+
+.even
+{
+  background-color: #e5f1f4;  
+}
+
+.odd
+{
+  background-color: #f8fbfc;  
+}
+
+.usrMsg
+{
+    border: 1px solid gray;  
+    width: 100%; 
+    background: url('../img/ui-bg_glass_95_fef1ec_1x400.png') repeat-x;
+    padding: 20px 5px 20px 5px;
+}
+
+.uname
+{
+    color: #2A75A9;
+}
+
+/*eAccount CSS */
+.rcDisabled
+{
+    color: White !important;   
+}
+
+.apeid
+{
+    display: none;   
+}
+
+.labelValue
+{
+    color: Black;   
+}
+
+.eAccdtls
+{
+    padding: 10px; 
+    background: #f9f9f9;
+    border: 1px solid #dddddd;
+}
+
+.eAccLabels
+{
+    color: Black;
+    font: bold;
+    width: 100%;
+    max-width: 230px !important;
+    display: inline-block;
+    text-align: right;
+}
+
+.eAccLabelValue
+{
+    
+}
+
+.toggleChk
+{
+    width: 16px;
+    height: 16px;
+}
+
+.ECSdtECSls td, .MFADtls td
+{
+    padding: 5px;
+}
+
+.thcol2, .thcol3
+{
+    font: bold;
+    color: #317eac;
+
+}
+
+.exclusion td
+{
+    padding: 2px;
+    text-align: left;
+}
+
+#tblUtilization, #tblActMemo
+{
+    border: 1px solid #0099CC;
+    border-collapse : collapse;
+    margin: 5px;
+    font: 90%;
+}
+
+#tblUtilization td, #tblUtilization th, #tblActMemo td, #tblActMemo th
+{
+    border: 1px solid #0099CC;
+    padding: 3px;
+}
+
+#tblActMemo
+{
+    font-size:smaller;  
+}
+
+#tblActMemo th, #tblUtilization th
+{
+    /*background: #3399FF;*/
+    background: #368bd7;
+    color: White;   
+}
+
+.labelInfo
+{
+    width: 100px;
+    display: inline-block;
+    text-align: right;
+    font-weight: bold;
+}
+.txt_right
+{
+    text-align: right !important;   
+}
+.txt_footer
+{
+    font-weight: bold;
+}
+
+.utilDiv
+{
+    width: 100%; text-align: center; 
+    position: relative;    
+    border: 1px solid gray;
+    padding: 20px 0 20px 0;
+}
+
+.tbl-info td
+{
+    vertical-align: top;
+    padding: 0;
+}
+
+.grid-setting
+{
+    font-size: 85%;   
+}
+.grid-date
+{
+    min-width: 70px;   
+}
+
+.btnLink
+{
+
+ background-color: blue;
+
+}
+
+.icons
+{
+ height: 16px;
+ width: 16px;
+}
+
+@media screen and (max-width: 1024px)
+{
+    .grid-setting
+    {
+        font-size: 80%;   
+    }
+    
+    .grid-date
+    {
+        min-width: 60px;   
+    }
+}
+/*@media only screen and (min-device-width: 320px) and (max-device-width: 480px) */
+@media screen and (max-width: 480px)
+{
+  /* iPhone, Android rules here */
+     .tblCons
+    {
+        width: 100%;
+        font-size: 0.8em;
+    }
+    
+    .resp_text
+    {
+        font-size: 9px;
+    }
+    
+    .col_size
+    {
+        width: 100px;          
+    }
+    
+    .popup-datagrid
+    {
+        max-width: 300px;   
+    }
+}
+

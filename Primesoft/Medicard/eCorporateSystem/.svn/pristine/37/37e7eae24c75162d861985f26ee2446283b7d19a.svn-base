@@ -1,0 +1,208 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewRequestManagement")]
+    public class RequestManagementController : BaseAccountController
+    {
+        #region  -- Action Results --
+
+        public ActionResult Index(string accountCode, string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.MemberRequests.Include(t => t.Reason).Include(t => t.DocumentType).Where(t => t.AccountCode == this.LegacyAccount.Code && !t.Deleted).ToList();
+
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).ToList();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult Amendments(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            MemberRequest memberRequest;
+            if (guid != null && db.MemberRequests.Any(t => t.Guid == guid && !t.Deleted))
+            {
+                memberRequest = db.MemberRequests.FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                memberRequest = new MemberRequest()
+                {
+                    AccountCode = accountCode,
+                    EffectivityDate = DateTime.Now,
+                    RequestType = Corelib.Enums.RequestType.Amendment,
+                    EndorsementBatchId = 1,
+                    MemberId = 1
+                };
+            }
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(memberRequest);
+        }
+
+        [HttpPost]
+        public ActionResult Amendments(MemberRequest model, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            byte[] fileData = null;
+            if (model.FileWrapper != null){
+                using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream)){
+                    fileData = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (model.Id == 0)
+                {
+                    model.DocumentFile = fileData;
+                    db.MemberRequests.Add(model);
+                }
+                else
+                {                    
+                    var memberRequest = db.MemberRequests.FirstOrDefault(t => t.Id == model.Id);
+                    db.Entry(memberRequest).CurrentValues.SetValues(model);
+                    memberRequest.DocumentFile = fileData;
+                    db.Entry(memberRequest).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode });
+            }
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        public ActionResult IdReplacement(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            MemberRequest memberRequest;
+            if (guid != null && db.MemberRequests.Any(t => t.Guid == guid && !t.Deleted))
+            {
+                memberRequest = db.MemberRequests.FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                memberRequest = new MemberRequest()
+                {
+                    AccountCode = accountCode,
+                    EffectivityDate = DateTime.Now,
+                    RequestType = Corelib.Enums.RequestType.IdReplacement,
+                    EndorsementBatchId = 1,
+                    MemberId = 1
+                };
+            }
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+
+            return View(memberRequest);
+        }
+
+        [HttpPost]
+        public ActionResult IdReplacement(MemberRequest model, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            
+            if (ModelState.IsValid)
+            {
+                if (model.Id == 0)
+                {
+                    db.MemberRequests.Add(model);
+                }
+                else
+                {
+                    var memberRequest = db.MemberRequests.FirstOrDefault(t => t.Id == model.Id);
+                    db.Entry(memberRequest).CurrentValues.SetValues(model);
+                    db.Entry(memberRequest).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode });
+            }
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public string GetPropertyValue(int memberId,int propertyName)
+        {
+            var dataType = Convert.ToString((Corelib.Enums.RequestDataType)propertyName);
+            var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Id == memberId);
+            var returnValue = "";
+            if (member != null)
+            {
+                var propertyInfo = member.GetType().GetProperty(dataType);
+                
+                if (propertyInfo.PropertyType == typeof(DateTime))
+                { 
+                    var date = Convert.ToDateTime(propertyInfo.GetValue(member, null));
+                    returnValue = date.ToString("MM/dd/yyyy");
+                }
+                else
+                {
+                    returnValue = Convert.ToString(propertyInfo.GetValue(member, null));
+                }
+
+                return returnValue;
+            }
+            return returnValue;
+        }
+
+        public bool IsPropertyDateTime(int memberId, int propertyName)
+        {
+            var dataType = Convert.ToString((Corelib.Enums.RequestDataType)propertyName);
+            var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Id == memberId);
+            if (member != null)            {
+                var propertyInfo = member.GetType().GetProperty(dataType);
+                if (propertyInfo.PropertyType == typeof(DateTime))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }                
+            }
+            return false;
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,205 @@
+﻿
+using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel;
+
+namespace Corelib.Enums
+{
+    public enum Gender
+    {
+        Male,
+        Female
+    }
+
+    public enum EndorsementBatchStatus
+    {
+        New,
+        [Display(Name = "For Employee Updating")]
+        ForEmployeeUpdating,
+        [Display(Name = "Partially For Processing")]
+        PartiallyForProcessing,
+        [Display(Name = "For Corporate Admin Approval")]
+        ForCorporateAdminApproval,
+        [Display(Name = "Approved By Corporate Admin")]
+        ApprovedByCorporateAdmin,
+        [Display(Name = "Received By Urg")]
+        ReceivedByUrg,
+        Completed,
+        Cancelled
+    }
+
+    public enum MembershipStatus
+    {
+        New = 0,
+        Saved = 1,
+        [Display(Name = "Submitted to Corporate Admin")]
+        SubmittedToCorporateAdmin = 2,
+        [Display(Name = "Corporate Admin Approved")]
+        CorporateAdminApproved = 3,
+        [Display(Name = "Corporate Admin Disapproved")]
+        CorporateAdminDisapproved = 4,
+        [Display(Name = "For Processing")]
+        ForProcessing = 5,
+        Approved = 6,
+        Cancelled = 7,
+        [Display(Name = "With Action Memo")]
+        WithActionMemo = 8,
+        Disapproved = 9,
+        [Display(Name = "For Encoding")]
+        ForEncoding = 10,
+        [Display(Name = "Medical Evaluation")]
+        MedicalEvaluation = 11,
+        [Display(Name = "On Hold")]
+        OnHold = 12,
+        [Display(Name = "For Approval")]
+        ForApproval = 13,
+        [Display(Name = "Permanent Resigned")]
+        PermanentResigned = 14,
+        [Display(Name = "Pending (eMedicard)")]
+        PendingeMedicard = 15,
+        [Display(Name = "Lapse (Non Renew)")]
+        Lapse = 16,
+        [Display(Name = "For Reactivation")]
+        ForReactivation = 17,
+        [Display(Name = "Verify Membership")]
+        VerifyMembership = 18
+    }
+
+    public enum UrgSetting
+    {
+        All,
+        Partial,
+        Principal
+    }
+
+    public enum RequestFor
+    {
+        Principal,
+        Dependent
+    }
+
+    public enum RequestDataType
+    {
+        [Display(Name = "Last Name")]
+        LastName = 1,
+        [Display(Name = "First Name")]
+        FirstName = 2,
+        [Display(Name = "Middle Name/Initial")]
+        MiddleName = 3,
+        [Display(Name = "Date of Birth")]
+        DateOfBirth = 4,
+        [Display(Name = "Civil Status")]
+        CivilStatus = 5,
+        Gender = 6,
+        [Display(Name = "Address (Street, City, Province, Area Code)")]
+        Address = 7,
+        [Display(Name = "Employee Number")]
+        EmployeeNumber = 8,
+        Position = 9,
+        Designation = 10,
+        Level = 11,
+        [Display(Name = "Telephone Number")]
+        Telephone = 12,
+        [Display(Name = "Cost Centre")]
+        CostCenter = 13,
+        Area = 14,
+        [Display(Name = "Hiring Date")]
+        DateHired = 15,
+        [Display(Name = "Effectivity Date")]
+        EffectivityDate = 16,
+        [Display(Name = "Plan")]
+        AppliedPlan = 17,
+        Classification = 18,
+        [Display(Name = "Deletion Date")]
+        DateResign = 19
+    }
+
+    public enum RequestStatus
+    {
+        Saved,
+        Submitted,
+        [Display(Name = "For Processing")]
+        ForProcessing,
+        [Display(Name = "Corporate Admin Approved")]
+        CorporateAdminApproved,
+        [Display(Name = "Corporate Admin Disapproved")]
+        CorporateAdminDisapproved,
+        Approved,
+        Disapproved,
+        [Display(Name = "Cancelled Request")]
+        CancelledRequest
+    }
+
+    public enum ActionMemoType
+    {
+        Undefined,
+        Disapproved,
+        Resigned,
+        Encoding,
+        [Display(Name = "Medical Examination")]
+        MedicalExamination,
+        Cancellation,
+        [Display(Name = "Resigned - Automatically")]
+        ResignedAutomatically,
+        [Display(Name = "On Hold - Others")]
+        OnHoldOthers,
+        [Display(Name = "On Hold - Active")]
+        OnHoldActive,
+        Overage
+    }
+
+    public enum ActionMemoStatus
+    {
+        New,
+        [Display(Name = "For Corporate Admin Approval")]
+        ForCorporateAdminApproval,
+        Replied,
+        [Display(Name = "For Processing")]
+        ForProcessing,
+        Issued
+    }
+
+    public enum CancelledMembershipStatus
+    {
+        [Display(Name = "Corporate Admin Approved")]
+        CorporateAdminApproved,
+        [Display(Name = "For Processing")]
+        ForProcessing,
+        Approved,
+        Disapproved
+    }
+
+    public enum QuestionType
+    {
+        [Display(Name = "Answerable by Yes or No")]
+        YesNo,
+        [Display(Name = "Select Single Item From Available Answers")]
+        SingleSelect,
+        [Display(Name = "Select Multiple Items From Available Answers")]
+        MultipleSelect,
+        [Display(Name = "Remarks Only")]
+        RemarksOnly
+    }
+
+    public enum ReasonType
+    {
+        Amendment,
+        [Display(Name = "Dependent Cancellation")]
+        DependentCancellation,
+        [Display(Name = "ID Replacement")]
+        IdReplacement
+    }
+
+    public enum MemberType
+    {
+        [Display(Name = "Company Paid")]
+        CompanyPaid,
+        [Display(Name = "Voluntary Paid")]
+        VoluntaryPaid
+    }
+
+}

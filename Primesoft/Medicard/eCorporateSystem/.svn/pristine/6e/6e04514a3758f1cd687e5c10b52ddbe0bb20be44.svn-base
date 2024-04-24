@@ -1,0 +1,25 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Membership for Renewal</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+@if (string.IsNullOrEmpty(Model.Member.AllowedPlans))
+{
+    <p class="details">Your medicard account has been applied for renewal.</p>
+    <p class="details">Membership Renewal result notification will be sent once the renewal process is completed.</p>
+}
+else
+{
+    <p class="details">Your Medicard Account has been applied for Renewal. To continue with the renewal process, please update your membership profile, and submit to your corporate admin for evaluation.</p>
+    <p class="details">You may click <a href="@Corelib.Config.BaseUrl">here</a>  to login and update your membership profile.</p>
+}
+
+@*@if (Model.Member.Status == Corelib.Enums.MembershipStatus.New)
+{
+    <p class="details">Please login to http://emedicard/, complete your information submit your information for processing of the renewal your account.</p>
+}*@
+<br />
+@*<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />*@

@@ -1,0 +1,47 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace WebUI.Models
+{
+    public class CorporateAdminViewModel : CorporateAdmin
+    {
+        #region -- Properties --
+
+        [Required]
+        [StringLength(32, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
+        public new string UserName { get; set; }
+
+        [Required]
+        [StringLength(32, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
+        #endregion
+
+        #region -- IValidatableObject Members --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (db.Users.Any(t => t.UserName == this.UserName && t.Id != this.UserId))
+                {
+                    yield return new ValidationResult("Username is already registered in the database.", new string[] { "UserName" });
+                }
+            }
+        }
+
+        #endregion
+    }
+}

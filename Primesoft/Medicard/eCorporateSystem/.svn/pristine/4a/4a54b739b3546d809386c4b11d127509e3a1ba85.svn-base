@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public interface IMemberProcess
+    {
+        decimal PrinAppNum { get; set; }
+        decimal? DepAppNum { get; set; }
+        string PrincipalCode { get; set; }
+        string DependentCode { get; set; }
+        int? StatCode { get; set; }
+        DateTime? DataCardPrintedDate { get; set; }
+        string PrincipalOrDependent { get; }
+    }
+}

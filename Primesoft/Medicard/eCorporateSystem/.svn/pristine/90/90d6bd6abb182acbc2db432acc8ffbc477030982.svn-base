@@ -1,0 +1,215 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+
+namespace Corelib.Models
+{
+    public class Dependent : BaseModel
+    {
+        #region -- Constructor --
+
+        public Dependent()
+        {
+            this.DateOfBirth = DateTime.MinValue;
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(25)]
+        [Index]
+        public string ControlNumber { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        [StringLength(32)]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        [StringLength(32)]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        [StringLength(32)]
+        public string MiddleName { get; set; }
+
+        [StringLength(8)]
+        [Display(Name = "Suffix")]
+        public string Suffix { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Relationship")]
+        public string Relationship { get; set; }
+        [ForeignKey("Relationship")]
+        public Relationship RelationshipClass { get; set; }
+
+        [Required]
+        [Display(Name = "Date Of Birth")]
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age")]
+        [NotMapped]
+        public int Age
+        {
+            get
+            {
+                DateTime today = DateTime.Today;
+                int age = today.Year - this.DateOfBirth.Year;
+                if (this.DateOfBirth > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
+
+        [StringLength(32)]
+        [Display(Name = "Gender")]
+        public string Gender { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Civil Status")]
+        public string CivilStatus { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Telephone")]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Mobile")]
+        public string Mobile { get; set; }
+
+        [StringLength(64)]
+        [Display(Name = "Email Address")]
+        public string EmailAddress { get; set; }
+
+        [StringLength(64)]
+        [Display(Name = "Street")]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Province")]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [Display(Name = "Zip")]
+        public string Zip { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        [StringLength(32)]
+        [Display(Name = "Occupation")]
+        public string Occupation { get; set; }
+
+        [Display(Name = "Weight")]
+        public int? Weight { get; set; }
+
+        [Display(Name = "Applied Plan")]
+        public int AppliedPlan { get; set; }
+
+        [StringLength(25)]
+        [Index(IsUnique = true)]
+        public string LegacyMapCode { get; set; }
+
+        [NotMapped]
+        public string AppliedPlanDescription
+        {
+            get
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var roomRate = legacyDb.LegacyRoomRates.Include(t => t.LegacyPlan).FirstOrDefault(t => t.Id == this.AppliedPlan) ?? new LegacyRoomRate() { LegacyPlan = new LegacyPlan() };
+                    return roomRate.LegacyPlan.Description;
+                }
+            }
+        }
+
+        [Display(Name = "Optional Plan")]
+        public int? OptionalPlan { get; set; }
+
+        public int MemberId { get; set; }
+        [ForeignKey("MemberId")]
+        public Member Member { get; set; }
+
+        public ICollection<DependentMedicalHistory> MedicalHistories { get; set; }
+
+        public Corelib.Enums.MembershipStatus Status { get; set; }
+
+        [StringLength(25)]
+        [Index]
+        public string Code { get; set; }
+
+        [Index]
+        public decimal? DepAppNum { get; set; }
+
+        public DateTime? EffectivityDate { get; set; }
+
+        public DateTime? ValidityDate { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped --
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}.", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+
+        [NotMapped]
+        public string Address
+        {
+            get
+            {
+                return string.Format("{0}, {1}, {2}, {3}.", Street, City, Province, Zip);
+            }
+        }
+
+        [NotMapped]
+        public string Position
+        {
+            get
+            {
+                return Occupation;
+            }
+        }
+
+        #endregion
+
+        #region -- IValidatableObject --
+
+        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        //{
+        //    using (var db = new IdentityDataContext())
+        //    {
+        //        if (db.de.Any(t => (t.DateOfBirth == DateOfBirth && t.LastName == LastName && t.FirstName == FirstName && t.MiddleName == MiddleName && t.Id != Id) && !t.Deleted))
+        //        {
+        //            yield return new ValidationResult("Application already exist in database.");
+        //        }
+
+        //    }
+        //}
+
+        #endregion
+    }
+}

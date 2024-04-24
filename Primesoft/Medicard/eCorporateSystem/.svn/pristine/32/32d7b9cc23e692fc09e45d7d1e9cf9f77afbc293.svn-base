@@ -1,0 +1,15 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Application For Addition Dependent By Member to Member</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+@if (Model.BypassCorporateAdminApproval)
+{
+    <p class="details">Your application for additional dependent is now submitted to the Medicard Underwriter for review.</p>
+}
+else
+{
+    <p class="details">Your application for additional dependent is now submitted to the your Corporate Administrator for approval.</p>
+}
+

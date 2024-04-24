@@ -1,0 +1,133 @@
+@model ImportViewModel
+@using (Html.BeginForm("UploadApplication", "MembershipEndorsement", FormMethod.Post, new { id = "uploadNewAppSerialize" }))
+{
+    @Html.HiddenFor(model => model.IsUpload)
+    <br />
+    if (Model.UploadSummary != null)
+    {
+        <h4 class="form-title">Verification Summary</h4>
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-lg-12 form-group">
+                    <label class="control-label col-lg-3">Row Completed:</label>
+                    <div class="col-md-9">
+                        <div class="control-label">
+                            @Html.HiddenFor(model => model.UploadSummary.RowCompleted)
+                            @Model.UploadSummary.RowCompleted
+                        </div>
+                    </div>
+                    <label class="control-label col-lg-3">File Name:</label>
+                    <div class="col-md-9">
+                        <div class="control-label">
+                            @Html.HiddenFor(model => model.UploadSummary.FileName)
+                            @Model.UploadSummary.FileName
+                        </div>
+                    </div>
+                    <label class="control-label col-lg-3">Row Contains Error:</label>
+                    <div class="col-md-9">
+                        <div class="control-label">
+                            @Html.HiddenFor(model => model.UploadSummary.NumberOfErrors)
+                            @{
+                                if (Model.UploadSummary.ErrorMessage != "Invalid Excel Format.")
+                                {
+                                    @Html.DisplayFor(modelItem => Model.UploadSummary.NumberOfErrors)
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => Model.UploadSummary.ErrorMessage)
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        @if (Model.UploadSummary != null)
+        {
+            <div class="col-lg-6">
+                <p style="padding-top: 1.5em !important;">@Html.CheckBox("ShowAllError", new { @checked = "checked" })<label for="ShowAllError">Show All Errors</label></p>
+            </div>
+            <div class="col-lg-6">
+                <p style="float: right">
+                    <a href="javascript:void(0);" onclick="saveApplication();" id="saveApplication" class="btn btn-primary pull-right">Save</a>
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="col-lg-12">
+                <p style="float: right">
+                    <a href="javascript:void(0);" onclick="saveApplication();" id="saveApplication" class="btn btn-primary pull-right">Save</a>
+                </p>
+            </div>
+        }
+    </div>
+
+    <div class="outer-container">
+        <div class="inner-container">
+            <div class="table-header">
+                <table id="headertable">
+                    <thead>
+                        <tr>
+                            <th class="header-cell col">Email Address</th>
+                            <th class="header-cell col">Employee Number</th>
+                            <th class="header-cell col">Area</th>
+                            <th class="header-cell col">Cost Center</th>
+                            <th class="header-cell col">Last Name</th>
+                            <th class="header-cell col">First Name</th>
+                            <th class="header-cell col">Middle Name</th>
+                            <th class="header-cell col">Suffix</th>
+                            <th class="header-cell col3">Gender</th>
+                            <th class="header-cell col">Date Of Birth</th>
+                            <th class="header-cell col">Age</th>
+                            <th class="header-cell col4">Civil Status</th>
+                            <th class="header-cell col">Effectivity Date</th>
+                            <th class="header-cell col">Validity Date</th>
+                            <th class="header-cell col">Date Hired</th>
+                            <th class="header-cell col2">Applied Plan</th>
+                            <th class="header-cell col">No. of allowed dependents</th>
+                            <th class="header-cell col2">Dependent Applied Plan</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table-body">
+                <table id="bodytable">
+                    <tbody id="ApplicationVerificationBody">
+                        @foreach (Corelib.Models.ApplicationVerification item in Model.ApplicationVerifications)
+                        {
+                            if (Model.UploadSummary != null)
+                            {
+                                if (item.IsError)
+                                {
+                                    <tr class="withError" style="background-color: #ddd">
+                                        <td style="padding: 2px 5px !important" class="text-danger" colspan="18">@item.ErrorMessage</td>
+                                    </tr>
+                                    <tr class="withError" style="background-color:#f16666">
+                                        @Html.Partial("_NewApplication", item)
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr style="display:none;">
+                                        @Html.Partial("_NewApplication", item)
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    @Html.Partial("_NewApplication", item)
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

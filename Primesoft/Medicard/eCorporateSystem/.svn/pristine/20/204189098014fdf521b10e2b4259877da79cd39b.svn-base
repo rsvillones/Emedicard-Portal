@@ -1,0 +1,159 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    public class DependentsController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Index(string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var dependents = db.Dependents.Where(t => !t.Deleted && t.ApplicationId == this.Application.Id).ToList();
+
+            var model = new DependentViewModel(){
+                Dependents = dependents
+            };
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Create()
+        {           
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var dependents = db.Dependents.Where(t => !t.Deleted && t.ApplicationId == this.Application.Id).ToList();
+            var isMaxDependent = false;
+            if (dependents.Count() == this.Application.Dependent) isMaxDependent = true;
+            if (isMaxDependent){               
+                return RedirectToAction("Index",new { @messageType = "Warning!", @message = string.Format("You have only {0} allowed dependent/s.",this.Application.Dependent) });;
+            }
+            var model = new Dependent();
+            var principalPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, true);
+            var optionalPlans = principalPlans.Where(t => t.Id != this.Application.AppliedPlan);
+            
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription");
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" });
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" });
+            ViewBag.RelationshipList = new SelectList(new List<string>() { "Parent", "Spouse", "Child", "Sibling" });
+            ViewBag.OptionalPlanCount = principalPlans.Count(t => t.Id != this.Application.AppliedPlan);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Create([Bind(Include = "Id, Guid, LastName, FirstName, MiddleName, Suffix, DateOfBirth, Age, Relationship, Gender, CivilStatus, EmailAddress, OptionalPlan, Street, City, Zip, Province, Telephone, Mobile, HeightFeet, HeightInches, Weight, Occupation")] Dependent dependent)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                dependent.ApplicationId = this.Application.Id;
+                db.Dependents.Add(dependent);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            var principalPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, true);
+            var optionalPlans = principalPlans.Where(t => t.Id != this.Application.AppliedPlan);
+
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription",dependent.OptionalPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" },dependent.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" },dependent.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(new List<string>() { "Parent", "Spouse", "Child", "Sibling" }, dependent.Relationship); 
+            ViewBag.OptionalPlanCount = principalPlans.Count(t => t.Id != this.Application.AppliedPlan);
+
+            return View(dependent);
+        }
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Edit(Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Dependents.FirstOrDefault(t => t.Guid == guid && !t.Deleted && t.ApplicationId == this.Application.Id);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            
+            var principalPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, true);
+            var optionalPlans = principalPlans.Where(t => t.Id != this.Application.AppliedPlan);
+
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", model.OptionalPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, model.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, model.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(new List<string>() { "Parent", "Spouse", "Child", "Sibling" }, model.Relationship); 
+            ViewBag.OptionalPlanCount = principalPlans.Count(t => t.Id != this.Application.AppliedPlan);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Guid, LastName, FirstName, MiddleName, Suffix, DateOfBirth, Age, Relationship, Gender, CivilStatus, EmailAddress, OptionalPlan, Street, City, Zip, Province, Telephone, Mobile, HeightFeet, HeightInches, Weight, Occupation")] Dependent model)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                var dependent = db.Dependents.FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                db.Entry(dependent).CurrentValues.SetValues(model);
+                dependent.ApplicationId = this.Application.Id;                
+                db.Entry(dependent).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            var principalPlans = Helper.GetLegacyRoomRates(this.Application.AccountCode, true);
+            var optionalPlans = principalPlans.Where(t => t.Id != this.Application.AppliedPlan);
+
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", model.OptionalPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, model.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, model.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(new List<string>() { "Parent", "Spouse", "Child", "Sibling" }, model.Relationship);
+            ViewBag.OptionalPlanCount = principalPlans.Count(t => t.Id != this.Application.AppliedPlan);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var dependent = await db.Dependents.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.Dependents.Remove(dependent);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index", new { @messageType = "Success!", @message = "Dependent is successfully deleted." });
+        }
+
+        #endregion
+    }
+}

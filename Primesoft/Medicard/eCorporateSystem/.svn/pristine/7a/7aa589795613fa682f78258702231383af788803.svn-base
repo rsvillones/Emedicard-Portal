@@ -1,0 +1,8 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Cancel Membership By Corporate Admin Sent to Member</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+<p class="details">Your membership has been cancelled by Corporate Administrator.</p>
+<br />

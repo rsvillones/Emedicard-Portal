@@ -1,0 +1,31 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Send New Endorsement Directly to URG </p>
+
+You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.EndorsementBatch.ReferenceNumber)">here</a> and login to receive the new endorsement.
+
+The following was enrolled in the eMedicardSystem:
+
+<table>
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Date of Birth</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var eb in Model.EndorsementBatch.Members)
+        {
+            <tr>
+                <td>@eb.LastName</td>
+                <td>@eb.FirstName</td>
+                <td>@eb.MiddleName</td>
+                <td>@eb.DateOfBirth.ToString("MM/dd/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

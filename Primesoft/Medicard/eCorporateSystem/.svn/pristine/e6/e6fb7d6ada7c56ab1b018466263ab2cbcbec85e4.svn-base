@@ -1,0 +1,266 @@
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Member Profile</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#PersonalDetails">Personal Details</a></li>
+                                    <li class=""><a data-toggle="tab" href="#MedicalHistory">Medical History</a></li>
+                                    <li class=""><a data-toggle="tab" href="#Dependents">Dependents</a></li>
+                                    <li class=""><a data-toggle="tab" href="#Documents">Documents</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="PersonalDetails" class="tab-pane fade active in">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Employee No.</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Last Name</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">First Name</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Middle Name</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Suffix</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Date of Birth</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Age</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Area</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Cost Center</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Effectivity Date</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Validity Date</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Date Hired</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Gender</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Civil Status</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Email Address</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Allowed Dependents</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Plan Applied</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Optional Plans</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <a href="#">Contract Details</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <a href="#">Other Details</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            <input type="submit" value="Approved" class="btn btn-primary" />
+                                                            <input type="submit" value="Disapproved" class="btn btn-primary" />
+                                                            <input type="submit" value="Cancel" class="btn btn-primary" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="MedicalHistory" class="tab-pane fade">
+                                        
+                                    </div>
+                                    <div id="Dependents" class="tab-pane fade">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Last Name</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">First Name</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Middle Name</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Suffix</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Relationship</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Birth Date</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Age</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Gender</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Civil Status</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-4">Optional Plans</label>
+                                                            <div class="col-lg-8">
+                                                                <input type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <a href="#">Contract Details</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <a href="#">Other Details</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            <input type="submit" value="Save" class="btn btn-primary" />
+                                                            <input type="submit" value="Cancel" class="btn btn-primary" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="Documents" class="tab-pane fade">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

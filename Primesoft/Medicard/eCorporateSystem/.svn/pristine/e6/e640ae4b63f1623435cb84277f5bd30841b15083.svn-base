@@ -1,0 +1,8 @@
+﻿@model MemberRequest
+@{
+    ViewBag.Title = "Id Replacement";
+}
+@using (Html.BeginForm("IdReplacement", "RequestManagement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.Partial("_IdReplacement", Model)
+}

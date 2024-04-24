@@ -1,0 +1,500 @@
+﻿using System.Data.Entity;
+using Corelib;
+using Corelib.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Models;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Microsoft.Owin.Security;
+
+namespace WebUI
+{
+    public class SortParameter
+    {
+        public string PropertyName { get; set; }
+    }
+
+    public static class Helper
+    {
+        #region -- Functions --
+
+        public static void SetSortParameters<T>(Controller controller, ref IQueryable<T> entities, string sortOrder, string currentFilter, SortParameter defaultParameter, IEnumerable<SortParameter> parameters)
+        {
+            controller.ViewBag.CurrentFilter = currentFilter;
+            controller.ViewBag.CurrentSort = sortOrder;
+
+            controller.ViewData.Add(String.Format("{0}SortParam", defaultParameter.PropertyName), String.IsNullOrEmpty(sortOrder) || sortOrder == defaultParameter.PropertyName.ToLower() ? String.Format("{0}_desc", defaultParameter.PropertyName.ToLower()) : defaultParameter.PropertyName.ToLower());
+            if (String.IsNullOrEmpty(sortOrder) || sortOrder == defaultParameter.PropertyName.ToLower())
+            {
+                entities = entities.OrderBy(defaultParameter.PropertyName);
+            }
+            else if (sortOrder == String.Format("{0}_desc", defaultParameter.PropertyName.ToLower()))
+            {
+                entities = entities.OrderByDescending(defaultParameter.PropertyName);
+            }
+
+            if (parameters != null)
+            {
+                foreach (var parameter in parameters)
+                {
+                    controller.ViewData.Add(String.Format("{0}SortParam", parameter.PropertyName), String.IsNullOrEmpty(sortOrder) || sortOrder == parameter.PropertyName.ToLower() ? String.Format("{0}_desc", parameter.PropertyName.ToLower()) : parameter.PropertyName.ToLower());
+                    if (sortOrder == parameter.PropertyName.ToLower())
+                    {
+                        entities = entities.OrderBy(parameter.PropertyName);
+                    }
+                    else if (sortOrder == String.Format("{0}_desc", parameter.PropertyName.ToLower()))
+                    {
+                        entities = entities.OrderByDescending(parameter.PropertyName);
+                    }
+                }
+            }
+        }
+
+        public static void AddUser(IdentityDataContext db, ApplicationUserViewModel applicationUser, bool saveChanges = true)
+        {
+            bool disposeDb = false;
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                db.User = db.Users.FirstOrDefault(t => t.UserName == HttpContext.Current.User.Identity.Name);
+                disposeDb = true;
+            }
+
+            if (!db.Users.Any(t => t.UserName == applicationUser.UserName))
+            {
+                var userGroups = new Collection<Group>();
+                var groupIds = applicationUser.Groups.Select(x => x.Id).ToList();
+                var groups = db.Groups.Where(t => groupIds.Contains(t.Id)).ToList();
+                foreach (var group in groups)
+                {
+                    userGroups.Add(group);
+                }
+                var user = new ApplicationUser();
+                MapProperties(applicationUser, user);
+                user.Groups = userGroups;
+
+                var store = new UserStore<ApplicationUser>(db);
+                var manager = new UserManager<ApplicationUser>(store);
+                manager.Create(user, applicationUser.Password);
+
+                if (saveChanges)
+                {
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                throw new Exception("UserName already exists.");
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+        }
+
+        public static bool ValidateOldPassword(string id, string oldPassword)
+        {
+            using (var context = new IdentityDataContext())
+            {
+                if (context.Users.Any(t => t.Id == id))
+                {
+
+                    var store = new UserStore<ApplicationUser>(context);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    //string hashedPassword = manager.PasswordHasher..HashPassword(oldPassword);
+                    var user = manager.FindById(id);
+                    //return user.PasswordHash == hashedPassword;
+                    return manager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, oldPassword) == PasswordVerificationResult.Success;
+                }
+            }
+
+            return false;
+        }
+
+        public static async Task<bool> LoginUser(string id)
+        {
+            using (var context = new IdentityDataContext())
+            {
+                if (context.Users.Any(t => t.Id == id))
+                {
+
+                    var store = new UserStore<ApplicationUser>(context);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    var user = manager.FindById(id);
+                    var am = HttpContext.Current.GetOwinContext().Authentication;
+                    am.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                    am.SignIn(new AuthenticationProperties() { IsPersistent = false }, await user.GenerateUserIdentityAsync(manager));
+                }
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> UpdateUserPasswordAsync(string id, string username, string password)
+        {
+            using (var context = new IdentityDataContext())
+            {
+                if (context.Users.Any(t => t.Id == id))
+                {
+
+                    var store = new UserStore<ApplicationUser>(context);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    string hashedPassword = manager.PasswordHasher.HashPassword(password);
+                    var user = manager.FindById(id);
+                    await store.SetPasswordHashAsync(user, hashedPassword);
+                    await store.UpdateAsync(user);
+                    await manager.UpdateSecurityStampAsync(id);
+                }
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> UpdateName(string id, string name)
+        {
+            using (var context = new IdentityDataContext())
+            {
+                if (context.Users.Any(t => t.Id == id))
+                {
+
+                    var store = new UserStore<ApplicationUser>(context);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    var user = manager.FindById(id);
+                    if (user != null)
+                    {
+                        user.Name = name;
+                        await store.UpdateAsync(user);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static void SetUserGroup(IdentityDataContext context, UserStore<ApplicationUser> store, UserManager<ApplicationUser> manager, ApplicationUser applicationUser)
+        {
+            bool disposeContext = false;
+            if (context == null)
+            {
+                context = new IdentityDataContext();
+                disposeContext = true;
+            }
+
+            if (store == null)
+            {
+                store = new UserStore<ApplicationUser>(context);
+            }
+
+            if (manager == null)
+            {
+                manager = new UserManager<ApplicationUser>(store);
+            }
+
+            foreach (var group in context.Groups.Include(t => t.Roles).ToList())
+            {
+                if (applicationUser.Groups == null || !applicationUser.Groups.Any(t => t.Id == group.Id))
+                {
+                    foreach (var role in group.Roles)
+                    {
+                        if (manager.IsInRole(applicationUser.Id, role.Name))
+                        {
+                            manager.RemoveFromRole(applicationUser.Id, role.Name);
+                        }
+                    }
+                }
+            }
+
+            if (applicationUser.Groups != null)
+            {
+                foreach (var group in applicationUser.Groups)
+                {
+                    var currentGroup = context.Groups.Include(t => t.Roles).FirstOrDefault(t => t.Id == group.Id);
+                    if (currentGroup != null)
+                    {
+                        foreach (var role in currentGroup.Roles)
+                        {
+                            if (!manager.IsInRole(applicationUser.Id, role.Name))
+                            {
+                                manager.AddToRole(applicationUser.Id, role.Name);
+                            }
+                        }
+                    }
+                }
+            }
+
+            context.SaveChanges();
+
+            if (disposeContext)
+            {
+                context.Dispose();
+            }
+        }
+
+        public static ApplicationUser AddUser(Corelib.IdentityDataContext context, UserStore<ApplicationUser> store, UserManager<ApplicationUser> manager, string name, string username, string password, string email, string phone, bool isMember, params string[] roles)
+        {
+            bool disposeContext = false;
+            if (context == null)
+            {
+                context = new IdentityDataContext();
+                disposeContext = true;
+            }
+
+            if (store == null)
+            {
+                store = new UserStore<ApplicationUser>(context);
+            }
+
+            if (manager == null)
+            {
+                manager = new UserManager<ApplicationUser>(store);
+            }
+
+            var user = context.Users.FirstOrDefault(t => t.UserName == username);
+
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    Name = name,
+                    UserName = username,
+                    Email = email,
+                    PhoneNumber = phone,
+                    IsMember = isMember
+                };
+
+                manager.Create(user, password);
+            }
+
+            if (roles != null)
+            {
+                foreach (var role in roles)
+                {
+                    if (!manager.IsInRole(user.Id, role))
+                    {
+                        manager.AddToRole(user.Id, role);
+                    }
+                }
+            }
+
+            if (disposeContext)
+            {
+                context.Dispose();
+            }
+
+            return user;
+        }
+
+        public static void MapProperties(object source, object destination, bool mapId = true, params string[] propertiesToExclude)
+        {
+            foreach (var pi in destination.GetType().GetProperties())
+            {
+                if (!pi.CanWrite || source.GetType().GetProperty(pi.Name) == null || (!mapId && pi.Name == "Id") || (propertiesToExclude != null && propertiesToExclude.Contains(pi.Name)))
+                    continue;
+
+                destination.GetType().GetProperty(pi.Name).SetValue(destination, source.GetType().GetProperty(pi.Name).GetValue(source));
+            }
+        }
+
+        public static IEnumerable<Group> GetGroups(IdentityDataContext db)
+        {
+            var disposeDb = false;
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            IEnumerable<Group> returnValue;
+
+            var userContext = HttpContext.Current.User;
+            if (userContext.IsInRole("SysAd"))
+            {
+                returnValue = db.Groups.Where(t => !t.Deleted).OrderBy(t => t.Name).ToList();
+            }
+            else
+            {
+                var currentUser = db.Users.FirstOrDefault(t => t.UserName == userContext.Identity.Name);
+                var groups = db.Groups.Include(t => t.AccessibleGroups).Where(t => t.Users.Select(user => user.UserName).Contains(userContext.Identity.Name) && !t.Deleted).ToList();
+                var groupGuids = groups.SelectMany(t => t.AccessibleGroups).Select(t => t.GroupGuid).Distinct().ToList();
+                var createdGroupGuids = db.Groups.Where(t => t.CrById == currentUser.Id && !t.Deleted).Select(t => t.Guid).ToList();
+
+                returnValue = db.Groups.Where(t => (groupGuids.Contains(t.Guid) || createdGroupGuids.Contains(t.Guid)) && !t.Deleted).ToList();
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyAccount> GetLegacyAccounts(LegacyDataContext legacyDb, string agentCode)
+        {
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = !String.IsNullOrEmpty(agentCode) ? legacyDb.LegacyAccounts.Where(t => t.AgentCode == agentCode).OrderBy(t => t.Name).ToList() : new List<LegacyAccount>();
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyAccount> GetLegacyAccounts(IdentityDataContext db, LegacyDataContext legacyDb)
+        {
+            var disposeDb = false;
+            if (db == null)
+            {
+                db = new IdentityDataContext ();
+                disposeDb = true;
+            }
+
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            IEnumerable<LegacyAccount> returnValue;
+
+            var userContext = HttpContext.Current.User;
+
+            if (HttpContext.Current.User.IsInRole("SysAd") || userContext.IsInRole("CanAssignAllAccounts"))
+            {
+                returnValue = legacyDb.LegacyAccounts.OrderBy(t => t.Name).ToList();
+            }
+            else
+            {
+                var user = db.Users.FirstOrDefault(t => t.UserName == userContext.Identity.Name);
+                var accountCodes = new List<string>();
+                if (user != null && !string.IsNullOrEmpty(user.AgentCode))
+                {
+                    returnValue = legacyDb.LegacyAccounts.Where(t => t.AgentCode == user.AgentCode).OrderBy(t => t.Name).ToList();
+                }
+                else
+                {
+                    accountCodes = db.Accounts.Where(t => t.ApplicationUser.UserName == HttpContext.Current.User.Identity.Name).Select(t => t.Code).ToList();
+                    returnValue = legacyDb.LegacyAccounts.Where(t => accountCodes.Contains(t.Code)).OrderBy(t => t.Name).ToList();
+                }
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static bool CreateUserForBatch(int batchId)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var batch = db.Batches.Include(t => t.Applications).FirstOrDefault(t => t.Id == batchId);
+                if (batch == null) throw new Exception("Invalid batch id passed.");
+                var account = db.Accounts.FirstOrDefault(t => t.Code == batch.AccountCode && t.ApplicationUser.UserName == HttpContext.Current.User.Identity.Name);
+                if (account == null) throw new Exception("Account selected was not found.");
+
+                foreach (var application in batch.Applications)
+                {
+                    var username = "";
+                    if (account.UseEmailAsLogin)
+                    {
+                        username = application.EmailAddress;
+                    }
+                    else
+                    {
+                        username = string.Format("{0}{1}{2:MMddyyyy}", application.FirstName.Substring(0, 1).ToLower(), application.LastName.ToLower(), application.DateOfBirth);
+                    }
+                    var password = "";
+                    if (account.UseRandomGeneratedPassword)
+                    {
+
+                    }
+                    else
+                    {
+                        password = string.Format("{0}{1:MMddyyyy}", application.LastName.ToLower(), application.DateOfBirth);
+                    }
+
+                    var applicationUser = new ApplicationUserViewModel()
+                    {
+                        Name = String.Format("{0} {1} {2}", application.FirstName, application.MiddleName, application.LastName),
+                        Email = application.EmailAddress,
+                        Address = application.Area,
+                        IsMember = true,
+                        UserName = username,
+                        Password = password
+                    };
+
+                    AddUser(db, applicationUser, false);
+                }
+
+                db.SaveChanges();
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region -- Extension Methods --
+
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string ordering, params object[] values)
+        {
+            var type = typeof(T);
+            var property = type.GetProperty(ordering);
+            var parameter = Expression.Parameter(type, "p");
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            var orderByExp = Expression.Lambda(propertyAccess, parameter);
+            MethodCallExpression resultExp = Expression.Call(typeof(Queryable), "OrderBy", new Type[] { type, property.PropertyType }, source.Expression, Expression.Quote(orderByExp));
+
+            return source.Provider.CreateQuery<T>(resultExp);
+        }
+
+        public static IQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string ordering, params object[] values)
+        {
+            var type = typeof(T);
+            var property = type.GetProperty(ordering);
+            var parameter = Expression.Parameter(type, "p");
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            var orderByExp = Expression.Lambda(propertyAccess, parameter);
+            MethodCallExpression resultExp = Expression.Call(typeof(Queryable), "OrderByDescending", new Type[] { type, property.PropertyType }, source.Expression, Expression.Quote(orderByExp));
+
+            return source.Provider.CreateQuery<T>(resultExp);
+        }
+
+        #endregion
+    }
+}

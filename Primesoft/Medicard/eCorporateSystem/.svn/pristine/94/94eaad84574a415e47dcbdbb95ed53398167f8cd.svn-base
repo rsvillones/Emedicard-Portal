@@ -1,0 +1,183 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class RenewalMember : BaseModel, IValidatableObject
+    {
+        #region -- Properties --
+
+        public int Row { get; set; }
+
+        [Required]
+        public string Code { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
+        public string FirstName { get; set; }
+
+        public string MiddleName { get; set; }
+
+        [Display(Name = "Email Address")]
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age")]
+        [NotMapped]
+        public int? Age
+        {
+            get
+            {
+                if (this.DateOfBirth == DateTime.MinValue) return null;
+
+                DateTime today = DateTime.Today;
+                int age = today.Year - this.DateOfBirth.Year;
+                if (this.DateOfBirth > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
+
+        public string Area { get; set; }
+
+        public string EmployeeNumber { get; set; }
+
+        public int? AppliedPlan { get; set; }
+
+        public string AllowedPlans { get; set; }
+
+        [Required]
+        public string Type { get; set; }
+
+        public string PrincipalMemberCode { get; set; }
+
+        public string Relationship { get; set; }
+
+        [Required]
+        public string Gender { get; set; }
+        
+        [Required]
+        public string CivilStatus { get; set; }
+
+        public string Waiver { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime? EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime? ValidityDate { get; set; }
+
+        public string Remarks { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        [Required]
+        [StringLength(25)]
+        public string AccountCode { get; set; }
+
+        [Index]
+        [StringLength(25)]
+        public string ControlNumber { get; set; }
+
+        public string AppliedPlanFromExcel { get; set; }
+
+        public string AllowedPlansFromExcel { get; set; }
+          
+        [StringLength(32)]
+        public string EndorsementType { get; set; }
+
+        public string DependentStringValue { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped Properties --
+
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+
+        #endregion
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var activeMembers = LegacyHelper.GetActiveMembers(null, this.AccountCode);
+            if (!activeMembers.Any(t => t.Code == this.Code && t.FirstName == this.FirstName && t.MiddleName == this.MiddleName && t.LastName == this.LastName && t.DateOfBirth == this.DateOfBirth))
+            {
+                yield return new ValidationResult("Member does not have an active subscription");
+            }
+
+            var dependentRoomRates = LegacyHelper.GetLegacyRoomRates(this.AccountCode, false);
+            if (this.Type == "Dependent" && !dependentRoomRates.Any(t => t.Id == this.AppliedPlan))
+            {
+                yield return new ValidationResult("Invalid applied plan for Dependent", new Collection<string>() { "AppliedPlan" });
+            }
+            if (this.Type == "Dependent" && !string.IsNullOrEmpty(this.AllowedPlans))
+            {
+                foreach(var allowedId in this.AllowedPlans.Split(',').ToArray())
+                {
+                    if (!dependentRoomRates.Any(t => t.Id.ToString() == allowedId))
+                    {
+                        yield return new ValidationResult("Invalid optional plan for Dependent", new Collection<string>() { "AllowedPlans" });
+                    }
+                }
+            }
+
+            var principalRoomRates = LegacyHelper.GetLegacyRoomRates(this.AccountCode, true);
+            if (this.Type == "Principal" && !principalRoomRates.Any(t => t.Id == this.AppliedPlan))
+            {
+                yield return new ValidationResult("Invalid applied plan for Principal", new Collection<string>() { "AppliedPlan" });
+            }
+            if (this.Type == "Principal" && !string.IsNullOrEmpty(this.AllowedPlans))
+            {
+                foreach(var allowedId in this.AllowedPlans.Split(',').ToArray())
+                {
+                    if (!principalRoomRates.Any(t => t.Id.ToString() == allowedId))
+                    {
+                        yield return new ValidationResult("Invalid optional plan for Principal", new Collection<string>() { "AllowedPlans" });
+                    }
+                }
+            }
+
+            using (var db = new IdentityDataContext())
+            {
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.AccountCode) ?? new AccountSetting();
+                if (accountSetting.UseEmailAsLogin && String.IsNullOrEmpty(this.EmailAddress))
+                {
+                    yield return new ValidationResult("Email address is required to be used for login.", new Collection<string>() { "EmailAddress" });
+                }
+                if (!String.IsNullOrEmpty(accountSetting.DomainEmail))
+                {
+                    if (!String.IsNullOrEmpty(this.EmailAddress) && this.EmailAddress.Substring(this.EmailAddress.IndexOf("@") + 1) != accountSetting.DomainEmail)
+                    {
+                        yield return new ValidationResult(String.Format("Invalid Email. Only @{0} email accounts are valid.", accountSetting.DomainEmail), new Collection<string>() { "EmailAddress" });
+                    }
+                }
+            }
+        }
+    }
+}

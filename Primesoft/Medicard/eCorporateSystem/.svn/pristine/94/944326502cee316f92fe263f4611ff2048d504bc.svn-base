@@ -1,0 +1,18 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Endorsement Received by URG</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">Endorsement was received with the following details:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count: @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Total Count: @Model.EndorsementBatch.ControlNumber</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<p class="details">Disclaimer:</p>
+<br />

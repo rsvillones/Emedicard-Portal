@@ -1,0 +1,131 @@
+﻿using Corelib.Enums;
+using System;
+using System.Data.Entity;
+using System.Web;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class DependentCancellation : BaseModel
+    {
+        #region -- Constructor --
+
+        public DependentCancellation()
+        {
+            RequestDate = DateTime.Now;
+            RequestEffectivityDate = DateTime.Now;
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(25)]
+        [Index]
+        public string ControlNumber { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Request Date")]
+        public DateTime RequestDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Request Effectivity Date")]
+        public DateTime RequestEffectivityDate { get; set; }
+
+        [Display(Name = "Status")]
+        public RequestStatus Status { get; set; }
+
+        public string Remarks { get; set; }
+
+        public string AccountCode { get; set; }
+
+        public byte[] DocumentFile { get; set; }
+
+        public string DocumentContentType { get; set; }
+
+        public string DocumentFileName { get; set; }
+
+        [NotMapped]
+        public HttpPostedFileBase FileWrapper { get; set; }
+
+        [Required]
+        [Display(Name = "Member Name")]
+        [Index]
+        [StringLength(25)]
+        public string MemberCode { get; set; }
+
+        [Required]
+        [Display(Name = "Dependent Name")]
+        [Index]
+        [StringLength(25)]
+        public string DependentCode { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped --
+
+        [NotMapped]
+        public string DependentName
+        {
+            get
+            {
+                using(var legacyDb = new LegacyDataContext()){
+                    var dependent = LegacyHelper.GetActiveDependents(legacyDb,this.AccountCode,this.MemberCode).FirstOrDefault(t=>t.Code == this.DependentCode) ?? new LegacyMember();
+                    return dependent.FullName;
+                }
+            }
+        }
+
+        [NotMapped]
+        public string MemberName
+        {
+            get
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var member = LegacyHelper.GetActiveMember(legacyDb, this.AccountCode, this.MemberCode) ?? new LegacyMember();
+                    return member.FullName;
+                }
+            }
+        }
+
+        [NotMapped]
+        public string DependentRelationship
+        {
+            get
+            {
+                using (var db = new IdentityDataContext())
+                {
+                    var dependent = db.Dependents.Include(t=>t.RelationshipClass).FirstOrDefault(t=>t.Code == this.DependentCode);
+                    return dependent != null ? dependent.RelationshipClass.Description : "";
+                }
+            }
+        }
+
+        #endregion
+
+        #region -- Foreign Keys --
+
+        [ForeignKey("Reason")]
+        [Display(Name = "Request Reason")]
+        public int ReasonId { get; set; }
+        public Reason Reason { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+
+        [ForeignKey("DocumentType")]
+        [Display(Name = "Document Type")]
+        public int? DocumentTypeId { get; set; }
+        public DocumentType DocumentType { get; set; }
+        
+        #endregion
+    }
+}

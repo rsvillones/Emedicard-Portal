@@ -1,0 +1,224 @@
+@model Dependent
+<h4 class="form-title">
+    Dependent Details
+</h4>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.LastName)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DateOfBirth)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.FirstName)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Age)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.MiddleName)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Gender)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Suffix)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.Suffix, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.CivilStatus)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.CivilStatus, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Relationship)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.RelationshipClass.Description, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.AppliedPlan)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.AppliedPlanDescription, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">&nbsp;</label>
+            <div class="col-lg-4">&nbsp;</div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.OptionalPlan)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.OptionalPlanDescription, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="form-title">Contact Details</h4>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Street)</label>
+                    <div class="col-lg-10">
+                        @Html.EditorFor(model => model.Street, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.City)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.CityDescription, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.EmailAddress)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Zip)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Zip, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Telephone)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Telephone, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Province)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.ProvinceDescription, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Mobile)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="form-title">Other Details</h4>
+<div class="row ">
+    <div class="col-lg-12">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">Height:</label>
+                    <div class="col-lg-2 bottom">
+                        <div class="input-group input-group-sm">
+                            @Html.EditorFor(model => model.HeightFeet, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                            <span class="input-group-addon">ft</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 bottom">
+                        <div class="input-group input-group-sm">
+                            @Html.EditorFor(model => model.HeightInches, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                            <span class="input-group-addon">in</span>
+                        </div>
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Occupation)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Occupation, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Weight)</label>
+                    <div class="col-lg-4 bottom">
+                        <div class="input-group input-group-sm">
+                            @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                            <span class="input-group-addon">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h4 class="form-title">Medical History</h4>
+<div class="row">
+    <div class="col-lg-12">
+
+        <form class="form-horizontal">
+            @foreach (var questionGroup in Model.MedicalHistories.Select(t => t.Question.QuestionGroup).Distinct())
+            {
+                <div class="row form-padding">
+                    <div class="col-lg-12">
+                        <label>@questionGroup.Question</label>
+                        <table class="table" style="margin-bottom: 0 !important;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%">
+                                        &nbsp;
+                                    </th>
+                                    <th style="width: 5%">
+                                        Yes
+                                    </th>
+                                    <th style="width: 5%">
+                                        No
+                                    </th>
+                                    <th style="width: 50%">
+                                        Remarks
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var medicalHistory in Model.MedicalHistories.Where(t => t.Question.QuestionGroupId == questionGroup.Id).OrderBy(t => t.Question.DisplayOrder).ThenBy(t => t.Question.Description))
+                                {
+                                    using (Html.BeginCollectionItem("MedicalHistories"))
+                                    {
+                                        Html.RenderPartial("_MemberQuestion", medicalHistory);
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+
+@{
+    ViewBag.Title = "User Management";
+}
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Users</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row spacing">
+                            <div class="col-lg-12">
+                                 <div style="text-align: left; margin-bottom: 1em;">
+                                    <a href="#" class="btn btn-primary">Add User</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                @*CODE*@
+                                
+                                <table class="table table-custom" style="margin-bottom: 0 !important;">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Username
+                                            </th>
+                                            <th>
+                                                Firstname
+                                            </th>
+                                            <th>
+                                                Lastname
+                                            </th>
+                                            <th>
+                                                &nbsp;
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                            <tr>
+                                                <td>
+                                                    ecorpmain@medicardphils.com
+                                                </td>
+                                                <td>
+                                                    Firstname
+                                                </td>
+                                                <td>
+                                                    Lastname
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="btn btn-primary btn-xs">Edit</a>
+                                                </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

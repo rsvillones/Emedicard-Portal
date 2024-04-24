@@ -1,0 +1,81 @@
+@model ApplicationUserViewModel
+<div class="col-lg-6 form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+
+        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+        </div>
+
+        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+
+        @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+        </div>
+
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+
+        @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+        </div>
+
+</div>
+@*<div class="col-lg-6 form-group">
+    @Html.LabelFor(model => model.Groups, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @foreach (Group group in ViewBag.Groups)
+        {
+            <input type="checkbox" name="GroupId" id="Group_@(group.Id)" value="@group.Id" @(Model.Groups != null && Model.Groups.Any(t => t.Id == group.Id) ? "checked='checked'" : "") /> <label for="Group_@(group.Id)">@group.Name</label>
+        }
+        @Html.ValidationMessageFor(model => model.Groups, "", new { @class = "text-danger" })
+    </div>
+</div>*@
+
+<div class="col-lg-6 form-group">
+    <table class="table table-form">
+        
+         <thead>
+            <tr>
+                <th>
+                @Html.LabelFor(model => model.Groups)
+                </th>
+            </tr>
+         </thead>
+        <tbody>
+            @foreach (Group group in ViewBag.Groups)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="GroupId" id="Group_@(group.Id)" value="@group.Id" @(Model.Groups != null && Model.Groups.Any(t => t.Id == group.Id) ? "checked='checked'" : "") /> <label for="Group_@(group.Id)">@group.Name</label>
+                </td>
+            </tr>
+        }
+        @Html.ValidationMessageFor(model => model.Groups, "", new { @class = "text-danger" })
+
+        
+                
+        
+        </tbody>
+            
+            
+    
+    </table>
+</div>
+

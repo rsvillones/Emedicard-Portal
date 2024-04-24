@@ -1,0 +1,114 @@
+@{
+    ViewBag.Title = "Benefits and Exclusions";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@Html.Action("AccountInformation", "BaseAccount")
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Benefits</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row spacing">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="col-lg-12">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewHospitalizationAndOutPatientServices"))
+                                            {
+                                                <li class="active"><a href="#HOPS" role="tab" data-toggle="tab">Hospitalization and Out-Patient Services</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewPreventiveHealthcareServices"))
+                                            {
+                                                <li><a href="#PHS" role="tab" data-toggle="tab">Preventive Healthcare Services</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewEmergencyCareServices"))
+                                            {
+                                                <li><a href="#ECS" role="tab" data-toggle="tab">Emergency Care Services</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewMemberFinancialAssistance"))
+                                            {
+                                                <li><a href="#MFA" role="tab" data-toggle="tab">Member Financial Assistance</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewDentalCareServices"))
+                                            {
+                                                <li><a href="#DCS" role="tab" data-toggle="tab">Dental Care Services</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewPreExistingCondition"))
+                                            {
+                                                <li><a href="#PEC" role="tab" data-toggle="tab">Pre-Existing Condition</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewPointOfService"))
+                                            {
+                                                <li><a href="#POS" role="tab" data-toggle="tab">Point of Service</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewMaternity"))
+                                            {
+                                                <li><a href="#MAT" role="tab" data-toggle="tab">Maternity</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewExecutiveCheckUp"))
+                                            {
+                                                <li><a href="#ECU" role="tab" data-toggle="tab">Executive Check Up</a></li>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewExclusions"))
+                                            {
+                                                <li><a href="#EXC" role="tab" data-toggle="tab">Exclusions</a></li>
+                                            }
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewHospitalizationAndOutPatientServices"))
+                                            {
+                                                <div class="tab-pane active" id="HOPS">Hozpitalization and Out-Patient Services</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewPreventiveHealthcareServices"))
+                                            {
+                                                <div class="tab-pane" id="PHS">Preventive Healthcare Services</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewEmergencyCareServices"))
+                                            {
+                                                <div class="tab-pane" id="ECS">Emergency Care Services</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewMemberFinancialAssistance"))
+                                            {
+                                                <div class="tab-pane" id="MFA">Member Financial Assistance</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewDentalCareServices"))
+                                            {
+                                                <div class="tab-pane" id="DCS">Dental Care Services</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewPreExistingCondition"))
+                                            {
+                                                <div class="tab-pane" id="PEC">Pre-Existing Condition</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewPointOfService"))
+                                            {
+                                                <div class="tab-pane" id="POS">Point of Service</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewMaternity"))
+                                            {
+                                                <div class="tab-pane" id="MAT">Maternity</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewExecutiveCheckUp"))
+                                            {
+                                                <div class="tab-pane" id="ECU">Executive Check Up</div>
+                                            }
+                                            @if (User.IsInRole("SysAd") || User.IsInRole("CanViewExclusions"))
+                                            {
+                                                <div class="tab-pane" id="EXC">Exclusions</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,278 @@
+@model ApplicationUserViewModel
+<div class="col-lg-5 form-group">
+    @if (HttpContext.Current.User.IsInRole("SysAd") || HttpContext.Current.User.IsInRole("CanCreateUserFromLegacySystem"))
+    {
+        @Html.LabelFor(model => model.AgentCode, htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.AgentCode, new { htmlAttributes = new { @class = "form-control" } })
+            <input type="button" class="btn" id="btnValidateCode" value="Validate Agent Code" />
+            @Html.ValidationMessageFor(model => model.AgentCode, "", new { @class = "text-danger" })
+        </div>
+    }
+    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+    </div>
+    <div class="col-md-4">&nbsp;</div>
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.UseActiveDirectory)
+        @Html.LabelFor(model => model.UseActiveDirectory)
+        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-8">
+        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+    </div>
+
+</div>
+<div class="col-lg-7 form-group">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#Roles">Roles</a></li>
+        <li class=""><a data-toggle="tab" href="#AssociatedAccounts">Associated Accounts</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="Roles" class="tab-pane fade active in">
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table table-fixed">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.LabelFor(model => model.Groups)
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="scrollable-table" style="margin-top: -3px !important; height: 354px !important;margin-bottom: 0 !important">
+                        <table class="table table-fixed">
+                            <tbody>
+                                @foreach (Group group in ViewBag.Groups)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="GroupId" id="Group_@(group.Id)" value="@group.Id" @(Model.Groups != null && Model.Groups.Any(t => t.Id == group.Id) ? "checked='checked'" : "") /> <label for="Group_@(group.Id)">@group.Name</label>
+                                        </td>
+                                    </tr>
+                                }
+                                @Html.ValidationMessageFor(model => model.Groups, "", new { @class = "text-danger" })
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="AssociatedAccounts" class="tab-pane fade">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div id="LegacyAccountsContainer" class="col-lg-12 form-group @(Model.AgentCodeValidated ? "hidden" : "")">
+                            <table class="table table-fixed">
+                                <thead>
+                                    <tr>
+                                        <th style="width:52%">
+                                            <label>Associated Accounts</label>
+                                        </th>
+                                        <th style="width:10%">
+                                            <label>Readonly Access</label>
+                                        </th>
+                                        <th style="width:9%">
+                                            <label>Is Corporate Admin</label>
+                                        </th>
+                                        <th style="width:1%">
+                                            &nbsp;
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div class="scrollable-tables" style="margin-top: -3px !important;height: 300px !important;margin-bottom: 0 !important">
+                                <table class="table table-fixed" margin-bottom 0 !important;>
+                                    <tbody>
+                                        @foreach (LegacyAccount legacyAccount in ViewBag.LegacyAccounts)
+                                        {
+                                            var account = Model.Accounts != null ? Model.Accounts.FirstOrDefault(t => t.Code == legacyAccount.Code) : null;
+                                            <tr>
+                                                <td style="width:50%">
+                                                    <input type="hidden" name="Accounts" value="@legacyAccount.Code" />
+                                                    <input type="hidden" name="UseAccountCode" value="@(account != null ? "true" : "false")" />
+                                                    <input type="hidden" name="IsReadOnly" value="@(account != null && account.IsReadOnly ? "true" : "false")" />
+                                                    <input type="hidden" name="IsCorporateAdmin" value="@(account != null && account.IsCorporateAdmin ? "true" : "false")" />
+                                                    <input id="Account_@legacyAccount.Code" type="checkbox" value="@legacyAccount.Code" class="legacy-account-checkbox" @(Model.Accounts != null && Model.Accounts.Any(t => t.Code == legacyAccount.Code) ? "checked='checked'" : "") onchange="OnAccountCheckChange(this)" />
+                                                    <label for="Account_@legacyAccount.Code">
+                                                        <span data-content="Name">@legacyAccount.Name</span>
+                                                    </label>
+                                                </td>
+                                                <td style="width:10%"><input type="checkbox" @(account == null ? "disabled='disabled'" : "") @(account != null && account.IsReadOnly ? "checked='checked'" : "") onchange="OnCheckboxCheckChanged(this, 'IsReadOnly')"></td>
+                                                <td style="width:10%"><input type="checkbox" @(account == null ? "disabled='disabled'" : "") @(account != null && account.IsCorporateAdmin ? "checked='checked'" : "") onchange="OnCheckboxCheckChanged(this, 'IsCorporateAdmin')"></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="AgentAccountsContainer" class="col-lg-12 form-group @(!Model.AgentCodeValidated ? "hidden" : "")">
+                    <label>The system will automatically retrieve the accounts for the associated AGENT CODE from the legacy system. The current enrolled Accounts for the AGENT CODE ARE</label>
+                    <table class="table table-fixed">
+                        <thead>
+                            <tr>
+                                <th style="width:50%">
+                                    <label>Associated Accounts</label>
+                                </th>
+                                <th style="width:10%">
+                                    <label>Readonly Access</label>
+                                </th>
+                                <th style="width:10%">
+                                    <label>Is Corporate Admin</label>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="scrollable-tables" style="margin-top: -3px !important;height: 300px !important;margin-bottom: 0 !important">
+                        <table class="table table-fixed">
+                            <tbody id="AssociatedAccountsTableBody">
+                                @foreach (LegacyAccount legacyAccount in ViewBag.AssociatedLegacyAccounts)
+                                {
+                                    var account = Model.Accounts != null ? Model.Accounts.FirstOrDefault(t => t.Code == legacyAccount.Code) : null;
+                                    <tr>
+                                        <td style="width:50%">
+                                            <input type="hidden" name="Accounts" value="@legacyAccount.Code" />
+                                            <input type="hidden" name="UseAccountCode" value="true" />
+                                            <input type="hidden" name="IsReadOnly" value="@(account != null && account.IsReadOnly ? "true" : "false")" />
+                                            <input type="hidden" name="IsCorporateAdmin" value="@(account != null && account.IsCorporateAdmin ? "true" : "false")" />
+                                            <input type="checkbox" checked="checked" disabled="disabled" />
+                                            <label><span data-content="Name">@legacyAccount.Name</span></label>
+                                        </td>
+                                        <td style="width:10%"><input type="checkbox" @(account != null && account.IsReadOnly ? "checked='checked'" : "") onchange="OnCheckboxCheckChanged(this, 'IsReadOnly')"></td>
+                                        <td style="width:10%"><input type="checkbox" @(account != null && account.IsCorporateAdmin ? "checked='checked'" : "") onchange="OnCheckboxCheckChanged(this, 'IsCorporateAdmin')"></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function OnAccountCheckChange(checkbox) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+
+        var accountCode = tr.children('td:nth-child(1)').children('input[name="UseAccountCode"]');
+        var isReadOnly = tr.children('td:nth-child(1)').children('input[name="IsReadOnly"]');
+        var isCorporateAdmin = tr.children('td:nth-child(1)').children('input[name="IsCorporateAdmin"]');
+
+        var isReadOnlyCheckbox = tr.children('td:nth-child(4)').children('input:first');
+        var isCorporateAdminCheckbox = tr.children('td:nth-child(6)').children('input:first');
+
+        if (checked) {
+            isReadOnlyCheckbox.removeAttr('disabled');
+            isCorporateAdminCheckbox.removeAttr('disabled');
+
+            accountCode.val('true');
+        }
+        else {
+            disableCheckbox(isReadOnlyCheckbox);
+            disableCheckbox(isCorporateAdminCheckbox);
+
+            accountCode.val('false');
+            isReadOnly.val('false');
+            isCorporateAdmin.val('false');
+        }
+    }
+
+    function disableCheckbox(checkbox, texbox, checked) {
+        if (!checkbox.attr('disabled')) {
+            checkbox.attr('disabled', 'disabled');
+        }
+        checkbox.removeAttr('checked');
+    }
+
+    function OnCheckboxCheckChanged(checkbox, inputName) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+        var input = tr.children('td:nth-child(1)').children('input[name="' + inputName + '"]');
+        if (checked) {
+            input.val('true');
+        }
+        else {
+            input.val('false');
+        }
+    }
+
+    function scrollableTable() {
+        setTableBody();
+        $(window).resize(setTableBody);
+        $(".table-body").scroll(function () {
+
+            //$(".table-header").offset({ left: -1*this.scrollLeft });
+            //var position = $(".table-header").position();
+            $(".table-header").animate({
+                left: -1 * this.scrollLeft
+            }, 0)
+
+            //var position = $(".table-header").position();
+            //$(".table-header").offset({ left: -1*this.scrollLeft });
+
+            //var offsetpos = $(".table-header").offsetParent();
+            // $(".table-header").offset({ left: -1*this.scrollLeft });
+            //$(".table-header").html(
+            // offsetpos.offset({left: -1*this.scrollLeft }) );
+        });
+    }
+
+    function setTableBody() {
+        $(".table-body").height($(".inner-container").height() - $(".table-header").height());
+    }
+
+</script>

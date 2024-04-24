@@ -1,0 +1,110 @@
+﻿using Corelib.Enums;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class EndorsementBatch : BaseModel, IValidatableObject
+    {
+        #region -- Constructor --
+
+        public EndorsementBatch()
+        {
+            this.Members = new Collection<Member>();
+            this.Deadline = DateTime.Now.AddDays(30);
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(16)]
+        public string ControlNumber { get; set; }
+
+        [Required]
+        [StringLength(16)]
+        public string ReferenceNumber { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime Date { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateReceived { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateForwarded { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateEndorsed { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime Deadline { get; set; }
+
+        [StringLength(128)]
+        public string Filename { get; set; }
+
+        [StringLength(64)]
+        public string GuidFilename { get; set; }
+
+        public EndorsementBatchStatus Status { get; set; }
+
+        public int EndorsementCount { get; set; }
+
+        private string _accountCode;
+        [StringLength(25)]
+        [Index]
+        public string AccountCode { 
+            get 
+            {
+                return _accountCode;
+            } 
+            set 
+            {
+                _accountCode = value;
+
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var legacyAccount = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == this.AccountCode) ?? new LegacyAccount();
+                    this.CompanyName = legacyAccount.Name;
+                }
+            } 
+        }
+
+        [StringLength(150)]
+        public string CompanyName { get; set; }
+
+        [StringLength(16)]
+        public string EndorsementType { get; set; }
+
+        [StringLength(32)]
+        public string BatchType { get; set; }
+
+        public string Remarks { get; set; }
+
+        public ICollection<Member> Members { get; set; }
+
+        #endregion
+
+        #region -- IValidatableObject Members --
+
+        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        {
+            var duplicates = this.Members.GroupBy(t => new { t.LastName, t.FirstName, t.MiddleName, t.DateOfBirth }).SelectMany(group => group.Skip(1));
+            if (duplicates != null && duplicates.Count() > 0)
+            {
+                foreach (var duplicate in duplicates)
+                {
+                    yield return new ValidationResult(String.Format("Duplicate entries found for {1}, {0} {2} ({3:MM/dd/yyyy})", duplicate.FirstName, duplicate.LastName, duplicate.MiddleName, duplicate.DateOfBirth));
+                }
+            }
+        }
+        
+        #endregion
+    }
+}

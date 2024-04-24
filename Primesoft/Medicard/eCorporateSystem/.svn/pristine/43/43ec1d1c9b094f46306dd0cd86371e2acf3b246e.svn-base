@@ -1,0 +1,629 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Web;
+using System.Data.Entity;
+using OfficeOpenXml;
+using OfficeOpenXml.DataValidation;
+using Corelib.Models;
+
+namespace Corelib.Classes
+{
+    public class ExcelTools
+    {
+        public struct ImportParameter
+        {
+            public string Path { get; set; }
+            public string Username { get; set; }
+        }
+
+        #region -- New Application --
+
+        #region -- Excel Download --
+
+        public static byte[] NewApplicationExcelDownload()
+        {
+            var templatePath = HttpContext.Current.Server.MapPath("~/ExcelTemplates/New Application.xlsx");
+            var targetPath = String.Format(@"{0}\{1}.xlsx", HttpContext.Current.Server.MapPath("~/Uploads"),
+                                           Guid.NewGuid());
+
+            File.Copy(templatePath, targetPath);
+
+            byte[] returnValue;
+
+            #region -- .XLSX File --
+
+            using (var package = new ExcelPackage(new FileInfo(targetPath)))
+            {
+                var workBook = package.Workbook;
+                if (workBook == null) throw new Exception("Invalid WorkBook.");
+                if (workBook.Worksheets.Count <= 0) throw new Exception("Worksheet doesn't exist.");
+                var worksheet = workBook.Worksheets[1];
+
+                #region -- Date Validation --
+                
+                CellDateValidation(worksheet, "J:J", DateTime.UtcNow.AddYears(-1000));
+                CellDateValidation(worksheet, "M:M", DateTime.UtcNow.AddYears(-1000));
+                CellDateValidation(worksheet, "N:N", DateTime.UtcNow.AddYears(-1000));
+                CellDateValidation(worksheet, "O:O", DateTime.UtcNow.AddYears(-1000));
+
+                #endregion
+
+                #region -- Integer Validation --
+
+                CellIntegerValidation(worksheet, "K:K");
+                CellIntegerValidation(worksheet, "Q:Q");
+
+                #endregion
+
+                #region -- Dropdown Validation --
+
+                var options = new List<string>();
+                options.Add("SMALL PRIVATE OPEN	- 100000 - W/O SLMC-GLOBAL");
+                options.Add("SEMI-PRIVATE OPEN	- 80000	- W/O SLMC-GLOBAL");
+                options.Add("SMALL PRIVATE OPEN	- 100000 - W/O SLMC-GLOBAL");
+                options.Add("SMALL PRIVATE OPEN	- 150000 - W/O SLMC-GLOBAL");
+                //options.Add("SMALL PRIVATE OPEN *OA - 100000 - EXISTING MEMBERS 61- 65 + 20% LOAD ON PREMIUM; W/O SLMC-GLOBAL");
+                //options.Add("SEMI-PRIVATE OPEN *OA	- 80000	- MEMBERS 61-65 Y/O + 20% LOAD; W/O SLMC-GLOBAL");
+                //options.Add("SMALL PRIVATE OPEN *OA	- 100000 - MEMBERS 61-65 Y/O + 20% LOAD; W/O SLMC-GLOBAL");
+                //options.Add("SMALL PRIVATE OPEN *OA	- 150000 - MEMBERS 61-65 Y/O + 20% LOAD; W/O SLMC-GLOBAL");
+                CellDropDownValidation(worksheet, "P:P", options);
+                CellDropDownValidation(worksheet, "R:R", options);
+
+                var secondOptions = new List<string>();
+                secondOptions.Add("Male");
+                secondOptions.Add("Female");
+                CellDropDownValidation(worksheet, "I:I", secondOptions);
+
+                #endregion
+
+                #region -- Text Length Validation --
+
+                CellTextLengthValidation(worksheet, "A:A",64);
+                CellTextLengthValidation(worksheet, "B:B", 64);
+                CellTextLengthValidation(worksheet, "C:C", 64);
+                CellTextLengthValidation(worksheet, "D:D", 64);
+                CellTextLengthValidation(worksheet, "E:E", 64);
+                CellTextLengthValidation(worksheet, "F:F", 64);
+                CellTextLengthValidation(worksheet, "G:G", 64);
+                CellTextLengthValidation(worksheet, "H:H", 64);
+
+                #endregion
+                
+                returnValue = package.GetAsByteArray();
+            }
+
+            #endregion
+
+            File.Delete(targetPath);
+            return returnValue;
+        }
+
+        #endregion
+
+        #region -- Excel Upload --
+
+        #region -- Const Variables --
+
+        private const int EMAIL_ADDRESS = 1;
+        private const int EMPLOYEE_NUMBER = EMAIL_ADDRESS + 1;
+        private const int AREA = EMPLOYEE_NUMBER + 1;
+        private const int COST_CENTER = AREA + 1;
+        private const int LAST_NAME = COST_CENTER + 1;
+        private const int FIRST_NAME = LAST_NAME + 1;
+        private const int MIDDLE_NAME = FIRST_NAME + 1;
+        private const int SUFFIX = MIDDLE_NAME + 1;
+        private const int GENDER = SUFFIX + 1;
+        private const int DATE_OF_BIRTH = GENDER + 1;
+        private const int AGE = DATE_OF_BIRTH + 1;
+        private const int CIVIL_STATUS = AGE + 1;
+        private const int EFFECTIVITY_DATE = CIVIL_STATUS + 1;
+        private const int VALIDITY_DATE = EFFECTIVITY_DATE + 1;
+        private const int DATE_HIRED = VALIDITY_DATE + 1;
+        private const int APPLIED_PLAN = DATE_HIRED + 1;
+        private const int NUMBER_OF_ALLOWED_DEPENDENTS = APPLIED_PLAN + 1;
+        private const int DEPENDENT_APPLIED_PLAN = NUMBER_OF_ALLOWED_DEPENDENTS + 1;
+        private const int DEPENDENT_OPTIONAL_PLAN = DEPENDENT_APPLIED_PLAN + 1;
+
+
+        #endregion
+
+        public static void ImportNewApplication(object parameter)
+        {
+            var path = ((ImportParameter)parameter).Path;
+            var username = ((ImportParameter)parameter).Username;
+
+            var db = new IdentityDataContext();
+            var extension = Path.GetExtension(path);
+            var filename = Path.GetFileName(path);
+
+            switch (extension)
+            {
+                case ".xlsx":
+
+                    #region -- .XLSX File --
+
+                    using (var package = new ExcelPackage(new FileInfo(path)))
+                    {
+                        var workBook = package.Workbook;
+                        if (workBook == null) break;
+                        if (workBook.Worksheets.Count <= 0) break;
+                        var workSheet = workBook.Worksheets[1];
+                        var startRow = 2;
+                        var numberOfItems = 0;
+
+                        #region -- Upload Log --
+
+                        while (startRow > 0)
+                        {
+                            var employeeNumber = Convert.ToString(workSheet.Cells[startRow, EMPLOYEE_NUMBER].Value);
+                            if (string.IsNullOrEmpty(employeeNumber))
+                            {
+                                break;
+                            }
+                            numberOfItems++;
+                            startRow++;
+                        }
+
+                        var log = new UploadLog()
+                        {
+                            Name = username,
+                            FileName = filename,
+                            NumberOfItems = numberOfItems
+                        };
+
+                        db.UploadLogs.Add(log);
+                        db.SaveChanges();
+
+                        #endregion
+
+                        ProcessItem(workSheet, 2, filename, log);
+                    }
+
+                    #endregion
+
+                    break;
+                default:
+                    throw new Exception("Invalid Excel file.");
+            }
+
+            db.Dispose();
+        }
+
+        public static void ProcessItem(ExcelWorksheet ws, int startRow, string filename, UploadLog uploadLog)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var excelError = new ExcelError() { FileName = filename };
+                var rowcompleted = 0;
+                while (startRow > 0)
+                {
+
+                    var currentRow = startRow;
+                    if (string.IsNullOrEmpty(ws.Cells[currentRow, EMPLOYEE_NUMBER].StringValue())) break;
+                    excelError.RowNumber = currentRow;
+
+                    var emailAddress = ws.Cells[currentRow, EMAIL_ADDRESS].StringValue();
+                    var employeeNumber = ws.Cells[currentRow, EMPLOYEE_NUMBER].StringValue();
+                    var area = ws.Cells[currentRow, AREA].StringValue();
+                    var costCenter = ws.Cells[currentRow, COST_CENTER].StringValue();
+                    var lastName = ws.Cells[currentRow, LAST_NAME].StringValue();
+                    var firstName = ws.Cells[currentRow, FIRST_NAME].StringValue();
+                    var middleName = ws.Cells[currentRow, MIDDLE_NAME].StringValue();
+                    var suffix = ws.Cells[currentRow, SUFFIX].StringValue();
+                    var gender = ws.Cells[currentRow, GENDER].StringValue();
+                    var dateOfBirth = ws.Cells[currentRow, DATE_OF_BIRTH].DateValue(db, excelError, "Date of Birth");
+                    var age = ws.Cells[currentRow, AGE].IntegerValue(db, excelError, "Age");
+                    var civilStatus = ws.Cells[currentRow, CIVIL_STATUS].StringValue();
+                    var effectivityDate = ws.Cells[currentRow, EFFECTIVITY_DATE].DateValue(db, excelError, "Effective Date");
+                    var validityDate = ws.Cells[currentRow, VALIDITY_DATE].DateValue(db, excelError, "Validity Date");
+                    var dateHired = ws.Cells[currentRow, DATE_HIRED].DateValue(db, excelError, "Date Hired");
+                    var appliedPlan = ws.Cells[currentRow, APPLIED_PLAN].StringValue();
+                    var dependent = ws.Cells[currentRow, NUMBER_OF_ALLOWED_DEPENDENTS].IntegerValue(db, excelError, "Number of allowed dependents");
+                    var dependentAppliedPlan = ws.Cells[currentRow, DEPENDENT_APPLIED_PLAN].StringValue();
+                    var dependentOptionalPlan = ws.Cells[currentRow, DEPENDENT_OPTIONAL_PLAN].StringValue();
+
+                    var applicationVerification = new ApplicationVerification(){
+                        Row = currentRow,FileName = filename,EmailAddress = emailAddress,
+                        EmployeeNumber = employeeNumber,Area = area,CostCenter = costCenter,
+                        LastName = lastName,FirstName = firstName,MiddleName = middleName,Suffix = suffix,
+                        Gender = gender,DateOfBirth = dateOfBirth,Age = age,CivilStatus = civilStatus,
+                        EffectivityDate = effectivityDate,ValidityDate = validityDate,DateHired = dateHired,
+                        AppliedPlan = appliedPlan,Dependent = dependent,DependentAppliedPlan = dependentAppliedPlan,
+                        DependentOptionalPlan = dependentOptionalPlan,
+                    };
+                    db.ApplicationVerifications.Add(applicationVerification);
+
+                    rowcompleted++;
+                    if (rowcompleted == 20)
+                    {
+                        if (uploadLog != null)
+                        {
+                            uploadLog.CurrentRow = startRow;
+                            uploadLog.RowsCompleted = rowcompleted;
+                            uploadLog.UploadStatus = UploadStatus.Loading;
+                            db.Entry(uploadLog).State = EntityState.Modified;
+                        }
+                        db.SaveChanges();
+                    }
+                    startRow++;
+                }
+                if (uploadLog != null)
+                {
+                    uploadLog.CurrentRow = startRow - 1;
+                    uploadLog.RowsCompleted = rowcompleted;
+                    uploadLog.UploadStatus = UploadStatus.Completed;
+                    db.Entry(uploadLog).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region -- Renewal of Application --
+
+        #region -- Excel Download --
+
+        public static byte[] RenewalApplicationExcelDownload()
+        {
+            var templatePath = HttpContext.Current.Server.MapPath("~/ExcelTemplates/Renewal.xlsx");
+            var targetPath = String.Format(@"{0}\{1}.xlsx", HttpContext.Current.Server.MapPath("~/Uploads"),
+                                           Guid.NewGuid());
+
+            File.Copy(templatePath, targetPath);
+
+            byte[] returnValue;
+
+            #region -- .XLSX File --
+
+            using (var package = new ExcelPackage(new FileInfo(targetPath)))
+            {
+                var workBook = package.Workbook;
+                if (workBook == null) throw new Exception("Invalid WorkBook.");
+                if (workBook.Worksheets.Count <= 0) throw new Exception("Worksheet doesn't exist.");
+                var worksheet = workBook.Worksheets[1];
+
+                GetApplicationForRenewal(worksheet, 2);
+
+                #region -- Date Validation --
+
+                CellDateValidation(worksheet, "K:K", DateTime.UtcNow.AddYears(-1000));
+                CellDateValidation(worksheet, "O:O", DateTime.UtcNow.AddYears(-1000));
+                CellDateValidation(worksheet, "P:P", DateTime.UtcNow.AddYears(-1000));
+                CellDateValidation(worksheet, "R:R", DateTime.UtcNow.AddYears(-1000));
+
+                #endregion
+
+                #region -- Integer Validation --
+
+                CellIntegerValidation(worksheet, "K:K");
+                CellIntegerValidation(worksheet, "Q:Q");
+
+                #endregion
+
+                #region -- Dropdown Validation --
+
+                var options = new List<string>();
+                options.Add("SMALL PRIVATE OPEN	- 100000 - W/O SLMC-GLOBAL");
+                options.Add("SEMI-PRIVATE OPEN	- 80000	- W/O SLMC-GLOBAL");
+                options.Add("SMALL PRIVATE OPEN	- 100000 - W/O SLMC-GLOBAL");
+                options.Add("SMALL PRIVATE OPEN	- 150000 - W/O SLMC-GLOBAL");
+                //options.Add("SMALL PRIVATE OPEN *OA - 100000 - EXISTING MEMBERS 61- 65 + 20% LOAD ON PREMIUM; W/O SLMC-GLOBAL");
+                //options.Add("SEMI-PRIVATE OPEN *OA	- 80000	- MEMBERS 61-65 Y/O + 20% LOAD; W/O SLMC-GLOBAL");
+                //options.Add("SMALL PRIVATE OPEN *OA	- 100000 - MEMBERS 61-65 Y/O + 20% LOAD; W/O SLMC-GLOBAL");
+                //options.Add("SMALL PRIVATE OPEN *OA	- 150000 - MEMBERS 61-65 Y/O + 20% LOAD; W/O SLMC-GLOBAL");
+                CellDropDownValidation(worksheet, "Q:Q", options);
+
+                var secondOptions = new List<string>();
+                secondOptions.Add("Male");
+                secondOptions.Add("Female");
+                CellDropDownValidation(worksheet, "J:J", secondOptions);
+
+                var thirdOptions = new List<string>();
+                thirdOptions.Add("Type One");
+                thirdOptions.Add("Type Two");
+                CellDropDownValidation(worksheet, "B:B", secondOptions);
+
+                var forthOptions = new List<string>();
+                forthOptions.Add("Active");
+                forthOptions.Add("Inactive");
+                CellDropDownValidation(worksheet, "N:N", secondOptions);
+
+                #endregion
+
+                #region -- Text Length Validation --
+
+                CellTextLengthValidation(worksheet, "A:A", 64);
+                CellTextLengthValidation(worksheet, "C:C", 64);
+                CellTextLengthValidation(worksheet, "D:D", 64);
+                CellTextLengthValidation(worksheet, "E:E", 64);
+                CellTextLengthValidation(worksheet, "F:F", 64);
+                CellTextLengthValidation(worksheet, "G:G", 64);
+                CellTextLengthValidation(worksheet, "H:H", 64);
+                CellTextLengthValidation(worksheet, "I:I", 64);
+
+                #endregion
+
+                returnValue = package.GetAsByteArray();
+            }
+
+            #endregion
+
+            File.Delete(targetPath);
+            return returnValue;
+        }
+
+
+        public static void GetApplicationForRenewal(ExcelWorksheet ws, int startRow)
+        {
+            var currentRow = startRow;
+
+            using (var db = new IdentityDataContext())
+            {
+                var applications = db.Applications.Where(t => !t.Deleted && !t.IsResigned).ToList();
+
+                foreach (var application in applications)
+                {
+                    ws.Cells[currentRow, REN_GUID].Value = application.Guid;
+                    ws.Cells[currentRow, REN_MEMBER_CODE].Value = application.MemberCode;
+                    ws.Cells[currentRow, REN_MEMBER_TYPE].Value = application.MemberType;
+                    ws.Cells[currentRow, REN_EMPLOYEE_NUMBER].Value = application.EmployeeNumber;
+                    ws.Cells[currentRow, REN_AREA].Value = application.Area;
+                    ws.Cells[currentRow, REN_COST_CENTER].Value = application.CostCenter;
+                    ws.Cells[currentRow, REN_LAST_NAME].Value = application.LastName;
+                    ws.Cells[currentRow, REN_FIRST_NAME].Value = application.FirstName;
+                    ws.Cells[currentRow, REN_MIDDLE_NAME].Value = application.MiddleName;
+                    ws.Cells[currentRow, REN_SUFFIX].Value = application.Suffix;
+                    ws.Cells[currentRow, REN_GENDER].Value = application.Gender;
+                    ws.Cells[currentRow, REN_DATE_OF_BIRTH].Value = application.DateOfBirth;
+                    ws.Cells[currentRow, REN_AGE].Value = application.Age;
+                    ws.Cells[currentRow, REN_CIVIL_STATUS].Value = application.CivilStatus;
+                    ws.Cells[currentRow, REN_MEMBERSHIP_STATUS].Value = application.MembershipStatus;
+                    ws.Cells[currentRow, REN_EFFECTIVITY_DATE].Value = application.EffectivityDate;
+                    ws.Cells[currentRow, REN_VALIDITY_DATE].Value = application.ValidityDate;
+                    ws.Cells[currentRow, REN_PLAN].Value = application.AppliedPlan;
+                    ws.Cells[currentRow, REN_DATE_HIRED].Value = application.DateHired;
+
+                    currentRow++;
+                }
+            }
+        }
+
+        #endregion
+
+        #region -- Excel Upload --
+
+        #region -- Const Variables --
+
+        private const int REN_GUID = 1;
+        private const int REN_MEMBER_CODE = REN_GUID + 1;
+        private const int REN_MEMBER_TYPE = REN_MEMBER_CODE + 1;
+        private const int REN_EMPLOYEE_NUMBER = REN_MEMBER_TYPE + 1;
+        private const int REN_AREA = REN_EMPLOYEE_NUMBER + 1;
+        private const int REN_COST_CENTER = REN_AREA + 1;
+        private const int REN_LAST_NAME = REN_COST_CENTER + 1;
+        private const int REN_FIRST_NAME = REN_LAST_NAME + 1;
+        private const int REN_MIDDLE_NAME = REN_FIRST_NAME + 1;
+        private const int REN_SUFFIX = REN_MIDDLE_NAME + 1;
+        private const int REN_GENDER = REN_SUFFIX + 1;
+        private const int REN_DATE_OF_BIRTH = REN_GENDER + 1;
+        private const int REN_AGE = REN_DATE_OF_BIRTH + 1;
+        private const int REN_CIVIL_STATUS = REN_AGE + 1;
+        private const int REN_MEMBERSHIP_STATUS = REN_CIVIL_STATUS + 1;
+        private const int REN_EFFECTIVITY_DATE = REN_MEMBERSHIP_STATUS + 1;
+        private const int REN_VALIDITY_DATE = REN_EFFECTIVITY_DATE + 1;
+        private const int REN_PLAN = REN_VALIDITY_DATE + 1;
+        private const int REN_DATE_HIRED = REN_PLAN + 1;
+
+        #endregion
+
+        public static void ImportRenewalApplication(object parameter)
+        {
+            var path = ((ImportParameter)parameter).Path;
+            var username = ((ImportParameter)parameter).Username;
+
+            var db = new IdentityDataContext();
+            var extension = Path.GetExtension(path);
+            var filename = Path.GetFileName(path);
+
+            switch (extension)
+            {
+                case ".xlsx":
+
+                    #region -- .XLSX File --
+
+                    using (var package = new ExcelPackage(new FileInfo(path)))
+                    {
+                        var workBook = package.Workbook;
+                        if (workBook == null) break;
+                        if (workBook.Worksheets.Count <= 0) break;
+                        var workSheet = workBook.Worksheets[1];
+                        var startRow = 2;
+                        var numberOfItems = 0;
+
+                        #region -- Upload Log --
+
+                        while (startRow > 0)
+                        {
+                            var employeeNumber = Convert.ToString(workSheet.Cells[startRow, REN_EMPLOYEE_NUMBER].Value);
+                            if (string.IsNullOrEmpty(employeeNumber))
+                            {
+                                break;
+                            }
+                            numberOfItems++;
+                            startRow++;
+                        }
+
+                        var log = new UploadLog()
+                        {
+                            Name = username,
+                            FileName = filename,
+                            NumberOfItems = numberOfItems
+                        };
+
+                        db.UploadLogs.Add(log);
+                        db.SaveChanges();
+
+                        #endregion
+
+                        ProcessRenewal(workSheet, 2, filename, log);
+                    }
+
+                    #endregion
+
+                    break;
+                default:
+                    throw new Exception("Invalid Excel file.");
+            }
+
+            db.Dispose();
+        }
+
+        public static void ProcessRenewal(ExcelWorksheet ws, int startRow, string filename, UploadLog uploadLog)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var excelError = new ExcelError() { FileName = filename };
+                var rowcompleted = 0;
+                while (startRow > 0)
+                {
+                    var currentRow = startRow;
+                    if (string.IsNullOrEmpty(ws.Cells[currentRow, REN_EMPLOYEE_NUMBER].StringValue())) break;
+                    excelError.RowNumber = currentRow;
+
+                    var memberCode = ws.Cells[currentRow, REN_MEMBER_CODE].StringValue();
+                    var memberType = ws.Cells[currentRow, REN_MEMBER_TYPE].StringValue();
+                    var membershipStatus = ws.Cells[currentRow, REN_MEMBERSHIP_STATUS].StringValue();
+                    var employeeNumber = ws.Cells[currentRow, REN_EMPLOYEE_NUMBER].StringValue();
+                    var area = ws.Cells[currentRow, REN_AREA].StringValue();
+                    var costCenter = ws.Cells[currentRow, REN_COST_CENTER].StringValue();
+                    var lastName = ws.Cells[currentRow, REN_LAST_NAME].StringValue();
+                    var firstName = ws.Cells[currentRow, REN_FIRST_NAME].StringValue();
+                    var middleName = ws.Cells[currentRow, REN_MIDDLE_NAME].StringValue();
+                    var suffix = ws.Cells[currentRow, REN_SUFFIX].StringValue();
+                    var gender = ws.Cells[currentRow, REN_GENDER].StringValue();
+                    var dateOfBirth = ws.Cells[currentRow, REN_DATE_OF_BIRTH].DateValue(db, excelError, "Date of Birth");
+                    var age = ws.Cells[currentRow, REN_AGE].IntegerValue(db, excelError, "Age");
+                    var civilStatus = ws.Cells[currentRow, REN_CIVIL_STATUS].StringValue();
+                    var effectivityDate = ws.Cells[currentRow, REN_EFFECTIVITY_DATE].DateValue(db, excelError, "Effective Date");
+                    var validityDate = ws.Cells[currentRow, REN_VALIDITY_DATE].DateValue(db, excelError, "Validity Date");
+                    var dateHired = ws.Cells[currentRow, REN_DATE_HIRED].DateValue(db, excelError, "Date Hired");
+                    var plan = ws.Cells[currentRow, REN_PLAN].StringValue();
+
+                    var applicationVerification = new ApplicationVerification()
+                    {
+                        Row = currentRow,FileName = filename,
+                        EmployeeNumber = employeeNumber,
+                        Area = area,
+                        CostCenter = costCenter,
+                        LastName = lastName,
+                        FirstName = firstName,
+                        MiddleName = middleName,
+                        Suffix = suffix,
+                        Gender = gender,
+                        DateOfBirth = dateOfBirth,
+                        Age = age,
+                        CivilStatus = civilStatus,
+                        EffectivityDate = effectivityDate,
+                        ValidityDate = validityDate,
+                        DateHired = dateHired,
+                        MemberCode = memberCode,
+                        MembershipStatus = membershipStatus,
+                        MemberType = memberType,
+                        AppliedPlan = plan
+                    };
+                    db.ApplicationVerifications.Add(applicationVerification);
+
+                    rowcompleted++;
+                    if (rowcompleted == 20)
+                    {
+                        if (uploadLog != null)
+                        {
+                            uploadLog.CurrentRow = startRow;
+                            uploadLog.RowsCompleted = rowcompleted;
+                            uploadLog.UploadStatus = UploadStatus.Loading;
+                            db.Entry(uploadLog).State = EntityState.Modified;
+                        }
+                        db.SaveChanges();
+                    }
+                    startRow++;
+                }
+                if (uploadLog != null)
+                {
+                    uploadLog.CurrentRow = startRow - 1;
+                    uploadLog.RowsCompleted = rowcompleted;
+                    uploadLog.UploadStatus = UploadStatus.Completed;
+                    db.Entry(uploadLog).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+            }
+        }
+
+
+        #endregion
+
+        #endregion
+
+        #region -- Function --
+
+        public static void CellDateValidation(ExcelWorksheet worksheet, string column, DateTime date)
+        {
+            // Add a date time validation
+            var validation = worksheet.DataValidations.AddDateTimeValidation(column);
+            // set validation properties
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid date was entered";
+            validation.Error = string.Format("The date must be greater than {0}.", date);
+            validation.Prompt = "Enter date here";
+            validation.Formula.Value = date;
+            validation.Operator = ExcelDataValidationOperator.greaterThan;
+        }
+
+        public static void CellIntegerValidation(ExcelWorksheet worksheet, string column)
+        {
+            // Add a integer validation
+            var validation = worksheet.DataValidations.AddIntegerValidation(column);
+            // set validation properties
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid number was entered";
+            validation.Error = string.Format("The number must be greater than {0}.", 0);
+            validation.Prompt = "Enter number here";
+            validation.Formula.Value = 0;
+            validation.Operator = ExcelDataValidationOperator.greaterThan;
+        }
+
+        public static void CellDropDownValidation(ExcelWorksheet worksheet, string column, List<string> items)
+        {
+            // Add a list validation
+            var validation = worksheet.DataValidations.AddListValidation(column);
+            // set validation properties
+            foreach (var item in items)
+            {
+                validation.Formula.Values.Add(item);
+            }
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid item was selected";
+            validation.Error = "Selected item must be in the list";
+        }
+
+        public static void CellTextLengthValidation(ExcelWorksheet worksheet, string column, int limit)
+        {
+            // Add a list validation
+            var validation = worksheet.DataValidations.AddTextLengthValidation(column);
+            // set validation properties
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid text length was entered";
+            validation.Error = string.Format("The text length must be less than or equal to {0}.", limit);
+            validation.Formula.Value = limit;
+            validation.Operator = ExcelDataValidationOperator.lessThanOrEqual;
+        }
+
+        #endregion
+    }
+}

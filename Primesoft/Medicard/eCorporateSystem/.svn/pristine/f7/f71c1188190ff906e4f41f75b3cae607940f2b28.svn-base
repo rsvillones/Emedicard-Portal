@@ -1,0 +1,218 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Mvc.Mailer;
+using System.Net.Mail;
+using Corelib;
+using WebUI.Models;
+using Corelib.Models;
+
+namespace WebUI.Mailers
+{
+    public class UserMailer : MailerBase, IUserMailer
+    {
+        public UserMailer()
+        {
+            MasterName = "_Layout";
+        }
+
+        public virtual MvcMailMessage SendMemberNotification(Member member,string userName,string password)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel()
+                {
+                    Member = member,
+                    Password = password,
+                    UserName = userName,
+                    Url = Helper.AbsoluteAction("Index", "Profile", new { area = "Member" })
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "MembershipEmailNotification",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Membership Email Notification for Member",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/MemberNotification.cshtml")
+                };
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendBatchSummaryNotification(List<Member> members)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel() { 
+                    Members = members
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "BatchSummaryNotification",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Process Batch Summary Notification",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/ProcessBatchNotification.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendCorpAdminMemberProfileNotification(Member member)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel()
+                {
+                    Member = member
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "HRMemberProfileNotification",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Member Profile Notification",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/HrMemberProfileNotification.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendUrgMemberProfileNotification(Member member)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel()
+                {
+                    Member = member
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "URGMemberProfileNotification",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Member Profile Notification",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/UrgMemberProfileNotification.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendMemberActionMemo(ActionMemo actionMemo)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Id == actionMemo.MemberId) ?? new Member();
+                Dependent dependent = null;
+                if(actionMemo.DependentId != null) dependent = db.Dependents.FirstOrDefault(t => !t.Deleted && t.Id == actionMemo.DependentId);
+                var emailViewModel = new EmailViewModel()
+                {
+                    ActionMemo = actionMemo,
+                    Member = member,
+                    Dependent = dependent
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "ActionMemo",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Action Memo",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/MemberActionMemo.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendUrgActionMemo(ActionMemo actionMemo)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Id == actionMemo.MemberId) ?? new Member();
+                Dependent dependent = null;
+                if (actionMemo.DependentId != null) dependent = db.Dependents.FirstOrDefault(t => !t.Deleted && t.Id == actionMemo.DependentId);
+                var emailViewModel = new EmailViewModel()
+                {
+                    ActionMemo = actionMemo,
+                    Member = member,
+                    Dependent = dependent
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "ActionMemo",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Action Memo",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/UrgActionMemo.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendCorpAdminActionMemo(ActionMemo actionMemo)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => !t.Deleted && t.Id == actionMemo.MemberId) ?? new Member();
+                Dependent dependent = null;
+                if (actionMemo.DependentId != null) dependent = db.Dependents.FirstOrDefault(t => !t.Deleted && t.Id == actionMemo.DependentId);
+                var emailViewModel = new EmailViewModel()
+                {
+                    ActionMemo = actionMemo,
+                    Member = member,
+                    Dependent = dependent
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "ActionMemo",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Action Memo",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/CorpAdminActionMemo.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendAmendment(Amendment amendment)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Id == amendment.MemberId) ?? new Member();
+                var dependent = db.Dependents.FirstOrDefault(t => t.Id == amendment.DependentId.Value) ?? new Dependent();
+                var batch = db.EndorsementBatches.FirstOrDefault(t => t.Id == amendment.EndorsementBatchId) ?? new EndorsementBatch();
+                var emailViewModel = new EmailViewModel()
+                {
+                    Amendment = amendment,
+                    Member = member,
+                    Dependent = dependent,
+                    EndorsementBatch = batch
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "Amendment",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Amendment",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/Amendment.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+    }
+}

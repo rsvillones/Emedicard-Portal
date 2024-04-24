@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class ReimbursementWaitingForHospitalBill
+    {
+        #region -- Properties --
+
+        [Column("box_1")]
+        public string BoxOne { get; set; }
+
+        [Column("box_2")]
+        public string BoxTwo { get; set; }
+
+        [Column("box_3")]
+        public string BoxThree { get; set; }
+
+        [Column("hospital_name")]
+        public string HospitalName { get; set; }
+
+        [Column("box_2_txt")]
+        public string BoxTwoRemark { get; set; }
+
+        [Column("loa_no")]
+        public string LoaNumber { get; set; }
+
+        [Column("lacking_date")]
+        public string LackingDate { get; set; }
+
+        [Column("memo_released_date")]
+        public string ReleasedDate { get; set; }
+
+        #endregion
+    }
+}

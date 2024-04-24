@@ -1,0 +1,889 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using Corelib.Models;
+using System.Data.Entity;
+using Corelib.Enums;
+
+namespace Corelib
+{
+    public static class Config
+    {
+        #region -- Properties --
+
+        public static string ConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings["Medicard.eCorporateSystem"].ConnectionString; }
+        }
+
+        public static string LegacyConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings["Medicard.LegacySystem"].ConnectionString; }
+        }
+
+        public static string UtilizationConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings["Medicard.UtilizationSystem"].ConnectionString; }
+        }
+
+        public static string CurrentUser
+        {
+            get
+            {
+                if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.User != null)
+                {
+                    return System.Web.HttpContext.Current.User.Identity.Name;
+                }
+                else
+                {
+                    return "anonymous";
+                }
+            }
+        }
+
+        public static int RecordCountPerPage
+        {
+            get
+            {
+                return Convert.ToInt32(ConfigurationManager.AppSettings["RecordCountPerPage"]);
+            }
+        }
+
+        public static int ItemsPerPage
+        {
+            get
+            {
+                return Convert.ToInt32(ConfigurationManager.AppSettings["ItemsPerPage"]);
+            }
+        }
+
+        public static string GetCurrentUser(HttpContextBase contextBase)
+        {
+            var context = contextBase != null ? contextBase.ApplicationInstance.Context : null;
+            if (context != null && context.User != null)
+            {
+                return System.Web.HttpContext.Current.User.Identity.Name;
+            }
+            else
+            {
+                return "anonymous";
+            }
+        }
+
+        public static string NotificationFromEmail
+        {
+            get { return ConfigurationManager.AppSettings["NotificationFromEmail"]; }
+        }
+
+        public static string Domain
+        {
+            get { return ConfigurationManager.AppSettings["Domain"]; }
+        }
+
+        public static string DomainPath
+        {
+            get { return ConfigurationManager.AppSettings["DomainPath"]; }
+        }
+
+        public static bool AutoLogin
+        {
+            get { return bool.Parse(ConfigurationManager.AppSettings["AutoLogin"]); }
+        }
+
+        public static string EmailDomain
+        {
+            get { return ConfigurationManager.AppSettings["EmailDomain"]; }
+        }
+
+        public static void MapProperties(object source, object destination, bool mapId = true, params string[] propertiesToExclude)
+        {
+            foreach (var pi in destination.GetType().GetProperties())
+            {
+                if (!pi.CanWrite || source.GetType().GetProperty(pi.Name) == null || (!mapId && pi.Name == "Id") || (propertiesToExclude != null && propertiesToExclude.Contains(pi.Name)))
+                    continue;
+
+                destination.GetType().GetProperty(pi.Name).SetValue(destination, source.GetType().GetProperty(pi.Name).GetValue(source));
+            }
+        }
+
+        public static string BenefitsAndExclusionsUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BenefitsAndExclusionsUrl"];
+            }
+        }
+
+        public static string BenefitsAndExclusionsBaseUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BenefitsAndExclusionsBaseUrl"];
+            }
+        }
+
+        public static string BenefitsAndExclusionsCssPath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BenefitsAndExclusionsCssPath"];
+            }
+        }
+
+        public static IEnumerable<LegacyMember> GetActiveMembers(IdentityDataContext db, LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeDb = false;
+            var disposeLegacyDb = false;
+
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = new List<LegacyMember>();
+            var members = db.Members.Include(t => t.Dependents).Where(t => t.AccountCode == accountCode);
+            var counter = 1;
+            foreach (var member in members)
+            {
+                var lm = new LegacyMember();
+                MapProperties(member, lm);
+                lm.Code = String.Format("MEM{0:00000}", counter);
+                //lm.Type = "Principal";
+                returnValue.Add(lm);
+                counter++;
+                var principalMemberCode = lm.Code;
+                foreach (var dependent in member.Dependents)
+                {
+                    lm = new LegacyMember();
+                    MapProperties(dependent, lm);
+                    lm.Code = String.Format("MEM{0:00000}", counter);
+                    //lm.Type = "Dependent";
+                    lm.PrincipalMemberCode = principalMemberCode;
+                    //lm.PrincipalLastName = member.LastName;
+                    //lm.PrincipalFirstName = member.FirstName;
+                    //lm.PrincipalMiddleName = member.MiddleName;
+                    lm.EmployeeNumber = member.EmployeeNumber;
+                    returnValue.Add(lm);
+                    counter++;
+                }
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static string ActionMemoDocumentsPath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoDocumentsPath"];
+            }
+        }
+
+        public static string TransmittalDocumentsPath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["TransmittalDocumentsPath"];
+            }
+        }
+
+        public static string UrgActionMemoTemplatePath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["UrgActionMemoTemplatePath"];
+            }
+        }
+
+        public static string UrgActionMemoToMemberTemplatePath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["UrgActionMemoToMemberTemplatePath"];
+            }
+        }
+
+        public static string UploadedFilesPath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["UploadedFilesPath"];
+            }
+        }
+
+        public static int CheckActionMemoMinutes
+        {
+            get
+            {
+                return int.Parse(ConfigurationManager.AppSettings["CheckActionMemoMinutes"]);
+            }
+        }
+
+        public static int CheckNewCorporateAccountsMinutes
+        {
+            get
+            {
+                return int.Parse(ConfigurationManager.AppSettings["CheckNewCorporateAccountsMinutes"]);
+            }
+        }
+
+        public static string SendEmailNotificationTime
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SendEmailNotificationTime"];
+            }
+        }
+
+        public static int CheckMemberProcessMinutes
+        {
+            get
+            {
+                return int.Parse(ConfigurationManager.AppSettings["CheckMemberProcessMinutes"]);
+            }
+        }
+
+        public static string BaseUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["BaseUrl"];
+            }
+        }
+
+        public static int ActionMemoDueDateDays
+        {
+            get
+            {
+                return int.Parse(ConfigurationManager.AppSettings["ActionMemoDueDateDays"]);
+            }
+        }
+
+        public static int PasswordExpirationDays
+        {
+            get
+            {
+                return int.Parse(ConfigurationManager.AppSettings["PasswordExpirationDays"]);
+            }
+        }
+
+        #endregion
+
+        #region -- Email Template Paths --
+
+        public static string SmtpServer
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SmtpServer"];
+            }
+        }
+
+        public static string SmtpUsername
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SmtpUsername"];
+            }
+        }
+
+        public static string SmtpPassword
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SmtpPassword"];
+            }
+        }
+
+        public static int SmtpPort
+        {
+            get
+            {
+                return int.Parse(ConfigurationManager.AppSettings["SmtpPort"]);
+            }
+        }
+
+        public static string EmailLayout
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["EmailLayout"];
+            }
+        }
+
+        public static string NewAccess
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["NewAccess"];
+            }
+        }
+
+        public static string ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin"];
+            }
+        }
+
+        public static string ProcessNewDirectlyToUrgByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessNewDirectlyToUrgByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string ProcessNewEndorsementBatchByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessNewEndorsementBatchByCorporateAdminToMember"];
+            }
+        }
+
+        public static string SubmitNewMemberByMemberToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitNewMemberByMemberToCorporateAdmin"];
+            }
+        }
+
+        public static string SubmitNewMemberByMemberToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitNewMemberByMemberToMember"];
+            }
+        }
+
+        public static string SubmitNewMemberByMemberToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitNewMemberByMemberToUrg"];
+            }
+        }
+
+        public static string ApproveNewMemberByUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ApproveNewMemberByUrgToCorporateAdmin"];
+            }
+        }
+
+        public static string ApproveNewMemberByUrgToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ApproveNewMemberByUrgToMember"];
+            }
+        }
+
+        public static string ActionMemoByUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoByUrgToCorporateAdmin"];
+            }
+        }
+
+        public static string ActionMemoForCancellationByUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoForCancellationByUrgToCorporateAdmin"];
+            }
+        }
+
+        public static string ActionMemoByUrgToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoByUrgToMember"];
+            }
+        }
+
+        public static string ActionMemoReplyByMemberToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoReplyByMemberToMember"];
+            }
+        }
+
+        public static string ActionMemoReplyByCorporateAdminToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoReplyByCorporateAdminToCorporateAdmin"];
+            }
+        }
+
+        public static string ActionMemoReplyByMemberToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoReplyByMemberToCorporateAdmin"];
+            }
+        }
+
+        public static string ActionMemoReplyByMemberToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoReplyByMemberToUrg"];
+            }
+        }
+
+        public static string ActionMemoReplyByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoReplyByCorporateAdminToMember"];
+            }
+        }
+
+        public static string ActionMemoReplyByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ActionMemoReplyByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string TransmittalByUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["TransmittalByUrgToCorporateAdmin"];
+            }
+        }
+
+        public static string TransmittalByUrgToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["TransmittalByUrgToMember"];
+            }
+        }
+
+        public static string ProcessRenewalByCorporateAdminToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessRenewalByCorporateAdminToCorporateAdmin"];
+            }
+        }
+
+        public static string ProcessRenewalByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessRenewalByCorporateAdminToMember"];
+            }
+        }
+
+        public static string ProcessRenewalByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessRenewalByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string ProcessCancelledMemberByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessCancelledMemberByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string ProcessCancelledMemberByCorporateAdminToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ProcessCancelledMemberByCorporateAdminToCorporateAdmin"];
+            }
+        }
+        
+        #region -- ID Replacements --
+
+        public static string SubmitIdReplacementByMemberToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitIdReplacementByMemberToMember"];
+            }
+        }
+
+        public static string SubmitIdReplacementByMemberToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitIdReplacementByMemberToCorporateAdmin"];
+            }
+        }
+
+        public static string SubmitIdReplacementByMemberToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitIdReplacementByMemberToUrg"];
+            }
+        }
+
+        public static string SubmitIdReplacementByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitIdReplacementByCorporateAdminToMember"];
+            }
+        }
+
+        public static string SubmitIdReplacementByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitIdReplacementByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string CancelledIdReplacementByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["CancelledIdReplacementByCorporateAdminToMember"];
+            }
+        }
+
+        public static string DisapproveIdReplacementByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DisapproveIdReplacementByCorporateAdminToMember"];
+            }
+        }
+
+        public static string DisapproveIdReplacementByUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DisapproveIdReplacementByUrgToCorporateAdmin"];
+            }
+        }
+
+        public static string DisapproveIdReplacementByUrgToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DisapproveIdReplacementByUrgToMember"];
+            }
+        }
+
+        #endregion
+
+        #region -- Amendments --
+
+        public static string SubmitAmendmentByMemberToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAmendmentByMemberToMember"];
+            }
+        }
+
+        public static string SubmitAmendmentByMemberToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAmendmentByMemberToCorporateAdmin"];
+            }
+        }
+
+        public static string SubmitAmendmentByMemberToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAmendmentByMemberToUrg"];
+            }
+        }
+
+        public static string SubmitAmendmentByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAmendmentByCorporateAdminToMember"];
+            }
+        }
+
+        public static string SubmitAmendmentByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAmendmentByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string CancelledAmendmentByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["CancelledAmendmentByCorporateAdminToMember"];
+            }
+        }
+
+        public static string DisapproveAmendmentByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DisapproveAmendmentByCorporateAdminToMember"];
+            }
+        }
+
+        public static string DeclinedAmendmentByUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DeclinedAmendmentByUrgToCorporateAdmin"];
+            }
+        }
+
+        public static string DeclinedAmendmentByUrgToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DeclinedAmendmentByUrgToMember"];
+            }
+        }
+
+        #endregion
+
+        #region -- Additional Dependent --
+
+        public static string SubmitAdditionalDependentByMemberToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAdditionalDependentByMemberToMember"];
+            }
+        }
+
+        public static string SubmitAdditionalDependentByMemberToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAdditionalDependentByMemberToCorporateAdmin"];
+            }
+        }
+
+        public static string SubmitAdditionalDependentByMemberToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAdditionalDependentByMemberToUrg"];
+            }
+        }
+
+        public static string SubmitAdditionalDependentByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAdditionalDependentByCorporateAdminToMember"];
+            }
+        }
+
+        public static string SubmitAdditionalDependentByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitAdditionalDependentByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string CancelledAdditionalDependentByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["CancelledAdditionalDependentByCorporateAdminToMember"];
+            }
+        }
+
+        public static string DisapproveAdditionalDependentByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DisapproveAdditionalDependentByCorporateAdminToMember"];
+            }
+        }
+
+        #endregion
+
+        #region -- Dependent Cancellation --
+
+        public static string SubmitDependentCancellationByMemberToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitDependentCancellationByMemberToMember"];
+            }
+        }
+
+        public static string SubmitDependentCancellationByMemberToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitDependentCancellationByMemberToCorporateAdmin"];
+            }
+        }
+
+        public static string SubmitDependentCancellationByMemberToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitDependentCancellationByMemberToUrg"];
+            }
+        }
+
+        public static string SubmitDependentCancellationByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitDependentCancellationByCorporateAdminToMember"];
+            }
+        }
+
+        public static string SubmitDependentCancellationByCorporateAdminToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SubmitDependentCancellationByCorporateAdminToUrg"];
+            }
+        }
+
+        public static string CancelledDependentCancellationByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["CancelledDependentCancellationByCorporateAdminToMember"];
+            }
+        }
+
+        public static string DisapproveDependentCancellationByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DisapproveDependentCancellationByCorporateAdminToMember"];
+            }
+        }
+
+        #endregion
+
+        #region -- Endorsement Listing --
+
+        public static string ApproveMembershipByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ApproveMembershipByCorporateAdminToMember"];
+            }
+        }
+
+        public static string CancelMembershipByCorporateAdminToMember
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["CancelMembershipByCorporateAdminToMember"];
+            }
+        }
+
+        #endregion
+
+        #region -- Receiving Entry --
+
+        public static string ReceiveEntryUrgToUrg
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ReceiveEntryUrgToUrg"];
+            }
+        }
+
+        public static string ReceiveEntryUrgToCorporateAdmin
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ReceiveEntryUrgToCorporateAdmin"];
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region -- Functions --
+
+        //public static string GenerateLegacyMapCode(IdentityDataContext db)
+        //{
+        //    var disposeDb = false;
+
+        //    if (db == null)
+        //    {
+        //        db = new IdentityDataContext();
+        //        disposeDb = true;
+        //    }
+
+        //    var randomString = "EMED" + System.Web.Security.Membership.GeneratePassword(21, 0).ToUpper();
+        //    randomString = System.Text.RegularExpressions.Regex.Replace(randomString, @"[^a-zA-Z0-9]", m => "9");
+        //    while (db.Members.Any(t => t.LegacyMapCode == randomString) || db.Dependents.Any(t => t.LegacyMapCode == randomString) || db.EndorsementBatches.Any(t => t.ReferenceNumber == randomString))
+        //    {
+        //        randomString = "EMED" + System.Web.Security.Membership.GeneratePassword(21, 0).ToUpper();
+        //        randomString = System.Text.RegularExpressions.Regex.Replace(randomString, @"[^a-zA-Z0-9]", m => "9");
+        //    }
+
+        //    if (disposeDb)
+        //    {
+        //        db.Dispose();
+        //        db = null;
+        //    }
+
+        //    return String.Format("{0}", randomString);
+        //}
+        
+        public static bool IsSimpleAmend(RequestDataType requestDataType)
+        {
+            return requestDataType == RequestDataType.LastName || requestDataType == RequestDataType.FirstName || requestDataType == RequestDataType.MiddleName ||
+                requestDataType == RequestDataType.DateOfBirth || requestDataType == RequestDataType.Gender || requestDataType == RequestDataType.Address ||
+                requestDataType == RequestDataType.Telephone;
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,163 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using Corelib.Enums;
+
+namespace WebUI.Controllers
+{
+    public class AmendmentsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region  -- Properties --
+
+        private Member Member { get; set; }
+
+        private Dependent Dependent { get; set; }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public ActionResult Index(Guid? memberGuid, string message, string messageType)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (memberGuid == null && !db.Members.Any(t => t.Guid == memberGuid && accountCodes.Contains(t.AccountCode))) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            this.Member = db.Members.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Guid == memberGuid);
+            var model = db.Amendments
+            .Include(t => t.EndorsementBatch)
+            .Include(t => t.DocumentType)
+            .Include(t => t.Reason)
+            .Where(t => accountCodes.Contains(t.EndorsementBatch.AccountCode) && t.MemberId == this.Member.Id &&
+                (t.Status == RequestStatus.Disapproved || t.Status == RequestStatus.Approved || t.Status == RequestStatus.ForProcessing))
+            .OrderByDescending(t => t.RequestDate)
+            .ToList();
+
+            ViewBag.Message = message;
+            ViewBag.MessageType = messageType;
+
+            ViewBag.Member = this.Member;
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && accountCodes.Contains(t.AccountCode)).ToList();
+            ViewBag.Dependents = db.Dependents.Include(t => t.Member).Where(t => !t.Deleted && accountCodes.Contains(t.Member.AccountCode)).ToList();
+
+            return View(model);
+        }
+
+        public ActionResult Amendment(Guid? guid)
+        {
+            if (guid == null && !db.Amendments.Any(t => t.Guid == guid)) return HttpNotFound();
+            var model = db.Amendments.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Guid == guid);
+            this.Member = db.Members.FirstOrDefault(t => t.Id == model.MemberId);
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+
+            ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlRequestForAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDataTypeAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDependentAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.DestroyPicker = "True";
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && accountCodes.Contains(t.AccountCode)).OrderBy(t => t.LastName);
+            ViewBag.Member = this.Member;
+            return View(model);
+        }
+
+        public ActionResult ApproveAmendment(Guid? guid)
+        {
+            var amendment = db.Amendments.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (amendment == null) throw new Exception("Amendment Not Found!.");
+
+            amendment.Status = Corelib.Enums.RequestStatus.Approved;
+            db.Entry(amendment).State = EntityState.Modified;
+            db.SaveChanges();
+            Helper.UrgAmendment(System.Web.HttpContext.Current, amendment);
+            var member = db.Members.FirstOrDefault(t => t.Id == amendment.MemberId);
+            return RedirectToAction("Index", new { memberGuid = member.Guid });
+        }
+
+        public ActionResult DisapproveAmendment(Guid? guid)
+        {
+            var amendment = db.Amendments.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (amendment == null) throw new Exception("Amendment Not Found!.");
+
+            amendment.Status = Corelib.Enums.RequestStatus.Disapproved;
+            db.Entry(amendment).State = EntityState.Modified;
+            db.SaveChanges();
+            Helper.UrgAmendment(System.Web.HttpContext.Current, amendment);
+            var member = db.Members.FirstOrDefault(t => t.Id == amendment.MemberId);
+            return RedirectToAction("Index", new { memberGuid = member.Guid });
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private ActionResult Validate(Guid? memberGuid, Guid? dependentGuid)
+        {
+            if (!memberGuid.HasValue && !dependentGuid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (dependentGuid.HasValue)
+            {
+                this.Dependent = db.Dependents.Include(t => t.Member).FirstOrDefault(t => t.Guid == dependentGuid);
+                if (Dependent != null)
+                {
+                    this.Member = this.Dependent.Member;
+                }
+            }
+            else
+            {
+                this.Member = db.Members.FirstOrDefault(t => t.Guid == memberGuid);
+            }
+
+            if (this.Member == null && this.Dependent == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            return null;
+        }
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.Amendments.Any(t => t.Guid == guid))
+            {
+                var amendment = db.Amendments.FirstOrDefault(t => t.Guid == guid);
+                if (amendment.DocumentFile != null || !string.IsNullOrEmpty(amendment.DocumentContentType) || !string.IsNullOrEmpty(amendment.DocumentFileName))
+                { return File(amendment.DocumentFile, amendment.DocumentContentType, amendment.DocumentFileName); }
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

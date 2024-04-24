@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    @*<div class="col-md-6">
+        <div id="panel-title">Account Information</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+            </div>
+        </div>
+    </div>*@
+    
+    @if (Helper.IsMember())
+    {
+        <div class="col-md-12">
+            <div id="panel-title">My Action Memos</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Partial("_MyActionMemos", ViewBag.ActionMemos as IEnumerable<ActionMemo>)
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

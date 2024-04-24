@@ -1,0 +1,399 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewApplicationManagement, CanViewAdditionalDependents, CanAddAdditionalDependents, CanEditAdditionalDependents")]
+    public class AdditionalDependentsController : BaseAccountController
+    {
+        #region  -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewApplicationManagement, CanViewAdditionalDependents, CanAddAdditionalDependents, CanEditAdditionalDependents")]
+        public ActionResult Index(string accountCode, int? page, string messageType, string message, string dependentName, string memberName, DateTime? applicationDate)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = db.AdditionalDependents
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Relationship)
+                .Where(t => t.AccountCode == this.LegacyAccount.Code && !t.Deleted &&
+                    t.Status != RequestStatus.Saved)
+                .OrderByDescending(t => t.ApplicationDate).ToList();
+
+            if (!string.IsNullOrEmpty(dependentName))
+            {
+                model = model.Where(t => t.FirstName.Contains(dependentName) || t.MiddleName.Contains(dependentName) || t.LastName.Contains(dependentName)).ToList();
+            }
+            if (!string.IsNullOrEmpty(memberName))
+            {
+                model = model.Where(t => t.MemberName.Contains(memberName)).ToList();
+            }
+            var applicationDateString = "";
+            if (applicationDate != null)
+            {
+                model = model.Where(t => t.ApplicationDate.Date == applicationDate.Value.Date).ToList();
+                applicationDateString = applicationDate.Value.ToString("MM/dd/yyyy");
+            }
+            ViewBag.SearchValue = String.Format("{0} {1} {2}", memberName, dependentName, applicationDateString).Trim();
+
+            ViewBag.DependentName = dependentName;
+            ViewBag.MemberName = memberName;
+            ViewBag.ApplicationDate = applicationDateString;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+            ViewBag.Members = db.Members.Where(t => !t.Deleted).ToList();
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+            ViewBag.BypassMedicalHistory = accountSetting.BypassMedicalHistory;
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddAdditionalDependents")]
+        public ActionResult Create(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = new AdditionalDependent()
+            {
+                AccountCode = accountCode,
+                Status = RequestStatus.Submitted
+            };
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+            ViewBag.BypassMedicalHistory = accountSetting.BypassMedicalHistory;
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddAdditionalDependents")]
+        public ActionResult Create(AdditionalDependent model, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            if (submit == "Submit Request" && !Helper.IsAdditionalDependentMedicalHistoryComplete(db, model.AccountCode, model))
+            {
+                ModelState.AddModelError("", "Please complete your dependent's medical history before submitting.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (model.FileWrapper != null)
+                {
+                    using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                    {
+                        model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                        model.DocumentFileName = model.FileWrapper.FileName;
+                        model.DocumentContentType = model.FileWrapper.ContentType;
+                    }
+                }
+
+                var endorsementBatch = new EndorsementBatch()
+                {
+                    Deadline = DateTime.Now,
+                    //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                    Date = DateTime.Now,
+                    EndorsementType = Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE,
+                    BatchType = Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE,
+                    EndorsementCount = 1,
+                    AccountCode = model.AccountCode,
+                    Status = Corelib.Enums.EndorsementBatchStatus.New
+                };
+                db.EndorsementBatches.Add(endorsementBatch);
+
+                model.EndorsementBatch = endorsementBatch;
+                if (submit == "Submit Request")
+                {
+                    model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    endorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                    Emailer.Emailer.SendSubmitAdditionalDependentCorporateAdminEmailInstant(model);
+                }
+                db.AdditionalDependents.Add(model);
+                db.SaveChanges();
+                if (submit == "Continue")
+                {
+                    return RedirectToAction("MedicalHistory", new { guid = model.Guid });
+                }
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == model.AccountCode) ?? new AccountSetting();
+            ViewBag.BypassMedicalHistory = accountSetting.BypassMedicalHistory;
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditAdditionalDependents")]
+        public ActionResult Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == model.AccountCode) ?? new AccountSetting();
+            ViewBag.BypassMedicalHistory = accountSetting.BypassMedicalHistory;
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditAdditionalDependents")]
+        public ActionResult Edit(AdditionalDependent model, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            if (submit == "Submit Request" && !Helper.IsAdditionalDependentMedicalHistoryComplete(db, model.AccountCode, model))
+            {
+                ModelState.AddModelError("", "Please complete your dependent's medical history before submitting.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (model.FileWrapper != null)
+                {
+                    using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                    {
+                        model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                        model.DocumentFileName = model.FileWrapper.FileName;
+                        model.DocumentContentType = model.FileWrapper.ContentType;
+                    }
+                }
+
+                var additionDependent = db.AdditionalDependents.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                db.Entry(additionDependent).CurrentValues.SetValues(model);
+                if (submit == "Submit Request")
+                {
+                    additionDependent.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    additionDependent.EndorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                    Emailer.Emailer.SendSubmitAdditionalDependentCorporateAdminEmailInstant(model);
+                }
+                db.Entry(additionDependent).State = EntityState.Modified;
+                db.SaveChanges();
+                if (submit == "Continue")
+                {
+                    return RedirectToAction("MedicalHistory", new { guid = model.Guid });
+                }
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == model.AccountCode) ?? new AccountSetting();
+            ViewBag.BypassMedicalHistory = accountSetting.BypassMedicalHistory;
+
+            return View(model);
+        }
+
+        public ActionResult CancelApplication(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.AdditionalDependents.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            model.Status = Corelib.Enums.RequestStatus.CancelledRequest;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendCancelledAdditionalDependentCorporateAdminToMemberEmailInstant(model);
+            return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Success!", message = "Application for Additional Dependent successfully cancelled." });
+        }
+
+        public ActionResult ApproveApplication(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.AdditionalDependents.Include(t => t.EndorsementBatch).FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            if (!Helper.IsAdditionalDependentMedicalHistoryComplete(db, model.AccountCode, model))
+            {
+                return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Error!", message = "Please complete your dependent's medical history before submitting." });
+            }
+
+            model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+            model.EndorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendSubmitAdditionalDependentCorporateAdminEmailInstant(model);
+            return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Success!", message = "Application for Additional Dependent successfully approved." });
+        }
+
+        public ActionResult DisapproveApplication(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.AdditionalDependents.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            model.Status = Corelib.Enums.RequestStatus.CorporateAdminDisapproved;
+            db.Entry(model).State = EntityState.Modified;
+            db.SaveChanges();
+            Emailer.Emailer.SendDisapproveAdditionalDependentCorporateAdminToMemberEmailInstant(model);
+            return RedirectToAction("Index", new { accountCode = model.AccountCode, messageType = "Success!", message = "Application for Additional Dependent successfully disapproved." });
+        }
+
+        #endregion
+
+        #region -- Medical History --
+
+        [Authorize(Roles = "SysAd, CanAddAdditionalDependents, CanEditAdditionalDependents")]
+        public ActionResult MedicalHistory(Guid? guid, string messageType, string message)
+        {
+            var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateAccountCode(model.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+            var member = db.Members.FirstOrDefault(t => t.Code == model.MemberCode && !t.Deleted);
+
+            Helper.IsAdditionalDependentMedicalHistoryComplete(db, model.AccountCode, model);
+
+            var viewModel = new AdditionalDependentMedicalHistoryViewModel()
+            {
+                AdditionalDependentMedicalHistories = db.AdditionalDependentMedicalHistories
+                .Include(t => t.Question)
+                .Include(t => t.Question.QuestionGroup)
+                .Where(t => t.AdditionalDependentId == model.Id)
+                .OrderBy(t => t.Question.QuestionGroup.DisplayOrder)
+                .ThenBy(t => t.Question.DisplayOrder)
+                .ThenBy(t => t.Question.Description).ToList()
+            };
+
+            base.AdditionalDependentReadOnlyAttribute(model);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddAdditionalDependents, CanEditAdditionalDependents")]
+        public ActionResult MedicalHistory(string accountCode, AdditionalDependentMedicalHistoryViewModel model, string submit)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                int? additionalDependentId = null;
+                if (model.AdditionalDependentMedicalHistories != null)
+                {
+                    foreach (var additionalDependentMedicalHistory in model.AdditionalDependentMedicalHistories)
+                    {
+                        db.Entry(additionalDependentMedicalHistory).State = EntityState.Modified;
+                        additionalDependentId = additionalDependentMedicalHistory.AdditionalDependentId;
+                    }
+
+                    if (submit == "Submit Request")
+                    {
+                        var additionalDependent = db.AdditionalDependents.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Id == additionalDependentId);
+                        if (additionalDependent != null)
+                        {
+                            additionalDependent.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                            additionalDependent.EndorsementBatch.Status = EndorsementBatchStatus.ApprovedByCorporateAdmin;
+                            db.Entry(additionalDependent).State = EntityState.Modified;
+                            Emailer.Emailer.SendSubmitAdditionalDependentCorporateAdminEmailInstant(additionalDependent);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Please complete your dependent's medical history before submitting.");
+                            foreach (var additionalDependentMedicalHistory in model.AdditionalDependentMedicalHistories)
+                            {
+                                additionalDependentMedicalHistory.Question = db.Questions.Find(additionalDependentMedicalHistory.QuestionId);
+                            }
+                            return View(model);
+                        }
+                    }
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode });
+            }
+
+            foreach (var additionalDependentMedicalHistory in model.AdditionalDependentMedicalHistories)
+            {
+                additionalDependentMedicalHistory.Question = db.Questions.Find(additionalDependentMedicalHistory.QuestionId);
+            }
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.AdditionalDependents.Any(t => t.Guid == guid))
+            {
+                var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region -- Process Other Info --
+
+        private void ProcessOtherInfo(AdditionalDependent model)
+        {
+            var dependentPlans = Helper.GetLegacyRoomRates(model.AccountCode, false);
+            var cities = legacyDb.LegacyCities.OrderBy(t => t.Name).ToList();
+            var provinces = legacyDb.LegacyProvinces.OrderBy(t => t.Name).ToList();
+
+            ViewBag.AppliedPlanList = new SelectList(dependentPlans, "Id", "LongDescription", model.AppliedPlan);
+            ViewBag.OptionalPlanList = new SelectList(dependentPlans, "Id", "LongDescription", model.OptionalPlan);
+            ViewBag.CityList = new SelectList(cities, "Code", "Name", model.City);
+            ViewBag.ProvinceList = new SelectList(provinces, "Code", "Name", model.Province);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, model.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, model.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(db.Relationships, "Code", "Description", model.RelationshipCode);
+        }
+
+        #endregion
+    }
+}

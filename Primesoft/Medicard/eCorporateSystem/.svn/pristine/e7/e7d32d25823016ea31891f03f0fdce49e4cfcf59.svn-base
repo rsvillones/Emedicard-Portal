@@ -1,0 +1,81 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section head{
+    @RenderSection("head", required: false)
+}
+<div class="row">
+    <div class="col-lg-2">
+        <div id='side-cssmenu'>
+            <ul>
+
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewAccountInformation"))
+                {
+                    <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "AccountInformation" ? "active-menu" : "")"><a href='~/CorporateAdministrator/AccountInformation/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-home"></i><span>Account Information</span></a></li>
+                }
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewBenefitsAndExclusions"))
+                {
+                    <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "BenefitsAndExclusions" ? "active-menu" : "")"><a href='~/CorporateAdministrator/BenefitsAndExclusions/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Benefits and Exclusions</span></a></li>
+                }
+                <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "UtilizationReporting" ? "active-menu" : "")"><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Utilization Reporting</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewUtilizationReportException"))
+                {
+                    <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "UtilizationReportException" ? "active-menu" : "")"><a href='~/CorporateAdministrator/UtilizationReportExceptions/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Utilization Report Exceptions</span></a></li>
+                }
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewActiveMembers"))
+                {
+                    <li class="has-sub">
+                        <a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Active Members</span><i class="subArrow glyphicon glyphicon-chevron-right"></i></a>
+                        <ul>
+                            <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "ActivePricipalMembers" ? "active-menu" : "")"><a href='~/CorporateAdministrator/ActiveMembers/ActivePricipalMembers/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Principal</span></a></li>
+                            <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "ActiveDependentMembers" ? "active-menu" : "")"><a href='~/CorporateAdministrator/ActiveMembers/ActiveDependentMembers/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Dependent</span></a></li>
+                        </ul>
+                    </li>
+                }
+                <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "ResignedMembers" ? "active-menu" : "")"><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Resigned Members</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewMembershipEndorsements"))
+                {
+                    <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "Endorsement" ? "active-menu" : "")"><a href='~/CorporateAdministrator/Endorsement/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Membership Endorsements</span></a></li>
+                }
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewEndorsementApprovals"))
+                {
+                    <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "EndorsementApprovals" ? "active-menu" : "")"><a href='~/CorporateAdministrator/EndorsementApprovals/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Endorsement Approvals</span></a></li>
+                }
+                <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "ECUScheduling" ? "active-menu" : "")"><a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>ECU Scheduling</span></a></li>
+                @if (User.IsInRole("SysAd") || User.IsInRole("CanViewApplicationManagement"))
+                {
+                    <li class="has-sub">
+                        <a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Application Management</span><i class="subArrow glyphicon glyphicon-chevron-right"></i></a>
+                        <ul>
+                            <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "AdditionalDependents" ? "active-menu" : "")"><a href='~/CorporateAdministrator/AdditionalDependents/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Application for Additional Dependent</span></a></li>
+                            <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "DependentCancellations" ? "active-menu" : "")"><a href='~/CorporateAdministrator/DependentCancellations/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Cancellation of Dependent Membership</span></a></li>
+                        </ul>
+                    </li>
+                }
+                <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "ActionMemos" ? "active-menu" : "")"><a href='~/CorporateAdministrator/ActionMemos/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Action Memo Management</span></a></li>
+
+                <li class="has-sub">
+                    <a href='#'><i class="glyphicon glyphicon-eye-open"></i><span>Request Management</span><i class="subArrow glyphicon glyphicon-chevron-right"></i></a>
+                    <ul>
+                        @if (User.IsInRole("SysAd") || User.IsInRole("CanViewRequestManagement"))
+                        {
+                            <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "IdReplacements" ? "active-menu" : "")"><a href='~/CorporateAdministrator/IdReplacements/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>ID Replacement</span></a></li>
+                        }
+                        @if (User.IsInRole("SysAd") || User.IsInRole("CanViewRequestManagement"))
+                        {
+                            <li class="@((string)HttpContext.Current.Request.RequestContext.RouteData.Values["controller"] == "Amendments" ? "active-menu" : "")"><a href='~/CorporateAdministrator/Amendments/Index/@(ViewBag.AccountCode)'><i class="glyphicon glyphicon-eye-open"></i><span>Amendment</span></a></li>
+                        }
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-10">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("scripts", required: false)
+
+}

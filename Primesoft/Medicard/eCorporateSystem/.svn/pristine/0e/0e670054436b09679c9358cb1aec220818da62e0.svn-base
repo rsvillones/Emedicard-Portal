@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Mvc.Mailer;
+using Corelib.Models;
+
+namespace WebUI.Mailers
+{
+    public interface IUserMailer
+    {
+        MvcMailMessage SendMemberNotification(Member member, string username, string password);
+
+        MvcMailMessage SendBatchSummaryNotification(List<Member> members);
+
+        MvcMailMessage SendCorpAdminMemberProfileNotification(Member member);
+
+        MvcMailMessage SendUrgMemberProfileNotification(Member member);
+
+        MvcMailMessage SendMemberActionMemo(ActionMemo actionMemo);
+
+        MvcMailMessage SendUrgActionMemo(ActionMemo actionMemo); 
+
+        MvcMailMessage SendAmendment(Amendment amendment);
+
+    }
+}

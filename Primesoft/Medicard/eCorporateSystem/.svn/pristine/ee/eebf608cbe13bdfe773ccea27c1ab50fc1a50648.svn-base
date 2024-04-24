@@ -1,0 +1,84 @@
+﻿@model Corelib.Models.CancelledMember
+
+@{
+    ViewBag.Title = "Cancel Membership";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+
+    var memberList = new SelectList(ViewBag.MemberList, "Code", "FullName", Model.MemberCode);
+}
+
+@using (Html.BeginForm("CancelledMember", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(false);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.EndorsementBatchId);
+    @Html.HiddenFor(model => model.Status);
+    @Html.HiddenFor(model => model.Timestamp);
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Cancel Membership</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadNewApplication">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12" id="MemberContainer">
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-2">@Html.Label("MemberCode", "Member Name:")</label>
+                                                    <div class="col-lg-7">
+                                                        @Html.DropDownList("MemberCode", (IEnumerable<SelectListItem>)memberList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <div class="no-color pull-right">
+                                                            @if (!ViewBag.ReadOnly)
+                                                            {
+                                                                <input type="submit" name="Submit" value="Cancel" class="btn btn-primary" />
+                                                            }
+                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="MemberProfile">
+        @Html.Partial("_CancelledMember", Model.LegacyMember ?? new LegacyMember())
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+        function onChangeMember(input) {
+            var option = {
+                url: '@Url.Action("GetMemberProfile")',
+                type: 'post',
+                data: {
+                    memberCode: input.val(),
+                    accountCode: '@ViewBag.AccountCode'
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#MemberProfile').html(data);
+            });
+        }
+    </script>
+}

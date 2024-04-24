@@ -1,0 +1,80 @@
+﻿using Corelib.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using Corelib;
+using PagedList;
+using System.Net;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles="SysAd, CanViewEndorsementApprovals")]
+    public class EndorsementApprovalsController : BaseAccountController
+    {
+        #region -- ActionResults --
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementApprovals")]
+        public ActionResult Index(string accountCode, string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.Members.Include(t => t.Dependents)
+                .Where(t => t.AccountCode == this.LegacyAccount.Code && t.Status == MembershipStatus.SubmittedToCorporateAdmin)
+                .OrderBy(t => t.LastName)
+                .ThenBy(t => t.FirstName)
+                .ThenBy(t => t.MiddleName);
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+     
+        [Authorize(Roles = "SysAd, CanViewEndorsementApprovals")]
+        public ActionResult MemberProfile(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (!guid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Members
+                .Include(t => t.Dependents)
+                .Include(t => t.MedicalHistories)
+                .Include(t => t.MedicalHistories.Select(mh => mh.Question))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories.Select(mh => mh.Question)))
+                .FirstOrDefault(t => t.Guid == guid);
+
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (model.AccountCode != accountCode) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementApprovals")]
+        public ActionResult Approve(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (!guid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.Members.FirstOrDefault(t => t.Guid == guid);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (model.AccountCode != accountCode) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            model.Status = MembershipStatus.CorporateAdminApproved;
+            db.SaveChanges();
+
+            Helper.UrgMemberProfileNotification(System.Web.HttpContext.Current, model, model.AccountCode);
+
+            return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Success", message = "Membership endorsement is now approved and summitted to underwriting." });
+        }
+
+        #endregion
+    }
+}

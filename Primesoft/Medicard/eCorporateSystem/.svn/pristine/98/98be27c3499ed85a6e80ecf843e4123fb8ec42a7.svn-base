@@ -1,0 +1,77 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Corelib.Models;
+namespace Corelib
+{
+    public static class ReportHelper
+    {
+
+        public static IEnumerable<LegacyMember> ActivePrincipalMembers(string accountCode)
+        {
+            ////using (var db = new StoredProceduresDataContext(Config.ConnectionString))
+            ////{
+            ////    return db.ActivePrincipalMembers(accountCode).ToList();
+            ////}
+            using (var db = new IdentityDataContext())
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var activeMembers = Config.GetActiveMembers(db, legacyDb, accountCode);
+                    return activeMembers.Where(t => t.Type == "Principal").ToList();
+                }
+            }
+        }
+
+        public static IEnumerable<LegacyMember> ActiveDependentMembers(string accountCode)
+        {
+            ////using (var db = new StoredProceduresDataContext(Config.ConnectionString))
+            ////{
+            ////    return db.ActiveDependentMembers(accountCode).ToList();
+            ////}
+            using (var db = new IdentityDataContext())
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var activeMembers = Config.GetActiveMembers(db, legacyDb, accountCode);
+                    return activeMembers.Where(t => t.Type == "Dependent").ToList();
+                }
+            }
+        }
+
+        public static IEnumerable<LegacyCancelledMember> CancelledPrincipleMembers(string accountCode)
+        {
+            ////using (var db = new StoredProceduresDataContext(Config.ConnectionString))
+            ////{
+            ////    return db.ActiveDependentMembers(accountCode).ToList();
+            ////}
+            using (var db = new IdentityDataContext())
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var cancelledMembers = Config.GetCancelledMembers(db, legacyDb, accountCode);
+                    return cancelledMembers.Where(t => t.Type == "Principal").ToList();
+                }
+            }
+        }
+
+        public static IEnumerable<LegacyCancelledMember> CancelledDependentMembers(string accountCode)
+        {
+            ////using (var db = new StoredProceduresDataContext(Config.ConnectionString))
+            ////{
+            ////    return db.ActiveDependentMembers(accountCode).ToList();
+            ////}
+            using (var db = new IdentityDataContext())
+            {
+                using (var legacyDb = new LegacyDataContext())
+                {
+                    var cancelledMembers = Config.GetCancelledDependents(db, legacyDb, accountCode);
+                    return cancelledMembers.Where(t => t.Type == "Dependent").ToList();
+                }
+            }
+        }
+                
+    }
+}

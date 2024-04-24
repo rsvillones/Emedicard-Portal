@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "NewApplicationImport";
+}
+
+<h2>NewApplicationImport</h2>
+

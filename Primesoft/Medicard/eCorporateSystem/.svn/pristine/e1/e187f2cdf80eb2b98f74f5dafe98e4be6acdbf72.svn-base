@@ -1,0 +1,6 @@
+﻿@model IEnumerable<Corelib.Models.RenewalMemberWrapper>
+
+@foreach (var rmw in Model)
+{
+    Html.RenderPartial("_RenewalMemberWrapperItem", rmw);
+}

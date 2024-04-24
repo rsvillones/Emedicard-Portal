@@ -1,0 +1,168 @@
+@model PagedList.IPagedList<Corelib.Models.AccountSetting>
+
+@{
+    ViewBag.Title = "Account Settings";
+    var accountSetting = new AccountSetting();
+}
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Account Settings</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                @*<div class="row">
+                    <div class="col-lg-6">
+                        <h2 class="title">Account Settings</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        @using (Html.BeginForm("Index", "AccountSettings", FormMethod.Get))
+                        {
+                            <p style="float: right">
+                                @Html.TextBox("currentFilter", null, new { @class = "input-search", placeholder = "Find by account code" })
+                                <input type="submit" value="Search" class="btn btn-primary" />
+                            </p>
+                        }
+                    </div>
+                </div>*@
+
+                <div class="row">
+                    <div class="col-lg-6 pageList-margin">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+                        <p class="pager-padding" style="float: right">
+                            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                        </p>
+                    </div>
+                    <div class="col-lg-6">
+                        @using (Html.BeginForm("Index", "AccountSettings", FormMethod.Get))
+                        {
+                            <p style="float: right">
+                                @Html.TextBox("currentFilter", null, new { @class = "input-search", placeholder = "Find by account code" })
+                                <input type="submit" value="Search" class="btn btn-primary" />
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <table class="table table-white-form">
+                    <tr>
+                        <th style="width:10%">
+                            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.AccountCodeSortParam, currentFilter = ViewBag.CurrentFilter })">
+                                Account Code &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+                            </a>
+                        </th>
+                        <th style="width:22%">
+                            @Html.DisplayNameFor(model => accountSetting.AccountName)
+                        </th>
+                        <th style="width:12%">
+                            &nbsp;
+                        </th>
+                        <th style="width:20%">
+                            &nbsp;
+                        </th>
+                        <th style="width:18%">
+                            &nbsp;
+                        </th>
+                        <th style="width:18%">
+                            &nbsp;
+                        </th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {   
+                        <div>
+                            @Html.Partial("_AccountSetting", item)
+                        </div>
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+
+        function useEmailAsLogin(selector) {
+            processAccountSetting(selector, 'UseEmailAsLogin');
+        }
+
+        function useRandomGeneratedPassword(selector) {
+            processAccountSetting(selector, 'UseRandomGeneratedPassword');
+        }
+
+        function bypassHRManagerApproval(selector) {
+            processAccountSetting(selector, 'BypassHRManagerApproval');
+        }
+
+        function bypassMedicalHistory(selector) {
+            processAccountSetting(selector, 'BypassMedicalHistory');
+        }
+
+        $('.UpdateAccountSetting').click(function (e) {
+            e.preventDefault();
+            var guid = $(this).parent().parent().parent().siblings().children('input[name*="Guid"]').val();
+            var accountCode = $(this).parent().parent().parent().siblings().children('input[name*="AccountCode"]').val();
+            var propertyValue = $(this).parent().siblings('input[name*="DomainEmail"]').val();;
+            var container = $(this).closest('.AccountContainer');
+            var option = {
+                url: '@Url.Action("EditDomainEmail")',
+                type: 'post',
+                data: {
+                    guid: guid,
+                    propertyValue: propertyValue,
+                    accountCode: accountCode
+                }
+            };
+            $.ajax(option).done(function (data) {
+                container.html(data);
+            });
+        });
+
+        function processAccountSetting(selector, prop) {
+            var guid = selector.parent().siblings().children('input[name*="Guid"]').val();
+            var accountCode = selector.parent().siblings().children('input[name*="AccountCode"]').val();
+            var propertyName = prop;
+            var propertyValue = false;
+            if (selector.is(':checked')) {
+                propertyValue = true;
+            }
+            var container = selector.closest('.AccountContainer');
+            var option = {
+                url: '@Url.Action("Edit")',
+                type: 'post',
+                data: {
+                    guid: guid,
+                    propertyValue: propertyValue,
+                    propertyName: propertyName,
+                    accountCode: accountCode
+                }
+            };
+            $.ajax(option).done(function (data) {
+                container.html(data);
+            });
+        }
+
+        function urgSetting(selector) {
+            var guid = selector.parent().siblings().children('input[name*="Guid"]').val();
+            var accountCode = selector.parent().siblings().children('input[name*="AccountCode"]').val();
+            var propertyValue = selector.val();
+            var container = selector.closest('.AccountContainer');
+            var option = {
+                url: '@Url.Action("EditUrgSetting")',
+                type: 'post',
+                data: {
+                    guid: guid,
+                    propertyValue: propertyValue,
+                    accountCode: accountCode
+                }
+            };
+            $.ajax(option).done(function (data) {
+                container.html(data);
+            });
+        }
+</script>
+}

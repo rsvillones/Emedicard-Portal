@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewReasons, CanAddReasons, CanEditReasons, CanDeleteReasons")]
+    public class ReasonsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewReasons")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var reasons = from t in db.Reasons where !t.Deleted select t;
+            if (!string.IsNullOrEmpty(currentFilter))
+            {
+                reasons = reasons.Where(t => t.Description.Contains(currentFilter));
+            }
+
+            Helper.SetSortParameters<Reason>(this, ref reasons, sortOrder, currentFilter, new SortParameter() { PropertyName = "DisplayOrder" }, new List<SortParameter>() { new SortParameter() { PropertyName = "Description" } });
+
+            return View(reasons.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddReasons")]
+        public ActionResult Create()
+        {
+            var model = new Reason();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddReasons")]
+        public async Task<ActionResult> Create([Bind(Include = "Id, Description, DisplayOrder, Guid")] Reason reason)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Reasons.Add(reason);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            return View(reason);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditReasons")]
+        public async Task<ActionResult> Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var reason = await db.Reasons.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (reason == null) return HttpNotFound();
+
+            return View(reason);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditReasons")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Description, DisplayOrder, Guid, CrById, Timestamp")] Reason reason)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(reason).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(reason);
+        }
+
+        // GET: Reasons/Delete/5
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var reason = await db.Reasons.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (reason == null) return HttpNotFound();
+
+            return View(reason);
+        }
+
+        // POST: Reasons/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(Guid guid)
+        {
+            var reason = await db.Reasons.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.Reasons.Remove(reason);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

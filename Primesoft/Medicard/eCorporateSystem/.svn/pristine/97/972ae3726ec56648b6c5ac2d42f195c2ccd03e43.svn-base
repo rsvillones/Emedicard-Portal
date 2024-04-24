@@ -1,0 +1,6 @@
+﻿@using System.Web.UI.WebControls
+@model ImportViewModel
+
+<div id="RenewalMainContent">
+    @Html.Partial("_RenewalVerification", Model)
+</div>

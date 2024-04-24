@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Medicard" Class="StoredProceduresDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=emedicard;Initial Catalog=Medicard;User ID=prime_user" SettingsObjectName="Corelib.Properties.Settings" SettingsPropertyName="MedicardConnectionString" Provider="System.Data.SqlClient" />
+  <Function Name="dbo.SpReport_ActivePrincipalMembers" Method="ActivePrincipalMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_ActivePrincipalMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(25)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_ActiveDependentMembers" Method="ActiveDependentMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_ActiveDependentMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PrincipalLastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalFirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalMiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_CancelledDependentMembers" Method="CancelledDependentMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_CancelledDependentMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PrincipalLastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalFirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalMiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ValidityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateCancelled" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_CancelledPrincipalMembers" Method="CancelledPrincipalMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_CancelledPrincipalMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(25)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ValidityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCancelled" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_resigned_members_dependent" Method="emed_resigned_members_dependent">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_resigned_members_dependentResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="DEP_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DEP_DESCRIPTION" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="DATE_RESGN" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="MEM_NAME" Type="System.String" DbType="VarChar(106)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_resigned_members_principal" Method="emed_resigned_members_principal">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_resigned_members_principalResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRIN_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DATE_RESGN" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="MEM_NAME" Type="System.String" DbType="VarChar(106)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_active_members" Method="emed_active_members">
+    <Parameter Name="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_active_membersResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRIN_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_active_member_dependent" Method="emed_active_member_dependent">
+    <Parameter Name="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_active_member_dependentResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="DEP_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DEP_DESCRIPTION" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+</Database>

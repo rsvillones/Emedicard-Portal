@@ -1,0 +1,21 @@
+﻿<script type="text/html" id="accountsTemplate">
+    <tr>
+        <td style="width:50%">
+            <input type="hidden" name="Accounts" data-value="Code" />
+            <input type="hidden" name="UseAccountCode" value="true" />
+            <input type="hidden" name="UseEmailAsLogin" value="false" />
+            <input type="hidden" name="UseRandomGeneratedPassword" value="false" />
+            <input type="hidden" name="IsReadOnly" value="false" />
+            <input type="hidden" name="BypassHRManagerApproval" value="false" />
+            <input type="hidden" name="IsHRManager" value="false" />
+            <input type="checkbox" checked="checked" disabled="disabled" />
+            <label><span data-content="Name"></span></label>
+        </td>
+        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'UseEmailAsLogin')"></td>
+        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'UseRandomGeneratedPassword')"></td>
+        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'IsReadOnly')"></td>
+        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'BypassHRManagerApproval')"></td>
+        <td style="width:10%"><input type="checkbox" onchange="OnCheckboxCheckChanged(this, 'IsHRManager')"></td>
+    </tr>
+</script>
+

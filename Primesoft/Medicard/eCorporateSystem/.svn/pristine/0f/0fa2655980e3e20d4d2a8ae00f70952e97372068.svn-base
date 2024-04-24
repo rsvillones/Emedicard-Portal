@@ -1,0 +1,279 @@
+@model PagedList.IPagedList<EndorsementBatch>
+@{
+    ViewBag.Title = "Receiving Entries";
+    var model = new EndorsementBatch();
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="title">Receiving Entries</h2>
+    </div>
+    @using (Html.BeginForm("Index", "MembershipEndorsements", FormMethod.Get, new { sortOrder = ViewBag.CompanyNameSortParam, currentFilter = ViewBag.CurrentFilter }))
+    {
+        <div class="col-lg-4">
+            <div class="input-group input-group-search">
+                <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                <div class="input-group-btn">
+                    <button type="button" class="dropdown-toggle btn-dd btn-default search-toggle" data-toggle="dropdown" tabindex="-1">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="rightMenu dropdown-menu">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Control No.</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.ControlNumber" name="controlNumber" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Reference No.</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.ReferenceNumber" name="referenceNumber" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Company Name</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.CompanyName" name="companyName" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">View All Accounts</label>
+                                    <div class="col-lg-12">@Html.DropDownList("viewAll", (IEnumerable<SelectListItem>)ViewBag.ViewAllAccounts, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Endorsement Type</label>
+                                    <div class="col-lg-12">
+                                        @Html.DropDownList("EndorsementType", (IEnumerable<SelectListItem>)ViewBag.EndorsementType, "-- Select --", new { @class = "form-control last-input" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /btn-group -->
+                <button type="submit" class="btn btn-primary btn-grp btn-search"
+                        tabindex="-1">
+                    Search
+                </button>
+            </div><!-- /input-group -->
+
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, viewAll = ViewBag.ViewAll, controlNumber = ViewBag.ControlNumber, referenceNumber = ViewBag.ReferenceNumber, companyName = ViewBag.CompanyName, endorsementType = ViewBag.SingleEndorsementType }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">&nbsp;</div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ControlNumberSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ControlNumber) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ReplyToSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ReplyTo) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.ReferenceNumberSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.ReferenceNumber) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.CompanyNameSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.CompanyName) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.EndorsementTypeSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.EndorsementType) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.DateReceivedSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.DateReceived) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.EndorsementCountSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.EndorsementCount) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.AssignedProcessorSortParam, currentFilter = ViewBag.CurrentFilter })">
+                @Html.DisplayNameFor(t => model.AssignedProcessor) &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr @(item.CanBeReceived ? "class=receiveTR" : "")>
+            <td>
+                @if (!String.IsNullOrEmpty(@item.ControlNumber))
+                {
+                    foreach (var controlNumber in item.ControlNumber.Split(','))
+                    {
+                        if (item.CanBeDownloaded)
+                        {
+                            @Html.ActionLink(controlNumber, "DownloadReceivingEntry", new { guid = item.Guid, controlNumber = controlNumber }) <br />
+                        }
+                        else
+                        {
+                            @controlNumber <br />
+                        }
+                    }
+                }
+            </td>
+            <td>
+                @if (!String.IsNullOrEmpty(item.ReplyTo))
+                {
+                    <a href="javascript:void(0);" onclick="showDocumentDetails('@item.Guid')">@Html.DisplayFor(modelItem => item.ReplyTo)</a>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReferenceNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndorsementType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateReceived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndorsementCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AssignedProcessor)
+            </td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                        @if (item.CanBeReceived)
+                        {
+                            <li>@Html.ActionLink("Receive", "ReceiveEndorsementBatch", new { guid = item.Guid, viewAll = ViewBag.ViewAll }, new { onclick = "$(this).parent().hide();" })</li>
+
+                        }
+                        @if (item.CanBeDeclined)
+                        {
+                            switch (item.EndorsementType)
+                            {
+                                case Constants.ID_REPLACEMENT_ENDORSEMENT_TYPE:
+                                    <li>@Html.ActionLink("Decline", "DeclinedIdReplacement", new { guid = item.Guid })</li>
+                                    break;
+                                case Constants.AMENDMENT_ENDORSEMENT_TYPE:
+                                    <li>@Html.ActionLink("Decline", "DeclinedAmendment", new { guid = item.Guid })</li>
+                                    break;
+                            }
+                        }
+                        @if (item.HasDetails)
+                        {
+                            switch (item.EndorsementType)
+                            {
+                                case Constants.ACTION_MEMO_ENDORSEMENT_TYPE:
+                                    <li>@Html.ActionLink("Details", "Index", "ActionMemos", new { area = "", replyTo = item.ReplyTo }, new { })</li>
+                                    break;
+                                case Constants.AMENDMENT_ENDORSEMENT_TYPE:
+                                <li>@Html.ActionLink("Details", "Amendment", "RequestDetails", new { area = "", guid = item.Guid }, new { })</li>
+                                    break;
+                                case Constants.ID_REPLACEMENT_ENDORSEMENT_TYPE:
+                                <li>@Html.ActionLink("Details", "IdReplacement", "RequestDetails", new { area = "", guid = item.Guid }, new { })</li>
+                                    break;
+                                case Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE:
+                                <li>@Html.ActionLink("Details", "AdditionalDependent", "RequestDetails", new { area = "", guid = item.Guid }, new { })</li>
+                                    break;
+                                case Constants.DEPENDENT_CANCELLATION_ENDORSEMENT_TYPE:
+                                <li>@Html.ActionLink("Details", "DependentCancellation", "RequestDetails", new { area = "", guid = item.Guid }, new { })</li>
+                                    break;
+                                case Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE:
+                                <li>@Html.ActionLink("Details", "CancelledMembers", "RequestDetails", new { area = "", guid = item.Guid }, new { })</li>
+                                    break;
+                                default:
+                                <li>@Html.ActionLink("Details", "Members", new { guid = item.Guid }, new { })</li>
+                                    break;
+                            }
+                        }
+                        @if (item.CanBeDownloaded)
+                        {
+                            <li>@Html.ActionLink("Download", "DownloadMembershipEndorsement", new { guid = item.Guid })</li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+
+
+<div id="documentModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Document Files</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+            $(function () {
+                $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                    event.stopPropagation();
+                });
+            });
+            $(function () {
+                //$(".dropdown-toggle").dropdown('toggle'); // this works
+                $('#click').click(function (e) {
+                    e.stopPropagation();
+                    $(".search-toggle").dropdown('toggle');// this doesn't
+                });
+            });
+        });
+        function showDocumentDetails(guid) {
+            var option = {
+                url: '@Url.Action("GetEndorsementDocumentFiles")',
+                type: 'POST',
+                data: {
+                    guid: guid
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $(".modal-body").html(data);
+                $("#documentModal").modal('show');
+            });
+        }
+    </script>
+}

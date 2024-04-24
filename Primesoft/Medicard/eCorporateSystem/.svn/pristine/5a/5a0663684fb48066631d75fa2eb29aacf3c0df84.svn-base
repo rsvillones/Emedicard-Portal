@@ -1,0 +1,392 @@
+﻿using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Linq.Mapping;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
+using System.Reflection;
+
+namespace Corelib
+{
+    public static class UtilizationHelper
+    {
+        #region -- Public Functions --
+
+        public static IEnumerable<UtilizationDental> GetUtilizationDentals(UtilizationDataContext db, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationDental>(db, "SP_Intra_ActiveAccount_Utilization_DT",
+                new List<string>() { "ComCode", "startDate", "endDate", "lastName" },
+                new List<object>() { accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.AccountNumber));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationMedicalService> GetUtilizationMedicalServices(UtilizationDataContext db, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationMedicalService>(db, "SP_Intra_ActiveAccount_Utilization_ER",
+                new List<string>() { "ComCode", "startDate", "endDate", "lastName" },
+                new List<object>() { accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.AccountNumber));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationOutPatient> GetUtilizationOutPatients(UtilizationDataContext db, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationOutPatient>(db, "SP_Intra_ActiveAccount_Utilization_OP_GRP",
+                new List<string>() { "ComCode", "startDate", "endDate", "lastName" },
+                new List<object>() { accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.AccountNumber));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationInPatient> GetUtilizationInPatients(UtilizationDataContext db, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationInPatient>(db, "SP_Intra_ActiveAccount_Utilization_IP_EMED",
+                new List<string>() { "ComCode", "startDate", "endDate", "lastName" },
+                new List<object>() { accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.AccountNumber));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationMemberAllService> GetUtilizationMemberAllServices(UtilizationDataContext db, string memberCode)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            if (string.IsNullOrEmpty(memberCode)) {
+
+                if (disposeDb)
+                {
+                    db.Dispose();
+                    db = null;
+                }
+
+                return new List<UtilizationMemberAllService>(); 
+            }
+
+            var returnValue = ExecuteSp<UtilizationMemberAllService>(db, "CP_CLMS_REP_UTILIZATION_ALL_EMED",
+                new List<string>() { "MEMCODE" },
+                new List<object>() { memberCode }
+            );
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationReimbursement> GetUtilizationReimbursements(UtilizationDataContext db, string service, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationReimbursement>(db, "SP_EMED_REIM_UTIL",
+                new List<string>() { "SERVICE", "ACCT_CODE", "StartDate", "EndDate", "LastName" },
+                new List<object>() { service, accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.MemberCode));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan != null ? t.AppliedPlan.Value : -1));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationUnBilledReportOutPatientMedSevice> GetUtilizationUnBilledReportOutPatientMedSevices(UtilizationDataContext db, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationUnBilledReportOutPatientMedSevice>(db, "SP_Intra_ActiveAccount_Utilization_CALLLOG",
+                new List<string>() { "ComCode", "StartDate", "EndDate", "LastName" },
+                new List<object>() { accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.AccountNumber));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<UtilizationUnBilledReportInPatient> GetUtilizationUnBilledReportInPatients(UtilizationDataContext db, string accountCode, DateTime? startDate, DateTime? endDate, string lastName)
+        {
+            var disposeDb = false;
+
+            if (db == null)
+            {
+                db = new UtilizationDataContext();
+                disposeDb = true;
+            }
+
+            var startDateString = ParameterDateTime(startDate);
+            var endDateString = !string.IsNullOrEmpty(startDateString) ? ParameterDateTime(endDate) : "";
+
+            var returnValue = ExecuteSp<UtilizationUnBilledReportInPatient>(db, "SP_Intra_ActiveAccount_Utilization_DCR",
+                new List<string>() { "ComCode", "StartDate", "EndDate", "LastName" },
+                new List<object>() { accountCode, startDateString, endDateString, lastName }
+            );
+
+            var memberCodeExceptions = GetMemberCodeExceptions(accountCode);
+            var planIdExceptions = GetPlanIdExceptions(accountCode);
+
+            returnValue = returnValue.Where(t => !memberCodeExceptions.Contains(t.AccountNumber));
+            returnValue = returnValue.Where(t => !planIdExceptions.Contains(t.AppliedPlan));
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            return returnValue;
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private static IEnumerable<T> ExecuteSp<T>(UtilizationDataContext db, string sp, List<string> parameterNames, List<object> parameterValues) where T : new()
+        {
+            var returnValue = new List<T>();
+
+            var connection = db.Database.Connection as SqlConnection;
+            using (var command = new SqlCommand(sp, connection))
+            {
+                connection.Open();
+                command.CommandType = CommandType.StoredProcedure;
+
+
+                for (var index = 0; index <= parameterNames.Count - 1; index++)
+                {
+                    command.Parameters.Add(new SqlParameter(parameterNames[index], parameterValues[index]));
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    MapSpResult<T>(returnValue, reader);
+
+                    reader.Close();
+                }
+
+            }
+
+            return returnValue;
+        }
+
+        private static void MapSpResult<T>(List<T> list, SqlDataReader reader) where T : new()
+        {
+            while (reader.Read())
+            {
+                var entity = new T();
+                foreach (var property in entity.GetType().GetProperties())
+                {
+                    string columnName;
+                    var attribute = property.CustomAttributes.FirstOrDefault(t => t.AttributeType == typeof(System.ComponentModel.DataAnnotations.Schema.ColumnAttribute));
+                    if (attribute != null)
+                    {
+                        columnName = attribute.ConstructorArguments[0].Value.ToString();
+                    }
+                    else
+                    {
+                        columnName = property.Name;
+                    }
+
+                    if (HasColumn(reader, columnName))
+                    {
+                        if (reader[columnName].GetType() != typeof(DBNull)) property.SetValue(entity, reader[columnName]);
+                    }
+                }
+                list.Add(entity);
+            }
+
+        }
+
+        public static bool HasColumn(IDataRecord dr, string columnName)
+        {
+            for (int i = 0; i < dr.FieldCount; i++)
+            {
+                if (dr.GetName(i).Equals(columnName, StringComparison.InvariantCultureIgnoreCase)) return true;
+            }
+            return false;
+        }
+
+        public static DateTime ParameterDateTime(string parameterDate)
+        {
+            if (!string.IsNullOrEmpty(parameterDate)) return Convert.ToDateTime(parameterDate);
+            return DateTime.Now;
+        }
+
+        public static DateTime? ReportParameterDateTime(string parameterDate)
+        {
+            DateTime dateValue;
+            if (DateTime.TryParse(parameterDate, out dateValue)) return Convert.ToDateTime(parameterDate);
+            return null;
+        }
+
+        public static string ParameterDateTime(DateTime? parameterDate)
+        {
+            if (parameterDate != null) return parameterDate.Value.ToString("MM/dd/yyyy");
+            return "";
+        }
+
+        public static List<string> GetMemberCodeExceptions(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var user = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+                return db.UtilizationReportExceptionForUsers.Where(t => !t.Deleted && t.UserIds.Contains(user.Id) && t.AccountCode == accountCode).Select(t => t.MemberCode).ToList();
+            }
+        }
+
+        public static List<int> GetPlanIdExceptions(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var user = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+                return db.UtilizationReportExceptionForPlans.Where(t => !t.Deleted && t.UserIds.Contains(user.Id) && t.AccountCode == accountCode).Select(t => t.PlanId).ToList();
+            }
+        }
+
+        #endregion
+    }
+}

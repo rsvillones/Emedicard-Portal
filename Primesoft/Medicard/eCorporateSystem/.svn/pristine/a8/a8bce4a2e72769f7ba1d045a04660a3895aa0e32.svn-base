@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class Question : BaseModel
+    {
+        #region -- Constructor --
+
+        public Question()
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var maxDisplayOrder = db.Questions.Select(t => t.DisplayOrder).Max();
+                this.DisplayOrder = maxDisplayOrder + 1;
+            }
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(512)]
+        [Required]
+        public string Description { get; set; }
+
+        [Display(Name="Display Order")]
+        public int DisplayOrder { get; set; }
+
+        #endregion
+    }
+}

@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewBenefitsAndExclusions")]
+    public class BenefitsAndExclusionsController : BaseAccountController
+    {
+        #region -- Action Results --
+
+        public ActionResult Index(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public void ProcessEmail()
+        {
+            Helper.MemberEmailNotification(System.Web.HttpContext.Current, 1, "mmedidas@rbsysinc.com", "aaaaa123");
+        }
+        
+        
+        #endregion
+    }
+}

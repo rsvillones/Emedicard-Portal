@@ -1,0 +1,191 @@
+@model Corelib.Models.Amendment
+
+@{
+    ViewBag.Title = "Amendment Data";
+}
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Amendment Detail</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            @using (Html.BeginForm("Amendment", "Amendments", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                            {
+                                                @Html.ValidationSummary(true);
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" id="IsReadOnly" value="@ViewBag.DestroyPicker">
+
+                                                @Html.Partial("_Amendment", Model)
+
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="space no-color pull-right">
+                                                            @if (Model.Status == Corelib.Enums.RequestStatus.Saved)
+                                                            {
+                                                                <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                                                                <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                                                            }
+                                                            @if (Model.Status == Corelib.Enums.RequestStatus.ForProcessing && Model.Status == Corelib.Enums.RequestStatus.Submitted)
+                                                            {
+                                                                @Html.ActionLink("Cancel", "CancelAmendment", new { guid = Model.Guid }, new { @class = "btn btn-danger" })
+                                                            }
+                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#MemberContainer').hide();
+        //dataTypeOnchange($('#DataType'));
+        //forRequestSelect($('#RequestFor'));
+        var isReadOnly = $('#IsReadOnly').val();
+        if (isReadOnly == "True") {
+            $('#EffectivityDate,#ChangeDataTo').datepicker("destroy");
+            $('#FileWrapper').prop('disabled', true);
+            $('#ClearFile').prop('disabled', true);
+            $('#ClearExistingFile').prop('disabled', true);
+        } else {
+            $('#EffectivityDate').datepicker();
+        }
+        CheckRequestFor();
+
+        $('#@Html.IdFor(t => t.DependentCode)').on('change', function (e) {
+            var optionSelected = $("option:selected", this).text();
+            $('#@Html.IdFor(t => t.DependentName)').val(optionSelected);
+        });
+
+    });
+
+    function CheckRequestFor() {
+        if ($('#RequestFor').val() == '0') {
+            $('#DependentCode').val('');
+            $('#DependentCode').attr('disabled', 'disabled');
+        }
+        else {
+            $('#DependentCode').removeAttr('disabled');
+        }
+    }
+
+    function dataTypeOnchange(input) {
+        dataTypeSelect(input);
+    }
+
+    function onChangeMember(input) {
+        dependentSelect(input);
+        dataTypeSelect($('#DataType'));
+    }
+
+    function onChangeDependent() {
+        if ($('#RequestFor').val() == '1' && $('#DataType').val() != '') {
+            $('#ChangeDataFrom').val('');
+            dataTypeSelect($('#DataType'));
+        }
+    }
+
+    function onChangeRequestFor(input) {
+        dataTypeSelect($('#DataType'));
+        forRequestSelect(input);
+        CheckRequestFor();
+    }
+
+    function forRequestSelect(input) {
+        var option = {
+            url: '@Url.Action("GetDataType")',
+            type: 'post',
+            data: {
+                requestForId: input.val(),
+                amendmentId: '@Model.Id'
+            }
+        };
+        $.ajax(option).done(function (data) {
+            $('#DataType').html(data);
+        });
+    }
+    function dataTypeSelect(input) {
+        var propertyName = input.val();
+        var memberCode = $('#MemberCode').val();
+        var requestForId = $('#RequestFor').val();
+        var dependentCode = $('#DependentCode').val();
+        var option = {
+            url: '@Url.Action("GetPropertyValue")',
+            type: 'post',
+            data: {
+                propertyName: propertyName,
+                memberCode: memberCode,
+                requestForId: requestForId,
+                dependentCode: dependentCode,
+                accountCode: '@Model.AccountCode'
+            }
+        };
+        $.ajax(option).done(function (data) {
+            $('#ChangeDataFrom').val(data);
+        });
+
+        var options = {
+            url: '@Url.Action("PropertyTool")',
+            type: 'post',
+            data: {
+                propertyName: propertyName,
+                memberCode: memberCode,
+                accountCode: '@Model.AccountCode',
+                dependentCode: dependentCode,
+                requestForId: requestForId
+            },
+            success: function (data) {
+                var json = data;
+                $("#DataToContainer").empty();
+                $("#DataToContainer").html(json.DataTool);
+                if (json.Success) {
+                    if (json.Tool == "DatePicker") {
+                        $("#ChangeDataTo").datepicker();
+                    }
+                }
+            }
+        }
+        $.ajax(options);
+    }
+    function clearFileInput() {
+        var oldInput = document.getElementById("FileWrapper");
+        var newInput = document.createElement("input");
+        newInput.type = "file";
+        newInput.id = oldInput.id;
+        newInput.name = oldInput.name;
+        newInput.className = oldInput.className;
+        newInput.style.cssText = oldInput.style.cssText;
+        // copy any other relevant attributes
+        oldInput.parentNode.replaceChild(newInput, oldInput);
+    }
+    function clearExistingFileInput(input) {
+        input.siblings('a').remove();
+        input.siblings('label[for="NoFile"]').remove();
+        input.siblings('label[for="CurrentUploaded"]').after('<label for="NoFile">&nbsp;Existing file deleted.<label>');
+        $('#DocumentContentType').val('');
+        $('#DocumentFile').val('');
+        $('#DocumentFileName').val('');
+    }
+    </script>
+}

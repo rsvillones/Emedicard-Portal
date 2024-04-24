@@ -1,0 +1,152 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UnBilledReportInPatient.aspx.cs" Inherits="WebUI.Reports.UtilizationReporting.UnBilledReportInPatient" %>
+<%@ Register TagPrefix="rsweb" Namespace="Microsoft.Reporting.WebForms" Assembly="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" %>
+
+<!DOCTYPE html>
+
+<html>
+<head id="Head1" runat="server">
+    <link href="/Content/report.css" rel="stylesheet" />
+    <link rel="Stylesheet" type="text/css" href="/Content/themes/jquery-ui.css"/>
+    <link rel="Stylesheet" type="text/css" href="/Content/select2.css" />
+    <link rel="Stylesheet" type="text/css" href="/Content/select2-bootstrap.css" />
+
+    <script type="text/javascript" src="/Scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery-ui.js"></script>  
+    <script type="text/javascript" src="/Scripts/select2.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#StartDateText').datepicker();
+            $('#EndDateText').datepicker();
+
+            $('#MemberCodeHiddenField').addClass('form-control');
+            $('#MemberNameHiddenField').addClass('form-control');
+
+            $('#MemberCodeHiddenField').select2({
+                placeholder: "Search for a Active Member",
+                minimumInputLength: 1,
+                ajax: {
+                    url: '/Items/GetAllMembers',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            accountCode: $('#AccountCodeHiddenField').val(),
+                            page_limit: 10
+                        };
+                    },
+                    results: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter remote JSON data
+                        return { results: data };
+                    }
+                }
+            });
+
+            $('#MemberCodeHiddenField').on('select2-selecting', function (e) {
+                $('#MemberNameHiddenField').val(e.choice.text);
+            });
+
+            var memberCode = $('#MemberCodeHiddenField').val();
+            if (memberCode.length === 0) {
+                $("#MemberCodeHiddenField").select2('data', { id: "", text: "All Members" });
+            }
+            else {
+                $("#MemberCodeHiddenField").select2('data', { id: memberCode, text: $('#MemberNameHiddenField').val() });
+            }
+
+            $('#ClearDropdown').click(function () {
+                $("#MemberCodeHiddenField").select2('data', { id: "", text: "All Members" });
+            });
+        });
+    </script>
+    <style>
+        html{
+            border: 1px solid #ddd;
+        }
+           .column,.columns {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server" style="height: 100%">
+        <div class="row form-report">
+            <div class="col-lg-1">
+                <label class="label-report">Start Date:</label>
+            </div>
+            <div class="col-lg-2">
+                <asp:TextBox ID="StartDateText" Width="150px" runat="server" AppendDataBoundItems="False" AutoPostBack="False" CausesValidation="true" ValidationGroup="UnBilledReportInPatient" CssClass="col-lg-12 form-control startDate"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator1"
+                    ControlToValidate="StartDateText"
+                    EnableClientScript="False"
+                    Display="Dynamic"
+                    ErrorMessage="Please enter a value."
+                    Text="Please enter a value."
+                    runat="server" CssClass="report-error" Width="150px" />
+            </div>
+            <div class="col-lg-1">
+                <label class="label-report space">End Date:</label>
+            </div>
+            <div class="col-lg-2">
+                <asp:TextBox ID="EndDateText" Width="150px" runat="server" AppendDataBoundItems="False" AutoPostBack="False" CausesValidation="true" ValidationGroup="UnBilledReportInPatient" CssClass="col-lg-12 form-control endDate"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator2"
+                    ControlToValidate="EndDateText"
+                    EnableClientScript="False"
+                    Display="Dynamic"
+                    ErrorMessage="Please enter a value."
+                    Text="Please enter a value."
+                    runat="server" CssClass="report-error" Width="150px" />
+            </div>
+            <div class="col-lg-1">
+                <label class="label-report space">Member:</label>
+            </div>
+            <div class="col-lg-3">
+                <asp:HiddenField ID="MemberCodeHiddenField" runat="server" />
+                <asp:HiddenField ID="MemberNameHiddenField" runat="server" />
+                <asp:HiddenField ID="AccountCodeHiddenField" runat="server" />
+                
+            </div>
+            <div class="col-lg-2">
+                <a ID="ClearDropdown" href="javascript:void(0)" class="btn-report btn-primary">X</a>
+                <asp:Button ID="GenerateButton" runat="server" CssClass="btn-report btn-primary" Text="Generate" OnClick="GenerateReport" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+                <rsweb:ReportViewer ID="UtilizationReportUnbilledReportIpViewer" runat="server" Width="100%" Height="100%"></rsweb:ReportViewer>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        var ie = false;
+    </script>
+    <!--[if IE ]>
+        <script>
+        ie = true;
+        </script>
+    <![endif]-->
+
+    <script language="javascript" type="text/javascript">
+        if (ie == false) {
+            ResizeReport();
+            window.onresize = function resize() { ResizeReport(); };
+            function ResizeReport() {
+                var viewer = document.getElementById("<%= UtilizationReportUnbilledReportIpViewer.ClientID %>");
+                var fixedtable = document.getElementById("UtilizationReportUnbilledReportIpViewer_fixedTable").getElementsByTagName('tbody')[0];;
+                var window = document.documentElement.clientHeight;
+                fixedtable.style.height = (window - 77) + "px";
+                viewer.style.height = (window - 45) + "px";
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+
+
+
+

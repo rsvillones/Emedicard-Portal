@@ -1,0 +1,46 @@
+@model AccountSetting
+<tr>
+    <td rowspan="2">
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.HiddenFor(model => model.AccountName)
+        @Html.DisplayFor(model => model.AccountCode)
+    </td>
+    <td rowspan="2">
+        @Html.DisplayFor(model => model.AccountName)
+    </td>
+
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.UseEmailAsLogin, new { @onClick = "useEmailAsLogin($(this))" })Use Email as Login
+    </td>
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.UseRandomGeneratedPassword, new { @onChange = "useRandomGeneratedPassword($(this))" })Use Random Generated Password
+    </td>
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.BypassHRManagerApproval, new { @onChange = "bypassHRManagerApproval($(this))" })Bypass HR Approval
+    </td>
+    <td class="act-setting">
+        @Html.CheckBoxFor(model => model.BypassMedicalHistory, new { @onChange = "bypassMedicalHistory($(this))" })Bypass Medical History
+    </td>
+</tr>
+<tr>
+    <td colspan="2">
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.AccountCode)
+        @Html.HiddenFor(model => model.AccountName)
+        <label class="table-label">URG Setting</label>
+        @Html.DropDownListFor(model => model.UrgSetting, new SelectList(Enum.GetValues(typeof(Corelib.Enums.UrgSetting)), Model.UrgSetting), new { @onChange = "urgSetting($(this))", @class = "form-control" })
+    </td>
+    <td  colspan="2">
+        <label class="table-label">Domain Email Address</label>
+        <div class="input-group" style="width: 100% !important">
+            @Html.TextBoxFor(model => model.DomainEmail, new { @class = "form-control" })
+            <span class="input-group-btn">
+                <input type="button" class="btn btn-default UpdateAccountSetting" value="update" />
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+

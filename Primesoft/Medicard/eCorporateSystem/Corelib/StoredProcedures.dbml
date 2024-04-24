@@ -1,0 +1,452 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Claims" Class="StoredProceduresDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=hellion\twilight;Initial Catalog=Claims;User ID=prime_user" SettingsObjectName="Corelib.Properties.Settings" SettingsPropertyName="ClaimsConnectionString" Provider="System.Data.SqlClient" />
+  <Function Name="dbo.SpReport_ActivePrincipalMembers" Method="ActivePrincipalMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_ActivePrincipalMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(25)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_ActiveDependentMembers" Method="ActiveDependentMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_ActiveDependentMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PrincipalLastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalFirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalMiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_CancelledDependentMembers" Method="CancelledDependentMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_CancelledDependentMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PrincipalLastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalFirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PrincipalMiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(32)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ValidityDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateCancelled" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SpReport_CancelledPrincipalMembers" Method="CancelledPrincipalMembers">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="NVarChar(MAX)" />
+    <ElementType Name="SpReport_CancelledPrincipalMembersResult">
+      <Column Name="EmployeeNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(25)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CivilStatus" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EffectivityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ValidityDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="AppliedPlan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCancelled" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_resigned_members_dependent" Method="emed_resigned_members_dependent">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_resigned_members_dependentResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="DEP_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DEP_DESCRIPTION" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="DATE_RESGN" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="MEM_NAME" Type="System.String" DbType="VarChar(106)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_resigned_members_principal" Method="emed_resigned_members_principal">
+    <Parameter Name="AccountCode" Parameter="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_resigned_members_principalResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRIN_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DATE_RESGN" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="MEM_NAME" Type="System.String" DbType="VarChar(106)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_active_members" Method="emed_active_members">
+    <Parameter Name="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_active_membersResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRIN_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.emed_active_member_dependent" Method="emed_active_member_dependent">
+    <Parameter Name="accountCode" Type="System.String" DbType="VarChar(25)" />
+    <ElementType Name="emed_active_member_dependentResult">
+      <Column Name="AREA_DESC" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="DEP_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_LNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_FNAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MEM_MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_BDAY" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="MEM_AGE" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="SEX_DESC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="MEMCSTAT_DESC" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PLAN_DESC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DEP_DESCRIPTION" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_IP_EMED" Method="SP_Intra_ActiveAccount_Utilization_IP_EMED">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="SP_Intra_ActiveAccount_Utilization_IP_EMEDResult">
+      <Column Name="CTLNO" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="H_NAME" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="REC_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DUE_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACCOUNT_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_TYPE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="VISIT_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DATE_DISCHARGE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="NO_OF_DAYS" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="DX_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DIAGNOSIS" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="TYPE" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SERVICE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="PRO_BY" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="AREA" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ICD10_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="ICD10_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="UTIL_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="HOSPITAL_CODE" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DX_CODE" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="PRO_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CLASS_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="CLASS_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="AGE" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CIVIL_STAT" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RM_CODE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp" Method="SP_Intra_ActiveAccount_Utilization_IP_EMED_Grp">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="SP_Intra_ActiveAccount_Utilization_IP_EMED_GrpResult">
+      <Column Name="CTLNO" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="H_NAME" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="REC_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DUE_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACCOUNT_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_TYPE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="VISIT_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DATE_DISCHARGE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="NO_OF_DAYS" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="DX_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DIAGNOSIS" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="TYPE" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SERVICE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="PRO_BY" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="AREA" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ICD10_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="ICD10_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="UTIL_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="HOSPITAL_CODE" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DX_CODE" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="PRO_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CLASS_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="CLASS_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="AGE" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CIVIL_STAT" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RM_CODE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_OP" Method="SP_Intra_ActiveAccount_Utilization_OP">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_OP_GRP" Method="SP_Intra_ActiveAccount_Utilization_OP_GRP">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="SP_Intra_ActiveAccount_Utilization_OP_GRPResult">
+      <Column Name="CTLNO" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="BILL_CODE" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="HOSPITAL_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="H_NAME" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="REC_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DUE_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACCOUNT_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_TYPE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="VISIT_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DX_CODE" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="DX_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DIAGNOSIS" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="TYPE" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MST_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="UTIL_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PRO_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AGE" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CIVIL_STAT" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RM_CODE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CO_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="SERVICE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="PRO_BY" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DA_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="AD_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ERC" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="AREA" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ICD10_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="ICD10_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DCLASS_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DCLASS_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="Lab" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="XRay" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="DiagProc" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Ultrasound" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ARS_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_ER" Method="SP_Intra_ActiveAccount_Utilization_ER">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="SP_Intra_ActiveAccount_Utilization_ERResult">
+      <Column Name="CTLNO" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="BILL_CODE" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="HOSPITAL_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="H_NAME" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="REC_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DUE_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACCOUNT_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_TYPE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="VISIT_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DX_CODE" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="DX_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DIAGNOSIS" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="TYPE" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MST_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="UTIL_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PRO_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AGE" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CIVIL_STAT" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RM_CODE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CO_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="SERVICE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="PRO_BY" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DA_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="AD_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ERC" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="AREA" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ICD10_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="ICD10_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DCLASS_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DCLASS_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="Lab" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="XRay" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="DiagProc" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Ultrasound" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ARS_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_ER_GRP" Method="SP_Intra_ActiveAccount_Utilization_ER_GRP">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="SP_Intra_ActiveAccount_Utilization_ER_GRPResult">
+      <Column Name="CTLNO" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="BILL_CODE" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="HOSPITAL_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="H_NAME" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="REC_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DUE_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACCOUNT_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="MEM_TYPE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="VISIT_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DX_CODE" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="DX_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DIAGNOSIS" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="TYPE" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MST_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="UTIL_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PRO_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AGE" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CIVIL_STAT" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RM_CODE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CO_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="SERVICE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="PRO_BY" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DA_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="AD_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ERC" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="AREA" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ICD10_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="ICD10_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="DCLASS_CODE" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DCLASS_DESC" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="Lab" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="XRay" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="DiagProc" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Ultrasound" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="ARS_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_DT" Method="SP_Intra_ActiveAccount_Utilization_DT">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="SP_Intra_ActiveAccount_Utilization_DTResult">
+      <Column Name="CTLNO" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="HOSPITAL_CODE" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="H_NAME" Type="System.String" DbType="VarChar(51)" CanBeNull="true" />
+      <Column Name="REC_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DUE_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ACCOUNT_NO" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="VISIT_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DX_DESC" Type="System.String" DbType="VarChar(120)" CanBeNull="true" />
+      <Column Name="UTIL_AMT" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="LAST_NAME" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_NAME" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="MI" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
+      <Column Name="MEM_TYPE" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="PRO_BY" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="SERVICE" Type="System.String" DbType="VarChar(2) NOT NULL" CanBeNull="false" />
+      <Column Name="AREA" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="PRO_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EFF_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="VAL_DATE" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AGE" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CIVIL_STAT" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SEX" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RM_CODE" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PRINCIPAL" Type="System.String" DbType="VarChar(102)" CanBeNull="true" />
+      <Column Name="PRIN_COMPID" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_CALLLOG" Method="SP_Intra_ActiveAccount_Utilization_CALLLOG">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+  </Function>
+  <Function Name="dbo.SP_Intra_ActiveAccount_Utilization_DCR" Method="SP_Intra_ActiveAccount_Utilization_DCR">
+    <Parameter Name="ComCode" Parameter="comCode" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+  </Function>
+  <Function Name="dbo.SP_EMED_REIM_UTIL" Method="SP_EMED_REIM_UTIL">
+    <Parameter Name="SERVICE" Parameter="sERVICE" Type="System.String" DbType="VarChar(2)" />
+    <Parameter Name="ACCT_CODE" Parameter="aCCT_CODE" Type="System.String" DbType="VarChar(25)" />
+    <Parameter Name="StartDate" Parameter="startDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="EndDaTe" Parameter="endDaTe" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="LastName" Parameter="lastName" Type="System.String" DbType="VarChar(50)" />
+  </Function>
+  <Function Name="dbo.CP_CLMS_REP_UTILIZATION_ALL_EMED" Method="CP_CLMS_REP_UTILIZATION_ALL_EMED">
+    <Parameter Name="MEMCODE" Parameter="mEMCODE" Type="System.String" DbType="VarChar(25)" />
+  </Function>
+</Database>

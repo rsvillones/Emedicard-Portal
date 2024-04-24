@@ -1,0 +1,82 @@
+
+@{
+    ViewBag.Title = "Medical History";
+}
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Fill up Medical History</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <div class="row form-padding">
+                            <div class="col-lg-12">
+                                <label>Have you ever been treated for or ever had any known indication of:</label>
+                                <table class="table" style="margin-bottom: 0 !important;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40%">
+                                                &nbsp;
+                                            </th>
+                                            <th style="width: 5%">
+                                                Yes
+                                            </th>
+                                            <th style="width: 5%">
+                                                No
+                                            </th>
+                                            <th style="width: 50%">
+                                                Remarks
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                a. Disorder of eyes, ears, nose, or throat?
+                                            </td>
+                                            <td>
+                                                <input type="radio" />
+                                            </td>
+                                            <td>
+                                                <input type="radio" />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                b. Dizziness, fainting, convulsions, headache, speech defect, paralysis or stroke, mental or nervous disorder?
+                                            </td>
+                                            <td>
+                                                <input type="radio" />
+                                            </td>
+                                            <td>
+                                                <input type="radio" />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row form-padding">
+                            <div class="col-lg-12">
+                                <div class="no-color pull-right">
+                                    <input type="submit" value="Save" class="btn btn-primary" />
+                                    <input type="submit" value="Back" class="btn btn-primary" />
+                                    <input type="submit" value="Continue" class="btn btn-primary" />
+                                    <input type="submit" value="Cancel" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

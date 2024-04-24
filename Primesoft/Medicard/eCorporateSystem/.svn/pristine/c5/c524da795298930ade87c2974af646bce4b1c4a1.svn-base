@@ -1,0 +1,65 @@
+﻿@model ImportViewModel
+@using (Html.BeginForm("UploadApplication", "Application", FormMethod.Post, new { id = "uploadApplication", @style = "padding: 1em;" }))
+{
+    <fieldset>
+        <legend>Verification Summary</legend>
+        <div>
+            <h5>Row Completed:</h5>
+            <label>
+                @Html.HiddenFor(model => model.UploadSummary.RowCompleted)
+                @Model.UploadSummary.RowCompleted
+            </label>
+        </div>
+        <div>
+            <h5>File Name:</h5>
+            <label>
+                @Html.HiddenFor(model => model.UploadSummary.FileName)
+                @Model.UploadSummary.FileName
+            </label>
+        </div>
+        <div>
+            <h5>Row Contains Error:</h5>
+            <label>
+                @Html.HiddenFor(model => model.UploadSummary.NumberOfErrors)
+                @Model.UploadSummary.NumberOfErrors
+            </label>
+        </div>
+    </fieldset>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="5">@Html.CheckBox("ShowAllError", new { @checked = "checked" })<label for="ShowAllError">Show All Errors</label></th>
+                <th><a href="javascript:void(0);" onclick="saveApplication();" id="saveApplication">Upload</a></th>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <th>Employee Number</th>
+                <th>Area</th>
+                <th>Cost Center</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Suffix</th>
+                <th>Gender</th>
+                <th>Date Of Birth</th>
+                <th>Age</th>
+                <th>Civil Status</th>
+                <th>Effectivity Date</th>
+                <th>Validity Date</th>
+                <th>Date Hired</th>
+                <th>Applied Plan</th>
+                <th>No. of allowed dependents</th>
+                <th>Dependent Applied Plan</th>
+            </tr>
+        </thead>
+        <tbody id="ApplicationVerificationBody">
+            @foreach (Corelib.Models.ApplicationVerification item in Model.ApplicationVerifications)
+            {
+                <tr>
+                    @Html.Partial("_Application", item)
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

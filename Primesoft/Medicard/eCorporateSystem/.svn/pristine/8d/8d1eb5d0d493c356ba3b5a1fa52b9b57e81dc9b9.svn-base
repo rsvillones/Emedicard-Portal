@@ -1,0 +1,133 @@
+@model Corelib.Models.IdReplacement
+
+@{
+    ViewBag.Title = "ID Replacement";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Member Request</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            @using (Html.BeginForm("IdReplacement", "IdReplacements", FormMethod.Post, new { accountCode = ViewBag.AccountCode, enctype = "multipart/form-data" }))
+                                            {
+                                                @Html.ValidationSummary(true);
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" id="IsReadOnly" value="@ViewBag.IsReadOnly">
+
+                                                @Html.Partial("_IdReplacement", Model)
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="space no-color pull-right">
+                                                            @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddIdReplacements") || User.IsInRole("CanEditIdReplacements"))))
+                                                            {
+                                                                if (Model.Status == Corelib.Enums.RequestStatus.Submitted)
+                                                                {
+                                                                    <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                                                                    <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                                                                    if (Model.Id != 0)
+                                                                    {
+                                                                        @Html.ActionLink("Cancel", "CancelIdReplacement", new { accountCode = ViewBag.AccountCode, guid = Model.Guid }, new { @class = "btn btn-danger" })
+                                                                    }
+                                                                }
+                                                            }
+                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#MemberCode').combobox();
+            $('#MemberContainer').attr("style", "margin-bottom:14px");
+            dependentSelect($('#MemberCode'));
+            var isReadOnly = $('#IsReadOnly').val();
+            if (isReadOnly == "True") {
+                $('#FileWrapper').prop('disabled', true);
+                $('#ClearFile').prop('disabled', true);
+                $('#ClearExistingFile').prop('disabled', true);
+            }
+
+            CheckRequestFor();
+            $('#RequestFor').change(function () {
+                CheckRequestFor();
+            });
+        });
+
+        function CheckRequestFor() {
+            if ($('#RequestFor').val() == '0') {
+                $('#DependentCode').val('');
+                $('#DependentCode').attr('disabled', 'disabled');
+            }
+            else {
+                $('#DependentCode').removeAttr('disabled');
+            }
+        }
+
+        function onChangeMember(input) {
+            dependentSelect(input);
+        }
+
+        function dependentSelect(input) {
+            var option = {
+                url: '@Url.Action("GetDependents")',
+                type: 'post',
+                data: {
+                    memberCode: input.val(),
+                    accountCode: '@Model.AccountCode',
+                    modelId: '@Model.Id'
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('#DependentCode').html(data);
+            });
+        }
+        function clearFileInput() {
+            var oldInput = document.getElementById("FileWrapper");
+            var newInput = document.createElement("input");
+            newInput.type = "file";
+            newInput.id = oldInput.id;
+            newInput.name = oldInput.name;
+            newInput.className = oldInput.className;
+            newInput.style.cssText = oldInput.style.cssText;
+            // copy any other relevant attributes
+
+            oldInput.parentNode.replaceChild(newInput, oldInput);
+        }
+        function clearExistingFileInput(input) {
+            input.siblings('a').remove();
+            input.siblings('label[for="NoFile"]').remove();
+            input.siblings('label[for="CurrentUploaded"]').after('<label for="NoFile">&nbsp;Existing file deleted.<label>');
+            $('#DocumentContentType').val('');
+            $('#DocumentFile').val('');
+            $('#DocumentFileName').val('');
+        }
+
+    </script>
+}

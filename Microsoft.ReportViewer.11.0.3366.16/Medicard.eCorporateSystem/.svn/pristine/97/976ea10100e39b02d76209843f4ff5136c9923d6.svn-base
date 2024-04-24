@@ -1,0 +1,133 @@
+﻿@model Corelib.Models.CancelledMember
+@{
+    SelectList appliedPlanList;
+    if (Model.Type == "Principal")
+    {
+        appliedPlanList = new SelectList(ViewBag.PrincipalPlans, "Id", "LongDescription", Model.AppliedPlan);
+    }
+    else
+    {
+        appliedPlanList = new SelectList(ViewBag.DependentPlans, "Id", "LongDescription", Model.AppliedPlan);
+    }
+}
+
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        <div id="panel-title">Member Profile</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="PersonalDetails">
+                                    <div class="row form-padding">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.EmployeeNumber)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.EmployeeNumber, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.EmployeeNumber)
+                                                        </div>
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.EffectivityDate)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.EffectivityDate, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.EffectivityDate)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.LastName)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.LastName)
+                                                        </div>
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.ValidityDate)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.ValidityDate, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.ValidityDate)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.FirstName)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.FirstName)
+                                                        </div>
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.CivilStatus)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.CivilStatus, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.CivilStatus)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.MiddleName)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.MiddleName)
+                                                        </div>
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.Gender)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.Gender)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.DateOfBirth)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.DateOfBirth)
+                                                        </div>
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.EmailAddress)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.EmailAddress)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.Age)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.Age)
+                                                        </div>
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.Area)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.EditorFor(model => model.Area, new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.Area)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-2">@Html.LabelFor(model => model.AppliedPlan)</label>
+                                                        <div class="col-lg-4">
+                                                            @Html.DropDownList("AppliedPlan", (IEnumerable<SelectListItem>)appliedPlanList, new { @class = "form-control white-readonly", @disabled = "disabled" })
+                                                            @Html.ValidationMessageFor(model => model.AppliedPlan, null, new { @class = "table-error" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

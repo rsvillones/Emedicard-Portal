@@ -1,0 +1,133 @@
+﻿@model PagedList.IPagedList<Corelib.Models.AccountSetting>
+
+@{
+    ViewBag.Title = "Account Settings";
+    var accountSetting = new AccountSetting();
+}
+
+<div class="row">
+    <div class="col-lg-6">
+        <h2 class="title">Account Settings</h2>
+    </div>
+    <div class="col-lg-6">
+        @using (Html.BeginForm("Index", "AccountSettings", FormMethod.Get))
+        {
+            <p style="float: right">
+                @Html.TextBox("currentFilter", null, new { @class = "input-search", placeholder = "Find by account code" })
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </p>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            <a class="sort-table" href="@Url.Action("Index", new { sortOrder = ViewBag.AccountCodeSortParam, currentFilter = ViewBag.CurrentFilter })">
+                Account Code &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+            </a>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => accountSetting.UseEmailAsLogin)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => accountSetting.UseRandomGeneratedPassword)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => accountSetting.BypassHRManagerApproval)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => accountSetting.BypassMedicalHistory)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => accountSetting.UrgSetting)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="AccountContainer">
+            @Html.Partial("_AccountSetting", item)
+        </tr>
+    }
+
+</table>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+
+        function useEmailAsLogin(selector) {
+            processAccountSetting(selector, 'UseEmailAsLogin');
+        }
+
+        function useRandomGeneratedPassword(selector) {
+            processAccountSetting(selector, 'UseRandomGeneratedPassword');
+        }
+
+        function bypassHRManagerApproval(selector) {
+            processAccountSetting(selector, 'BypassHRManagerApproval');
+        }
+
+        function bypassMedicalHistory(selector) {
+            processAccountSetting(selector, 'BypassMedicalHistory');
+        }
+
+        function processAccountSetting(selector, prop) {
+            var guid = selector.parent().siblings().children('input[name*="Guid"]').val();
+            var accountCode = selector.parent().siblings().children('input[name*="AccountCode"]').val();
+            var propertyName = prop;
+            var propertyValue = false;
+            if (selector.is(':checked')) {
+                propertyValue = true;
+            }
+            var container = selector.closest('.AccountContainer');
+            var option = {
+                url: '@Url.Action("Edit")',
+                type: 'post',
+                data: {
+                    guid: guid,
+                    propertyValue: propertyValue,
+                    propertyName: propertyName,
+                    accountCode: accountCode
+                }
+            };
+            $.ajax(option).done(function (data) {
+                container.html(data);
+            });
+        }
+
+        function urgSetting(selector) {
+            var guid = selector.parent().siblings().children('input[name*="Guid"]').val();
+            var accountCode = selector.parent().siblings().children('input[name*="AccountCode"]').val();
+            var propertyValue = selector.val();
+            var container = selector.closest('.AccountContainer');
+            var option = {
+                url: '@Url.Action("EditUrgSetting")',
+                type: 'post',
+                data: {
+                    guid: guid,
+                    propertyValue: propertyValue,
+                    accountCode: accountCode
+                }
+            };
+            $.ajax(option).done(function (data) {
+                container.html(data);
+            });
+        }
+    </script>
+}

@@ -1,0 +1,206 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles="SysAd, CanViewGroups, CanAddGroups, CanEditGroups, CanDeleteGroups")]
+    public class GroupsController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewGroups")]
+        public ActionResult Index(string sortOrder, string currentFilter, int? page)
+        {
+            var groups = from t in db.Groups where !t.Deleted select t;
+            if (!string.IsNullOrEmpty(currentFilter))
+            {
+                groups = groups.Where(t => t.Name.Contains(currentFilter));
+            }
+
+            Helper.SetSortParameters<Group>(this, ref groups, sortOrder, currentFilter, new SortParameter() { PropertyName = "Name" }, null);
+
+            return View(groups.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanAddGroups")]
+        public ActionResult Create()
+        {
+            var model = new Group();
+
+            ViewBag.Roles = db.Roles.OrderBy(t => t.Name).ToList();
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddGroups")]
+        public async Task<ActionResult> Create([Bind(Include = "Name, Guid")] Group group, string[] RoleId, Guid[] GroupGuid)
+        {
+            if (RoleId != null)
+            {
+                foreach (var roleId in RoleId)
+                {
+                    var role = db.Roles.FirstOrDefault(t => t.Id == roleId) as ApplicationRole;
+                    if (role != null)
+                    {
+                        group.Roles.Add(role);
+                    }
+                }
+            }
+
+            if (GroupGuid != null)
+            {
+                foreach (var guid in GroupGuid)
+                {
+                    group.AccessibleGroups.Add(new AccessibleGroup() { GroupGuid = guid });
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                db.Groups.Add(group);
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Roles = db.Roles.OrderBy(t => t.Name).ToList();
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(group);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditGroups")]
+        public async Task<ActionResult> Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Group group = await db.Groups.Include(t => t.Roles).FirstOrDefaultAsync(t => t.Guid == guid);
+            if (group == null) return HttpNotFound();
+
+            ViewBag.Roles = db.Roles.OrderBy(t => t.Name).ToList();
+            ViewBag.Groups = db.Groups.OrderBy(t => t.Name).ToList();
+
+            return View(group);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditGroups")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Name, Guid")] Group group, string[] RoleId)
+        {
+            if (ModelState.IsValid)
+            {
+                var currentGroup = db.Groups.Include(t => t.Roles).FirstOrDefault(t => t.Guid == group.Guid);
+                if (currentGroup != null && currentGroup.Roles != null)
+                {
+                    var forDeleting = new List<ApplicationRole>();
+                    foreach (var role in currentGroup.Roles)
+                    {
+                        if (RoleId == null || !RoleId.Any(t => t == role.Id))
+                        {
+                            forDeleting.Add(role);
+                        }
+                    }
+                    foreach (var role in forDeleting)
+                    {
+                        currentGroup.Roles.Remove(role);
+                    }
+
+                    if (RoleId != null)
+                    {
+                        foreach (var roleId in RoleId)
+                        {
+                            if (!currentGroup.Roles.Any(t => t.Id == roleId))
+                            {
+                                var role = db.Roles.FirstOrDefault(t => t.Id == roleId) as ApplicationRole;
+                                if (role != null)
+                                {
+                                    currentGroup.Roles.Add(role);
+                                }
+                            }
+                        }
+                    }
+
+                    db.Entry(currentGroup).CurrentValues.SetValues(group);
+                    db.Entry(currentGroup).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+
+            }
+            return View(group);
+        }
+
+        [Authorize(Roles = "SysAd, CanDeleteGroups")]
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            if (guid == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Group group = await db.Groups.FirstOrDefaultAsync(t => t.Guid == guid);
+            if (group == null)
+            {
+                return HttpNotFound();
+            }
+            return View(group);
+        }
+
+        [Authorize(Roles = "SysAd, CanDeleteGroups")]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(Guid guid)
+        {
+            Group group = await db.Groups.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.Groups.Remove(group);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

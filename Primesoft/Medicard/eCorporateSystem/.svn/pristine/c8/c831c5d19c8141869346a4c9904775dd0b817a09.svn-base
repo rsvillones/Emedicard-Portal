@@ -1,0 +1,98 @@
+﻿@model Corelib.Models.EndorsementBatch
+
+@{
+    ViewBag.Title = "Amendment";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("Amendment", "RequestManagement", FormMethod.Post, new { accountCode = ViewBag.AccountCode, enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.ReferenceNumber);
+    @Html.HiddenFor(model => model.Filename);
+    @Html.HiddenFor(model => model.GuidFilename);
+    @Html.HiddenFor(model => model.Deadline)
+    @Html.HiddenFor(model => model.Remarks)
+    @Html.HiddenFor(model => model.Timestamp);
+    
+    if (Model.Amendments != null && Model.Amendments.Any())
+    {
+        foreach (var amendment in Model.Amendments)
+        {
+            @Html.Partial("_SingleAmendment", amendment)
+        }
+    }
+    else
+    {
+        @Html.Partial("_SingleAmendment", new Corelib.Models.Amendment() { MemberId = 1 })
+    }
+
+    <div class="row space">
+        <div class="col-lg-12">
+            <div class="no-color pull-right">
+                    <input type="submit" name="Submit" value="Save" class="btn btn-primary" />
+                    <input type="submit" name="Submit" value="Submit Request" class="btn btn-primary" />
+                
+                @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[name*="EffectivityDate"]').datepicker();           
+        });
+        function dataTypeOnchange(input) {
+            var propertyName = input.val();
+            var memberId = $('input[name*="MemberId"]').val();
+            var option = {
+                url: '@Url.Action("GetPropertyValue")',
+                type: 'post',
+                data: {
+                    propertyName: propertyName,
+                    memberId: memberId
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('input[name*="ChangeDataFrom"]').val(data);
+            });
+
+            var option2 = {
+                url: '@Url.Action("IsPropertyDateTime")',
+                type: 'post',
+                data: {
+                    propertyName: propertyName,
+                    memberId: memberId
+                }
+            };
+            $.ajax(option2).done(function (data) {
+
+                if (data == "True") {
+                    $('input[name*="ChangeDataTo"]').datepicker();
+                } else {
+                    $('input[name*="ChangeDataTo"]').datepicker("remove");
+                }
+            });
+        }
+        function onChangeMember(input) {
+            var option = {
+                url: '@Url.Action("GetDependents")',
+                type: 'post',
+                data: {
+                    memberId: input.val()
+                }
+            };
+            $.ajax(option).done(function (data) {
+                $('select[name*="DependentId"]').html(data);
+            });
+        }
+    </script>
+}

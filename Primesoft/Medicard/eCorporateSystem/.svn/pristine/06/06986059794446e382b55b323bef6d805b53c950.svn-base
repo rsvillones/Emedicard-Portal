@@ -1,0 +1,379 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using System.Net;
+using System.Data.Entity;
+using OfficeOpenXml;
+using System.IO;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+    public class MembershipEndorsementsController : Controller
+    {
+        #region -- Constants --
+
+        private const int NEW_APPLICATION_TYPE_COLUMN = 1;
+        private const int NEW_LAST_NAME_COLUMN = NEW_APPLICATION_TYPE_COLUMN + 1;
+        private const int NEW_FIRST_NAME_COLUMN = NEW_LAST_NAME_COLUMN + 1;
+        private const int NEW_MIDDLE_NAME_COLUMN = NEW_FIRST_NAME_COLUMN + 1;
+        private const int NEW_BIRTHDAY_COLUMN = NEW_MIDDLE_NAME_COLUMN + 1;
+        private const int NEW_AREA_CODE_COLUMN = NEW_BIRTHDAY_COLUMN + 1;
+        private const int NEW_EMPLOYEE_ID_COLUMN = NEW_AREA_CODE_COLUMN + 1;
+        private const int NEW_APPLIED_PLAN_COLUMN = NEW_EMPLOYEE_ID_COLUMN + 1;
+        private const int NEW_DEPENDENT_TYPE_COLUMN = NEW_APPLIED_PLAN_COLUMN + 1;
+        private const int NEW_DEPENDENT_RELATION_CODE_COLUMN = NEW_DEPENDENT_TYPE_COLUMN + 1;
+        private const int NEW_GENDER_COLUMN = NEW_DEPENDENT_RELATION_CODE_COLUMN + 1;
+        private const int NEW_CIVIL_STATUS_COLUMN = NEW_GENDER_COLUMN + 1;
+        private const int NEW_WAIVER_COLUMN = NEW_CIVIL_STATUS_COLUMN + 1;
+        private const int NEW_EFFECTIVITY_DATE_COLUMN = NEW_WAIVER_COLUMN + 1;
+        private const int NEW_OTHER_REMARKS_COLUMN = NEW_EFFECTIVITY_DATE_COLUMN + 1;
+        private const int NEW_ERC_COLUMN = NEW_OTHER_REMARKS_COLUMN + 1;
+        private const int NEW_REFERENCE_NUMBER_COLUMN = NEW_ERC_COLUMN + 1;
+        private const int NEW_DEPARTMENT_TYPE_COLUMN = NEW_REFERENCE_NUMBER_COLUMN + 1;
+        private const int NEW_DEPARTMENT_PRINNAME_COLUMN = NEW_DEPARTMENT_TYPE_COLUMN + 1;
+        private const int NEW_DEPARTMENT_PRINAPPNO_COLUMN = NEW_DEPARTMENT_PRINNAME_COLUMN + 1;
+        private const int NEW_DATE_HIRED_COLUMN = NEW_DEPARTMENT_PRINAPPNO_COLUMN + 1;
+        private const int NEW_CANCER_LIMIT_COLUMN = NEW_DATE_HIRED_COLUMN + 1;
+        private const int NEW_CIB_PLAN_COLUMN = NEW_CANCER_LIMIT_COLUMN + 1;
+        private const int NEW_CIB_LIMIT_COLUMN = NEW_CIB_PLAN_COLUMN + 1;
+        private const int NEW_IDENTIFIER_COLUMN = NEW_CIB_LIMIT_COLUMN + 1;
+
+        #endregion
+
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public MembershipEndorsementsController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult Index( string sortOrder, string currentFilter, int? page, string message, string messageType,string controllNumber = "", string referenceNumber = "", string companyName = "", string endorsementType = "")
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var endorsementBatches = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Where(t => accountCodes.Contains(t.AccountCode) && (
+                    t.ControlNumber.Contains(controllNumber) && t.ReferenceNumber.Contains(referenceNumber) &&
+                    t.CompanyName.Contains(companyName) && t.EndorsementType.Contains(endorsementType)));
+
+            ViewBag.ControllNumber = controllNumber;
+            ViewBag.ReferenceNumber = referenceNumber;
+            ViewBag.CompanyName = companyName;
+
+            var searchValue = String.Format("{0} {1} {2} {3}", controllNumber, referenceNumber, companyName, endorsementType);
+             
+            //while(true){
+            //    if(!string.IsNullOrEmpty(searchValue))
+            //    {
+            //        if (searchValue[0] == ',') searchValue = searchValue.Remove(0, 1);
+            //        if (!string.IsNullOrEmpty(searchValue) && searchValue[searchValue.Length - 1] == ',') searchValue = searchValue.Remove(searchValue.Length - 1,1);
+            //        if (!string.IsNullOrEmpty(searchValue) && (searchValue[0] == ',' || searchValue[searchValue.Length - 1] == ',')) continue;                    
+            //    };
+            //    break;
+            //}
+
+            ViewBag.SearchValue = searchValue;
+            var endorsementTypes = new List<string>() { "Action Memo", "Additional Dependent", "Amendment", "Dependent Cancellation", "ID Replacement" };
+            ViewBag.EndorsementType = new SelectList(endorsementTypes, endorsementType);
+
+            Helper.SetSortParameters<EndorsementBatch>(this, ref endorsementBatches, string.IsNullOrEmpty(sortOrder) ? "date_desc" : sortOrder, currentFilter, new SortParameter() { PropertyName = "Date" }, new List<SortParameter>()
+            {
+                new SortParameter() { PropertyName = "ControlNumber" },
+                new SortParameter() { PropertyName = "ReferenceNumber" },
+                new SortParameter() { PropertyName = "CompanyName" },
+                new SortParameter() { PropertyName = "DateForwarded" },
+                new SortParameter() { PropertyName = "EndorsementCount" },
+                new SortParameter() { PropertyName = "EndorsementType" },
+                new SortParameter() { PropertyName = "DateEndorsed" },
+                new SortParameter() { PropertyName = "Deadline" },
+                new SortParameter() { PropertyName = "Filename" }
+            });
+
+            ViewBag.Message = message;
+            ViewBag.MessageType = messageType;
+
+            return View(endorsementBatches.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult DownloadNewApplication(Guid? guid)
+        {
+            if(guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var eb = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Include(t => t.Members.Select(m => m.Dependents))
+                .FirstOrDefault(t => t.Guid == guid && legacyAccountCodes.Contains(t.AccountCode));
+            if (eb == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            return File(PopulateNewApplication(eb, null), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", String.Format("{0}.xlsx", eb.ReferenceNumber));
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult DownloadReceivingEntry(Guid? guid, string controlNumber)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var eb = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Include(t => t.Members.Select(m => m.Dependents))
+                .FirstOrDefault(t => t.Guid == guid && legacyAccountCodes.Contains(t.AccountCode));
+            if (eb == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            return File(PopulateNewApplication(eb, controlNumber), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", String.Format("{0}.xlsx", controlNumber));
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult Members(Guid? guid, string sortOrder, string currentFilter, int? page)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var eb = db.EndorsementBatches.FirstOrDefault(t => t.Guid == guid && legacyAccountCodes.Contains(t.AccountCode));
+            if (eb == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            var members = db.Members.Where(t => t.EndorsementBatchId == eb.Id);
+
+            Helper.SetSortParameters<Member>(this, ref members, sortOrder, currentFilter, new SortParameter() { PropertyName = "LastName" }, new List<SortParameter>()
+            {
+                new SortParameter() { PropertyName = "EmployeeNumber" },
+                new SortParameter() { PropertyName = "FirstName" },
+                new SortParameter() { PropertyName = "MiddleName" },
+                new SortParameter() { PropertyName = "DateOfBirth" },
+                new SortParameter() { PropertyName = "EmailAddress" }
+            });
+
+            return View(members.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult MemberProfile(Guid? guid)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (!guid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Members
+                .Include(t => t.Dependents)
+                .Include(t => t.MedicalHistories)
+                .Include(t => t.MedicalHistories.Select(mh => mh.Question))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories.Select(mh => mh.Question)))
+                .FirstOrDefault(t => t.Guid == guid);
+
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (!accountCodes.Contains(model.AccountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Helper.IsMedicalHistoryComplete(db, model);
+            Helper.IsDependentMedicalHistoryComplete(db, model);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewReceivingEntries")]
+        public ActionResult ReceiveEndorsementBatch(Guid? guid)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (!guid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Include(t => t.Members.Select(m => m.Dependents))
+                .FirstOrDefault(t => t.Guid == guid);
+
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (!accountCodes.Contains(endorsementBatch.AccountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var controlNumber = Helper.GenerateReceivingEntryControlNumber();
+            var principalCount = 0;
+            var dependentCount = 0;
+            if(!string.IsNullOrEmpty(endorsementBatch.ControlNumber))
+            {
+                endorsementBatch.ControlNumber += String.Format(",{0}", controlNumber);
+            }
+            else
+            {
+                endorsementBatch.ControlNumber = controlNumber;
+            }
+            foreach (var member in endorsementBatch.Members)
+            {
+                if (member.Status == Corelib.Enums.MembershipStatus.CorporateAdminApproved)
+                {
+                    member.ControlNumber = controlNumber;
+                    member.Status = Corelib.Enums.MembershipStatus.ForProcessing;
+                    foreach (var dependent in member.Dependents)
+                    {
+                        dependent.ControlNumber = controlNumber;
+                        dependent.Status = Corelib.Enums.MembershipStatus.ForProcessing;
+                        
+                        dependentCount++;
+                    }
+
+                    principalCount++;
+                }
+            }
+
+            var dateReceived = DateTime.Now;
+
+            var receivingEntry = new ReceivingEntry()
+            {
+                ControlNumber = controlNumber,
+                AccountCode = endorsementBatch.AccountCode,
+                DateReceived = dateReceived,
+                DateForwarded = dateReceived,
+                DueDate = dateReceived.AddDays(3),
+                Processed = false,
+                NewPrincipalCount = principalCount,
+                NewDependentCount = dependentCount,
+                RenewPrincipalCount = 0,
+                RenewDependentCount = 0,
+                AdditionalPrincipalCount = 0,
+                AdditionalDependentCount = 0,
+                ReplyCount = 0,
+                ApprovedCount = 0,
+                ChangeStatus = 0,
+                SimpleAmendment = 0,
+                MedicardReevaluation = 0,
+                DeletionCount = 0,
+                CorrectionCount = 0,
+                TimeReceived = dateReceived.ToString("hh:mm:ss tt"),
+                FromIntra = "",
+                AssignedUser = ""
+            };
+            db.ReceivingEntries.Add(receivingEntry);
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index", new { message = "Successfully Received Membership Endorsements", messageType = "Success" });
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private byte[] PopulateNewApplication(EndorsementBatch eb, string controlNumber)
+        {
+            byte[] returnValue;
+            var templatePath = Server.MapPath("~/ExcelTemplates/Underwriting New Application.xlsx");
+            var targetPath = String.Format(@"{0}\{1}.xlsm", Server.MapPath("~/Uploads"), Guid.NewGuid());
+
+            System.IO.File.Copy(templatePath, targetPath);
+
+            using (var package = new ExcelPackage(new FileInfo(targetPath)))
+            {
+                var workBook = package.Workbook;
+                if (workBook == null) throw new Exception("Invalid WorkBook.");
+                if (workBook.Worksheets.Count <= 0) throw new Exception("Worksheet doesn't exist.");
+                var worksheet = workBook.Worksheets[1];
+                var currentRow = 2;
+                foreach (var member in eb.Members)
+                {
+                    if (!string.IsNullOrEmpty(controlNumber) && member.ControlNumber != controlNumber) continue;
+
+                    worksheet.Cells[currentRow, NEW_APPLICATION_TYPE_COLUMN].Value = "P";
+                    worksheet.Cells[currentRow, NEW_LAST_NAME_COLUMN].Value = member.LastName;
+                    worksheet.Cells[currentRow, NEW_FIRST_NAME_COLUMN].Value = member.FirstName;
+                    worksheet.Cells[currentRow, NEW_MIDDLE_NAME_COLUMN].Value = member.MiddleName;
+                    worksheet.Cells[currentRow, NEW_BIRTHDAY_COLUMN].Value = member.DateOfBirth;
+                    worksheet.Cells[currentRow, NEW_AREA_CODE_COLUMN].Value = member.Area;
+                    worksheet.Cells[currentRow, NEW_EMPLOYEE_ID_COLUMN].Value = member.EmployeeNumber;
+                    worksheet.Cells[currentRow, NEW_APPLIED_PLAN_COLUMN].Value = member.AppliedPlan;
+                    worksheet.Cells[currentRow, NEW_DEPENDENT_TYPE_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_DEPENDENT_RELATION_CODE_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_GENDER_COLUMN].Value = member.Gender;
+                    worksheet.Cells[currentRow, NEW_CIVIL_STATUS_COLUMN].Value = member.CivilStatus;
+                    worksheet.Cells[currentRow, NEW_WAIVER_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_EFFECTIVITY_DATE_COLUMN].Value = member.EffectivityDate;
+                    worksheet.Cells[currentRow, NEW_OTHER_REMARKS_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_ERC_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_REFERENCE_NUMBER_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_DEPARTMENT_TYPE_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_DEPARTMENT_PRINNAME_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_DEPARTMENT_PRINAPPNO_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_DATE_HIRED_COLUMN].Value = member.DateHired;
+                    worksheet.Cells[currentRow, NEW_CANCER_LIMIT_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_CIB_PLAN_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_CIB_LIMIT_COLUMN].Value = "";
+                    worksheet.Cells[currentRow, NEW_IDENTIFIER_COLUMN].Value = member.Guid;
+
+                    currentRow++;
+
+                    if (member.Dependents != null)
+                    {
+                        foreach (var dependent in member.Dependents)
+                        {
+                            worksheet.Cells[currentRow, NEW_APPLICATION_TYPE_COLUMN].Value = "D";
+                            worksheet.Cells[currentRow, NEW_LAST_NAME_COLUMN].Value = dependent.LastName;
+                            worksheet.Cells[currentRow, NEW_FIRST_NAME_COLUMN].Value = dependent.FirstName;
+                            worksheet.Cells[currentRow, NEW_MIDDLE_NAME_COLUMN].Value = dependent.MiddleName;
+                            worksheet.Cells[currentRow, NEW_BIRTHDAY_COLUMN].Value = dependent.DateOfBirth;
+                            worksheet.Cells[currentRow, NEW_AREA_CODE_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_EMPLOYEE_ID_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_APPLIED_PLAN_COLUMN].Value = dependent.AppliedPlan;
+                            worksheet.Cells[currentRow, NEW_DEPENDENT_TYPE_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_DEPENDENT_RELATION_CODE_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_GENDER_COLUMN].Value = member.Gender;
+                            worksheet.Cells[currentRow, NEW_CIVIL_STATUS_COLUMN].Value = dependent.CivilStatus;
+                            worksheet.Cells[currentRow, NEW_WAIVER_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_EFFECTIVITY_DATE_COLUMN].Value = member.EffectivityDate;
+                            worksheet.Cells[currentRow, NEW_OTHER_REMARKS_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_ERC_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_REFERENCE_NUMBER_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_DEPARTMENT_TYPE_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_DEPARTMENT_PRINNAME_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_DEPARTMENT_PRINAPPNO_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_DATE_HIRED_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_CANCER_LIMIT_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_CIB_PLAN_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_CIB_LIMIT_COLUMN].Value = "";
+                            worksheet.Cells[currentRow, NEW_IDENTIFIER_COLUMN].Value = dependent.Guid;
+
+                            currentRow++;
+                        }
+                    }
+                }
+
+                returnValue = package.GetAsByteArray();
+            }
+
+            System.IO.File.Delete(targetPath);
+
+            return returnValue;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

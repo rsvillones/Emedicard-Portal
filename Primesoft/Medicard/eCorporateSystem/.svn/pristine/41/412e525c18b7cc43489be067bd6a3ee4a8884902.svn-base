@@ -1,0 +1,913 @@
+﻿using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+
+namespace Corelib
+{
+    public static class LegacyHelper
+    {
+        #region -- Public Functions --
+
+        public static IQueryable<LegacyAccount> GetLegacyAccounts(LegacyDataContext legacyDb, string agentCode)
+        {
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var activeStatus = "ASC0000003";
+
+            var returnValue = !String.IsNullOrEmpty(agentCode) ? legacyDb.LegacyAccounts.Where(t => t.AgentCode == agentCode && t.AccountStatusCode == activeStatus).OrderBy(t => t.Name) : new List<LegacyAccount>() as IQueryable<LegacyAccount>;
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IQueryable<LegacyAccount> GetLegacyAccounts(IdentityDataContext db, LegacyDataContext legacyDb, IPrincipal user)
+        {
+            var disposeDb = false;
+            if (db == null)
+            {
+                db = new IdentityDataContext();
+                disposeDb = true;
+            }
+
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            IQueryable<LegacyAccount> returnValue;
+
+            var activeStatus = "ASC0000003";
+
+            if (user.IsInRole("SysAd") || user.IsInRole("CanAssignAllAccounts"))
+            {
+                returnValue = legacyDb.LegacyAccounts.Where(t => t.AccountStatusCode == activeStatus).OrderBy(t => t.Name);
+            }
+            else
+            {
+                var username = user.Identity.Name;
+
+                var accountCodes = new List<string>();
+                var applicationUser = db.Users.FirstOrDefault(t => t.UserName == user.Identity.Name) ?? new ApplicationUser();
+                var agentCode = applicationUser.AgentCode;
+                if (user != null && !string.IsNullOrEmpty(agentCode))
+                {
+                    returnValue = legacyDb.LegacyAccounts.Where(t => t.AgentCode == agentCode && t.AccountStatusCode == activeStatus).OrderBy(t => t.Name);
+                }
+                else
+                {
+                    accountCodes = db.Accounts.Where(t => t.ApplicationUser.UserName == username).Select(t => t.Code).ToList();
+                    returnValue = legacyDb.LegacyAccounts.Where(t => accountCodes.Contains(t.Code)).OrderBy(t => t.Name);
+                }
+            }
+
+            if (disposeDb)
+            {
+                db.Dispose();
+                db = null;
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IQueryable<LegacyAccount> GetAllLegacyAccounts(LegacyDataContext legacyDb)
+        {
+            var disposeLegacyDb = false;
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var activeStatus = "ASC0000003";
+
+            var returnValue = legacyDb.LegacyAccounts.Where(t => t.AccountStatusCode == activeStatus).OrderBy(t => t.Name);
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<IActionMemo> GetLegacyActionMemos(IdentityDataContext db, LegacyDataContext legacyDb, string memberCode, string accountCode, IEnumerable<string> accountCodes)
+        {
+            IEnumerable<IActionMemo> returnValue = null;
+
+            var principalActionMemos = legacyDb.LegacyPrincipalActionMemos as IQueryable<IActionMemo>;
+            var dependentActionMemos = legacyDb.LegacyDependentActionMemos as IQueryable<IActionMemo>;
+
+            if (!String.IsNullOrEmpty(memberCode))
+            {
+                principalActionMemos = principalActionMemos.Where(t => t.PrincipalCode == memberCode);
+                dependentActionMemos = dependentActionMemos.Where(t => t.PrincipalCode == memberCode);
+            }
+            else if (!String.IsNullOrEmpty(accountCode))
+            {
+                principalActionMemos = principalActionMemos.Where(t => t.AccountCode == accountCode);
+                dependentActionMemos = dependentActionMemos.Where(t => t.AccountCode == accountCode);
+            }
+            else if (accountCodes != null)
+            {
+                principalActionMemos = principalActionMemos.Where(t => accountCodes.Contains(t.AccountCode));
+                dependentActionMemos = dependentActionMemos.Where(t => accountCodes.Contains(t.AccountCode));
+            }
+
+            returnValue = principalActionMemos.AsEnumerable().Concat<IActionMemo>(dependentActionMemos);
+
+            returnValue = SetActionMemoWhereCondition(returnValue);
+
+            return returnValue;
+        }
+
+        public static IEnumerable<IActionMemo> GetLegacyActionMemos(LegacyDataContext legacyDb, DateTime dateFrom, DateTime dateTo)
+        {
+            IEnumerable<IActionMemo> returnValue = null;
+
+            var principalActionMemos = legacyDb.LegacyPrincipalActionMemos.Where(t => t.ActionMemoDate >= dateFrom && t.ActionMemoDate <= dateTo) as IQueryable<IActionMemo>;
+            var dependentActionMemos = legacyDb.LegacyDependentActionMemos.Where(t => t.ActionMemoDate >= dateFrom && t.ActionMemoDate <= dateTo) as IQueryable<IActionMemo>;
+
+            var principal = principalActionMemos.ToList();
+
+            returnValue = principalActionMemos.AsEnumerable().Concat<IActionMemo>(dependentActionMemos);
+
+            returnValue = SetActionMemoWhereCondition(returnValue);
+
+            return returnValue;
+        }
+
+        public static IEnumerable<IMemberProcess> GetMemberProcesses(LegacyDataContext legacyDb, DateTime dateFrom, DateTime dateTo)
+        {
+            IEnumerable<IMemberProcess> returnValue = null;
+
+            var principals = legacyDb.LegacyPrincipalProcesses.Where(t =>
+                (t.UpdatedDate >= dateFrom && t.UpdatedDate <= dateTo)
+                || (t.AlteredDate >= dateFrom && t.AlteredDate <= dateTo)
+                || (t.AmendedDate >= dateFrom && t.AmendedDate <= dateTo)
+            );
+            var dependents = legacyDb.LegacyDependentProcesses.Where(t =>
+                (t.UpdatedDate >= dateFrom && t.UpdatedDate <= dateTo)
+                || (t.AlteredDate >= dateFrom && t.AlteredDate <= dateTo)
+                || (t.AmendedDate >= dateFrom && t.AmendedDate <= dateTo)
+            );
+
+            var p = principals.ToList();
+            var d = dependents.ToList();
+
+            returnValue = principals.AsEnumerable().Concat<IMemberProcess>(dependents);
+
+            return returnValue;
+        }
+
+        public static LegacyMember GetActiveMember(LegacyDataContext legacyDb, string accountCode, string memberCode)
+        {
+            return GetActiveMembers(legacyDb, accountCode, true).FirstOrDefault(t => t.Code == memberCode && String.IsNullOrEmpty(t.PrincipalMemberCode));
+        }
+
+        public static IEnumerable<LegacyMember> GetActiveDependents(LegacyDataContext legacyDb, string accountCode, string memberCode)
+        {
+            return GetActiveMembers(legacyDb, accountCode, false, "Dependent").Where(t => t.PrincipalMemberCode == memberCode);
+        }
+
+        public static IEnumerable<LegacyMember> GetActiveMembers(LegacyDataContext legacyDb, string accountCode, bool all = true, string type = "Principal")
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = ExecuteSp<LegacyMember>(legacyDb, "emed_active_member_prin_and_dep",
+                new List<string>() { "accountCode" },
+                new List<object>() { accountCode }
+            );
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            if (!all)
+            {
+                if (type == "Principal")
+                {
+                    returnValue = returnValue.Where(t => String.IsNullOrEmpty(t.PrincipalMemberCode));
+                }
+                else
+                {
+                    returnValue = returnValue.Where(t => !String.IsNullOrEmpty(t.PrincipalMemberCode));
+                }
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyMember> GetResignedMembers(LegacyDataContext legacyDb, string accountCode, bool all = true, string type = "Principal")
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = ExecuteSp<LegacyMember>(legacyDb, "emed_resigned_member_prin_and_dep",
+                new List<string>() { "accountCode" },
+                new List<object>() { accountCode }
+            );
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            if (!all)
+            {
+                if (type == "Principal")
+                {
+                    returnValue = returnValue.Where(t => String.IsNullOrEmpty(t.PrincipalMemberCode));
+                }
+                else
+                {
+                    returnValue = returnValue.Where(t => !String.IsNullOrEmpty(t.PrincipalMemberCode));
+                }
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyMember> GetAllMembers(LegacyDataContext legacyDb, string accountCode, bool all = true, string type = "Principal")
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            IEnumerable<LegacyMember> returnValue = GetActiveMembers(legacyDb, accountCode, all, type);
+            returnValue = returnValue.Concat(GetResignedMembers(legacyDb, accountCode, all, type));
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            if (!all)
+            {
+                if (type == "Principal")
+                {
+                    returnValue = returnValue.Where(t => String.IsNullOrEmpty(t.PrincipalMemberCode));
+                }
+                else
+                {
+                    returnValue = returnValue.Where(t => !String.IsNullOrEmpty(t.PrincipalMemberCode));
+                }
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyMember> GetAllDependents(LegacyDataContext legacyDb, string accountCode, string memberCode)
+        {
+            return GetAllMembers(legacyDb, accountCode, false, "Dependent").Where(t => t.PrincipalMemberCode == memberCode);
+        }
+
+        public static IEnumerable<LegacyMember> GetActiveMembersWithDependents(LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var all = ExecuteSp<LegacyMember>(legacyDb, "emed_active_member_prin_and_dep",
+                new List<string>() { "accountCode" },
+                new List<object>() { accountCode }
+            );
+
+            var principalCodes = all.Where(t => !String.IsNullOrEmpty(t.PrincipalMemberCode)).Select(t => t.PrincipalMemberCode).Distinct().ToList();
+            var returnValue = all.Where(t => principalCodes.Contains(t.Code));
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyUtilization> GetUtilization(LegacyDataContext legacyDb, string accountCode, string memberCode, string username)
+        {
+            // Uncomment code below to return interim data for display editing outside medicard.
+            //return new List<LegacyUtilization>()
+            //{
+            //    new LegacyUtilization() { ControlCode = "CALL-LOG", AvailmentDate = new DateTime(2014, 08, 22), Diagnosis = "non-specific abd colic", Remarks = "", Hospital = "ST. LUKE`S MEDICAL CENTER - GLOBAL CITY", ApprovedAmount = 0 },
+            //    new LegacyUtilization() { ControlCode = "MS256436", AvailmentDate = new DateTime(2014, 08, 18), Diagnosis = "GASTROESOPHAGEAL REFLUX, NOS", Remarks = "", Hospital = "", ApprovedAmount = 4320.91M },
+            //    new LegacyUtilization() { ControlCode = "OP672567", AvailmentDate = new DateTime(2014, 07, 09), Diagnosis = "HYPERTENSION", Remarks = "", Hospital = "", ApprovedAmount = 0 },
+            //    new LegacyUtilization() { ControlCode = "OP672567", AvailmentDate = new DateTime(2014, 07, 09), Diagnosis = "PRESBYOPIA", Remarks = "", Hospital = "", ApprovedAmount = 350 },
+            //    new LegacyUtilization() { ControlCode = "CALL-LOG", AvailmentDate = new DateTime(2014, 08, 22), Diagnosis = "non-specific abd colic", Remarks = "", Hospital = "ST. LUKE`S MEDICAL CENTER - GLOBAL CITY", ApprovedAmount = 0 },
+            //    new LegacyUtilization() { ControlCode = "MS256436", AvailmentDate = new DateTime(2014, 08, 18), Diagnosis = "GASTROESOPHAGEAL REFLUX, NOS", Remarks = "", Hospital = "", ApprovedAmount = 4320.91M },
+            //    new LegacyUtilization() { ControlCode = "OP672567", AvailmentDate = new DateTime(2014, 07, 09), Diagnosis = "HYPERTENSION", Remarks = "", Hospital = "", ApprovedAmount = 0 },
+            //    new LegacyUtilization() { ControlCode = "OP672567", AvailmentDate = new DateTime(2014, 07, 09), Diagnosis = "PRESBYOPIA", Remarks = "", Hospital = "", ApprovedAmount = 350 },
+            //    new LegacyUtilization() { ControlCode = "CALL-LOG", AvailmentDate = new DateTime(2014, 08, 22), Diagnosis = "non-specific abd colic", Remarks = "", Hospital = "ST. LUKE`S MEDICAL CENTER - GLOBAL CITY", ApprovedAmount = 0 },
+            //    new LegacyUtilization() { ControlCode = "MS256436", AvailmentDate = new DateTime(2014, 08, 18), Diagnosis = "GASTROESOPHAGEAL REFLUX, NOS", Remarks = "", Hospital = "", ApprovedAmount = 4320.91M },
+            //    new LegacyUtilization() { ControlCode = "OP672567", AvailmentDate = new DateTime(2014, 07, 09), Diagnosis = "HYPERTENSION", Remarks = "", Hospital = "", ApprovedAmount = 0 },
+            //    new LegacyUtilization() { ControlCode = "OP672567", AvailmentDate = new DateTime(2014, 07, 09), Diagnosis = "PRESBYOPIA", Remarks = "", Hospital = "", ApprovedAmount = 350 },
+            //};
+
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var legacyMember = GetActiveMember(legacyDb, accountCode, memberCode);
+            if (legacyMember == null) return new List<LegacyUtilization>();
+
+
+            IEnumerable<LegacyUtilization> returnValue = null;
+            using (var udb = new UtilizationDataContext())
+            {
+                returnValue = ExecuteSp<LegacyUtilization>(udb, "CP_CLMS_REP_UTILIZATION_ALL",
+                    new List<string>() { "DATE_FR", "DATE_TO", "MEMCODE", "LNAME", "FNAME", "MI", "COMP", "USER" },
+                    new List<object>() { legacyMember.EffectivityDate ?? DateTime.Now.AddYears(-1), legacyMember.ValidityDate ?? DateTime.Now.AddMonths(1), legacyMember.Code, legacyMember.LastName, legacyMember.FirstName, legacyMember.MiddleName, accountCode, username }
+                );
+            }
+
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+
+        }
+
+        public static IEnumerable<LegacyReimbursement> GetReimbursement(LegacyDataContext legacyDb, string accountCode, string memberCode)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var legacyMember = GetActiveMember(legacyDb, accountCode, memberCode);
+            if (legacyMember == null) return new List<LegacyReimbursement>();
+
+            IEnumerable<LegacyReimbursement> returnValue = null;
+            using (var udb = new ReimbursementDataContext())
+            {
+                returnValue = ExecuteSp<LegacyReimbursement>(udb, "REIM_Get_Reimbursement_Status_EMED",
+                    new List<string>() { "member_code" },
+                    new List<object>() { legacyMember.Code },
+                    38
+                );
+            }
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+
+        }
+
+        public static IEnumerable<ReimbursementDisapproved> GetReimbursementDisapproved(string controlCode)
+        {
+            IEnumerable<ReimbursementDisapproved> returnValue = null;
+            using (var udb = new ReimbursementDataContext())
+            {
+                returnValue = ExecuteSp<ReimbursementDisapproved>(udb, "Reim_Get_Reimb_Details_EMED_Disapproved",
+                    new List<string>() { "control_code" },
+                    new List<object>() { controlCode }
+                );
+            }
+            return returnValue;
+        }
+
+        public static IEnumerable<ReimbursementWithLackingDocument> GetReimbursementWithLackingDocument(string controlCode)
+        {
+            IEnumerable<ReimbursementWithLackingDocument> returnValue = null;
+            using (var udb = new ReimbursementDataContext())
+            {
+                returnValue = ExecuteSp<ReimbursementWithLackingDocument>(udb, "Reim_Get_Reimb_Details_EMED_lack_documents",
+                    new List<string>() { "control_code" },
+                    new List<object>() { controlCode }
+                );
+            }
+            return returnValue;
+        }
+
+        public static IEnumerable<ReimbursementWaitingForHospitalBill> GetReimbursementWaitingForHospitalBill(string controlCode)
+        {
+            IEnumerable<ReimbursementWaitingForHospitalBill> returnValue = null;
+            using (var udb = new ReimbursementDataContext())
+            {
+                returnValue = ExecuteSp<ReimbursementWaitingForHospitalBill>(udb, "Reim_Get_Reimb_Details_EMED_WaitingHB",
+                    new List<string>() { "control_code" },
+                    new List<object>() { controlCode }
+                );
+            }
+            return returnValue;
+        }
+
+        public static IEnumerable<ReimbursementDetail> GetReimbursementDetail(string controlCode, string memberCode)
+        {
+            IEnumerable<ReimbursementDetail> returnValue = null;
+            using (var udb = new ReimbursementDataContext())
+            {
+                returnValue = ExecuteSp<ReimbursementDetail>(udb, "Reim_Get_Reimb_Details_EMED",
+                    new List<string>() { "control_code", "member_code" },
+                    new List<object>() { controlCode, memberCode }
+                );
+            }
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyRoomRate> GetLegacyRoomRates(string accountCode, bool principal)
+        {
+            var paymentMode = (principal ? 0 : 1);
+            using (var legacyDb = new LegacyDataContext())
+            {
+                if (principal)
+                {
+                    return legacyDb.LegacyRoomRates
+                        .Include(t => t.LegacyPlan)
+                        .Include(t => t.LegacyPaymode)
+                            .Where(t => t.AccountCode == accountCode && (t.LegacyPaymode.Id == 0 || t.LegacyPaymode.Id == 5 || t.LegacyPaymode.Id == 8))
+                            .ToList();
+                }
+                else
+                {
+                    return legacyDb.LegacyRoomRates
+                        .Include(t => t.LegacyPlan)
+                        .Include(t => t.LegacyPaymode)
+                        .Where(t => t.AccountCode == accountCode && (t.LegacyPaymode.Id == 1 || t.LegacyPaymode.Id == 5 || t.LegacyPaymode.Id == 8 || t.LegacyPaymode.Id == 9))
+                    .ToList();
+                }
+            }
+        }
+
+        public static IEnumerable<LegacyPrincipalProcess> GetLegacyActivePrincipals(LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = new List<LegacyPrincipalProcess>();
+
+            returnValue = legacyDb.LegacyPrincipalProcesses
+                .Where(t => t.AccountCode == accountCode && Constants.ACTIVE_OSTAT_CODES.Contains(t.StatCode)
+                    && t.ValidityDate >= DateTime.Now).ToList();
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static IEnumerable<LegacyDependentProcess> GetLegacyActiveDependents(LegacyDataContext legacyDb, string accountCode)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = new List<LegacyDependentProcess>();
+            var principalCodes = new List<string>();
+
+            principalCodes = legacyDb.LegacyPrincipalProcesses
+                .Where(t => t.AccountCode == accountCode && Constants.ACTIVE_OSTAT_CODES.Contains(t.StatCode)
+                    && t.ValidityDate >= DateTime.Now).Select(t => t.PrincipalCode).ToList();
+
+            returnValue = legacyDb.LegacyDependentProcesses
+                .Where(t => t.AccountCode == accountCode && Constants.ACTIVE_OSTAT_CODES.Contains(t.StatCode)
+                    && t.ValidityDate >= DateTime.Now && principalCodes.Contains(t.PrincipalCode)).ToList();
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static LegacyPrincipalProcess GetLegacyActivePrincipal(LegacyDataContext legacyDb, string accountCode,string code,string firstName,string middleName,string lastName,DateTime dateOfBirth)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var returnValue = legacyDb.LegacyPrincipalProcesses
+                .FirstOrDefault(t => t.AccountCode == accountCode && Constants.ACTIVE_OSTAT_CODES.Contains(t.StatCode)
+                    && t.ValidityDate >= DateTime.Now && t.PrincipalCode == code && t.FirstName.ToLower() == firstName.ToLower() && t.LastName.ToLower() == lastName.ToLower() && t.DateOfBirth == dateOfBirth && (string.IsNullOrEmpty(t.MiddleName) == string.IsNullOrEmpty(middleName) || t.MiddleName == middleName));
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+
+        public static LegacyDependentProcess GetLegacyActiveDependent(LegacyDataContext legacyDb, string accountCode, string code, string firstName, string middleName, string lastName, DateTime dateOfBirth)
+        {
+            var disposeLegacyDb = false;
+
+            if (legacyDb == null)
+            {
+                legacyDb = new LegacyDataContext();
+                disposeLegacyDb = true;
+            }
+
+            var principalCodes = new List<string>();
+
+            principalCodes = legacyDb.LegacyPrincipalProcesses
+                .Where(t => t.AccountCode == accountCode && Constants.ACTIVE_OSTAT_CODES.Contains(t.StatCode)
+                    && t.ValidityDate >= DateTime.Now).Select(t => t.PrincipalCode).ToList();
+
+            var returnValue = legacyDb.LegacyDependentProcesses
+                .FirstOrDefault(t => t.AccountCode == accountCode && Constants.ACTIVE_OSTAT_CODES.Contains(t.StatCode)
+                    && t.ValidityDate >= DateTime.Now && principalCodes.Contains(t.PrincipalCode) && t.DependentCode == code
+                    && t.FirstName.ToLower() == firstName.ToLower() && t.LastName.ToLower() == lastName.ToLower() && t.DateOfBirth == dateOfBirth && (string.IsNullOrEmpty(t.MiddleName) == string.IsNullOrEmpty(middleName) || t.MiddleName == middleName));
+
+            if (disposeLegacyDb)
+            {
+                legacyDb.Dispose();
+                legacyDb = null;
+            }
+
+            return returnValue;
+        }
+        
+        #endregion
+
+        #region -- Private Functions --
+
+        private static IEnumerable<T> ExecuteSp<T>(DbContext db, string sp, List<string> parameterNames, List<object> parameterValues, int readerIndex = 0) where T : new()
+        {
+            var returnValue = new List<T>();
+
+            var connection = db.Database.Connection as SqlConnection;
+            using (var command = new SqlCommand(sp, connection))
+            {
+                connection.Open();
+                command.CommandType = CommandType.StoredProcedure;
+
+                for (var index = 0; index <= parameterNames.Count - 1; index++)
+                {
+                    command.Parameters.Add(new SqlParameter(parameterNames[index], parameterValues[index]));
+                }
+
+                using (var reader = command.ExecuteReader())
+                {
+                    for (int index = 0; index < readerIndex; index++)
+                    {
+                        if (!reader.NextResult()) return returnValue;
+                    }
+
+                    MapSpResult<T>(returnValue, reader);
+
+                    reader.Close();
+                }
+                connection.Close();
+            }
+
+            return returnValue;
+        }
+
+        private static void MapSpResult<T>(List<T> list, SqlDataReader reader) where T : new()
+        {
+            while (reader.Read())
+            {
+                var entity = new T();
+                foreach (var property in entity.GetType().GetProperties())
+                {
+                    string columnName;
+                    var attribute = property.CustomAttributes.FirstOrDefault(t => t.AttributeType == typeof(ColumnAttribute));
+                    if (attribute != null)
+                    {
+                        columnName = attribute.ConstructorArguments[0].Value.ToString();
+                    }
+                    else
+                    {
+                        columnName = property.Name;
+                    }
+
+                    if (HasColumn(reader, columnName))
+                    {
+                        if (reader[columnName].GetType() != typeof(DBNull)) property.SetValue(entity, reader[columnName]);
+                    }
+                }
+                list.Add(entity);
+            }
+
+        }
+
+        public static bool HasColumn(IDataRecord dr, string columnName)
+        {
+            for (int i = 0; i < dr.FieldCount; i++)
+            {
+                if (dr.GetName(i).Equals(columnName, StringComparison.InvariantCultureIgnoreCase)) return true;
+            }
+            return false;
+        }
+
+        public static ActionMemoType GetActionMemoType(IActionMemo actionMemo)
+        {
+            var resignAmendmentDate = DateTime.Now.AddDays(Constants.RESIGNED_AMENDMENT_DAYS);
+            var resignResignedDate = DateTime.Now.AddDays(Constants.RESIGNED_RESIGNED_DAYS);
+            if (
+                Constants.RESIGNED_STAT_CODES.Contains(actionMemo.StatCode)
+                &&
+                !String.IsNullOrEmpty(actionMemo.StatusRemarks)
+                &&
+                (
+                    actionMemo.StatusRemarks.ToUpper().Contains("LETTER")
+                    || actionMemo.StatusRemarks.ToUpper().Contains("RCV")
+                    || actionMemo.StatusRemarks.ToUpper().Contains("ATTACHMENT")
+                    || actionMemo.StatusRemarks.ToUpper().Contains("PRE-TERMINATION")
+                )
+                &&
+                (
+                    actionMemo.AmmendmentDate >= resignAmendmentDate
+                    || actionMemo.ResignedDate >= resignAmendmentDate
+                )
+            ) return ActionMemoType.Resigned;
+            else if (
+                !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks)
+                && !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks.Trim())
+                && !actionMemo.ActionMemoRemarks.ToUpper().Contains("CANCEL")
+                &&
+                (
+                    (Constants.DISAPPROVED_STAT_CODES_CONTRACT_YEAR.Contains(actionMemo.StatCode) && actionMemo.ActionMemoRemarks.Contains("Contract Year"))
+                    || (actionMemo.StatCode == 1 && actionMemo.Posted == 1)
+                    || (actionMemo.StatCode == 9 &&
+                        (
+                            actionMemo.ActionMemoRemarks.ToUpper().Contains("CHANGE")
+                            || actionMemo.ActionMemoRemarks.ToUpper().Contains("OVER")
+                            || actionMemo.ActionMemoRemarks.ToUpper().Contains("NO EXTENDED")
+                            || actionMemo.ActionMemoRemarks.ToUpper().Contains("NOT")
+                        )
+                    )
+                )
+            ) return ActionMemoType.Disapproved;
+            else if (
+                actionMemo.StatCode == 2
+                && actionMemo.Posted == 1
+            ) return ActionMemoType.Encoding;
+            else if (
+                actionMemo.StatCode == 3
+                && actionMemo.Posted == 1
+            ) return ActionMemoType.MedicalExamination;
+            else if (
+                (
+                    (
+                        actionMemo.StatCode == 1
+                        && actionMemo.Posted == 1
+                    )
+                    || actionMemo.StatCode == 9
+                )
+                && actionMemo.ActionMemoRemarks.ToUpper().Contains("CANCEL")
+            ) return ActionMemoType.Cancellation;
+            else if (
+                (
+                    actionMemo.StatCode == 9
+                    || actionMemo.StatCode == 0
+                )
+                && actionMemo.ActionMemoRemarks.ToUpper().Contains("AUTOMATICALLY DELETED")
+                &&
+                (
+                    actionMemo.AmmendmentDate >= resignAmendmentDate
+                    || actionMemo.ResignedDate >= resignAmendmentDate
+                )
+            ) return ActionMemoType.ResignedAutomatically;
+            else if (
+                actionMemo.StatCode == 4
+                && (
+                    !actionMemo.ActionMemoRemarks.ToUpper().Contains("LESS THAN")
+                    || actionMemo.ActionMemoRemarks.ToUpper().Contains("LESS THAN 10")
+                    || actionMemo.ActionMemoRemarks.ToUpper().Contains("LESS THAN 5")
+                )
+                && !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks)
+                && !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks.Trim())
+                && String.IsNullOrEmpty(actionMemo.PrincipalCode)
+            ) return ActionMemoType.OnHoldOthers;
+            else if (
+                actionMemo.StatCode == 4
+                && (
+                    !actionMemo.ActionMemoRemarks.ToUpper().Contains("LESS THAN")
+                    || actionMemo.ActionMemoRemarks.ToUpper().Contains("LESS THAN 10")
+                    || actionMemo.ActionMemoRemarks.ToUpper().Contains("LESS THAN 5")
+                )
+                && !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks)
+                && !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks.Trim())
+                && !String.IsNullOrEmpty(actionMemo.PrincipalCode)
+            ) return ActionMemoType.OnHoldActive;
+            else if (
+                actionMemo.StatCode == 9
+                && !String.IsNullOrEmpty(actionMemo.ActionMemoRemarks)
+                && actionMemo.ActionMemoRemarks.ToUpper().Contains("AUTOMATIC")
+                &&
+                (
+                    actionMemo.AmmendmentDate >= resignAmendmentDate
+                    || actionMemo.ResignedDate >= resignAmendmentDate
+                )
+            ) return ActionMemoType.Overage;
+
+            return ActionMemoType.Undefined;
+        }
+
+        private static IEnumerable<IActionMemo> SetActionMemoWhereCondition(IEnumerable<IActionMemo> query)
+        {
+            var resignAmendmentDate = DateTime.Now.AddDays(Constants.RESIGNED_AMENDMENT_DAYS);
+            var resignResignedDate = DateTime.Now.AddDays(Constants.RESIGNED_RESIGNED_DAYS);
+
+            var returnValue = query.Where(t =>
+                // Resigned Condition
+                (
+                    Constants.RESIGNED_STAT_CODES.Contains(t.StatCode)
+                    &&
+                    !String.IsNullOrEmpty(t.StatusRemarks)
+                    &&
+                    (
+                        t.StatusRemarks.Contains("LETTER")
+                        || t.StatusRemarks.Contains("RCV")
+                        || t.StatusRemarks.Contains("ATTACHMENT")
+                        || t.StatusRemarks.Contains("PRE-TERMINATION")
+                    )
+                    &&
+                    (
+                        t.AmmendmentDate >= resignAmendmentDate
+                        || t.ResignedDate >= resignAmendmentDate
+                    )
+                )
+                ||
+                    // Disapproved Condition
+                (
+                    !String.IsNullOrEmpty(t.ActionMemoRemarks)
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks.Trim())
+                    && !t.ActionMemoRemarks.Contains("CANCEL")
+                    &&
+                    (
+                        (Constants.DISAPPROVED_STAT_CODES_CONTRACT_YEAR.Contains(t.StatCode) && t.ActionMemoRemarks.Contains("Contract Year"))
+                        || (t.StatCode == 1 && t.Posted == 1)
+                        || (t.StatCode == 9 &&
+                            (
+                                t.ActionMemoRemarks.Contains("CHANGE")
+                                || t.ActionMemoRemarks.Contains("OVER")
+                                || t.ActionMemoRemarks.Contains("NO EXTENDED")
+                                || t.ActionMemoRemarks.Contains("NOT")
+                            )
+                        )
+                    )
+                )
+                ||
+                    // Encoding Condition
+                (
+                    t.StatCode == 2
+                    && t.Posted == 1
+                )
+                ||
+                    // Medical Examination Condition
+                (
+                    t.StatCode == 3
+                    && t.Posted == 1
+                )
+                ||
+                    // Cancellation Condition
+                (
+                    (
+                        (
+                            t.StatCode == 1
+                            && t.Posted == 1
+                        )
+                        || t.StatCode == 9
+                    )
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks)
+                    && t.ActionMemoRemarks.Contains("CANCEL")
+                )
+                ||
+                    // Resigned Automatically
+                (
+                    (
+                        t.StatCode == 9
+                        || t.StatCode == 9
+                    )
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks)
+                    && t.ActionMemoRemarks.Contains("AUTOMATICALLY DELETED")
+                    &&
+                    (
+                        t.AmmendmentDate >= resignAmendmentDate
+                        || t.ResignedDate >= resignAmendmentDate
+                    )
+                )
+                ||
+                    // On Hold Others
+                (
+                    t.StatCode == 4
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks)
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks.Trim())
+                    && (
+                            !t.ActionMemoRemarks.Contains("LESS THAN")
+                            || t.ActionMemoRemarks.Contains("LESS THAN 10")
+                            || t.ActionMemoRemarks.Contains("LESS THAN 5")
+                    )
+                    && String.IsNullOrEmpty(t.PrincipalCode)
+                )
+                ||
+                    // On Hold Active
+                (
+                    t.StatCode == 4
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks)
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks.Trim())
+                    && (
+                            !t.ActionMemoRemarks.Contains("LESS THAN")
+                            || t.ActionMemoRemarks.Contains("LESS THAN 10")
+                            || t.ActionMemoRemarks.Contains("LESS THAN 5")
+                    )
+                    && !String.IsNullOrEmpty(t.PrincipalCode)
+                )
+                ||
+                    // Overage
+                (
+                    t.StatCode == 9
+                    && !String.IsNullOrEmpty(t.ActionMemoRemarks)
+                    && t.ActionMemoRemarks.Contains("AUTOMATIC")
+                    &&
+                    (
+                        t.AmmendmentDate >= resignAmendmentDate
+                        || t.ResignedDate >= resignAmendmentDate
+                    )
+                )
+            );
+
+            return returnValue;
+        }
+
+        #endregion
+    }
+}

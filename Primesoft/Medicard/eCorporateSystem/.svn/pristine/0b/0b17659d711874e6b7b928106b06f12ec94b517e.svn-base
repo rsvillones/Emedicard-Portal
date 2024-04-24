@@ -1,0 +1,34 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Request For Amendment By Member Sent to URG</p>
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following has submitted his/her request for amendment for your approval:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Member Name</th>
+            <th>Request Date</th>
+            <th>Request For</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>@Model.Amendment.MemberName</td>
+                <td>@Model.Amendment.RequestDate</td>
+                <td>@Model.Amendment.RequestFor</td>
+                <td>
+                    @if (Model.Amendment.RequestFor == Corelib.Enums.RequestFor.Dependent)
+                    {
+                        @Model.Amendment.DependentName
+                    }
+                    else
+                    {
+                        @Model.Amendment.MemberName
+                    }
+                </td>
+            </tr>
+    </tbody>
+</table>

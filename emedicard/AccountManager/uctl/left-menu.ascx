@@ -1,0 +1,35 @@
+﻿<%@ Control Language="vb" AutoEventWireup="false" CodeBehind="left-menu.ascx.vb" Inherits="emedicard.left_menu" %>
+<div class="span2 main-menu-span" id="l" runat="server">
+
+	<div class="well nav-collapse sidebar-nav">
+		<ul class="nav nav-tabs nav-stacked main-menu">
+			<li class="nav-header hidden-tablet">Main</li>
+            <% If Request.QueryString("t") = 1 Then%>
+                <li runat="server" id="lnkECorp"><a href="../ecorporate/Default.aspx?t=<%= Request.Querystring("t") %>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&c=<%= Request.Querystring("c")%>"><i class="icon-home"></i><span class="hidden-tablet"> eCorporate</span></a></li>
+            <% End If%>
+            <% If Request.QueryString("t") = 2 Then%>
+                <li runat="server" id="Li1"><a href="../eaccount/Default.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= HttpUtility.UrlEncode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>"><i class="icon-home"></i><span class="hidden-tablet"> eAccount</span></a></li>
+            <% End If%>	
+            <li runat="server" id="lnkAccountInfo"><a href="Default.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-home"></i><span class="hidden-tablet"> Account Information</span></a></li>
+            <% If Request.QueryString("t") = 2 Then%>
+                <%--<li runat="server" id="lnkeCorporateUser"><a href="eCorporateUsers.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-home"></i><span class="hidden-tablet"> eCorporate User</span></a></li>--%>
+            <% End If%>			
+			<!--<li runat="server" id="lnkOnsiteAPE"><a href="OnSiteAPE.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Onsite APE Scheduling</span></a></li>-->
+            <li runat="server" id="lnkBenefitsInclusions"><a href="BenfitsExclusions.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Benefits and Exclusions</span></a></li>
+            <li runat="server" id="lnkUtilization"><a href="Utilization.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Utilization Reporting</span></a></li>
+            <li runat="server" id="lnkActiveMembers"><a href="ActiveMembers.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Active Members</span></a></li>
+            <li runat="server" id="lnkResignedMembers"><a href="Resigned.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Resigned Members</span></a></li>
+            <li runat="server" id = "lnkActionMemos"><a href="ActionMemos.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Action Memos Members</span></a></li>
+            <li runat="server" id ="lnkEndorsement"><a href="Endorsement.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Membership Endorsements</span></a></li>
+            <% If Request.QueryString("t") = "1" Then%>
+                <%--<li runat="server" id ="lnkECU"><a href="ECUScheduling.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> ECU Scheduling</span></a></li>--%>                
+            <% End If%>
+            <%--<li runat="server" id="lnkIDReplacement"><a href="RequestIDReplace.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Request for ID Replacement</span></a></li>--%>
+            <%--<li runat="server" id="lnkSendDocuments"><a href="DocUploading.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Send Documents</span></a></li>--%>
+            <li runat="server" id="lnkReimbStatus"><a href="Reimbursements.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Reimbursement Status </span></a></li>
+            <li runat="server" id="lnkMyCureAPE"><a href="MyCureAPE.aspx?t=<%= Request.Querystring("t") %>&c=<%= Request.Querystring("c")%>&u=<%= httputility.urlencode(Request.Querystring("u")) %>&agnt=<%= Request.Querystring("agnt") %>&a=<%= Request.Querystring("a")%>"><i class="icon-eye-open"></i><span class="hidden-tablet"> Medicard Clinics Results </span></a></li>
+            <li><a id="A1" href="~/Logout.aspx" runat="server"><i class="icon-off"></i><span class="hidden-tablet"> Logout</span></a></li>
+		</ul>
+		<%--<label id="for-is-ajax" class="hidden-tablet" for="is-ajax"><input id="is-ajax" type="checkbox"> Ajax on menu</label>--%>
+	</div><!--/.well -->
+</div><!--/span-->

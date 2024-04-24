@@ -1,0 +1,214 @@
+﻿@model Dependent
+
+<h4 class="form-title">Dependent Details</h4>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.LastName)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DateOfBirth)</label>
+            <div class="col-lg-4">
+                @if (Model.DateOfBirth == DateTime.MinValue)
+                {
+                    <input class="form-control disabled text-box single-line" data-val="true" data-val-date="The field Date Of Birth: must be a date." data-val-required="The Date Of Birth: field is required." id="DateOfBirth" name="DateOfBirth" onchange="OnDateOfBirthChange()" type="datetime" value="" />
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control disabled", @onchange = "OnDateOfBirthChange()" } })
+                }
+                @Html.ValidationMessageFor(model => model.DateOfBirth)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.FirstName)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Age)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.Age)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.MiddleName)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MiddleName)
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Gender)</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("Gender", (IEnumerable<SelectListItem>)ViewBag.GenderList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Gender)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Suffix)</label>
+            <div class="col-lg-4">
+                @Html.EditorFor(model => model.Suffix, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Suffix)
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.CivilStatus)</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("CivilStatus", (IEnumerable<SelectListItem>)ViewBag.CivilStatusList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CivilStatus)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Relationship)</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("Relationship", (IEnumerable<SelectListItem>)ViewBag.RelationshipList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Relationship)
+            </div>
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.AppliedPlan)</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("AppliedPlan", (IEnumerable<SelectListItem>)ViewBag.AppliedPlanList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OptionalPlan)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">&nbsp;</label>
+            <div class="col-lg-4">&nbsp;</div>
+            @if (ViewBag.OptionalPlanCount > 0)
+            {
+                <label class="control-label col-lg-2">@Html.LabelFor(model => model.OptionalPlan)</label>
+                <div class="col-lg-4">
+                    @Html.DropDownList("OptionalPlan", (IEnumerable<SelectListItem>)ViewBag.OptionalPlanList, "Select Optional Plan", new { @class = "form-control", @onchange = "if($(this).val() != '') { $('#OptionalPlanWarning').removeClass('hidden'); } else { if(!$('#OptionalPlanWarning').hasClass('hidden')) { $('#OptionalPlanWarning').addClass('hidden'); } }" })
+                    @Html.ValidationMessageFor(model => model.OptionalPlan)
+                    <span id="OptionalPlanWarning" class="@(Model.OptionalPlan.HasValue ? "" : "hidden") alert-danger">Selecting higher plan with excess amount will be shouldered by employee.</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<h4 class="form-title">Contact Details</h4>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Street)</label>
+                    <div class="col-lg-10">
+                        @Html.EditorFor(model => model.Street, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Street)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.City)</label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("City", (IEnumerable<SelectListItem>)ViewBag.CityList, "Please select city", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.City)
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.EmailAddress)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.EmailAddress)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Zip)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Zip, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Zip)
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Telephone)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Telephone, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Telephone)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Province)</label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("Province", (IEnumerable<SelectListItem>)ViewBag.ProvinceList, "Please select province", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Province)
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Mobile)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Mobile)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="form-title">Other Details</h4>
+<div class="row ">
+    <div class="col-lg-12">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">Height:</label>
+                    <div class="col-lg-2 bottom">
+                        <div class="input-group input-group-sm">
+                            @Html.EditorFor(model => model.HeightFeet, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.HeightFeet)
+                            <span class="input-group-addon">ft</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 bottom">
+                        <div class="input-group input-group-sm">
+                            @Html.EditorFor(model => model.HeightInches, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.HeightInches)
+                            <span class="input-group-addon">in</span>
+                        </div>
+                    </div>
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Occupation)</label>
+                    <div class="col-lg-4">
+                        @Html.EditorFor(model => model.Occupation, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Occupation)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.Weight)</label>
+                    <div class="col-lg-4 bottom">
+                        <div class="input-group input-group-sm">
+                            @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Weight)
+                            <span class="input-group-addon">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

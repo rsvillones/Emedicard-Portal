@@ -1,0 +1,101 @@
+@model WebUI.Areas.Member.Models.SubmitForApprovalViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div class="col-lg-8 col-centered">
+        @if (!ViewBag.ReadOnly)
+        {
+            <div id="panel-title">Submit for Approval</div>
+        }
+        else
+        {
+            <div id="panel-title">@String.Format("Your information is now {0}", ViewBag.MembershipStatus)</div>
+        }
+        
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(t => t.MemberGuid)
+
+                        @Html.ValidationSummary();
+                        
+                        <div class="row">
+                            <div class="col-lg-12">
+
+                                <h4 class="form-title">Summary</h4>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.LastName)</label>
+                                                    <div class="col-lg-4">
+                                                        @Html.EditorFor(model => model.LastName, "", new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                    </div>
+                                                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.FirstName)</label>
+                                                    <div class="col-lg-4">
+                                                        @Html.EditorFor(model => model.FirstName, "", new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.DateOfBirth)</label>
+                                                    <div class="col-lg-4">
+                                                        @Html.EditorFor(model => model.DateOfBirth, "", new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                    </div>
+                                                    <label class="control-label col-lg-2">@Html.LabelFor(model => model.MiddleName)</label>
+                                                    <div class="col-lg-4">
+                                                        @Html.EditorFor(model => model.MiddleName, "", new { htmlAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (!ViewBag.ReadOnly)
+                                {
+                                    <div class="row form-padding">
+                                        <div class="alert alert-danger" role="alert">
+                                            <label>Warning:</label>
+                                            <p>Please carefully review your information. Your information is currently in Draft mode. Once your information is submitted, you will need to contact our information technology department to update your information.</p>
+                                            <p>Please check "I hereby certify that the above information is true and correct" to process your information for Approval.</p>
+                                        </div>
+                                        <div class="pull-right">
+                                            @Html.EditorFor(model => model.Accepted)
+                                            <label class="control-label">&nbsp; I hereby certify that the above information is true and correct</label>
+                                        </div>
+                                        <div class="pull-right">
+                                            @Html.ValidationMessageFor(model => model.Accepted)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="no-color pull-right">
+                                                <input type="submit" name="Submit" value="Submit for Approval" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

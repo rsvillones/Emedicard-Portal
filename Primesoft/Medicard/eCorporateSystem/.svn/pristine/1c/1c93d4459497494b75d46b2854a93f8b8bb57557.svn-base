@@ -1,0 +1,179 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Corelib.Models
+{
+    public class Application : BaseModel,IValidatableObject
+    {
+        #region -- Constructors --
+
+        public Application()
+        {
+            
+        }
+              
+        #endregion
+
+        #region -- Properties --
+
+        [Display(Name = "Email Address:")]
+        public string EmailAddress { get; set; }
+
+        [Display(Name="Employee Number:")]
+        public string EmployeeNumber { get; set; }
+
+        [Display(Name = "Area:")]
+        public string Area { get; set; }
+
+        [Display(Name = "Cost Center:")]
+        public string CostCenter { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name:")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name:")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name:")]
+        public string MiddleName { get; set; }
+
+        [Display(Name = "Suffix:")]
+        public string Suffix { get; set; }
+
+        [Display(Name = "Gender:")]
+        public string Gender { get; set; }
+        
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Date of Birth:")]
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age:")]
+        [NotMapped]
+        public int Age
+        {
+            get
+            {
+                DateTime today = DateTime.Today;
+                int age = today.Year - this.DateOfBirth.Year;
+                if (this.DateOfBirth > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
+
+        [Display(Name = "Civil Status:")]
+        public string CivilStatus { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Effectivity Date:")]
+        public DateTime EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Validity Date:")]
+        public DateTime ValidityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Date Hired:")]
+        public DateTime DateHired { get; set; }
+
+        [Display(Name = "Applied Plan:")]
+        public int AppliedPlan { get; set; }
+
+        [Display(Name = "Optional Plan:")]
+        public string OptionalPlan { get; set; }
+
+        [Display(Name = "Allowed Dependents:")]
+        public int Dependent { get; set; }
+
+        [Display(Name = "Dependent Applied Plan:")]
+        public int DependentAppliedPlan { get; set; }
+
+        [Display(Name = "Dependent Optional Plan:")]
+        public string DependentOptionalPlan { get; set; }
+
+        [Display(Name = "Member Code:")]
+        public string MemberCode { get; set; }
+
+        [Display(Name = "Member Type:")]
+        public string MemberType { get; set; }
+
+        [Display(Name = "Membership Status:")]
+        public string MembershipStatus { get; set; }
+
+        public bool IsResigned { get; set; }
+
+        [Display(Name = "Cancelation Date:")]
+        public DateTime? ResignationDate { get; set; }
+
+        public string AccountCode { get; set; }
+
+        [StringLength(128)]
+        public string UserName { get; set; }
+
+        [StringLength(128)]
+        public string UserId { get; set; }
+
+        [StringLength(256)]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        public string City { get; set; }
+
+        [StringLength(8)]
+        public string AreaCode { get; set; }
+
+        [StringLength(32)]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        public string Mobile { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        public int? Weight { get; set; }
+
+        [StringLength(32)]
+        public string Position { get; set; }
+
+        public ICollection<MedicalHistory> MedicalHistory { get; set; }
+
+        #endregion
+
+        #region -- Foreign Keys --
+
+        public int BatchId { get; set; }
+        [ForeignKey("BatchId")]
+        public Batch Batch { get; set; }
+
+        #endregion
+
+        #region -- IValidatableObject --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (db.Applications.Any(t => (t.DateOfBirth == DateOfBirth && t.LastName == LastName && t.FirstName == FirstName && t.MiddleName == MiddleName && t.Id != Id) && !t.Deleted))
+                {
+                    yield return new ValidationResult("Application already exist in database.");
+                }
+
+            }
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,442 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using System.Threading;
+using System.Security.Principal;
+using Corelib.Enums;
+using System.Diagnostics;
+using System.Text;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+    public class EndorsementHistoryController : BaseAccountController
+    {
+
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public EndorsementHistoryController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult Index(string accountCode, int? page, string messageType, string message, string endorsementType, DateTime? dateCreated)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.EndorsementBatches
+                .Where(t => t.AccountCode == this.LegacyAccount.Code && !t.Deleted)
+                .OrderByDescending(t => t.Date).ToList();
+
+            if (!string.IsNullOrEmpty(endorsementType)) model = model.Where(t => t.EndorsementType.Contains(endorsementType)).ToList();
+            var dateSting = "";
+            if (dateCreated != null)
+            {
+                model = model.Where(t => t.Date.Date == dateCreated.Value.Date).ToList();
+                dateSting = dateCreated.Value.ToString("MM/dd/yyyy");
+            }
+
+            ViewBag.EndorsementType = endorsementType;
+            ViewBag.DateSting = dateSting;
+
+            ViewBag.EndorsementTypes = new SelectList(new List<string>() { 
+                Constants.ACTION_MEMO_ENDORSEMENT_TYPE,
+                Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE,
+                Constants.AMENDMENT_ENDORSEMENT_TYPE,
+                Constants.CANCEL_MEMBERSHIP_ENDORSEMENT_TYPE,
+                Constants.DEPENDENT_CANCELLATION_ENDORSEMENT_TYPE,
+                Constants.ID_REPLACEMENT_ENDORSEMENT_TYPE,
+                Constants.NEW_ENDORSEMENT_TYPE,
+                Constants.RENEWAL_ENDORSEMENT_TYPE,
+            }, endorsementType);
+
+            ViewBag.SearchValue = String.Format("{0} {1}", endorsementType, dateSting).Trim();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult Amendment(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.Amendments)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.Amendments.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.Amendment).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            bool isPrincipal = model.RequestFor == RequestFor.Principal ? true : false;
+            ViewBag.PlanList = new SelectList(Helper.GetLegacyRoomRates(model.AccountCode, isPrincipal), "LongDescription", "LongDescription", model.ChangeDataTo);
+            ViewBag.EnumList = GetEnumSelectList(model);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult IdReplacement(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.IdReplacements)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.IdReplacements.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.IdReplacement).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult AdditionalDependent(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.AdditionalDependents)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.AdditionalDependents.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            AdditionalDependentProcessOtherInfo(model);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult DependentCancellation(Guid? guid, string accountCode)
+        {
+
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.DependentCancellations)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            var model = endorsementBatch.DependentCancellations.FirstOrDefault();
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.DependentCancellation).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult CancelledMembers(Guid? guid, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var endorsementBatch = db.EndorsementBatches
+                .Include(t => t.CancelledMembers)
+                .FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+
+            if (endorsementBatch == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            ReadOnlyAttribute();
+
+            return View(endorsementBatch);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult ActionMemos(string accountCode, string replyTo, string controlNumber, DateTime? dateIssued, string memberName)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+
+            if (string.IsNullOrEmpty(replyTo)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var query = db.ActionMemos
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Member)
+                .Include(t => t.Dependent)
+                .Include(t => t.Documents)
+                .Where(t => accountCodes.Contains(t.EndorsementBatch.AccountCode));
+
+            query = query.Where(t => t.EndorsementBatch.ReplyTo.Contains(replyTo));
+
+            if (!string.IsNullOrEmpty(controlNumber)) query = query.Where(t => t.ControlNumber.Contains(controlNumber));
+
+            string dateIssuedString = "";
+            if (dateIssued != null)
+            {
+                query = query.Where(t => t.DateIssued.Date == dateIssued.Value.Date);
+                dateIssuedString = dateIssued.Value.ToString("MM/dd/yyyy");
+            }
+
+            if (!string.IsNullOrEmpty(memberName))
+                query = query.Where(t => t.Member.FirstName.Contains(memberName) || t.Member.MiddleName.Contains(memberName) || t.Member.LastName.Contains(memberName));
+
+
+            var model = query.OrderByDescending(t => t.DateIssued);
+
+            ViewBag.ControlNumber = controlNumber;
+            ViewBag.DateIssued = dateIssuedString;
+            ViewBag.MemberName = memberName;
+            ViewBag.ReplyTo = replyTo;
+
+            ViewBag.SearchValue = string.Format("{0} {1} {2}", controlNumber, dateIssuedString, memberName).Trim();
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult ActionMemoDetail(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var actionMemo = db.ActionMemos
+                .Include(t => t.Member)
+                .Include(t => t.Dependent)
+                .Include(t => t.Documents)
+                .Include(t => t.Documents.Select(d => d.DocumentType))
+                .FirstOrDefault(t => t.Guid == guid);
+            if (actionMemo == null) return HttpNotFound();
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (!accountCodes.Any(t => t == actionMemo.Member.AccountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+
+            ViewBag.ShowActionMemoDueDate = accountSetting.ShowActionMemoDueDate;
+
+            return View(actionMemo);
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult Members(Guid? guid, string sortOrder, string currentFilter, int? page)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var legacyAccountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            var eb = db.EndorsementBatches
+                .Include(t => t.Members)
+                .Include(t => t.RenewalMembers)
+                .FirstOrDefault(t => t.Guid == guid && legacyAccountCodes.Contains(t.AccountCode));
+            if (eb == null) return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            var returnValue = base.ValidateAccountCode(eb.AccountCode);
+            if (returnValue != null) return returnValue;
+
+            var members = db.Members.Where(t=>t.EndorsementBatchId == eb.Id);
+            Helper.SetSortParameters<Corelib.Models.Member>(this, ref members, sortOrder, currentFilter, new SortParameter() { PropertyName = "LastName" }, new List<SortParameter>()
+            {
+                new SortParameter() { PropertyName = "EmployeeNumber" },
+                new SortParameter() { PropertyName = "FirstName" },
+                new SortParameter() { PropertyName = "MiddleName" },
+                new SortParameter() { PropertyName = "DateOfBirth" }
+            });
+
+            ViewBag.EndorsementGuid = eb.Guid;
+            return View(members.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        [Authorize(Roles = "SysAd, CanViewEndorsementHistories")]
+        public ActionResult MemberProfile(Guid? guid)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (!guid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Members
+                .Include(t => t.Dependents)
+                .Include(t => t.MedicalHistories)
+                .Include(t => t.MedicalHistories.Select(mh => mh.Question))
+                .Include(t => t.MedicalHistories.Select(mh => mh.Question.QuestionGroup))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories.Select(mh => mh.Question)))
+                .Include(t => t.Dependents.Select(d => d.MedicalHistories.Select(mh => mh.Question.QuestionGroup)))
+                .FirstOrDefault(t => t.Guid == guid);
+
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (!accountCodes.Contains(model.AccountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Helper.IsMedicalHistoryComplete(db, model);
+            Helper.IsDependentMedicalHistoryComplete(db, model);
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region -- Function Action Results --
+
+        public ActionResult ReadOnlyAttribute()
+        {
+            ViewBag.ReadOnly = true;
+            ViewBag.HtmlControlReadOnlyAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            ViewBag.HtmlDropDownAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlMemberAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlRequestForAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDataTypeAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDependentAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+            ViewBag.HtmlDateOfBirthAttributes = new { @class = "form-control white-readonly", @readonly = "readonly" };
+            ViewBag.HtmlOptionalPlanAttributes = new { @class = "form-control white-readonly", @disabled = "disabled" };
+
+            return null;
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.Amendments.Any(t => t.Guid == guid))
+            {
+                var amendment = db.Amendments.FirstOrDefault(t => t.Guid == guid);
+                if (amendment.DocumentFile != null || !string.IsNullOrEmpty(amendment.DocumentContentType) || !string.IsNullOrEmpty(amendment.DocumentFileName))
+                { return File(amendment.DocumentFile, amendment.DocumentContentType, amendment.DocumentFileName); }
+            }
+            if (guid != null && db.IdReplacements.Any(t => t.Guid == guid))
+            {
+                var model = db.IdReplacements.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            if (guid != null && db.DependentCancellations.Any(t => t.Guid == guid))
+            {
+                var model = db.DependentCancellations.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            if (guid != null && db.AdditionalDependents.Any(t => t.Guid == guid))
+            {
+                var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            return null;
+        }
+
+        private void AdditionalDependentProcessOtherInfo(AdditionalDependent model)
+        {
+            var member = db.Members.FirstOrDefault(t => t.Code == model.MemberCode) ?? new Corelib.Models.Member();
+            var dependentPlans = Helper.GetLegacyRoomRates(model.AccountCode, false);
+            var appliedPlans = dependentPlans.Where(t => t.Id == member.DependentAppliedPlan).ToList();
+            if (appliedPlans.Count == 0) appliedPlans = dependentPlans.ToList();
+
+            var allowedPlans = new List<int>();
+            if (!String.IsNullOrEmpty(member.AllowedDependentPlans))
+            {
+                foreach (var allowedPlan in member.AllowedDependentPlans.Split(','))
+                {
+                    allowedPlans.Add(int.Parse(allowedPlan));
+                }
+            }
+
+            var optionalPlans = dependentPlans.Where(t => t.Id != member.DependentAppliedPlan && allowedPlans.Contains(t.Id)).ToList();
+            var cities = legacyDb.LegacyCities.OrderBy(t => t.Name).ToList();
+            var provinces = legacyDb.LegacyProvinces.OrderBy(t => t.Name).ToList();
+
+            ViewBag.AppliedPlanList = new SelectList(appliedPlans, "Id", "LongDescription", model.AppliedPlan);
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", model.OptionalPlan);
+            ViewBag.CityList = new SelectList(cities, "Code", "Name", model.City);
+            ViewBag.ProvinceList = new SelectList(provinces, "Code", "Name", model.Province);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, model.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, model.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(db.Relationships, "Code", "Description", model.RelationshipCode);
+            ViewBag.MemberList = new SelectList(LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal"), "Code", "FullName", model.MemberCode);
+            ViewBag.OptionalPlanCount = optionalPlans.Count(t => t.Id != member.DependentAppliedPlan);
+        }
+
+        public static IEnumerable<SelectListItem> GetEnumSelectList(Amendment amendment)
+        {
+            var dataTypes = Enum.GetValues(typeof(RequestDataType)).Cast<RequestDataType>();
+            if (amendment.RequestFor == RequestFor.Dependent)
+            {
+                dataTypes = dataTypes.Except(new RequestDataType[] { 
+                        RequestDataType.CostCenter, 
+                        RequestDataType.DateHired, 
+                        RequestDataType.Area, 
+                        RequestDataType.Designation, 
+                        RequestDataType.Level,
+                        RequestDataType.EmployeeNumber
+                    }).ToList();
+            }
+            var requestDataTypes = dataTypes.Select(t => new
+            {
+                ID = ((int)t).ToString(),
+                Name = EnumHelper<RequestDataType>.GetDisplayValue(t)
+            }).ToList();
+
+            var intValue = Convert.ChangeType(amendment.DataType, amendment.DataType.GetTypeCode());
+            return new SelectList(requestDataTypes, "ID", "Name", intValue.ToString());
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

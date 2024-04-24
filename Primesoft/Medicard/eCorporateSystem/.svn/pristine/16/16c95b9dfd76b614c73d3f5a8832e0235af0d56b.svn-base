@@ -1,0 +1,5 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Action Memo By Urg To Corporate Admin</p>

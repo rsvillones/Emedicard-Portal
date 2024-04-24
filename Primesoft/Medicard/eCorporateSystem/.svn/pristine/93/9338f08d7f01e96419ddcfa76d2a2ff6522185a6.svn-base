@@ -1,0 +1,118 @@
+﻿using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using System.Collections.ObjectModel;
+using System.Threading;
+using Corelib;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class UserManagementController : BaseAccountController
+    {
+        #region -- Variable Declarations --
+
+        private struct ThreadParameter
+        {
+            public LegacyMember LegacyMember { get; set; }
+            public string AccountCode { get; set; }
+            public ApplicationUser User { get; set; }
+        }
+
+        #endregion
+
+        #region -- Action Results --
+
+        public ActionResult CreateMemberAccountForActiveUser(string accountCode, string memberCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var legacyMember = LegacyHelper.GetActiveMember(legacyDb, accountCode, memberCode);
+            if (legacyMember == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var user = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            var thread = new Thread(new ParameterizedThreadStart(CreateMemberForLegacyMember));
+            thread.Start(new ThreadParameter() { LegacyMember = legacyMember, AccountCode = accountCode, User =  user });
+
+            return View("Processing");
+        }
+
+        public ActionResult CreateMemberAccountForAccountCode(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var user = db.Users.FirstOrDefault(t => t.UserName == User.Identity.Name);
+            var thread = new Thread(new ParameterizedThreadStart(CreateMemberForAccountCode));
+            thread.Start(new ThreadParameter() { LegacyMember = null, AccountCode = accountCode, User = user });
+
+            return View("Processing");
+        }
+        
+        #endregion
+
+        #region  -- Functions --
+
+        private void CreateMemberForAccountCode(object threadParameter)
+        {
+            var accountCode = ((ThreadParameter)threadParameter).AccountCode;
+            var user = ((ThreadParameter)threadParameter).User;
+
+            using (var ldb = new LegacyDataContext())
+            {
+                var legacyMembers = LegacyHelper.GetActiveMembers(ldb, accountCode, false, "Principal");
+                foreach (var legacyMember in legacyMembers)
+                {
+                    CreateMemberForLegacyMember(new ThreadParameter() { LegacyMember = legacyMember, AccountCode = accountCode, User= user });
+                }
+            }
+        }
+
+        private void CreateMemberForLegacyMember(object threadParameter)
+        {
+            var lm = ((ThreadParameter)threadParameter).LegacyMember;
+            var accountCode = ((ThreadParameter)threadParameter).AccountCode;
+            var user = ((ThreadParameter)threadParameter).User;
+
+            using (var ldb = new LegacyDataContext())
+            {
+                using (var idb = new IdentityDataContext())
+                {
+                    idb.User = user;
+
+                    var legacyMember = lm as LegacyMember;
+                    var member = idb.Members.FirstOrDefault(t => t.Code == legacyMember.Code);
+                    if (member != null) return;
+
+                    var accountSetting = idb.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode) ?? new AccountSetting();
+
+                    member = new Corelib.Models.Member();
+                    Helper.MapProperties(legacyMember, member);
+                    member.AccountCode = accountCode;
+                    //member.LegacyMapCode = Config.GenerateLegacyMapCode(idb);
+                    member.Status = Corelib.Enums.MembershipStatus.Approved;
+                    member.Dependents = new Collection<Dependent>();
+                    foreach (var legacyDependent in LegacyHelper.GetActiveDependents(ldb, accountCode, legacyMember.Code))
+                    {
+                        var dependent = new Dependent();
+                        Helper.MapProperties(legacyDependent, dependent);
+                        //dependent.LegacyMapCode = Config.GenerateLegacyMapCode(idb);
+                        member.Dependents.Add(dependent);
+                        member.Dependent++;
+                    }
+                    idb.Members.Add(member);
+                    idb.SaveChanges();
+
+                    Helper.CreateUserForMember(idb, accountSetting, member);
+                }
+            }
+        }
+
+        #endregion
+    }
+}

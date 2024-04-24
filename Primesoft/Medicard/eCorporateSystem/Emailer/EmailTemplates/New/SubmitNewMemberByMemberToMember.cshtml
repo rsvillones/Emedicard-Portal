@@ -1,0 +1,14 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Membership Information Submitted</p>
+<p class="greetings">Dear @Model.Member.FirstName</p>
+@if (Model.BypassCorporateAdminApproval)
+{
+    <p class="details">Your membership information has been submitted to Medicard for review and processing.</p>
+}
+else
+{
+    <p class="details">Your membership information has been submitted to the your Corporate Administrator for evaluation.</p>
+}

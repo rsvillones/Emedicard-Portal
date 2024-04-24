@@ -1,0 +1,206 @@
+﻿using Corelib;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Data.Entity;
+using Corelib.Enums;
+
+namespace WebUI.Controllers
+{
+    [PasswordExpired(Roles = "SysAd, CanViewActionMemos")]
+    public class ActionMemosController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+
+        #endregion
+
+        #region -- Constructor --
+
+        public ActionMemosController()
+        {
+            db.User = db.Users.FirstOrDefault(t => t.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+        }
+
+        #endregion
+
+        #region  -- Properties --
+
+        private Member Member { get; set; }
+
+        private Dependent Dependent { get; set; }
+
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewActionMemos")]
+        public ActionResult Index(string message, string messageType,string controlNumber, DateTime? dateIssued, string memberName,string replyTo)
+        {
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+
+            ViewBag.Message = message;
+            ViewBag.MessageType = messageType;
+
+            var query = db.ActionMemos
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Member)
+                .Include(t => t.Dependent)
+                .Include(t => t.Documents)
+                .Where(t => accountCodes.Contains(t.EndorsementBatch.AccountCode));            
+                       
+
+            if (!string.IsNullOrEmpty(controlNumber)) query = query.Where(t => t.ControlNumber.Contains(controlNumber));
+
+            string dateIssuedString = "";
+            if (dateIssued != null)
+            {
+                query = query.Where(t => t.DateIssued.Date == dateIssued.Value.Date);
+                dateIssuedString = dateIssued.Value.ToString("MM/dd/yyyy");
+            }
+
+            if (!string.IsNullOrEmpty(memberName))
+                query = query.Where(t => t.Member.FirstName.Contains(memberName) || t.Member.MiddleName.Contains(memberName) || t.Member.LastName.Contains(memberName));
+                    //t.Dependent.FirstName.Contains(memberName) || t.Dependent.MiddleName.Contains(memberName) || t.Dependent.LastName.Contains(memberName)
+
+            if (!string.IsNullOrEmpty(replyTo)) query = query.Where(t => t.EndorsementBatch.ReplyTo.Contains(replyTo));
+
+            var model = query.OrderByDescending(t => t.DateIssued);
+            
+            ViewBag.ControlNumber = controlNumber;
+            ViewBag.DateIssued = dateIssuedString;
+            ViewBag.MemberName = memberName;
+            ViewBag.ReplyTo = replyTo;
+
+            ViewBag.SearchValue = string.Format("{0} {1} {2} {3}", controlNumber, dateIssuedString, memberName, replyTo).Trim();
+            return View(model);
+        }
+
+        [Authorize(Roles = "SysAd, CanAddActionMemos")]
+        public ActionResult Create(Guid? memberGuid, Guid? dependentGuid)
+        {
+            var returnValue = this.Validate(memberGuid, dependentGuid);
+            if (returnValue != null) return returnValue;
+
+            var model = new ActionMemo()
+            {
+                MemberId = this.Member != null ? (int?)this.Member.Id : null,
+                Member = this.Member,
+                DependentId = this.Dependent != null ? (int?)this.Dependent.Id : null,
+                Dependent = this.Dependent
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddActionMemos")]
+        public ActionResult Create(ActionMemo actionMemo, Guid? memberGuid, Guid? dependentGuid)
+        {
+            var returnValue = this.Validate(memberGuid, dependentGuid);
+            if (returnValue != null) return returnValue;
+
+            actionMemo.EndorsementBatch = new EndorsementBatch()
+            {
+                Date = actionMemo.DateIssued,
+                Deadline = actionMemo.DateIssued,
+                Status = EndorsementBatchStatus.New,
+                EndorsementType = Constants.ACTION_MEMO_ENDORSEMENT_TYPE,
+                EndorsementCount = 1,
+                AccountCode = this.Member != null ? this.Member.AccountCode : this.Dependent.Member.AccountCode,
+                //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber()
+            };
+
+            if (ModelState.IsValid)
+            {
+                switch (actionMemo.Type)
+                {
+                    case ActionMemoType.Disapproved:
+                        actionMemo.Status = ActionMemoStatus.Issued;
+                        break;
+                    default:
+                        actionMemo.Status = ActionMemoStatus.New;
+                        break;
+                };
+
+                db.ActionMemos.Add(actionMemo);
+                db.SaveChanges();
+
+                //Helper.UrgActionMemo(System.Web.HttpContext.Current, actionMemo, actionMemo.Member.AccountCode);
+
+                return RedirectToAction("Index", new { messageType = "Success", message = "Successfully created Action Memo." });
+            }
+
+            return View();
+        }
+
+        [Authorize(Roles = "SysAd, CanViewActionMemos")]
+        public ActionResult Details(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var actionMemo = db.ActionMemos
+                .Include(t => t.Member)
+                .Include(t => t.Dependent)
+                .Include(t => t.Documents)
+                .Include(t => t.Documents.Select(d => d.DocumentType))
+                .FirstOrDefault(t => t.Guid == guid);
+            if (actionMemo == null) return HttpNotFound();
+            var accountCodes = Helper.GetLegacyAccountCodes(db, legacyDb);
+            if (!accountCodes.Any(t => t == actionMemo.Member.AccountCode)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            return View(actionMemo);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private ActionResult Validate(Guid? memberGuid, Guid? dependentGuid)
+        {
+            if (!memberGuid.HasValue && !dependentGuid.HasValue) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (dependentGuid.HasValue)
+            {
+                this.Dependent = db.Dependents.Include(t => t.Member).FirstOrDefault(t => t.Guid == dependentGuid);
+                if (Dependent != null)
+                {
+                    this.Member = this.Dependent.Member;
+                }
+            }
+            else
+            {
+                this.Member = db.Members.FirstOrDefault(t => t.Guid == memberGuid);
+            }
+
+            if (this.Member == null && this.Dependent == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            return null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+                db = null;
+                legacyDb = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+}

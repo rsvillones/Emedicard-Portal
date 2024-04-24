@@ -1,0 +1,24 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+
+    string title = "ADDITIONAL MEMBER";
+    if (Model.EndorsementBatch.EndorsementType == Corelib.Constants.RENEWAL_ENDORSEMENT_TYPE)
+    {
+        title = "MEMBERS FOR RENEWAL";
+    }
+}
+
+<p class="title">@Model.EndorsementBatch.CompanyName - @title</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">The following was enrolled with the following details:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Total Count: @Model.Count</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.EndorsementBatch.ReferenceNumber)">here</a> to login and view the endorsement.
+</p>

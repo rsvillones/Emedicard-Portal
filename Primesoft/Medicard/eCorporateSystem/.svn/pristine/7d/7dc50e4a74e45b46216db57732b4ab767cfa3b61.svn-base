@@ -1,0 +1,125 @@
+@{
+    ViewBag.Title = "Account Manager";
+}
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">User Information</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row spacing">
+                            <div class="col-lg-2">
+                                <img src="~/Content/images/company_logo2.png" alt="" class="img-responsive img-thumbnail user-photo" />
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="form-group">
+                                    <div class="col-lg-2">
+                                        <label>Username:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>ecorpmain@medicardphils.com</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Name:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>Anonymous A. Anony</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Designation:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>Designation</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Address:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>17/fF ,88 Corporate Center Sedeno Cor. Valero St. Salcedo Village/label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Telephone No.:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>8450-561212</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Mobile No.:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>09656323223</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Fax No.:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>1245823</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Email:</label>
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <label>ecorpmain@medicardphils.com</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Account List</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <form class="form-horizontal">
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-12">
+                                @*CODE*@
+                                
+                                <table class="table table-full">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Account Name
+                                            </th>
+                                            <th>
+                                                Account Code
+                                            </th>
+                                            <th>
+                                                &nbsp;
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                PRIMESOFT PHILIPPINES, INC.
+                                            </td>
+                                            <td>
+                                                02202003-000260
+                                            </td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-xs">Manage Account</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

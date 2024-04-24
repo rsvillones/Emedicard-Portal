@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E8C992E3-F7DD-4DC8-99C2-2B3E9287EF18}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Emailer</RootNamespace>
+    <AssemblyName>Emailer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.0.0\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.0.0\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.0.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.2.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Emailer.cs" />
+    <Compile Include="EmailViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="EmailTemplates\New\ProcessNewDirectlyToUrgByCorporateAdminToUrg.cshtml" />
+    <None Include="EmailTemplates\Transmittal\TransmittalByUrgToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\Transmittal\TransmittalByUrgToMember.cshtml" />
+    <None Include="EmailTemplates\ActionMemo\ActionMemoReplyByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\ActionMemo\ActionMemoReplyByMemberToUrg.cshtml" />
+    <None Include="EmailTemplates\ActionMemo\ActionMemoReplyByMemberToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\ActionMemo\ActionMemoByUrgToMember.cshtml" />
+    <None Include="EmailTemplates\ActionMemo\ActionMemoByUrgToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\DisapproveAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\CancelledAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToUrg.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToMember.cshtml" />
+    <None Include="EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToUrg.cshtml" />
+    <None Include="EmailTemplates\Amendment\DisapproveAmendmentByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\Amendment\CancelledAmendmentByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToUrg.cshtml" />
+    <None Include="EmailTemplates\Amendment\SubmitAmendmentByMemberToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\Amendment\SubmitAmendmentByMemberToMember.cshtml" />
+    <None Include="EmailTemplates\Amendment\SubmitAmendmentByMemberToUrg.cshtml" />
+    <None Include="EmailTemplates\CancelledMember\ProcessCancelledMemberByCorporateAdminToUrg.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\DisapproveDependentCancellationByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\CancelledDependentCancellationByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\SubmitDependentCancellationByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\SubmitDependentCancellationByCorporateAdminToUrg.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToMember.cshtml" />
+    <None Include="EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToUrg.cshtml" />
+    <None Include="EmailTemplates\EndorsementListing\CancelMembershipByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\EndorsementListing\ApproveMembershipByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\DisapproveIdReplacementByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\CancelledIdReplacementByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\NewUser\NewAccess.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToUrg.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToUrg.cshtml" />
+    <None Include="EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToMember.cshtml" />
+    <None Include="EmailTemplates\New\ApproveNewMemberByUrgToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\New\ApproveNewMemberByUrgToMember.cshtml" />
+    <None Include="EmailTemplates\New\SubmitNewMemberByMemberToUrg.cshtml" />
+    <None Include="EmailTemplates\New\SubmitNewMemberByMemberToMember.cshtml" />
+    <None Include="EmailTemplates\New\SubmitNewMemberByMemberToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToMember.cshtml" />
+    <None Include="EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToCorporateAdmin.cshtml" />
+    <None Include="EmailTemplates\_Layout.cshtml" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Corelib\Corelib.csproj">
+      <Project>{f5107f87-42e0-469c-8bd7-6e3e85231f1c}</Project>
+      <Name>Corelib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,40 @@
+@model Account
+@{
+    ViewBag.CodeList = new SelectList(ViewBag.LegacyAccounts, "Code", "Name", Model.Code);
+    var legacyAccount = ((IEnumerable<LegacyAccount>)ViewBag.LegacyAccounts).FirstOrDefault(t => t.Code == Model.Code);
+}
+
+<tr>
+    @using (Html.BeginCollectionItem("Accounts"))
+    {
+        <td style="width:55%">
+            @Html.HiddenFor(t => t.Id)
+            @Html.HiddenFor(t => t.Guid)
+            @Html.HiddenFor(t => t.Timestamp)
+            @if (ViewBag.DisableDropdown != null && ViewBag.DisableDropdown)
+            {
+                @Html.HiddenFor(t => Model.Code)
+                <input type="text" value="@legacyAccount.Name" class="form-control white-readonly" readonly="readonly" />
+            }
+            else
+            {
+                @Html.DropDownList("Code", (IEnumerable<SelectListItem>)ViewBag.CodeList, new { @class = "form-control" })
+            }
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsReadOnly)
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsCorporateAdmin)
+        </td>
+        <td style="width:13%">
+            @Html.EditorFor(t => t.IsUnderWriter)
+        </td>
+        <td style="width:6%">
+            @if (ViewBag.DisableDropdown == null || !ViewBag.DisableDropdown)
+            {
+                @Html.ActionLink("Delete", "Delete", null, new { @class = "btn btn-danger btn-xs", @onclick = "$(this).parent().parent().remove(); return false;" })
+            }
+        </td>
+    }
+</tr>

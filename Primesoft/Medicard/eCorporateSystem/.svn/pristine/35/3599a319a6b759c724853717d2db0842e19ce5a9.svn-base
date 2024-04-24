@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Corelib;
+using Microsoft.Reporting.WebForms;
+
+namespace WebUI.Reports.ResignedMembers
+{
+    public partial class ResignedMembersPrincipal : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (IsPostBack) return;
+            GenerateReport(sender, e);
+        }
+
+        protected void GenerateReport(object sender, EventArgs e)
+        {
+            CancelledPricipalMemberViewer.LocalReport.DataSources.Clear();
+            CancelledPricipalMemberViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/ResignedMembers/ResignedMembersPrincipal.rdlc");
+            CancelledPricipalMemberViewer.LocalReport.DataSources.Add(new ReportDataSource("ResignedMembersPrincipal", ReportHelper.ResignedMembersPrincipal("02202003-000260")));
+        }
+    }
+}

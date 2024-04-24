@@ -1,0 +1,140 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using WebUI.Models;
+
+namespace WebUI.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewAccountOfficers, CanAddAccountOfficers, CanEditAccountOfficers, CanDeleteAccountOfficers")]
+    public class AccountOfficersController : Controller
+    {
+        #region -- Variable Declarations --
+
+        private IdentityDataContext db = new IdentityDataContext();
+        private LegacyDataContext legacyDb = new LegacyDataContext();
+        
+        #endregion
+
+        #region -- Action Results --
+
+        [Authorize(Roles = "SysAd, CanViewAccountOfficers")]
+        public async Task<ActionResult> Index()
+        {
+            return View(await db.AccountOfficers.ToListAsync());
+        }
+
+        [Authorize(Roles = "SysAd, CanAddAccountOfficers")]
+        public ActionResult Create()
+        {
+            var model = new AccountOfficerViewModel();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanAddAccountOfficers")]
+        public async Task<ActionResult> Create([Bind(Include = "Id,Code,FirstName,MiddleInitial,LastName,EmailAddress,Guid,CrBy,CrDate,ModBy,ModDate,Deleted,Timestamp")] AccountOfficer accountOfficer)
+        {
+            if (ModelState.IsValid)
+            {
+                db.AccountOfficers.Add(accountOfficer);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            return View(accountOfficer);
+        }
+
+        [Authorize(Roles = "SysAd, CanEditAccountOfficers")]
+        public async Task<ActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            AccountOfficer accountOfficer = await db.AccountOfficers.FindAsync(id);
+            if (accountOfficer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(accountOfficer);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanEditAccountOfficers")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Code,FirstName,MiddleInitial,LastName,EmailAddress,Guid,CrBy,CrDate,ModBy,ModDate,Deleted,Timestamp")] AccountOfficer accountOfficer)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(accountOfficer).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(accountOfficer);
+        }
+
+        [Authorize(Roles = "SysAd, CanDeleteAccountOfficers")]
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            AccountOfficer accountOfficer = await db.AccountOfficers.FindAsync(id);
+            if (accountOfficer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(accountOfficer);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SysAd, CanDeleteAccountOfficers")]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            AccountOfficer accountOfficer = await db.AccountOfficers.FindAsync(id);
+            db.AccountOfficers.Remove(accountOfficer);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public async Task<JsonResult> ValidateAccountOfficerCode(string code)
+        {
+            var legacyAgent = await legacyDb.LegacyAgents.FirstOrDefaultAsync(t => t.Code == code);
+
+            return legacyAgent != null ? this.Json(legacyAgent, JsonRequestBehavior.AllowGet) : null;
+        }
+
+        #endregion
+
+        #region -- Overrides --
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                legacyDb.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+        
+        #endregion
+    }
+}

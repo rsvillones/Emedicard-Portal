@@ -1,0 +1,101 @@
+@model IEnumerable<ActionMemo>
+
+@{
+    ViewBag.Title = "Action Memos";
+}
+<div class="row">
+    <div class="col-lg-12 col-centered">
+    <div id="panel-title">Action Memos</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <table class="table table-white-form">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.EndorsementBatch.ControlNumber)</th>
+                            <th>@Html.DisplayNameFor(model => model.DateIssued)</th>
+                            <th>@Html.DisplayNameFor(model => model.Type)</th>
+                            @*<th>@Html.DisplayNameFor(model => model.Member.EmployeeNumber)</th>
+                        <th>Member Name</th>
+                        <th>Issued To</th>
+                        <th>Member Type</th>*@
+                            <th>@Html.DisplayNameFor(model => model.Details)</th>
+                            <th>@Html.DisplayNameFor(model => model.UrgStatus)</th>
+                            @*<th>Issued AM Status</th>
+                            <th>Last Update</th>
+                            <th>Document Type</th>*@
+                            <th>Action Memo</th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(model => item.EndorsementBatch.ControlNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.DateIssued)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.Type)
+                                </td>
+                                @*<td>
+                                    @Html.DisplayFor(model => item.Member.EmployeeNumber)
+                                </td>
+                                <td>
+                                    @if (item.Dependent != null)
+                                    {
+                                        @Html.DisplayFor(model => item.Dependent.FullName)
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(model => item.Member.FullName)
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.Member.FullName)
+                                </td>
+                                <td>
+                                    @if (item.Dependent != null)
+                                    {
+                                        @:Dependent
+                                    }
+                                    else
+                                    {
+                                        @:Principal
+                                    }
+                                </td>*@
+                                <td>
+                                    @Html.DisplayFor(model => item.Details)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.UrgStatus)
+                                </td>
+                                @*<td>
+                                    @Html.DisplayFor(model => item.Status)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.ModDate)
+                                </td>
+                                <td>
+                                    @if (item.Documents.Count > 0)
+                                    {
+                                        @:View Documents
+                                    }
+                                    &nbsp;
+                                </td>*@
+                                <td>
+                                    @Html.ActionLink("View Details", "Details", "ActionMemos", new { guid = item.Guid }, new { @class = "btn btn-primary btn-xs" })
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

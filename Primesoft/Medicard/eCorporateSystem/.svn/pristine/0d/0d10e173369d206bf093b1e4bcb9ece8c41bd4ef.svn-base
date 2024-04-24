@@ -1,0 +1,12 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Application Approved</p>
+<br />
+<p class="details">Your membership information is now approved by the URG.</p>
+<br />
+<p class="details">Thank you for using eMedicard!</p>
+<br />
+<p class="details">Disclaimer:</p>
+<br />

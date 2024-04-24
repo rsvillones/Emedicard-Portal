@@ -1,0 +1,6 @@
+@model LegacyAccount
+
+@{
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+

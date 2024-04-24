@@ -1,0 +1,86 @@
+﻿@model AdditionalDependent
+
+@{
+    ViewBag.Title = "Additional Dependent";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(t => t.Id)
+    @Html.HiddenFor(t => t.Guid)
+    @Html.HiddenFor(t => t.Timestamp)
+    @Html.HiddenFor(t => t.Status)
+    @Html.HiddenFor(t => t.EndorsementBatchId)
+    @Html.HiddenFor(t => t.AccountCode)
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Dependent Personal Details</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="PersonalDetails">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                @Html.Partial("_Dependent", Model)
+                                                <div class="row space">
+                                                    <div class="col-lg-12">
+                                                        <div class="no-color pull-right">
+                                                            @Html.ActionLink("Back to List", "Index", "MembershipEndorsements", new { area = "" }, new { @class = "btn btn-primary" })                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#MemberContainer').attr("style", "margin-bottom:14px");
+            $('#OptionalPlanCount').hide();
+
+            $('#@Html.IdFor(t => t.MemberCode)').select2({
+                placeholder: "Search for a Active Member",
+                minimumInputLength: 1,
+                ajax: {
+                    url: '@Url.Action("GetAllMembers")',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            q: term, // search term
+                            accountCode: '@Model.AccountCode',
+                            page_limit: 10
+                        };
+                    },
+                    results: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter remote JSON data
+                        return { results: data };
+                    }
+                }
+            });
+
+            $('#@Html.IdFor(t => t.MemberCode)').on('select2-selecting', function (e) {
+                $('#@Html.IdFor(t => t.MemberName)').val(e.choice.text);
+            });
+
+            $("#@Html.IdFor(t => t.MemberCode)").select2('data', { id: '@Model.MemberCode', text: '@Model.MemberName' });
+
+            @if (ViewBag.ReadOnly != null && ViewBag.ReadOnly){
+                @:$("#@Html.IdFor(t => t.MemberCode)").select2('readonly', true);
+            }
+        });
+    </script>
+}

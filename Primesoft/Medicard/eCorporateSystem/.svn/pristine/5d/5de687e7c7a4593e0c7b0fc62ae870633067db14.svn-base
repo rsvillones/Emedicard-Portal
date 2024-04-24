@@ -1,0 +1,202 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Areas.Member.Models;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using Corelib.Enums;
+using System.IO;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class IdReplacementsController : BaseMemberController
+    {
+        #region  -- Action Results --
+
+        public ActionResult Index(string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.IdReplacements
+                 .Include(t => t.EndorsementBatch)
+                 .Include(t => t.Reason)
+                 .Where(t => !t.Deleted && t.MemberCode == this.Member.Code)
+                 .OrderByDescending(t => t.RequestDate).ToList();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        #endregion
+
+        #region -- Id Replacement --
+
+        public ActionResult IdReplacement(Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+                        
+            IdReplacement model;
+            if (guid != null && db.IdReplacements.Any(t => t.Guid == guid))
+            {
+                model = db.IdReplacements.FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                model = new IdReplacement()
+                {
+                    AccountCode = this.Member.AccountCode,
+                    MemberCode = this.Member.Code,
+                    Status = Corelib.Enums.RequestStatus.Saved
+                };
+            }
+
+            base.IdReplacementReadOnlyAttribute(model);
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.IdReplacement).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult IdReplacement(IdReplacement model, string submit)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (model.FileWrapper != null)
+            {
+                using (var binaryReader = new BinaryReader(model.FileWrapper.InputStream))
+                {
+                    model.DocumentFile = binaryReader.ReadBytes(model.FileWrapper.ContentLength);
+                    model.DocumentFileName = model.FileWrapper.FileName;
+                    model.DocumentContentType = model.FileWrapper.ContentType;
+                }
+            }
+
+            if (ModelState.IsValid)
+            {                
+                if (model.Id == 0)
+                {
+                    var endorsementBatch = new EndorsementBatch()
+                    {
+                        Deadline = DateTime.Now,
+                        //ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                        Date = DateTime.Now,
+                        EndorsementType = "ID Replacement",
+                        BatchType = "ID Replacement",
+                        EndorsementCount = 1,
+                        AccountCode = this.Member.AccountCode,
+                        Status = Corelib.Enums.EndorsementBatchStatus.New
+                    };
+
+                    db.EndorsementBatches.Add(endorsementBatch);
+
+                    model.EndorsementBatch = endorsementBatch;
+                    model.AccountCode = this.Member.AccountCode;
+                    db.IdReplacements.Add(model);
+                    if (submit == "Submit Request")
+                    {
+                        var setting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.Member.AccountCode) ?? new AccountSetting();
+                        if (setting.BypassHRManagerApproval)
+                        {
+                            model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                        }
+                        else
+                        {
+                            model.Status = Corelib.Enums.RequestStatus.Submitted;
+                        }
+                        Emailer.Emailer.SendSubmitIdReplacementEmailInstant(model);
+                    }  
+                }
+                else
+                {
+                    var currentIdReplacement = db.IdReplacements.FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                    db.Entry(currentIdReplacement).CurrentValues.SetValues(model);
+                    db.Entry(currentIdReplacement).State = EntityState.Modified;
+                    if (submit == "Submit Request")
+                    {
+                        var setting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.Member.AccountCode) ?? new AccountSetting();
+                        if (setting.BypassHRManagerApproval)
+                        {
+                            currentIdReplacement.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                        }
+                        else
+                        {
+                            currentIdReplacement.Status = Corelib.Enums.RequestStatus.Submitted;
+                        }
+                        Emailer.Emailer.SendSubmitIdReplacementEmailInstant(currentIdReplacement);
+                    }  
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            base.IdReplacementReadOnlyAttribute(model);
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted && t.Type == ReasonType.IdReplacement).OrderBy(t => t.DisplayOrder).ThenBy(t => t.Description);
+            ViewBag.Dependents = LegacyHelper.GetActiveDependents(legacyDb, model.AccountCode, model.MemberCode);
+            ViewBag.Members = LegacyHelper.GetActiveMembers(legacyDb, model.AccountCode).Where(t => t.Type == "Principal");
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(model);
+        }
+
+        public ActionResult CancelIdReplacement(Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var idReplacement = db.IdReplacements.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (idReplacement == null) throw new Exception("ID Replacement Not Found!.");
+
+            idReplacement.Status = Corelib.Enums.RequestStatus.Saved;
+            db.Entry(idReplacement).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index", new { messageType = "Success!", message = "Successfully cancelled ID Replacement." });
+        }
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Delete(Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var idReplacement = db.IdReplacements.FirstOrDefault(t => !t.Deleted && t.Guid == guid);
+            if (idReplacement == null) throw new Exception("ID Replacement Not Found!.");
+
+            db.Entry(idReplacement).State = EntityState.Deleted;
+            db.SaveChanges();
+            return RedirectToAction("Index", new { messageType = "Success!", message = "ID Replacement successfully deleted ." });
+        }
+
+        #endregion
+
+        #region -- Function --
+
+        public FileResult DownloadFile(Guid? guid)
+        {
+            if (guid != null && db.IdReplacements.Any(t => t.Guid == guid))
+            {
+                var model = db.IdReplacements.FirstOrDefault(t => t.Guid == guid);
+                if (model.DocumentFile != null || !string.IsNullOrEmpty(model.DocumentContentType) || !string.IsNullOrEmpty(model.DocumentFileName))
+                { return File(model.DocumentFile, model.DocumentContentType, model.DocumentFileName); }
+            }
+            return null;
+        }
+
+        #endregion
+    }
+}

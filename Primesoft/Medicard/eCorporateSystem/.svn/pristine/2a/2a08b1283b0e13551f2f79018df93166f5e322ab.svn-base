@@ -1,0 +1,291 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Web;
+using System.Data.Entity;
+using OfficeOpenXml;
+using OfficeOpenXml.DataValidation;
+using Corelib.Models;
+
+namespace Corelib.Classes
+{
+    public class ExcelTools
+    {
+        public struct ImportParameter
+        {
+            public string Path { get; set; }
+            public string Username { get; set; }
+        }
+
+        #region -- New Application Excel Tool --
+
+        #region -- Excel Download --
+
+        public static byte[] NewApplicationExcelDownload()
+        {
+            var templatePath = HttpContext.Current.Server.MapPath("~/ExcelTemplates/New Application.xlsx");
+            var targetPath = String.Format(@"{0}\{1}.xlsx", HttpContext.Current.Server.MapPath("~/ExcelTemplates"),
+                                           Guid.NewGuid());
+
+            File.Copy(templatePath, targetPath);
+
+            byte[] returnValue;
+
+            #region -- .XLSX File --
+
+            using (var package = new ExcelPackage(new FileInfo(targetPath)))
+            {
+                var workBook = package.Workbook;
+                if (workBook == null) throw new Exception("Invalid WorkBook.");
+                if (workBook.Worksheets.Count <= 0) throw new Exception("Worksheet doesn't exist.");
+                var worksheet = workBook.Worksheets[1];
+                CellDateValidation(worksheet, "J:J",DateTime.UtcNow.AddYears(-100));
+                CellDateValidation(worksheet, "M:M",DateTime.Now);
+                CellDateValidation(worksheet, "N:N", DateTime.Now);
+                CellDateValidation(worksheet, "O:O", DateTime.Now);
+
+                CellIntegerValidation(worksheet, "K:K");
+                CellIntegerValidation(worksheet, "Q:Q");
+                
+                var options = new List<string>();
+                options.Add("plan1");
+                options.Add("plan2");
+                options.Add("plan3");
+                CellDropDownValidation(worksheet, "P:P", options);
+                var secondOptions = new List<string>();
+                secondOptions.Add("Male");
+                secondOptions.Add("Female");
+                CellDropDownValidation(worksheet, "I:I", secondOptions);
+                returnValue = package.GetAsByteArray();
+            }
+
+            #endregion
+
+            File.Delete(targetPath);
+            return returnValue;
+        }
+
+        #endregion
+
+        #region -- Excel Upload --
+
+        #region -- Const Variables --
+
+        private const int EMAIL_ADDRESS = 1;
+        private const int EMPLOYEE_NUMBER = EMAIL_ADDRESS + 1;
+        private const int AREA = EMPLOYEE_NUMBER + 1;
+        private const int COST_CENTER = AREA + 1;
+        private const int LAST_NAME = COST_CENTER + 1;
+        private const int FIRST_NAME = LAST_NAME + 1;
+        private const int MIDDLE_NAME = FIRST_NAME + 1;
+        private const int SUFFIX = MIDDLE_NAME + 1;
+        private const int GENDER = SUFFIX + 1;
+        private const int DATE_OF_BIRTH = GENDER + 1;
+        private const int AGE = DATE_OF_BIRTH + 1;
+        private const int CIVIL_STATUS = AGE + 1;
+        private const int EFFECTIVITY_DATE = CIVIL_STATUS + 1;
+        private const int VALIDITY_DATE = EFFECTIVITY_DATE + 1;
+        private const int DATE_HIRED = VALIDITY_DATE + 1;
+        private const int APPLIED_PLAN = DATE_HIRED + 1;
+        private const int NUMBER_OF_ALLOWED_DEPENDENTS = APPLIED_PLAN + 1;
+        private const int DEPENDENT_APPLIED_PLAN = NUMBER_OF_ALLOWED_DEPENDENTS + 1;
+        private const int DEPENDENT_OPTIONAL_PLAN = DEPENDENT_APPLIED_PLAN + 1;
+
+
+        #endregion
+
+        public static void ImportNewApplication(object parameter)
+        {
+            var path = ((ImportParameter)parameter).Path;
+            var username = ((ImportParameter)parameter).Username;
+
+            var db = new IdentityDataContext();
+            var extension = Path.GetExtension(path);
+            var filename = Path.GetFileName(path);
+
+            switch (extension)
+            {
+                case ".xlsx":
+
+                    #region -- .XLSX File --
+
+                    using (var package = new ExcelPackage(new FileInfo(path)))
+                    {
+                        var workBook = package.Workbook;
+                        if (workBook == null) break;
+                        if (workBook.Worksheets.Count <= 0) break;
+                        var workSheet = workBook.Worksheets[1];
+                        var startRow = 2;
+                        var numberOfItems = 0;
+
+                        #region -- Verification --
+
+                        while (startRow > 0)
+                        {
+                            var employeeNumber = Convert.ToString(workSheet.Cells[startRow, EMPLOYEE_NUMBER].Value);
+                            if (string.IsNullOrEmpty(employeeNumber))
+                            {
+                                break;
+                            }
+                            numberOfItems++;
+                            startRow++;
+                        }
+
+                        var log = new UploadLog()
+                        {
+                            Name = username,
+                            FileName = filename,
+                            NumberOfItems = numberOfItems
+                        };
+
+                        db.UploadLogs.Add(log);
+                        db.SaveChanges();
+
+                        #endregion
+
+                        ProcessItem(workSheet, 2, filename, log);
+                    }
+
+                    #endregion
+
+                    break;
+                default:
+                    throw new Exception("Invalid Excel file.");
+            }
+
+            db.Dispose();
+        }
+
+        public static void ProcessItem(ExcelWorksheet ws, int startRow, string filename, UploadLog uploadLog)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var excelError = new ExcelError() { FileName = filename };
+                var rowcompleted = 0;
+                while (startRow > 0)
+                {
+                    var applicationVerification = new ApplicationVerification();
+
+                    var currentRow = startRow;
+                    if (string.IsNullOrEmpty(ws.Cells[currentRow, EMPLOYEE_NUMBER].StringValue())) break;
+                    excelError.RowNumber = currentRow;
+
+                    var emailAddress = ws.Cells[currentRow, EMAIL_ADDRESS].StringValue();
+                    var employeeNumber = ws.Cells[currentRow, EMPLOYEE_NUMBER].StringValue();
+                    var area = ws.Cells[currentRow, AREA].StringValue();
+                    var costCenter = ws.Cells[currentRow, COST_CENTER].StringValue();
+                    var lastName = ws.Cells[currentRow, LAST_NAME].StringValue();
+                    var firstName = ws.Cells[currentRow, FIRST_NAME].StringValue();
+                    var middleName = ws.Cells[currentRow, MIDDLE_NAME].StringValue();
+                    var suffix = ws.Cells[currentRow, SUFFIX].StringValue();
+                    var gender = ws.Cells[currentRow, GENDER].StringValue();
+                    var dateOfBirth = ws.Cells[currentRow, DATE_OF_BIRTH].DateValue(db, excelError, "Date of Birth", applicationVerification);
+                    var age = ws.Cells[currentRow, AGE].IntegerValue(db, excelError, "Age", applicationVerification);
+                    var civilStatus = ws.Cells[currentRow, AGE].StringValue();
+                    var effectivityDate = ws.Cells[currentRow, EFFECTIVITY_DATE].DateValue(db, excelError, "Effective Date", applicationVerification);
+                    var validityDate = ws.Cells[currentRow, VALIDITY_DATE].DateValue(db, excelError, "Validity Date", applicationVerification);
+                    var dateHired = ws.Cells[currentRow, DATE_HIRED].DateValue(db, excelError, "Date Hired", applicationVerification);
+                    var appliedPlan = ws.Cells[currentRow, APPLIED_PLAN].StringValue();
+                    var dependent = ws.Cells[currentRow, NUMBER_OF_ALLOWED_DEPENDENTS].IntegerValue(db, excelError, "Number of allowed dependents", applicationVerification);
+                    var dependentAppliedPlan = ws.Cells[currentRow, DEPENDENT_APPLIED_PLAN].StringValue();
+                    var dependentOptionalPlan = ws.Cells[currentRow, DEPENDENT_OPTIONAL_PLAN].StringValue();
+
+                    applicationVerification.Row = currentRow;
+                    applicationVerification.FileName = filename;
+                    applicationVerification.EmailAddress = emailAddress;
+                    applicationVerification.EmployeeNumber = employeeNumber;
+                    applicationVerification.Area = area;
+                    applicationVerification.CostCenter = costCenter;
+                    applicationVerification.LastName = lastName;
+                    applicationVerification.FirstName = firstName;
+                    applicationVerification.MiddleName = middleName;
+                    applicationVerification.Suffix = suffix;
+                    applicationVerification.Gender = gender;
+                    applicationVerification.DateOfBirth = dateOfBirth;
+                    applicationVerification.Age = age;
+                    applicationVerification.CivilStatus = civilStatus;
+                    applicationVerification.EffectivityDate = effectivityDate;
+                    applicationVerification.ValidityDate = validityDate;
+                    applicationVerification.DateHired = dateHired;
+                    applicationVerification.AppliedPlan = appliedPlan;
+                    applicationVerification.Dependent = dependent;
+                    applicationVerification.DependentAppliedPlan = dependentAppliedPlan;
+                    applicationVerification.DependentOptionalPlan = dependentOptionalPlan;
+                    db.ApplicationVerifications.Add(applicationVerification);
+
+                    rowcompleted++;
+                    if (rowcompleted == 20)
+                    {
+                        if (uploadLog != null)
+                        {
+                            uploadLog.CurrentRow = startRow;
+                            uploadLog.RowsCompleted = rowcompleted;
+                            uploadLog.UploadStatus = UploadStatus.Loading;
+                            db.Entry(uploadLog).State = EntityState.Modified;
+                        }
+                        db.SaveChanges();
+                    }
+                    startRow++;
+                }
+                if (uploadLog != null)
+                {
+                    uploadLog.CurrentRow = startRow - 1;
+                    uploadLog.RowsCompleted = rowcompleted;
+                    uploadLog.UploadStatus = UploadStatus.Completed;
+                    db.Entry(uploadLog).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region -- Function --
+
+        public static void CellDateValidation(ExcelWorksheet worksheet, string column,DateTime date)
+        {
+            // Add a date time validation
+            var validation = worksheet.DataValidations.AddDateTimeValidation(column);
+            // set validation properties
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid date was entered";
+            validation.Error = string.Format("The date must be greater than {0}.", date);
+            validation.Prompt = "Enter date here";
+            validation.Formula.Value = date;
+            validation.Operator = ExcelDataValidationOperator.greaterThan;
+        }
+
+        public static void CellIntegerValidation(ExcelWorksheet worksheet, string column)
+        {
+            // Add a integer validation
+            var validation = worksheet.DataValidations.AddIntegerValidation(column);
+            // set validation properties
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid number was entered";
+            validation.Error = string.Format("The number must be greater than {0}.", 0);
+            validation.Prompt = "Enter number here";
+            validation.Formula.Value = 0;
+            validation.Operator = ExcelDataValidationOperator.greaterThan;
+        }
+
+        public static void CellDropDownValidation(ExcelWorksheet worksheet, string column,List<string> items)
+        {
+            // Add a list validation
+            var validation = worksheet.DataValidations.AddListValidation(column);
+            // set validation properties
+            foreach (var item in items){
+                validation.Formula.Values.Add(item);
+            }
+            validation.ShowErrorMessage = true;
+            validation.ErrorTitle = "An invalid item was selected";
+            validation.Error = "Selected item must be in the list";
+        }
+
+        #endregion
+    }
+}

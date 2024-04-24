@@ -1,0 +1,256 @@
+@model EndorsementBatch
+
+@{
+    ViewBag.Title = "Batch Upload";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+@using (Html.BeginForm("BatchUpload", "Endorsement", new { accountCode = ViewBag.AccountCode }))
+{
+    @Html.ValidationSummary(true);
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.Guid);
+    @Html.HiddenFor(model => model.ReferenceNumber);
+    @Html.HiddenFor(model => model.Filename);
+    @Html.HiddenFor(model => model.GuidFilename);
+    @Html.HiddenFor(model => model.Timestamp);
+    @Html.HiddenFor(model => model.Status);
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            <div id="panel-title">Membership Endorsement (Add New Member)</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="panel-container">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id="BatchUploadNewApplication">
+                                        <div class="row form-padding">
+                                            <div class="col-lg-12">
+                                                <h4 class="form-title" style="margin-bottom: 1em">Batch Upload for New Application</h4>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Submission Deadline:</label>
+                                                        <div class="col-lg-8 editor-form-control">
+                                                            @Html.EditorFor(model => model.Deadline, new { htmlAttributes = ViewBag.HtmlControlReadOnlyAttributes })
+                                                            @Html.ValidationMessage("DeadLineError", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label class="control-label col-lg-4">Remarks:</label>
+                                                        <div class="col-lg-8">
+                                                            @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">&nbsp;</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <label class="inline">Allowed file extension: xlsx.</label>
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <input id="downloadNewApplicationTemplateButton" type="button" class="btn-download" value="Download Template" />
+                                                                @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                {
+                                                                    <input type="file" id="uploadNewApplication" name="uploadNewApplication" style="background-color:blue" />
+                                                                    <input type="hidden" id="uploadStringNewApplication" name="uploadStringNewApplication" />
+
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div id="RowsContainer">
+                                                            @if (Model.Members != null && Model.Members.Count > 0)
+                                                            {
+                                                                <div class="row">
+                                                                    <div class="col-lg-1">
+                                                                        <input type="checkbox" id="ShowOnlyError" checked="checked" class="form-control" />
+                                                                    </div>
+                                                                    <div class="col-lg-11">
+                                                                        <label for="ShowOnlyError">Show Only Error(s)</label>
+                                                                    </div>
+                                                                </div>
+                                                                <table class="sticky-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Name</th>
+                                                                            <th>Last Name</th>
+                                                                            <th>First Name</th>
+                                                                            <th>Middle Name</th>
+                                                                            <th>Email Address</th>
+                                                                            <th>Employee Number</th>
+                                                                            <th>Area</th>
+                                                                            <th>Cost Center</th>
+                                                                            <th>Suffix</th>
+                                                                            <th>Gender</th>
+                                                                            <th>Date Of Birth</th>
+                                                                            <th>Civil Status</th>
+                                                                            <th>Effectivity Date</th>
+                                                                            <th>Validity Date</th>
+                                                                            <th>Date Hired</th>
+                                                                            <th>Applied Plan</th>
+                                                                            <th>Optional Plan</th>
+                                                                            <th>No. of allowed dependents</th>
+                                                                            <th>Dependent Applied Plan</th>
+                                                                            <th>Dependent Optional Plan</th>
+                                                                            @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                            {
+                                                                                <th>&nbsp;</th>
+                                                                            }
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="ApplicationVerificationBody">
+                                                                        @foreach (var member in Model.Members)
+                                                                        {
+                                                                            @Html.Partial("_Member", member)
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="form-actions no-color" style="text-align: right">
+                                                                            &nbsp;
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="no-color" style="text-align: right">
+                                                                            @if (ViewBag.ReadOnly == null || !ViewBag.ReadOnly)
+                                                                            {
+                                                                                <input type="submit" value="Save" class="btn btn-primary" />
+                                                                            }
+                                                                            @Html.ActionLink("Back to List", "Index", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function deleteMember(button) {
+            var tr = $(button).parent().parent();
+            tr.remove();
+        }
+
+        $(document).ready(function () {
+            $("#uploadNewApplication").uploadifive({
+                'method': 'post',
+                'formData': {
+                    'accountCode': '@ViewBag.AccountCode',
+                    'endorsementBatchId': '@Model.Id'
+                },
+                'uploadScript': '/CorporateAdministrator/Endorsement/UploadExcel',
+                'fileObjName': 'fileData',
+                'buttonText': 'Select File',
+                'multi': false,
+                'auto': true,
+                'height': 40,
+                'width': 60,
+                'removeCompleted': true,
+                'onError': function (file, data) {
+                    alert(file);
+                },
+                'onUploadComplete': function (file, data) {
+                    var json = $.parseJSON(data);
+
+                    if (json.Success) {
+                        $('#Filename').val(json.Filename);
+                        $('#GuidFilename').val(json.GuidFilename);
+                        $('#RowsContainer').html(json.TableData);
+                        $('form').attr('action', '@Url.Action("ValidateUploadedExcel", new { accountCode = @ViewBag.AccountCode })');
+                        $('form').submit();
+                    }
+                    else {
+                        alert(json.ErrorMessage);
+                    }
+                }
+            });
+
+            $('#downloadNewApplicationTemplateButton').click(function (e) {
+                e.preventDefault();
+                window.location.href = '@(Url.Action("DownloadNewApplicationTemplate", new { @accountCode = ViewBag.AccountCode }))';
+            });
+
+            $('.selectpicker').each(function (index, select) {
+                var value = $(select).attr('data-value');
+                $(select).selectpicker();
+                $(select).selectpicker('val', eval(value));
+            });
+
+            $('.selectpicker').on('change', function () {
+                $(this).prev('input').val($(this).val());
+            });
+
+            $('#ApplicationVerificationBody:contains("exists"),#ApplicationVerificationBody:contains("required")').each(function () {
+                $("#ApplicationVerificationBody").find("td").css({ "height": "64px" });
+            });
+
+            $('.sticky-col tbody tr input').remove();
+            $('.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists")').closest('tr').css("background-color", "#E84646");
+            ShowOnlyError('#ShowOnlyError');
+            $('#ShowOnlyError').click(function () {
+                AlertMessage(this);
+                ShowOnlyError(this);
+            });
+        });
+        function ShowOnlyError(selector) {
+            if ($(selector).is(':checked')) {
+                var errorCount = $('.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists")').length;
+                if (errorCount > 0) {
+                    $('#ApplicationVerificationBody').children('tr').hide();
+                    $('.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists")').closest('tr').show();
+                } else {
+                    $('#ApplicationVerificationBody').children('tr').show();
+                    $(selector).prop('checked', false);
+                }
+            } else {
+                $('#ApplicationVerificationBody').children('tr').show();
+            }
+        }
+        function AlertMessage(selector) {
+            if ($(selector).is(':checked')) {
+                var errorCount = $('.table-error:contains("required"), .table-error:contains("Invalid Email"), .table-error:contains("already exists")').length;
+                if (errorCount <= 0) {
+                    alert('No error found.')
+                }
+            }
+        }
+    </script>
+}

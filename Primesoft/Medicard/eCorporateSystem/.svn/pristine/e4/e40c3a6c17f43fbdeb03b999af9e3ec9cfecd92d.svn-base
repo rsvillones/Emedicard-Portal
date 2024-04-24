@@ -1,0 +1,46 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Members with Action Memo</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">The details of which are as follows:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Number or Records:  @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Date: @Model.EndorsementBatch.Date.ToString("MM/dd/yyyy hh:mm tt")</p>
+<br />
+<table border="1" style="border-collapse:collapse;width:70%">
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Date of Birth</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Corelib.Models.ActionMemo am in Model.EndorsementBatch.ActionMemos)
+        {
+            if (am.Member == null) { continue; }
+            
+            <tr>
+                <td>@am.Member.LastName</td>
+                <td>@am.Member.FirstName</td>
+                <td>@am.Member.MiddleName</td>
+                <td>@am.Member.DateOfBirth.ToString("MM/dd/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+<p class="details">Thank you for using eMedicard!</p>
+<br />
+<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>
+<br />

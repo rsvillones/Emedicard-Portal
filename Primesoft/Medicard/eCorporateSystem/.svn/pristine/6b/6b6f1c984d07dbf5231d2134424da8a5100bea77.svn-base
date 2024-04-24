@@ -1,0 +1,122 @@
+@model IdReplacement
+@{
+    var resonList = new SelectList(ViewBag.Reasons, "Id", "Description", Model.ReasonId);
+    var dependentList = new SelectList(ViewBag.Dependents, "DependentCode", "FullName", Model.DependentCode);
+    var documentList = new SelectList(ViewBag.DocumentTypes, "Id", "Name", Model.DocumentTypeId);
+}
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Guid)
+@Html.HiddenFor(model => model.CrBy)
+@Html.HiddenFor(model => model.CrById)
+@Html.HiddenFor(model => model.CrDate)
+@Html.HiddenFor(model => model.EndorsementBatchId)
+@Html.HiddenFor(model => model.RequestDate)
+@Html.HiddenFor(model => model.AccountCode)
+@Html.HiddenFor(model => model.Status)
+@Html.HiddenFor(model => model.DocumentFileName)
+@Html.HiddenFor(model => model.DocumentFile)
+@Html.HiddenFor(model => model.DocumentContentType)
+
+
+<h4 class="form-title">ID Replacement</h4>
+<div class="row">
+    <div class="col-lg-12" id="MemberContainer">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.Label("MemberCode", "Member Name:")</label>
+            <div class="col-lg-8">
+                @Html.HiddenFor(t => t.MemberCode, ViewBag.HtmlMemberAttributes as object)
+                @Html.HiddenFor(t => t.MemberName, ViewBag.HtmlMemberAttributes as object)
+                @Html.ValidationMessageFor(model => model.MemberCode)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.RequestFor):</label>
+            <div class="col-lg-8">
+                @Html.EnumDropDownListFor(model => model.RequestFor, ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.RequestFor)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.ReasonId):</label>
+            <div class="col-lg-8">
+                @Html.DropDownList("ReasonId", (IEnumerable<SelectListItem>)resonList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.ReasonId)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DependentCode):</label>
+            <div class="col-lg-8">
+                @Html.HiddenFor(t => t.DependentName)
+                @Html.DropDownList("DependentCode", (IEnumerable<SelectListItem>)dependentList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.DependentCode)
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.DocumentTypeId):</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("DocumentTypeId", (IEnumerable<SelectListItem>)documentList, "-- Select --", ViewBag.HtmlDropDownAttributes as object)
+                @Html.ValidationMessageFor(model => model.DocumentTypeId)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <div class="col-lg-2">
+                @Html.Label("FileUploaded", "File Upload:")
+            </div>
+            <div class="col-lg-4" id="FileInput">
+                <label class="inline">Allowed file extension: .doc, .pdf, .jpeg, .png, .jpg</label>
+                @Html.TextBoxFor(model => model.FileWrapper, new { @Type = "file" })
+                <input id="ClearFile" onclick="clearFileInput()" type="button" value="Clear File" class="btn btn-primary btn-xs" />
+                @Html.ValidationMessageFor(model => model.FileWrapper)
+            </div>
+            @if (Model.Id != 0)
+            {
+                <div class="col-lg-6  align-top">
+                    @Html.Label("CurrentUploaded", "Existing File:", new { @Id = "labelFileExist" })
+                    @if (!string.IsNullOrEmpty(Model.DocumentFileName))
+                    {
+                        @Html.ActionLink(Model.DocumentFileName, "DownloadFile", new { guid = Model.Guid }, new { @class = "" })
+                    }
+                    else
+                    {
+                        <label for="NoFile">No file exist.</label>
+                    }
+                    <br />
+                    <input style="margin-top:10px" id="ClearExistingFile" onclick="clearExistingFileInput($(this))" type="button" value="Clear Existing File" class="btn btn-primary btn-xs" />
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label class="control-label col-lg-2">@Html.LabelFor(model => model.Remarks):</label>
+            <div class="col-lg-8">
+                @Html.TextAreaFor(model => model.Remarks, ViewBag.HtmlControlReadOnlyAttributes as object)
+                @Html.ValidationMessageFor(model => model.Remarks)
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <div class="col-lg-8 col-lg-offset-2">
+                <div class="alert alert-danger" role="alert">
+                    <p>Show Payment Options in ID Replacement</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

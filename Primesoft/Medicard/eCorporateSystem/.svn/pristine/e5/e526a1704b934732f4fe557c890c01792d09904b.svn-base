@@ -1,0 +1,23 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Cancellation of Dependent's Membership By Member Sent to URG</p>
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following has submitted his/her cancellation of dependent's membership for your approval:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Member Name</th>
+            <th>Request Date</th>
+            <th>Dependent Name</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>@Model.DependentCancellation.MemberName</td>
+                <td>@Model.DependentCancellation.RequestDate</td>
+                <td>@Model.DependentCancellation.DependentName</td>
+            </tr>
+    </tbody>
+</table>

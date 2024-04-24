@@ -1,0 +1,84 @@
+﻿using Corelib.Enums;
+using System;
+using System.Web;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    public class DependentCancellation : BaseModel
+    {
+        #region -- Constructor --
+
+        public DependentCancellation()
+        {
+            RequestDate = DateTime.Now;
+            RequestEffectivityDate = DateTime.Now;
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [StringLength(25)]
+        [Index]
+        public string ControlNumber { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Request Date")]
+        public DateTime RequestDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Request Effectivity Date")]
+        public DateTime RequestEffectivityDate { get; set; }       
+
+        [Display(Name = "Status")]
+        public RequestStatus Status { get; set; }
+
+        public string Remarks { get; set; }
+
+        public string AccountCode { get; set; }
+
+        public byte[] DocumentFile { get; set; }
+
+        public string DocumentContentType { get; set; }
+
+        public string DocumentFileName { get; set; }
+
+        [NotMapped]
+        public HttpPostedFileBase FileWrapper { get; set; }
+
+        #endregion      
+
+        #region -- Foreign Keys --
+
+        [ForeignKey("Reason")]
+        [Display(Name = "Request Reason")]
+        public int ReasonId { get; set; }
+        public Reason Reason { get; set; }
+
+        [ForeignKey("EndorsementBatch")]
+        public int EndorsementBatchId { get; set; }
+        public EndorsementBatch EndorsementBatch { get; set; }
+        
+        [ForeignKey("DocumentType")]
+        [Display(Name = "Document Type")]
+        public int? DocumentTypeId { get; set; }
+        public DocumentType DocumentType { get; set; }
+
+        [Index]
+        [Display(Name = "Name of Dependent")]
+        public int DependentId { get; set; }
+
+        [Index]
+        [Display(Name = "Member Name")]
+        public int MemberId { get; set; }
+
+        #endregion        
+    }
+}

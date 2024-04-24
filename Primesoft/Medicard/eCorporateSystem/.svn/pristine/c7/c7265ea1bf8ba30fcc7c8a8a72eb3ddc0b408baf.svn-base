@@ -1,0 +1,100 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    public class UtilizationReportingController : BaseAccountController
+    {
+        // GET: CorporateAdministrator/UtilizationReporting
+        //public ActionResult Index(string accountCode)
+        //{
+        //    var returnValue = base.ValidateAccountCode(accountCode);
+        //    if (returnValue != null) return returnValue;
+        //    return View();
+        //}
+
+        #region -- Action Results --
+
+        public ActionResult UtilizationDental(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public ActionResult UtilizationMedicalService(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public ActionResult UtilizationOutPatient(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public ActionResult UtilizationInPatient(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public ActionResult UtilizationMemberAllService(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        public ActionResult UtilizationReimbursementInPatient(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.Service = "IP";
+
+            return View("UtilizationReimbursement");
+        }
+
+        public ActionResult UtilizationReimbursementOutPatient(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.Service = "OP";
+
+            return View("UtilizationReimbursement");
+        }
+
+        public ActionResult UtilizationUnBilledReportOpMs(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            
+            return View();
+        }
+
+        public ActionResult UtilizationUnBilledReportInPatient(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            return View();
+        }
+
+        #endregion
+    }
+}

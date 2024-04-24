@@ -1,0 +1,236 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+using WebUI.Areas.Member.Models;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class AdditionalDependentsController : BaseMemberController
+    {
+        #region  -- Action Results --
+
+        public ActionResult Index(string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.AdditionalDependents
+                .Include(t => t.EndorsementBatch)
+                .Include(t=>t.Relationship)
+                .Where(t => t.MemberCode == this.Member.Code && !t.Deleted)
+                .OrderByDescending(t => t.ApplicationDate).ToList();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult Create()
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var model = new AdditionalDependent()
+            {
+                MemberCode = this.Member.Code,
+                AccountCode = this.Member.AccountCode,
+                Status = RequestStatus.Saved
+            };
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(AdditionalDependent model, string submit)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                var endorsementBatch = new EndorsementBatch()
+                {
+                    Deadline = DateTime.Now,
+                    ReferenceNumber = Helper.GenerateRandomEndorsementBatchReferenceNumber(),
+                    Date = DateTime.Now,
+                    EndorsementType = Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE,
+                    BatchType = Constants.ADDITIONAL_DEPENDENT_ENDORSEMENT_TYPE
+                    ,
+                    EndorsementCount = 1,
+                    AccountCode = model.AccountCode,
+                    Status = Corelib.Enums.EndorsementBatchStatus.New
+                };
+                db.EndorsementBatches.Add(endorsementBatch);
+                model.EndorsementBatch = endorsementBatch;                
+                if (submit == "Submit Request"){
+                    var setting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.Member.AccountCode) ?? new AccountSetting();
+                    if (setting.BypassHRManagerApproval){
+                        model.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    }
+                    else{
+                        model.Status = Corelib.Enums.RequestStatus.Submitted;
+                    }
+                    Helper.MemberAdditionDependent(System.Web.HttpContext.Current, model, setting.BypassHRManagerApproval);                     
+                }                
+                db.AdditionalDependents.Add(model);
+                db.SaveChanges();
+                if (submit == "Continue")
+                {
+                    return RedirectToAction("MedicalHistory", new { guid = model.Guid});
+                }
+                return RedirectToAction("Index");
+            }
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+
+            return View(model);
+        }
+
+        public ActionResult Edit(Guid? guid)
+        {
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid && !t.Deleted);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(AdditionalDependent model, string submit)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid){
+                var additionDependent = db.AdditionalDependents.FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                db.Entry(additionDependent).CurrentValues.SetValues(model);
+                if (submit == "Submit Request"){
+                    var setting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == this.Member.AccountCode) ?? new AccountSetting();
+                    if (setting.BypassHRManagerApproval){
+                        additionDependent.Status = Corelib.Enums.RequestStatus.CorporateAdminApproved;
+                    }
+                    else{
+                        additionDependent.Status = Corelib.Enums.RequestStatus.Submitted;
+                    }
+                    Helper.MemberAdditionDependent(System.Web.HttpContext.Current, model, setting.BypassHRManagerApproval);
+                }
+                db.Entry(additionDependent).State = EntityState.Modified;                
+                db.SaveChanges();
+                if (submit == "Continue")
+                {
+                    return RedirectToAction("MedicalHistory", new { guid = model.Guid });
+                }
+                return RedirectToAction("Index", new { accountCode = model.AccountCode });
+            }
+
+            ProcessOtherInfo(model);
+            base.AdditionalDependentReadOnlyAttribute(model);
+
+            return View(model);
+        }
+        
+        public ActionResult MedicalHistory(Guid? guid, string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var model = db.AdditionalDependents.FirstOrDefault(t => t.Guid == guid);
+            if (model == null || model.MemberCode != this.Member.Code) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            Helper.IsAdditionalDependentMedicalHistoryComplete(db, this.Member);
+
+            var viewModel = new AdditionalDependentMedicalHistoryViewModel()
+            {
+                AdditionalDependentMedicalHistories = db.AdditionalDependentMedicalHistories.Include(t => t.Question).Where(t => t.AdditionalDependentId == model.Id).OrderBy(t => t.Question.DisplayOrder).ThenBy(t => t.Question.Description).ToList()
+            };
+
+            base.AdditionalDependentReadOnlyAttribute(model);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult MedicalHistory(AdditionalDependentMedicalHistoryViewModel model)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                if (model.AdditionalDependentMedicalHistories != null)
+                {
+                    foreach (var additionalDependentMedicalHistory in model.AdditionalDependentMedicalHistories)
+                    {
+                        db.Entry(additionalDependentMedicalHistory).State = EntityState.Modified;
+                    }
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { @messageType = "Success", @message = "Successfully saved information." });
+            }
+
+            foreach (var additionalDependentMedicalHistory in model.AdditionalDependentMedicalHistories)
+            {
+                additionalDependentMedicalHistory.Question = db.Questions.Find(additionalDependentMedicalHistory.QuestionId);
+            }
+
+            return View(model);
+        }
+
+        #endregion
+
+        private void ProcessOtherInfo(AdditionalDependent model)
+        {
+            var dependentPlans = Helper.GetLegacyRoomRates(this.Member.AccountCode, false);
+            var appliedPlans = dependentPlans.Where(t => t.Id == this.Member.DependentAppliedPlan).ToList();
+            if (appliedPlans.Count == 0) appliedPlans = dependentPlans.ToList();
+
+            var allowedPlans = new List<int>();
+            if (!String.IsNullOrEmpty(this.Member.AllowedDependentPlans))
+            {
+                foreach (var allowedPlan in this.Member.AllowedDependentPlans.Split(','))
+                {
+                    allowedPlans.Add(int.Parse(allowedPlan));
+                }
+            }
+
+            var optionalPlans = dependentPlans.Where(t => t.Id != this.Member.DependentAppliedPlan && allowedPlans.Contains(t.Id)).ToList();
+
+            ViewBag.AppliedPlanList = new SelectList(appliedPlans, "Id", "LongDescription", model.AppliedPlan);
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription", model.OptionalPlan);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" }, model.Gender);
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" }, model.CivilStatus);
+            ViewBag.RelationshipList = new SelectList(db.Relationships, "Code", "Description", model.RelationshipCode);
+            ViewBag.MemberList = new SelectList(LegacyHelper.GetActiveMembers(legacyDb,this.Member.AccountCode).Where(t=>t.Type == "Principal"), "Code", "FullName", model.MemberCode);
+            ViewBag.OptionalPlanCount = optionalPlans.Count(t => t.Id != this.Member.DependentAppliedPlan);
+        }
+    }
+}

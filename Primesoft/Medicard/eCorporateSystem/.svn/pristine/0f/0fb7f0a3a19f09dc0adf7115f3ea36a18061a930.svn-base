@@ -1,0 +1,20 @@
+﻿@model Corelib.Models.ApplicationUser
+<td>
+    @Html.DisplayFor(model => model.Name)
+</td>
+<td>
+    @Html.DisplayFor(model => model.UserName)
+</td>
+<td>
+    @Html.DisplayFor(model => model.Email)
+</td>
+<td>
+    @Html.DisplayFor(model => model.PhoneNumber)
+</td>
+<td>
+    @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { @onclick = "UpdateUser($(this),'" + Model.Guid + "')" } })
+</td>
+<td>
+    @Html.ActionLink("Edit", "Edit", new { guid = Model.Guid }, new { @class = "btn btn-primary btn-xs" })
+    <a href="javascript:void(0)" class="btn btn-danger btn-xs" onclick="deleteItem('@Url.Action("DeleteConfirmed", "Users", new { area = "", guid = Model.Guid })')">Delete</a>
+</td>

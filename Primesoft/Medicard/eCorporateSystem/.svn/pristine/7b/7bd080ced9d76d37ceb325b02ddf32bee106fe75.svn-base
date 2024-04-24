@@ -1,0 +1,185 @@
+﻿using Corelib.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+
+namespace Corelib
+{
+    public class IdentityDataContext : IdentityDbContext<ApplicationUser>
+    {
+        #region -- Variable Declarations --
+
+        private ApplicationUser _user;
+
+        #endregion
+
+        #region -- Constructor --
+
+        public IdentityDataContext()
+            : base("Medicard.eCorporateSystem", throwIfV1Schema: false)
+        {
+        }
+
+        public IdentityDataContext(ApplicationUser user)
+            : base("Medicard.eCorporateSystem", throwIfV1Schema: false)
+        {
+            _user = user;
+        }
+        
+        #endregion
+
+        #region -- Properties --
+
+        public ApplicationUser User
+        {
+            set { _user = value; }
+            get { return _user; }
+        }
+
+        #endregion
+
+        #region -- DbSets --
+
+        public DbSet<Group> Groups { get; set; }
+        
+        public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<AccountSetting> AccountSettings { get; set; }
+
+        public DbSet<Question> Questions { get; set; }
+
+        public DbSet<MedicalHistory> MedicalHistories { get; set; }
+
+        public DbSet<Dependent> Dependents { get; set; }
+
+        public DbSet<DependentMedicalHistory> DependentMedicalHistories { get; set; }
+
+        public DbSet<EndorsementBatch> EndorsementBatches { get; set; }
+
+        public DbSet<Member> Members { get; set; }
+
+        public DbSet<RenewalMember> RenewalMembers { get; set; }
+
+        public DbSet<DocumentType> DocumentTypes { get; set; }
+
+        public DbSet<Reason> Reasons { get; set; }
+
+        public DbSet<ReceivingEntry> ReceivingEntries { get; set; }
+
+        public DbSet<Amendment> Amendments { get; set; }
+
+        public DbSet<ActionMemo> ActionMemos { get; set; }
+
+        public DbSet<Document> Documents { get; set; }
+
+        public DbSet<IdReplacement> IdReplacements { get; set; }
+
+        public DbSet<AdditionalDependent> AdditionalDependents { get; set; }
+
+        public DbSet<DependentCancellation> DependentCancellations { get; set; }
+
+        public DbSet<AdditionalDependentMedicalHistory> AdditionalDependentMedicalHistories { get; set; }
+
+        public DbSet<CancelledMember> CancelledMembers { get; set; }
+
+        public DbSet<Relationship> Relationships { get; set; }
+
+        public DbSet<UtilizationReportExceptionForUser> UtilizationReportExceptionForUsers { get; set; }
+
+        public DbSet<UtilizationReportExceptionForPlan> UtilizationReportExceptionForPlans { get; set; }
+
+        #endregion
+
+        #region -- Overrides --
+
+        public override int SaveChanges()
+        {
+            ProcessChanges();
+
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public override Task<int> SaveChangesAsync()
+        {
+            ProcessChanges();
+
+            try
+            {
+                return base.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public static IdentityDataContext Create()
+        {
+            return new IdentityDataContext();
+        }
+
+        private void ProcessChanges()
+        {
+            if (_user == null) _user = new ApplicationUser() { UserName = "Anonymous" };
+            foreach (var entry in this.ChangeTracker.Entries().Where(t => t.Entity is BaseModel && (t.State == EntityState.Added || t.State == EntityState.Modified || t.State == EntityState.Deleted)))
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        if (_user != null)
+                        {
+                            ((BaseModel)entry.Entity).CrById = _user.Id;
+                        }
+                        ((BaseModel)entry.Entity).CrBy = _user.UserName;
+                        ((BaseModel)entry.Entity).CrDate = DateTime.Now;
+                        break;
+                    case EntityState.Modified:
+                        if (_user != null)
+                        {
+                            ((BaseModel)entry.Entity).ModById = _user.Id;
+                        }
+                        ((BaseModel)entry.Entity).ModBy = _user.UserName;
+                        ((BaseModel)entry.Entity).ModDate = DateTime.Now;
+                        break;
+                    //case EntityState.Deleted:
+                    //    if(!(entry.Entity is Account))
+                    //    {
+                    //        entry.State = EntityState.Modified;
+                    //        ((BaseModel)entry.Entity).Deleted = true;
+                    //        if (_user != null)
+                    //        {
+                    //            ((BaseModel)entry.Entity).ModById = _user.Id;
+                    //        }
+                    //        ((BaseModel)entry.Entity).ModBy = _user.UserName;
+                    //        ((BaseModel)entry.Entity).ModDate = DateTime.Now;
+                    //    }
+                    //    break;
+                }
+            }
+        }
+
+        #endregion
+    }
+}

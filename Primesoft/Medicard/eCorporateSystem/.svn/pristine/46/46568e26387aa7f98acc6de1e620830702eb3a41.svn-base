@@ -1,0 +1,287 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Corelib;
+using Corelib.Models;
+using PagedList;
+using PagedList.Mvc;
+using WebUI.Models;
+using WebUI.Areas.Member.Models;
+using Corelib.Enums;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    public class DependentsController : BaseMemberController
+    {
+        #region -- Action Results --
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Index(string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var dependents = db.Dependents
+                .Include(t => t.RelationshipClass)
+                .Where(t => !t.Deleted && t.MemberId == this.Member.Id).ToList();
+
+            var model = new DependentViewModel()
+            {
+                Dependents = dependents
+            };
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Create()
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var dependents = db.Dependents.Where(t => !t.Deleted && t.MemberId == this.Member.Id).ToList();
+            var isMaxDependent = false;
+            if (dependents.Count() == this.Member.Dependent) isMaxDependent = true;
+            if (isMaxDependent)
+            {
+                return RedirectToAction("Index", new { @messageType = "Error", @message = string.Format("You can only have {0} dependent/s.", this.Member.Dependent) });
+            }
+            var model = new Dependent();
+
+            ProcessOtherInfo(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Create([Bind(Include = "Id, Guid, LegacyMapCode, LastName, FirstName, MiddleName, Suffix, DateOfBirth, Relationship, Gender, CivilStatus, AppliedPlan, OptionalPlan, EmailAddress, Street, City, Zip, Province, Telephone, Mobile, HeightFeet, HeightInches, Weight, Occupation")] Dependent dependent)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                dependent.MemberId = this.Member.Id;
+                db.Dependents.Add(dependent);
+
+                var currentMember = db.Members.FirstOrDefault(t => t.Id == this.Member.Id);
+                currentMember.Status = MembershipStatus.Saved;
+
+                await db.SaveChangesAsync();
+                Helper.IsDependentMedicalHistoryComplete(db, this.Member);
+                return RedirectToAction("MedicalHistory", new { @guid = dependent.Guid });
+            }
+
+            ProcessOtherInfo(dependent);
+
+            return View(dependent);
+        }
+
+        [Authorize(Roles = "Member")]
+        public ActionResult Edit(Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = db.Dependents.FirstOrDefault(t => t.Guid == guid && !t.Deleted && t.MemberId == this.Member.Id);
+            if (model == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ProcessOtherInfo(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id, Guid, LegacyMapCode, Code, LastName, FirstName, MiddleName, Suffix, DateOfBirth, Relationship, Gender, CivilStatus, EmailAddress, AppliedPlan, OptionalPlan, Street, City, Zip, Province, Telephone, Mobile, HeightFeet, HeightInches, Weight, Occupation")] Dependent model)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                var dependent = db.Dependents.FirstOrDefault(t => t.Id == model.Id && !t.Deleted);
+                db.Entry(dependent).CurrentValues.SetValues(model);
+                dependent.MemberId = this.Member.Id;
+                db.Entry(dependent).State = EntityState.Modified;
+
+                var currentMember = db.Members.FirstOrDefault(t => t.Id == this.Member.Id);
+                currentMember.Status = MembershipStatus.Saved;
+
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            ProcessOtherInfo(model);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> Delete(Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var dependent = await db.Dependents.FirstOrDefaultAsync(t => t.Guid == guid);
+            db.Dependents.Remove(dependent);
+            var currentMember = db.Members.FirstOrDefault(t => t.Id == this.Member.Id);
+            currentMember.Status = MembershipStatus.Saved;
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index", new { @messageType = "Success!", @message = "Dependent is successfully deleted." });
+        }
+        
+        ////[Authorize(Roles = "Member")]
+        ////public ActionResult MedicalHistory(Guid? guid)
+        ////{ 
+        ////    var returnValue = base.ValidateRequest();
+        ////    if (returnValue != null) return returnValue;
+
+        ////    if (guid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            
+        ////    Helper.IsMedicalHistoryComplete(db, this.Application.Id);
+
+        ////    var model = new MedicalHistoryViewModel()
+        ////    {
+        ////        MedicalHistories = db.MedicalHistories.Include(t => t.Question).Where(t => t.ApplicationId == this.Application.Id).OrderBy(t => t.Question.DisplayOrder).ThenBy(t => t.Question.Description).ToList()
+        ////    };
+
+        ////    return View(model);
+        ////}
+
+        ////[HttpPost]
+        ////[ValidateAntiForgeryToken]
+        ////[Authorize(Roles = "Member")]
+        ////public async Task<ActionResult> Index(MedicalHistoryViewModel model)
+        ////{
+        ////    var returnValue = base.ValidateRequest();
+        ////    if (returnValue != null) return returnValue;
+
+        ////    if (ModelState.IsValid)
+        ////    {
+        ////        foreach (var medicalHistory in model.MedicalHistories)
+        ////        {
+        ////            db.Entry(medicalHistory).State = EntityState.Modified;
+        ////        }
+        ////        await db.SaveChangesAsync();
+        ////        return RedirectToAction("Index", new { @messageType = "Success", @message = "Successfully saved information." });
+        ////    }
+
+        ////    foreach (var medicalHistory in model.MedicalHistories)
+        ////    {
+        ////        medicalHistory.Question = db.Questions.Find(medicalHistory.QuestionId);
+        ////    }
+
+        ////    return View(model);
+
+        ////}
+
+        [Authorize(Roles = "Member")]
+        public ActionResult MedicalHistory(Guid? guid, string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            var dependent = db.Dependents.Include(t => t.Member).FirstOrDefault(t => t.Guid == guid);
+            if (dependent == null || dependent.MemberId != this.Member.Id) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Helper.IsDependentMedicalHistoryComplete(db, dependent);
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = new DependentMedicalHistoryViewModel()
+            {
+                DependentMedicalHistories = db.DependentMedicalHistories
+                .Include(t => t.Question)
+                .Include(t => t.Question.QuestionGroup)
+                .Where(t => t.DependentId == dependent.Id)
+                .OrderBy(t => t.Question.QuestionGroup.DisplayOrder)
+                .ThenBy(t => t.Question.DisplayOrder)
+                .ThenBy(t => t.Question.Description).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Member")]
+        public async Task<ActionResult> MedicalHistory(DependentMedicalHistoryViewModel model)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            if (ModelState.IsValid)
+            {
+                if (model.DependentMedicalHistories != null)
+                {
+                    foreach (var dependentMedicalHistory in model.DependentMedicalHistories)
+                    {
+                        db.Entry(dependentMedicalHistory).State = EntityState.Modified;
+                    }
+                }
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index", new { @messageType = "Success", @message = "Successfully saved information." });
+            }
+
+            foreach (var dependentMedicalHistory in model.DependentMedicalHistories)
+            {
+                dependentMedicalHistory.Question = db.Questions.Find(dependentMedicalHistory.QuestionId);
+            }
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        private void ProcessOtherInfo(Dependent dependent)
+        {
+            var dependentPlans = Helper.GetLegacyRoomRates(this.Member.AccountCode, false);
+            var appliedPlans = dependentPlans.Where(t => t.Id == this.Member.DependentAppliedPlan).ToList();
+            if (appliedPlans.Count == 0) appliedPlans = dependentPlans.ToList();
+            else if (appliedPlans.Count == 1) dependent.AppliedPlan = appliedPlans[0].Id;
+
+            var allowedPlans = new List<int>();
+            if (!String.IsNullOrEmpty(this.Member.AllowedDependentPlans))
+            {
+                foreach (var allowedPlan in this.Member.AllowedDependentPlans.Split(','))
+                {
+                    allowedPlans.Add(int.Parse(allowedPlan));
+                }
+            }
+
+            var optionalPlans = dependentPlans.Where(t => t.Id != this.Member.DependentAppliedPlan && allowedPlans.Contains(t.Id)).ToList();
+            var cities = legacyDb.LegacyCities.OrderBy(t => t.Name).ToList();
+            var provinces = legacyDb.LegacyProvinces.OrderBy(t => t.Name).ToList();
+
+            ViewBag.AppliedPlanList = new SelectList(appliedPlans, "Id", "LongDescription");
+            ViewBag.OptionalPlanList = new SelectList(optionalPlans, "Id", "LongDescription");
+            ViewBag.CityList = new SelectList(cities, "Code", "Name", dependent.City);
+            ViewBag.ProvinceList = new SelectList(provinces, "Code", "Name", dependent.Province);
+            ViewBag.GenderList = new SelectList(new List<string>() { "Male", "Female" });
+            ViewBag.CivilStatusList = new SelectList(new List<string>() { "Single", "Married", "Divorced", "Widowed" });
+            ViewBag.RelationshipList = new SelectList(db.Relationships.OrderBy(t => t.Description), "Code", "Description", dependent.Relationship);
+            ViewBag.OptionalPlanCount = optionalPlans.Count(t => t.Id != this.Member.AppliedPlan);
+        }
+
+        #endregion
+    }
+}

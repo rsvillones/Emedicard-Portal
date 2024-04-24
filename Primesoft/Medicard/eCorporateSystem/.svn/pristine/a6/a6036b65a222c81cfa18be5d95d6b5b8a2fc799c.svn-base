@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Corelib.Models
+{
+    public class Batch : BaseModel
+    {
+        #region -- Properties --
+
+        public DateTime DateUploaded { get; set; }
+
+        public string UploadBy { get; set; }
+
+        public string Status { get; set; }
+
+        public string AccountCode { get; set; }
+
+        public ICollection<Application> Applications { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped --
+
+        [NotMapped]
+        public string BatchName
+        {
+            get
+            {
+                return string.Format("({2}){1} - {0:MM/dd/yyyy HH:MM} ", this.DateUploaded, this.UploadBy, this.AccountCode);
+            }
+        }
+
+        #endregion
+
+    }
+}

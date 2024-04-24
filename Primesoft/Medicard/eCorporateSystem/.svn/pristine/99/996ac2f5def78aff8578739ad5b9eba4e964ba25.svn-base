@@ -1,0 +1,11 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Additional Dependent Request for Evaluation</p>
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">Additional Dependent request has been submitted for your evaluation, details of which are as follows:</p>
+<p class="details">Company Name: @Model.CompanyName</p>
+<p class="details">Member Code: @Model.AdditionalDependent.MemberCode</p>
+<p class="details">Member Name: @Model.AdditionalDependent.MemberName</p>
+<br/>

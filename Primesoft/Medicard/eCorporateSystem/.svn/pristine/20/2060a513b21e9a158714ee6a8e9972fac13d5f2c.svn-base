@@ -1,0 +1,59 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+    string name = "";
+    string code = "";
+    if (Model.Amendment.RequestFor == Corelib.Enums.RequestFor.Dependent)
+    {
+        name = Model.Amendment.DependentName;
+        code = Model.Amendment.DependentCode;
+    }
+    else
+    {
+        name = Model.Amendment.MemberName;
+        code = Model.Amendment.MemberCode;
+    }
+}
+
+<p class="title">@Model.Amendment.EndorsementBatch.CompanyName - FOR CORRECTION (@Model.SubjectAmendment) </p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<p class="details">The following has submitted his/her request for amendment for your approval:</p>
+<br />
+<p class="details">Reference Number: @Model.Amendment.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Request Date: @Model.Amendment.RequestDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Effectivity of Amendment: @Model.Amendment.EffectivityDate.ToString("MM/dd/yyyy")</p>
+<p class="details">Request For: @Model.Amendment.RequestFor</p>
+<p class="details">Name: @name</p>
+<p class="details">Member Code: @code</p>
+<p class="details">Data Type: @Model.Amendment.DataType</p>
+<p class="details">Change Data From: @Model.Amendment.ChangeDataFrom</p>
+@if (Model.Amendment.ChangeDataTo != "Please fill up remarks for other reason.")
+{
+    <p class="details">Change Data To: @Model.Amendment.ChangeDataTo</p>
+}
+<p class="details">Reason: @Model.Amendment.Reason.Description</p>
+<p class="details">Remarks: @Model.Amendment.Remarks</p>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.Amendment.EndorsementBatch.ReferenceNumber)">here</a> to login and view the endorsement.
+</p>
+<br />
+@*<p class="details">Disclaimer:</p>
+<p class="details">The information transmitted through this mail is intended solely for the person or entity to which it is addressed, and may contain confidential and/or privileged material. Any review, re-transmission, disclosure, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system.</p>*@
+<p class="details">
+    @if (
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.LastName ||
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.FirstName ||
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.MiddleName ||
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.DateOfBirth ||
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.Gender ||
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.Address ||
+        Model.Amendment.DataType == Corelib.Enums.RequestDataType.Telephone)
+    {
+        @:Processing Time : 30 mins.
+    }
+    else
+    {
+        @:Processing Time : 3 working days.
+    }
+</p>

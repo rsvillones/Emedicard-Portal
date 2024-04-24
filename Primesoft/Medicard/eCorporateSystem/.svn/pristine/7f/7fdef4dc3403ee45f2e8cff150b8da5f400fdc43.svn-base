@@ -1,0 +1,86 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model Corelib.Models.ApplicationVerification
+@using (Html.BeginCollectionItem("ApplicationVerifications"))
+{
+    <td>
+        @Html.HiddenFor(model => model.Guid)
+        @Html.HiddenFor(model => model.FileName)
+        @Html.HiddenFor(model => model.Row)
+        @Html.HiddenFor(model => model.EmailAddress)
+        @Html.HiddenFor(model => model.OptionalPlan)
+        @Html.HiddenFor(model => model.Dependent)
+        @Html.HiddenFor(model => model.DependentAppliedPlan)
+        @Html.HiddenFor(model => model.DependentOptionalPlan)
+
+        @Html.EditorFor(model => model.MemberCode)
+        @Html.ValidationMessageFor(model => model.MemberCode)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MemberType)
+        @Html.ValidationMessageFor(model => model.MemberType)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.EmployeeNumber)
+        @Html.ValidationMessageFor(model => model.EmployeeNumber)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Area)
+        @Html.ValidationMessageFor(model => model.Area)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.CostCenter)
+        @Html.ValidationMessageFor(model => model.CostCenter)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.LastName)
+        @Html.ValidationMessageFor(model => model.LastName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.FirstName)
+        @Html.ValidationMessageFor(model => model.FirstName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MiddleName)
+        @Html.ValidationMessageFor(model => model.MiddleName)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Suffix)
+        @Html.ValidationMessageFor(model => model.Suffix)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Gender)
+        @Html.ValidationMessageFor(model => model.Gender)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.DateOfBirth)
+        @Html.ValidationMessageFor(model => model.DateOfBirth)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Age)
+        @Html.ValidationMessageFor(model => model.Age)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.CivilStatus)
+        @Html.ValidationMessageFor(model => model.CivilStatus)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MembershipStatus)
+        @Html.ValidationMessageFor(model => model.MembershipStatus)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.EffectivityDate)
+        @Html.ValidationMessageFor(model => model.EffectivityDate)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.ValidityDate)
+        @Html.ValidationMessageFor(model => model.ValidityDate)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.AppliedPlan)
+        @Html.ValidationMessageFor(model => model.AppliedPlan)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.DateHired)
+        @Html.ValidationMessageFor(model => model.DateHired)
+    </td>
+}

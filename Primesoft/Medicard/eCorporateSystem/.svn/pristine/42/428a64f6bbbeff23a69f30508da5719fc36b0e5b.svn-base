@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+  </configSections>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
+  </startup>
+  <entityFramework>
+    <defaultConnectionFactory type="System.Data.Entity.Infrastructure.LocalDbConnectionFactory, EntityFramework">
+      <parameters>
+        <parameter value="v11.0" />
+      </parameters>
+    </defaultConnectionFactory>
+    <providers>
+      <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+    </providers>
+  </entityFramework>
+  <connectionStrings>
+    <add name="Medicard.eCorporateSystem" connectionString="Data Source=emedicard;Initial Catalog=eMEDICARD;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+    <add name="Medicard.LegacySystem" connectionString="Data Source=emedicard;Initial Catalog=Medicard;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  <appSettings>
+    <add key="NotificationFromEmail" value="noreply@medicardphils.com" />
+    <add key="MvcMailer.BaseURL" value="" />
+    <add key="ActionMemoDocumentsPath" value="\\triton\emed_files\AM" />
+    <add key="TransmittalDocumentsPath" value="\\triton\emed_files\TRANSMITTAL" />
+    <add key="UrgActionMemoTemplatePath" value="C:\inetpub\wwwroot\EmailTemplates\UrgActionMemo.cshtml" />
+    <add key="UrgActionMemoToMemberTemplatePath" value="C:\inetpub\wwwroot\EmailTemplates\UrgActionMemoToMember.cshtml" />
+    <add key="ActionMemoDueDateDays" value="15" />
+    <add key="CheckActionMemoMinutes" value="5" />
+    <add key="CheckNewCorporateAccountsMinutes" value="5" />
+    <add key="CheckMemberProcessMinutes" value="5" />
+    <add key="SendEmailNotificationTime" value="12:00 AM" />
+    <add key="SendEmailNotificationBeforeDeadline" value="3" />
+    <add key="BaseUrl" value="http://emedicard" />
+
+    <add key="EmailLayout" value="C:\inetpub\wwwroot\EmailTemplates\_Layout.cshtml" />
+
+    <add key="NewAccess" value="C:\inetpub\wwwroot\EmailTemplates\NewUser\NewAccess.cshtml" />
+
+    <add key="ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessNewEndorsementBatchByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToMember.cshtml" />
+    <add key="SubmitNewMemberByMemberToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\New\SubmitNewMemberByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitNewMemberByMemberToMember" value="C:\inetpub\wwwroot\EmailTemplates\New\SubmitNewMemberByMemberToMember.cshtml" />
+    <add key="SubmitNewMemberByMemberToUrg" value="C:\inetpub\wwwroot\EmailTemplates\New\SubmitNewMemberByMemberToUrg.cshtml" />
+    <add key="ApproveNewMemberByUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\New\ApproveNewMemberByUrgToCorporateAdmin.cshtml" />
+    <add key="ApproveNewMemberByUrgToMember" value="C:\inetpub\wwwroot\EmailTemplates\New\ApproveNewMemberByUrgToMember.cshtml" />
+
+    <add key="ActionMemoByUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoByUrgToCorporateAdmin.cshtml" />
+    <add key="ActionMemoByUrgToMember" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoByUrgToMember.cshtml" />
+    <add key="ActionMemoReplyByMemberToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToCorporateAdmin.cshtml" />
+    <add key="ActionMemoReplyByMemberToUrg" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToUrg.cshtml" />
+    <add key="ActionMemoReplyByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoReplyByCorporateAdminToMember.cshtml" />
+
+    <add key="TransmittalByUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\Transmittal\TransmittalByUrgToCorporateAdmin.cshtml" />
+    <add key="TransmittalByUrgToMember" value="C:\inetpub\wwwroot\EmailTemplates\Transmittal\TransmittalByUrgToMember.cshtml" />
+
+    <add key="ProcessRenewalByCorporateAdminToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessRenewalByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToMember.cshtml" />
+    <add key="ProcessRenewalByCorporateAdminToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessRenewalByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToMember.cshtml" />
+
+    <add key="ProcessCancelledMemberByCorporateAdminToUrg" value="C:\inetpub\wwwroot\EmailTemplates\CancelledMember\ProcessCancelledMemberByCorporateAdminToUrg.cshtml" />
+
+    <add key="SubmitIdReplacementByMemberToMember" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToMember.cshtml" />
+    <add key="SubmitIdReplacementByMemberToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitIdReplacementByMemberToUrg" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToUrg.cshtml" />
+    <add key="SubmitIdReplacementByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToMember.cshtml" />
+    <add key="SubmitIdReplacementByCorporateAdminToUrg" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledIdReplacementByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\CancelledIdReplacementByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveIdReplacementByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\DisapproveIdReplacementByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitAmendmentByMemberToMember" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\SubmitAmendmentByMemberToMember.cshtml" />
+    <add key="SubmitAmendmentByMemberToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\SubmitAmendmentByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitAmendmentByMemberToUrg" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\SubmitAmendmentByMemberToUrg.cshtml" />
+    <add key="SubmitAmendmentByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToMember.cshtml" />
+    <add key="SubmitAmendmentByCorporateAdminToUrg" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledAmendmentByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\CancelledAmendmentByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveAmendmentByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\DisapproveAmendmentByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitAdditionalDependentByMemberToMember" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToMember.cshtml" />
+    <add key="SubmitAdditionalDependentByMemberToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitAdditionalDependentByMemberToUrg" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToUrg.cshtml" />
+    <add key="SubmitAdditionalDependentByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <add key="SubmitAdditionalDependentByCorporateAdminToUrg" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledAdditionalDependentByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\CancelledAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveAdditionalDependentByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\AdditionalDependent\CancelledAdditionalDependentByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitDependentCancellationByMemberToMember" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToMember.cshtml" />
+    <add key="SubmitDependentCancellationByMemberToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitDependentCancellationByMemberToUrg" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToUrg.cshtml" />
+    <add key="SubmitDependentCancellationByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\SubmitDependentCancellationByCorporateAdminToMember.cshtml" />
+    <add key="SubmitDependentCancellationByCorporateAdminToUrg" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\SubmitDependentCancellationByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledDependentCancellationByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\CancelledDependentCancellationByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveDependentCancellationByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\DependentCancellation\DisapproveDependentCancellationByCorporateAdminToMember.cshtml" />
+
+    <add key="ApproveMembershipByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\EndorsementListing\ApproveMembershipByCorporateAdminToMember.cshtml" />
+    <add key="CancelMembershipByCorporateAdminToMember" value="C:\inetpub\wwwroot\EmailTemplates\EndorsementListing\CancelMembershipByCorporateAdminToMember.cshtml" />
+
+    <add key="ReceiveEntryUrgToUrg" value="C:\inetpub\wwwroot\EmailTemplates\ReceivingEntry\ReceiveEntryUrgToUrg.cshtml" />
+    <add key="ReceiveEntryUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\ReceivingEntry\ReceiveEntryUrgToCorporateAdmin.cshtml" />
+
+    <add key="ActionMemoForCancellationByUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoForCancellationByUrgToCorporateAdmin.cshtml" />
+    <add key="ActionMemoReplyByCorporateAdminToUrg" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoReplyByCorporateAdminToUrg.cshtml" />
+
+    <add key="ActionMemoReplyByMemberToMember" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToMember.cshtml" />
+    <add key="ActionMemoReplyByCorporateAdminToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\ActionMemo\ActionMemoReplyByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessCancelledMemberByCorporateAdminToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\CancelledMember\ProcessCancelledMemberByCorporateAdminToCorporateAdmin.cshtml" />
+
+    <add key="DisapproveIdReplacementByUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\DisapproveIdReplacementByUrgToCorporateAdmin.cshtml" />
+    <add key="DisapproveIdReplacementByUrgToMember" value="C:\inetpub\wwwroot\EmailTemplates\IdReplacement\DisapproveIdReplacementByUrgToMember.cshtml" />
+
+    <add key="DeclinedAmendmentByUrgToCorporateAdmin" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\DeclinedAmendmentByUrgToCorporateAdmin.cshtml" />
+    <add key="DeclinedAmendmentByUrgToMember" value="C:\inetpub\wwwroot\EmailTemplates\Amendment\DeclinedAmendmentByUrgToMember.cshtml" />
+
+    <add key="SubmittionDeadlineNotification" value="C:\inetpub\wwwroot\EmailTemplates\SubmittionDeadline\Notification.cshtml" />
+
+    <add key="SmtpServer" value="owa.medicardphils.com" />
+    <add key="SmtpUsername" value="noreply@medicardphils.com" />
+    <add key="SmtpPassword" value="medicard123" />
+    <add key="SmtpPort" value="25" />
+    
+  </appSettings>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin.Security" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin.Security.Cookies" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin.Security.OAuth" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-5.1.0.0" newVersion="5.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-1.5.2.14234" newVersion="1.5.2.14234" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <system.net>
+    <mailSettings>
+      <smtp deliveryMethod="Network">
+        <network host="owa.medicardphils.com" userName="noreply@medicardphils.com" password="medicard123" port="25" />
+      </smtp>
+    </mailSettings>
+  </system.net>
+</configuration>

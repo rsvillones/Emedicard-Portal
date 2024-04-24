@@ -1,0 +1,91 @@
+﻿using Corelib;
+using Corelib.Enums;
+using Corelib.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Entity;
+
+namespace Tester
+{
+    public partial class Form1 : Form
+    {
+        private readonly string _windowsServiceUser = "eMedicardWindowsService";
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var idReplacement = db.IdReplacements
+                    .Include(t => t.EndorsementBatch)
+                    .FirstOrDefault(t => t.Id == 2);
+
+
+                Emailer.Emailer.SendCancelledIdReplacementCorporateAdminToMemberEmailInstant(idReplacement);
+            }
+
+            MessageBox.Show("Done");
+        }
+
+        private void SetStatus(object entity, int? statCode, string code)
+        {
+            switch (statCode)
+            {
+                case 0:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    entity.GetType().GetProperty("Code").SetValue(entity, code);
+                    break;
+                case 1:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Disapproved);
+                    break;
+                case 2:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForEncoding);
+                    break;
+                case 3:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.MedicalEvaluation);
+                    break;
+                case 4:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.OnHold);
+                    break;
+                case 5:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForApproval);
+                    break;
+                case 9:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.PermanentResigned);
+                    break;
+                case 15:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Cancelled);
+                    break;
+                case 16:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.PendingeMedicard);
+                    break;
+                case 17:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Lapse);
+                    break;
+                case 18:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.ForReactivation);
+                    break;
+                case 20:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    break;
+                case 21:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.Approved);
+                    break;
+                case 22:
+                    entity.GetType().GetProperty("Status").SetValue(entity, MembershipStatus.VerifyMembership);
+                    break;
+            }
+        }
+    }
+}

@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+using System.Net;
+using Corelib.Enums;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+using WebUI.Areas.CorporateAdministrator.Models;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewUtilizationReportException")]
+    public class UtilizationReportExceptionsController : BaseAccountController
+    {
+        #region -- Action Results --
+
+        public ActionResult Index(string accountCode, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.UtilizationReportExceptions
+                .Where(t => t.AccountCode == this.LegacyAccount.Code)
+                .OrderByDescending(t => t.CrDate).ToList();
+
+            var viewModel = new UtilizationReportExceptionViewModel()
+            {
+                UtilizationReportExceptions = model
+            };
+            IsReadOnlyAttribute();
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && t.AccountCode == accountCode).OrderBy(t => t.LastName);
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(UtilizationReportExceptionViewModel model,string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            if (ModelState.IsValid)
+            {
+                if (model.UtilizationReportExceptions != null)
+                {                    
+                    foreach (var item in model.UtilizationReportExceptions)
+                    {
+                        if (item.Id == 0)
+                        {
+                            db.UtilizationReportExceptions.Add(item);
+                        }
+                        else
+                        {
+                            var exception = db.UtilizationReportExceptions.FirstOrDefault(t => t.Id == item.Id && !t.Deleted);
+                            db.Entry(exception).CurrentValues.SetValues(item);
+                            db.Entry(exception).State = EntityState.Modified;
+                        }
+                    }
+                }
+                var modelIds = model.UtilizationReportExceptions != null ? model.UtilizationReportExceptions.Select(t => t.Id).ToArray() : new int[0];
+                var removeData = db.UtilizationReportExceptions.Where(t => !t.Deleted && !modelIds.Contains(t.Id)).ToList();
+                db.UtilizationReportExceptions.RemoveRange(removeData);
+
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode, messageType = "Success!", message = "Utilization Report Exception successfully saved." });
+            }
+            IsReadOnlyAttribute();
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && t.AccountCode == accountCode).OrderBy(t => t.LastName);
+            if (model.UtilizationReportExceptions == null) model.UtilizationReportExceptions = new List<UtilizationReportException>();
+            return View(model);
+        }
+
+        #endregion
+
+        #region -- Functions --
+
+        public ActionResult NewUtilizationReportException(string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            var model = new UtilizationReportException() { AccountCode = accountCode };
+
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && t.AccountCode == accountCode).OrderBy(t => t.LastName);
+            return PartialView("_UtilizationReportException",model);
+        }
+
+        public ActionResult IsReadOnlyAttribute()
+        {
+            #region -- Can Add Or Edit Utilization Report Exception --
+
+            if (User.IsInRole("SysAd") || User.IsInRole("CanAddUtilizationReportException") || User.IsInRole("CanEditUtilizationReportException"))
+            {
+                ViewBag.HtmlDropDownAttribute = new { @class= "form-control" };
+            }
+            else
+            {
+                ViewBag.HtmlDropDownAttribute = new { @disabled = "disabled", @class = "form-control white-readonly" };
+            }
+
+            #endregion
+            
+            return null;
+        }
+
+        #endregion
+    }
+}

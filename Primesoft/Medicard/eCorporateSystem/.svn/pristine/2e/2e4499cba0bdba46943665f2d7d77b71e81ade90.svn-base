@@ -1,0 +1,210 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Corelib.Models
+{
+    public class Application : BaseModel,IValidatableObject
+    {
+        #region -- Constructors --
+
+        public Application()
+        {
+            
+        }
+
+        public Application(ApplicationVerification applicationVerification)
+        {
+            EmailAddress = applicationVerification.EmailAddress;
+            EmployeeNumber = applicationVerification.EmployeeNumber;
+            Area = applicationVerification.Area;
+            CostCenter = applicationVerification.CostCenter;
+            LastName = applicationVerification.LastName;
+            FirstName = applicationVerification.FirstName;
+            MiddleName =  applicationVerification.MiddleName;
+            Suffix = applicationVerification.Suffix;
+            Gender = applicationVerification.Gender;
+            DateOfBirth = Convert.ToDateTime(applicationVerification.DateOfBirth);
+            Age = Convert.ToInt32(applicationVerification.Age);
+            CivilStatus = applicationVerification.CivilStatus;
+            EffectivityDate =  Convert.ToDateTime(applicationVerification.EffectivityDate);
+            ValidityDate =  Convert.ToDateTime(applicationVerification.ValidityDate);
+            DateHired = Convert.ToDateTime(applicationVerification.DateHired);
+            AppliedPlan = Convert.ToInt32(applicationVerification.AppliedPlan.Split('|').Last().Trim());
+
+            OptionalPlan = applicationVerification.OptionalPlan != null ? Convert.ToInt32(applicationVerification.OptionalPlan.Split('|').Last().Trim()) : (int?)null;
+
+            Dependent =  Convert.ToInt32(applicationVerification.Dependent);
+
+            DependentAppliedPlan  = Convert.ToInt32(applicationVerification.DependentAppliedPlan.Split('|').Last().Trim());
+
+            DependentOptionalPlan = applicationVerification.DependentOptionalPlan != null ? Convert.ToInt32(applicationVerification.DependentOptionalPlan.Split('|').Last().Trim()) : (int?)null;
+
+            MemberCode = applicationVerification.MemberCode;
+            MembershipStatus = applicationVerification.MembershipStatus;
+            MemberType = applicationVerification.MemberType;
+            IsResigned = Convert.ToBoolean(applicationVerification.IsResigned);
+            AccountCode = applicationVerification.AccountCode;
+
+            DateTime? newDate;
+            try{
+                newDate = DateTime.Parse(applicationVerification.ResignationDate);
+            }
+            catch{
+                newDate = null;
+            }
+
+            ResignationDate = newDate;
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        [Display(Name = "Email Address:")]
+        public string EmailAddress { get; set; }
+
+        [Display(Name="Employee Number:")]
+        public string EmployeeNumber { get; set; }
+
+        [Display(Name = "Area:")]
+        public string Area { get; set; }
+
+        [Display(Name = "Cost Center:")]
+        public string CostCenter { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name:")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "First Name:")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name:")]
+        public string MiddleName { get; set; }
+
+        [Display(Name = "Suffix:")]
+        public string Suffix { get; set; }
+
+        [Display(Name = "Gender:")]
+        public string Gender { get; set; }
+        
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Date of Birth:")]
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Age:")]
+        public int Age { get; set; }
+
+        [Display(Name = "Civil Status:")]
+        public string CivilStatus { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Effectivity Date:")]
+        public DateTime EffectivityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Validity Date:")]
+        public DateTime ValidityDate { get; set; }
+
+        [DisplayFormat(DataFormatString = BaseModel.DateFormat, ApplyFormatInEditMode = true)]
+        [Display(Name = "Date Hired:")]
+        public DateTime DateHired { get; set; }
+
+        [Display(Name = "Applied Plan:")]
+        public int AppliedPlan { get; set; }
+
+        [Display(Name = "Optional Plan:")]
+        public int? OptionalPlan { get; set; }
+
+        [Display(Name = "Allowed Dependents:")]
+        public int Dependent { get; set; }
+
+        [Display(Name = "Dependent Applied Plan:")]
+        public int DependentAppliedPlan { get; set; }
+
+        [Display(Name = "Dependent Optional Plan:")]
+        public int? DependentOptionalPlan { get; set; }
+
+        [Display(Name = "Member Code:")]
+        public string MemberCode { get; set; }
+
+        [Display(Name = "Member Type:")]
+        public string MemberType { get; set; }
+
+        [Display(Name = "Membership Status:")]
+        public string MembershipStatus { get; set; }
+
+        public bool IsResigned { get; set; }
+
+        [Display(Name = "Cancelation Date:")]
+        public DateTime? ResignationDate { get; set; }
+
+        public string AccountCode { get; set; }
+
+        [StringLength(128)]
+        public string UserName { get; set; }
+
+        [StringLength(128)]
+        public string UserId { get; set; }
+
+        [StringLength(256)]
+        public string Street { get; set; }
+
+        [StringLength(32)]
+        public string City { get; set; }
+
+        [StringLength(8)]
+        public string AreaCode { get; set; }
+
+        [StringLength(32)]
+        public string Province { get; set; }
+
+        [StringLength(32)]
+        public string Telephone { get; set; }
+
+        [StringLength(32)]
+        public string Mobile { get; set; }
+
+        public int? HeightFeet { get; set; }
+
+        public int? HeightInches { get; set; }
+
+        public int? Weight { get; set; }
+
+        [StringLength(32)]
+        public string Position { get; set; }
+                
+        #endregion
+
+        #region -- Foreign Keys --
+
+        public int BatchId { get; set; }
+        [ForeignKey("BatchId")]
+        public Batch Batch { get; set; }
+
+        #endregion
+
+        #region -- IValidatableObject --
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                if (db.Applications.Any(t => (t.DateOfBirth == DateOfBirth && t.LastName == LastName && t.FirstName == FirstName && t.MiddleName == MiddleName && t.Id != Id) && !t.Deleted))
+                {
+                    yield return new ValidationResult("Application already exist in database.");
+                }
+
+            }
+        }
+
+        #endregion
+    }
+}

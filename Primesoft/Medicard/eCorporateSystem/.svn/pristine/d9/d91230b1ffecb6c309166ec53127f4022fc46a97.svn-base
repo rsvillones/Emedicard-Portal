@@ -1,0 +1,2156 @@
+﻿using Corelib;
+using Corelib.Models;
+using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
+using System.Threading;
+using Corelib.Enums;
+
+namespace Emailer
+{
+    public static class Emailer
+    {
+        #region -- Functions --
+
+        #region -- New --
+
+        public static void SendProcessNewEmailInstant(EndorsementBatch endorsementBatch)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == endorsementBatch.AccountCode);
+                if (accountSetting.DirectlySubmitToUrg)
+                {
+                    SendProcessNewEndorsementBatchByCorporateAdminDirectlyToUrg(endorsementBatch);
+                }
+                else
+                {
+                    SendProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin(endorsementBatch);
+                }
+            }
+        }
+
+        public static void SendNewAccessInstant(Member member, string username, string password)
+        {
+            SendNewAccess(member, username, password);
+        }
+
+        public static void SendSubmitNewEmailInstant(Member member)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == member.AccountCode) ?? new AccountSetting();
+                SendSubmitNewMemberByMemberToMember(member, accountSetting.BypassHRManagerApproval);
+            }
+        }
+
+        public static void SendApprovedNewEndorsementByCorpAdminToUrg(EndorsementBatch endorsementBatch)
+        {
+            SendProcessNewEndorsementBatchByCorporateAdminDirectlyToUrg(endorsementBatch);
+        }
+
+        public static void SendSubmitNewEmailEndOfDay()
+        {
+            DateTime from, to;
+            SetEndOfDayDates(out from, out to);
+
+            using (var db = new IdentityDataContext())
+            {
+                var endorsementBatchesToCorporateAdmin = db.EndorsementBatches
+                    .Include(t => t.Members)
+                    .Where(t => t.Members.Any(m => m.DateSubmittedToCorporateAdmin >= from && m.DateSubmittedToCorporateAdmin <= to)).ToList();
+
+                foreach (var endorsementBatch in endorsementBatchesToCorporateAdmin)
+                {
+                    SendSubmitNewMemberByMemberToCorporateAdmin(endorsementBatch, from, to, db);
+                }
+
+                var endorsementBatchesToUrg = db.EndorsementBatches
+                    .Include(t => t.Members)
+                    .Where(t => t.Members.Any(m => m.DateSubmittedToUrg >= from && m.DateSubmittedToUrg <= to)).ToList();
+
+                foreach (var endorsementBatch in endorsementBatchesToUrg)
+                {
+                    SendSubmitNewMemberByMemberToUrg(endorsementBatch, from, to);
+                }
+            }
+        }
+
+        #endregion
+
+        #region -- Renewal --
+
+        public static void SendProcessRenewalEmailInstant(EndorsementBatch endorsementBatch)
+        {
+            SendProcessRenewalByCorporateAdminToCorporateAdmin(endorsementBatch);
+            SendProcessRenewalByCorporateAdminToMember(endorsementBatch);
+        }
+
+        public static void SendProcessRenewalCorporateAdminToUrgEmailInstant(EndorsementBatch endorsementBatch)
+        {
+            SendProcessRenewalByCorporateAdminToUrg(endorsementBatch);
+        }
+
+        #endregion
+
+        #region -- Member Cancellation --
+
+        public static void SendProcessCancelledMemberInstant(EndorsementBatch endorsementBatch)
+        {
+            SendProcessCancelledMemberByCorporateAdminToUrg(endorsementBatch);
+        }
+
+        #endregion
+
+        public static void SendApproveNewMemberInstant(Member member)
+        {
+            SendApproveNewMemberByUrgToMember(member);
+        }
+
+        public static void SendActionMemoInstant(EndorsementBatch endorsementBatch)
+        {
+            SendActionMemoByUrgToCorporateAdmin(endorsementBatch);
+            SendActionMemoByUrgToAllAccess(endorsementBatch);
+            foreach (var actionMemo in endorsementBatch.ActionMemos)
+            {
+                SendActionMemoByUrgToMember(actionMemo);
+            }
+        }
+
+        public static void SendActionMemoForCancellationInstant(EndorsementBatch endorsementBatch)
+        {
+            SendActionMemoForCancellationByUrgToCorporateAdmin(endorsementBatch);
+        }
+
+        public static void SendActionMemoReplyInstant(ActionMemo actionMemo)
+        {
+            SendActionMemoReplyByCorporateAdminToMember(actionMemo);
+        }
+
+        public static void SendActionMemoCorporateAdminReplyInstant(EndorsementBatch endorsementBatch)
+        {
+            SendActionMemoReplyByCorporateAdminToUrg(endorsementBatch);
+        }
+
+        public static void SentActionMemoReplyEndOfDay()
+        {
+            DateTime from, to;
+            SetEndOfDayDates(out from, out to);
+
+            using (var db = new IdentityDataContext())
+            {
+                var actionMemosToCorporateAdmin = db.ActionMemos
+                    .Include(t => t.Member)
+                    .Include(t => t.Dependent)
+                    .Include(t => t.EndorsementBatch)
+                    .Where(t => t.DateSubmittedToCorporateAdmin >= from && t.DateSubmittedToCorporateAdmin <= to).ToList();
+
+                var accountCodes = actionMemosToCorporateAdmin.Select(t => t.EndorsementBatch.AccountCode).Distinct();
+                foreach (var accountCode in accountCodes)
+                {
+                    SendActionMemoReplyByMemberToCorporateAdmin(accountCode, actionMemosToCorporateAdmin.Where(t => t.EndorsementBatch.AccountCode == accountCode).ToList());
+                }
+
+                var actionMemosToUrg = db.ActionMemos
+                    .Include(t => t.Member)
+                    .Include(t => t.Dependent)
+                    .Include(t => t.EndorsementBatch)
+                    .Where(t => t.DateSubmittedToUrg >= from && t.DateSubmittedToUrg <= to).ToList();
+
+                accountCodes = actionMemosToUrg.Select(t => t.EndorsementBatch.AccountCode).Distinct();
+                foreach (var accountCode in accountCodes)
+                {
+                    SendActionMemoReplyByMemberToUrg(accountCode, actionMemosToUrg.Where(t => t.EndorsementBatch.AccountCode == accountCode).ToList());
+                }
+
+            }
+        }
+
+        public static void SendTransmittalInstant(EndorsementBatch endorsementBatch)
+        {
+            SendTransmittalByUrgToCorporateAdmin(endorsementBatch);
+            SendTransmittalByUrgToAllAccess(endorsementBatch);
+            foreach (var member in endorsementBatch.Members)
+            {
+                if (member.Status != Corelib.Enums.MembershipStatus.Approved) continue;
+
+                SendTransmittalByUrgToMember(member);
+            }
+        }
+
+        #region -- ID Replacement --
+
+        public static void SendSubmitIdReplacementEmailInstant(IdReplacement idReplacement, bool bypassHRManagerApproval)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == idReplacement.MemberCode) ?? new Member();
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == idReplacement.EndorsementBatchId);
+                idReplacement.EndorsementBatch = endorsement;
+                if (idReplacement.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || bypassHRManagerApproval)
+                {
+                    SendSubmitIdReplacementByMemberToUrg(idReplacement, member);
+                }
+                else if (idReplacement.Status == Corelib.Enums.RequestStatus.Submitted)
+                {
+                    SendSubmitIdReplacementByMemberToCorporateAdmin(idReplacement, member);
+                }
+                SendSubmitIdReplacementByMemberToMember(member, bypassHRManagerApproval);
+            }
+        }
+
+        public static void SendSubmitIdReplacementCorporateAdminEmailInstant(IdReplacement idReplacement)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == idReplacement.MemberCode) ?? new Member();
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == idReplacement.EndorsementBatchId);
+                idReplacement.EndorsementBatch = endorsement;
+                //SendSubmitIdReplacementByCorporateAdminToMember(member);
+                SendSubmitIdReplacementByCorporateAdminToUrg(idReplacement);
+            }
+        }
+
+        public static void SendCancelledIdReplacementCorporateAdminToMemberEmailInstant(IdReplacement idReplacement)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == idReplacement.MemberCode) ?? new Member();
+                SendCancelledIdReplacementByCorporateAdminToMember(member);
+            }
+        }
+
+        public static void SendDisapproveIdReplacementCorporateAdminToMemberEmailInstant(IdReplacement idReplacement)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == idReplacement.MemberCode) ?? new Member();
+                SendDisapproveIdReplacementByCorporateAdminToMember(member);
+            }
+        }
+
+        #endregion
+
+        #region -- Amendment --
+
+        public static void SendSubmitAmendmentEmailInstant(Amendment amendment, bool bypassHRManagerApproval)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == amendment.MemberCode) ?? new Member();
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == amendment.EndorsementBatchId);
+                amendment.EndorsementBatch = endorsement;
+                if (amendment.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || bypassHRManagerApproval)
+                {
+                    SendSubmitAmendmentByMemberToUrg(amendment, member);
+                }
+                else if (amendment.Status == Corelib.Enums.RequestStatus.Submitted)
+                {
+                    SendSubmitAmendmentByMemberToCorporateAdmin(amendment, member);
+                }
+                SendSubmitAmendmentByMemberToMember(member, bypassHRManagerApproval);
+            }
+        }
+
+        public static void SendSubmitAmendmentCorporateAdminEmailInstant(Amendment amendment)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == amendment.MemberCode) ?? new Member();
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == amendment.EndorsementBatchId);
+                amendment.EndorsementBatch = endorsement;
+                //SendSubmitAmendmentByCorporateAdminToMember(member);
+                SendSubmitAmendmentByCorporateAdminToUrg(amendment);
+            }
+        }
+
+        public static void SendCancelledAmendmentCorporateAdminToMemberEmailInstant(Amendment amendment)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == amendment.MemberCode) ?? new Member();
+                SendCancelledAmendmentByCorporateAdminToMember(member);
+            }
+        }
+
+        public static void SendDisapproveAmendmentCorporateAdminToMemberEmailInstant(Amendment amendment)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == amendment.MemberCode) ?? new Member();
+                SendDisapproveAmendmentByCorporateAdminToMember(member);
+            }
+        }
+
+        #endregion
+
+        #region -- Additionl Dependent --
+
+        public static void SendSubmitAdditionalDependentEmailInstant(AdditionalDependent additionalDependent, bool bypassHRManagerApproval)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == additionalDependent.MemberCode) ?? new Member();
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == additionalDependent.EndorsementBatchId);
+                additionalDependent.EndorsementBatch = endorsement;
+                if (additionalDependent.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || bypassHRManagerApproval)
+                {
+                    SendSubmitAdditionalDependentByMemberToUrg(additionalDependent, member);
+                }
+                else if (additionalDependent.Status == Corelib.Enums.RequestStatus.Submitted)
+                {
+                    SendSubmitAdditionalDependentByMemberToCorporateAdmin(additionalDependent, member);
+                }
+                SendSubmitAdditionalDependentByMemberToMember(member, bypassHRManagerApproval);
+            }
+        }
+
+        public static void SendSubmitAdditionalDependentCorporateAdminEmailInstant(AdditionalDependent additionalDependent)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == additionalDependent.MemberCode) ?? new Member();
+                var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == additionalDependent.EndorsementBatchId);
+                additionalDependent.EndorsementBatch = endorsement;
+                //SendSubmitAdditionalDependentByCorporateAdminToMember(member);
+                SendSubmitAdditionalDependentByCorporateAdminToUrg(additionalDependent);
+            }
+        }
+
+        public static void SendCancelledAdditionalDependentCorporateAdminToMemberEmailInstant(AdditionalDependent additionalDependent)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == additionalDependent.MemberCode) ?? new Member();
+                SendCancelledAdditionalDependentByCorporateAdminToMember(member);
+            }
+        }
+
+        public static void SendDisapproveAdditionalDependentCorporateAdminToMemberEmailInstant(AdditionalDependent additionalDependent)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var member = db.Members.FirstOrDefault(t => t.Code == additionalDependent.MemberCode) ?? new Member();
+                SendDisapproveAdditionalDependentByCorporateAdminToMember(member);
+            }
+        }
+
+        #endregion
+
+        #region -- Dependent Cancellation --
+
+        public static void SendSubmitDependentCancellationEmailInstant(DependentCancellation dependentCancellation, bool bypassHRManagerApproval)
+        {
+            //using (var db = new IdentityDataContext())
+            //{
+            //    var member = db.Members.FirstOrDefault(t => t.Code == dependentCancellation.MemberCode) ?? new Member();
+            //    var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == dependentCancellation.EndorsementBatchId);
+            //    dependentCancellation.EndorsementBatch = endorsement;
+            //    if (dependentCancellation.Status == Corelib.Enums.RequestStatus.CorporateAdminApproved || bypassHRManagerApproval)
+            //    {
+            //        SendSubmitDependentCancellationByMemberToUrg(dependentCancellation, member);
+            //    }
+            //    else if (dependentCancellation.Status == Corelib.Enums.RequestStatus.Submitted)
+            //    {
+            //        SendSubmitDependentCancellationByMemberToCorporateAdmin(dependentCancellation, member);
+            //    }
+            //    SendSubmitDependentCancellationByMemberToMember(member, bypassHRManagerApproval);
+            //}
+        }
+
+        public static void SendSubmitDependentCancellationCorporateAdminEmailInstant(DependentCancellation dependentCancellation)
+        {
+            //using (var db = new IdentityDataContext())
+            //{
+            //    var member = db.Members.FirstOrDefault(t => t.Code == dependentCancellation.MemberCode) ?? new Member();
+            //    var endorsement = db.EndorsementBatches.FirstOrDefault(t => t.Id == dependentCancellation.EndorsementBatchId);
+            //    dependentCancellation.EndorsementBatch = endorsement;
+            //    SendSubmitDependentCancellationByCorporateAdminToMember(member);
+            //    SendSubmitDependentCancellationByCorporateAdminToUrg(dependentCancellation);
+            //}
+        }
+
+        public static void SendCancelledDependentCancellationCorporateAdminToMemberEmailInstant(DependentCancellation dependentCancellation)
+        {
+            //using (var db = new IdentityDataContext())
+            //{
+            //    var member = db.Members.FirstOrDefault(t => t.Code == dependentCancellation.MemberCode) ?? new Member();
+            //    SendCancelledDependentCancellationByCorporateAdminToMember(member);
+            //}
+        }
+
+        public static void SendDisapproveDependentCancellationCorporateAdminToMemberEmailInstant(DependentCancellation dependentCancellation)
+        {
+            //using (var db = new IdentityDataContext())
+            //{
+            //    var member = db.Members.FirstOrDefault(t => t.Code == dependentCancellation.MemberCode) ?? new Member();
+            //    SendDisapproveDependentCancellationByCorporateAdminToMember(member);
+            //}
+        }
+
+        #endregion
+
+        #region -- Endorsement Listing --
+
+        public static void SendCancelMembershipCorporateAdminToMemberEmailInstant(Member member)
+        {
+            SendCancelMembershipByCorporateAdminToMember(member);
+        }
+
+        public static void SendApproveMembershipCorporateAdminToMemberEmailInstant(Member member)
+        {
+            SendApproveMembershipByCorporateAdminToMember(member);
+        }
+
+        #endregion
+
+        #region -- Receiving Entry --
+
+        public static void SendReceivingEntryInstant(EndorsementBatch endorsementBatch)
+        {
+            SendReceivingEntryUrgToCorporateAdmin(endorsementBatch);
+            SendReceivingEntryUrgToAllAccess(endorsementBatch);
+        }
+
+        public static void SendReceivingEntryUrgToAssignUserInstant(EndorsementBatch endorsementBatch,string assignUser)
+        {
+            SendReceivingEntryUrgToUrg(endorsementBatch, assignUser);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region -- Sending Emails --
+
+        #region -- New Access --
+
+        private static void SendNewAccess(Member member, string username, string password)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrEmpty(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.NewAccess, new EmailViewModel()
+            {
+                Member = member,
+                Username = username,
+                Password = password
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: New Member Access",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(member.EmailAddress);
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Process New Endorsement --
+
+        private static void SendProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMedicard: Additional Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendProcessNewEndorsementBatchByCorporateAdminToMember(EndorsementBatch endorsementBatch)
+        {
+            foreach (var member in endorsementBatch.Members)
+            {
+                if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrEmpty(member.EmailAddress)) continue;
+
+                var body = ParseEmailTemplate(Config.ProcessNewEndorsementBatchByCorporateAdminToMember, new EmailViewModel()
+                {
+                    Member = member
+                });
+                var mailMessage = new MailMessage()
+                {
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "eMediCard: New Member Access",
+                    Body = body,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(member.EmailAddress);
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendProcessNewEndorsementBatchByCorporateAdminDirectlyToUrg(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ProcessNewDirectlyToUrgByCorporateAdminToUrg, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard: {0} - ADDITIONAL MEMBER", endorsementBatch.CompanyName),
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            //var attachmentPath = String.Format(@"{0}{1}", Config.UploadedFilesPath, endorsementBatch.GuidFilename);
+            //if (!String.IsNullOrEmpty(endorsementBatch.GuidFilename) && File.Exists(attachmentPath))
+            //{
+            //    mailMessage.Attachments.Add(new Attachment(attachmentPath));
+            //}
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(endorsementBatch.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                        sendEmail = true;
+                    }
+                }
+                SendMailMessage(mailMessage);
+            };
+        }
+
+        #endregion
+
+        #region -- Submit New Endorsement --
+
+        private static void SendSubmitNewMemberByMemberToMember(Member member, bool bypassCorporateAdminApproval)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitNewMemberByMemberToMember, new EmailViewModel()
+            {
+                Member = member,
+                BypassCorporateAdminApproval = bypassCorporateAdminApproval
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Membership Information Submitted",
+                Body = body,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitNewMemberByMemberToCorporateAdmin(EndorsementBatch endorsementBatch, DateTime from, DateTime to, IdentityDataContext db)
+        {
+            var accountSetting = db.AccountSettings.FirstOrDefault(t => t.AccountCode == endorsementBatch.AccountCode) ?? new AccountSetting();
+            var body = ParseEmailTemplate(Config.SubmitNewMemberByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                From = from,
+                To = to,
+                EndorsementBatch = endorsementBatch,
+                BypassCorporateAdminApproval = accountSetting.BypassHRManagerApproval
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = accountSetting.BypassHRManagerApproval ? "eMediCard: Membership Information Submitted to MediCard" : "eMediCard: Membership Information Submitted for Evaluation",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitNewMemberByMemberToUrg(EndorsementBatch endorsementBatch, DateTime from, DateTime to)
+        {
+            var body = ParseEmailTemplate(Config.SubmitNewMemberByMemberToUrg, new EmailViewModel()
+            {
+                From = from,
+                To = to,
+                EndorsementBatch = endorsementBatch
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} Submit New Member by Member to Urg", endorsementBatch.CompanyName),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(endorsementBatch.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        #endregion
+
+        #region -- Approve New Endorsement --
+
+        private static void SendApproveNewMemberByUrgToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ApproveNewMemberByUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - APPROVED MEMBERS", GetCompanyName(endorsementBatch.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            //var accountSetting = GetAccountSetting(endorsementBatch.AccountCode);
+            //if (accountSetting.BypassHRManagerApproval)
+            //{
+            //    foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            //    {
+            //        mailMessage.CC.Add(new MailAddress(email));
+            //    }
+            //}  
+
+            if (sendEmail)
+            {
+                foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+                {
+                    mailMessage.CC.Add(new MailAddress(email));
+                    sendEmail = true;
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendApproveNewMemberByUrgToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.ApproveNewMemberByUrgToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - APPROVED MEMBERS", GetCompanyName(member.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Action Memo --
+
+        private static void SendActionMemoByUrgToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ActionMemoByUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Members with Action Memo",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var di = new DirectoryInfo(Config.ActionMemoDocumentsPath);
+            foreach (var fi in di.GetFiles(String.Format("A_{0}*.pdf", endorsementBatch.ReplyTo)))
+            {
+                mailMessage.Attachments.Add(new System.Net.Mail.Attachment(fi.FullName));
+            }
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+                {
+                    mailMessage.CC.Add(new MailAddress(email));
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendActionMemoForCancellationByUrgToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ActionMemoForCancellationByUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Action Memo By Urg To Corporate Admin",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var di = new DirectoryInfo(Config.ActionMemoDocumentsPath);
+            foreach (var fi in di.GetFiles(String.Format("A_{0}*.pdf", endorsementBatch.ControlNumber)))
+            {
+                mailMessage.Attachments.Add(new System.Net.Mail.Attachment(fi.FullName));
+            }
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+                {
+                    mailMessage.CC.Add(new MailAddress(email));
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendActionMemoByUrgToAllAccess(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ActionMemoByUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: MEMBERS WITH ACTION MEMO",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetOtherEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendActionMemoByUrgToMember(ActionMemo actionMemo)
+        {
+            if (actionMemo.Member == null || string.IsNullOrEmpty(actionMemo.Member.EmailAddress) || string.IsNullOrWhiteSpace(actionMemo.Member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.ActionMemoByUrgToMember, new EmailViewModel()
+            {
+                ActionMemo = actionMemo
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Action Memo",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(actionMemo.Member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendActionMemoReplyByMemberToCorporateAdmin(string accountCode, IEnumerable<ActionMemo> actionMemos)
+        {
+            var body = ParseEmailTemplate(Config.ActionMemoReplyByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                ActionMemos = actionMemos
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Action Memo Reply By Member to Corporate Admin",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(accountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendActionMemoReplyByMemberToUrg(string accountCode, IEnumerable<ActionMemo> actionMemos)
+        {
+            var companyName = GetCompanyName(accountCode);
+            var body = ParseEmailTemplate(Config.ActionMemoReplyByMemberToUrg, new EmailViewModel()
+            {
+                ActionMemos = actionMemos,
+                CompanyName = companyName
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - REPLY TO ACTION MEMO", companyName),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(accountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(accountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(accountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendActionMemoReplyByCorporateAdminToMember(ActionMemo actionMemo)
+        {
+            if (string.IsNullOrEmpty(actionMemo.Member.EmailAddress) || string.IsNullOrWhiteSpace(actionMemo.Member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.ActionMemoReplyByCorporateAdminToMember, new EmailViewModel()
+            {
+                ActionMemo = actionMemo
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Action Memo Reply Submitted to MediCard",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(actionMemo.Member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendActionMemoReplyByCorporateAdminToUrg(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ActionMemoReplyByCorporateAdminToUrg, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - REPLY TO ACTION MEMO", GetCompanyName(endorsementBatch.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(endorsementBatch.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        #endregion
+
+        #region -- Transmittal --
+
+        private static void SendTransmittalByUrgToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.TransmittalByUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Transmittal By Urg To Corporate Admin",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var di = new DirectoryInfo(Config.TransmittalDocumentsPath);
+            foreach (var fi in di.GetFiles(String.Format("T_{0}*.pdf", endorsementBatch.ControlNumber)))
+            {
+                mailMessage.Attachments.Add(new System.Net.Mail.Attachment(fi.FullName));
+            }
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+                {
+                    mailMessage.CC.Add(new MailAddress(email));
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendTransmittalByUrgToAllAccess(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.TransmittalByUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Transmittal By Urg To All Access",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetOtherEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendTransmittalByUrgToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.TransmittalByUrgToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Transmittal By Urg To Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Process Renewal --
+
+        private static void SendProcessRenewalByCorporateAdminToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ProcessRenewalByCorporateAdminToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMedicard: Members for Renewal",
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendProcessRenewalByCorporateAdminToMember(EndorsementBatch endorsementBatch)
+        {
+            foreach (var member in endorsementBatch.Members)
+            {
+                if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrEmpty(member.EmailAddress)) continue;
+
+                var body = ParseEmailTemplate(Config.ProcessRenewalByCorporateAdminToMember, new EmailViewModel()
+                {
+                    Member = member
+                });
+                var mailMessage = new MailMessage()
+                {
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "eMediCard: Renewal Processed By Corporate Admin To Member",
+                    Body = body,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(member.EmailAddress);
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendProcessRenewalByCorporateAdminToUrg(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ProcessRenewalByCorporateAdminToUrg, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - MEMBERS FOR RENEWAL", endorsementBatch.CompanyName),
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(endorsementBatch.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        #endregion
+
+        #region -- Process Member Cancellation --
+
+        private static void SendProcessCancelledMemberByCorporateAdminToUrg(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ReceiveEntryUrgToUrg, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - MEMBER FOR DELETION", endorsementBatch.CompanyName),
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(endorsementBatch.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        #endregion
+
+        #region -- ID Replacement --
+
+        private static void SendSubmitIdReplacementByMemberToMember(Member member, bool bypassCorporateAdminApproval)
+        {
+            if (string.IsNullOrWhiteSpace(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitIdReplacementByMemberToMember, new EmailViewModel()
+            {
+                Member = member,
+                BypassCorporateAdminApproval = bypassCorporateAdminApproval
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: ID Replacement Request Submitted",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitIdReplacementByMemberToCorporateAdmin(IdReplacement idReplacement, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitIdReplacementByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                IdReplacement = idReplacement
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: ID Replacement Request for Evaluation",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(idReplacement.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+            if (sendEmail) SendMailMessage(mailMessage);
+
+        }
+
+        private static void SendSubmitIdReplacementByMemberToUrg(IdReplacement idReplacement, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitIdReplacementByMemberToUrg, new EmailViewModel()
+            {
+                IdReplacement = idReplacement
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - REQUEST FOR LOST ID", GetCompanyName(idReplacement.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(idReplacement.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(idReplacement.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(idReplacement.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendSubmitIdReplacementByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitIdReplacementByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Request for ID Replacements by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitIdReplacementByCorporateAdminToUrg(IdReplacement idReplacement)
+        {
+            var body = ParseEmailTemplate(Config.SubmitIdReplacementByCorporateAdminToUrg, new EmailViewModel()
+            {
+                IdReplacement = idReplacement
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - REQUEST FOR LOST ID", GetCompanyName(idReplacement.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(idReplacement.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+
+                var accountSetting = GetAccountSetting(idReplacement.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(idReplacement.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendCancelledIdReplacementByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.CancelledIdReplacementByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: ID Replacement Request Cancelled",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendDisapproveIdReplacementByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.DisapproveIdReplacementByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: ID Replacement Request Disapproved",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Amendment --
+
+        private static void SendSubmitAmendmentByMemberToMember(Member member, bool bypassCorporateAdminApproval)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitAmendmentByMemberToMember, new EmailViewModel()
+            {
+                Member = member,
+                BypassCorporateAdminApproval = bypassCorporateAdminApproval
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Amendment Request Submitted",
+                Body = body,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitAmendmentByMemberToCorporateAdmin(Amendment amendment, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitAmendmentByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                Amendment = amendment
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Amendment Request for Evaluation",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(amendment.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+            if (sendEmail) SendMailMessage(mailMessage);
+
+        }
+
+        private static void SendSubmitAmendmentByMemberToUrg(Amendment amendment, Member member)
+        {
+            var subjectAmendment = SubjectAmendment(amendment.DataType);
+            var body = ParseEmailTemplate(Config.SubmitAmendmentByMemberToUrg, new EmailViewModel()
+            {
+                Amendment = amendment,
+                SubjectAmendment = subjectAmendment
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - FOR CORRECTION {1}", GetCompanyName(amendment.AccountCode), subjectAmendment),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(amendment.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+
+                var accountSetting = GetAccountSetting(amendment.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(amendment.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendSubmitAmendmentByCorporateAdminToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitAmendmentByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Request for Amendment by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitAmendmentByCorporateAdminToUrg(Amendment amendment)
+        {
+            var subjectAmendment = SubjectAmendment(amendment.DataType);
+            var body = ParseEmailTemplate(Config.SubmitAmendmentByCorporateAdminToUrg, new EmailViewModel()
+            {
+                Amendment = amendment,
+                SubjectAmendment = subjectAmendment
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - FOR CORRECTION {1}", GetCompanyName(amendment.AccountCode), subjectAmendment),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(amendment.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+
+                var accountSetting = GetAccountSetting(amendment.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(amendment.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendCancelledAmendmentByCorporateAdminToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.CancelledAmendmentByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Amendment Request Cancelled",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendDisapproveAmendmentByCorporateAdminToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.DisapproveAmendmentByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Amendment Request Disapproved",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Additional Dependent --
+
+        private static void SendSubmitAdditionalDependentByMemberToMember(Member member, bool bypassCorporateAdminApproval)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitAdditionalDependentByMemberToMember, new EmailViewModel()
+            {
+                Member = member,
+                BypassCorporateAdminApproval = bypassCorporateAdminApproval
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Additional Dependent Request Submitted",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitAdditionalDependentByMemberToCorporateAdmin(AdditionalDependent additionalDependent, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitAdditionalDependentByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                AdditionalDependent = additionalDependent
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Additional Dependent Request for Evaluation",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(additionalDependent.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+            if (sendEmail) SendMailMessage(mailMessage);
+
+        }
+
+        private static void SendSubmitAdditionalDependentByMemberToUrg(AdditionalDependent additionalDependent, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitAdditionalDependentByMemberToUrg, new EmailViewModel()
+            {
+                AdditionalDependent = additionalDependent
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - ADDITIONAL DEPENDENT", GetCompanyName(additionalDependent.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(additionalDependent.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+
+                var accountSetting = GetAccountSetting(additionalDependent.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(additionalDependent.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendSubmitAdditionalDependentByCorporateAdminToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitAdditionalDependentByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Application for Additional Dependent by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitAdditionalDependentByCorporateAdminToUrg(AdditionalDependent additionalDependent)
+        {
+            var body = ParseEmailTemplate(Config.SubmitAdditionalDependentByCorporateAdminToUrg, new EmailViewModel()
+            {
+                AdditionalDependent = additionalDependent
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - ADDITIONAL DEPENDENT", GetCompanyName(additionalDependent.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(additionalDependent.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(additionalDependent.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(additionalDependent.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendCancelledAdditionalDependentByCorporateAdminToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.CancelledAdditionalDependentByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Application for Additional Dependent by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendDisapproveAdditionalDependentByCorporateAdminToMember(Member member)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.DisapproveAdditionalDependentByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Additional Dependent Request Disapproved",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Dependent Cancellation --
+
+        private static void SendSubmitDependentCancellationByMemberToMember(Member member, bool bypassCorporateAdminApproval)
+        {
+            if (string.IsNullOrEmpty(member.EmailAddress) || string.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitDependentCancellationByMemberToMember, new EmailViewModel()
+            {
+                Member = member,
+                BypassCorporateAdminApproval = bypassCorporateAdminApproval
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Submit Cancellation of Dependent's Membership By Member To Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitDependentCancellationByMemberToCorporateAdmin(DependentCancellation dependentCancellation, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitDependentCancellationByMemberToCorporateAdmin, new EmailViewModel()
+            {
+                DependentCancellation = dependentCancellation
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Submit Cancellation of Dependent's Membership by Member to Corporate Admin",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(dependentCancellation.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+            if (sendEmail) SendMailMessage(mailMessage);
+
+        }
+
+        private static void SendSubmitDependentCancellationByMemberToUrg(DependentCancellation dependentCancellation, Member member)
+        {
+            var body = ParseEmailTemplate(Config.SubmitDependentCancellationByMemberToUrg, new EmailViewModel()
+            {
+                DependentCancellation = dependentCancellation
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - DEPENDENT FOR DELETION", GetCompanyName(dependentCancellation.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(dependentCancellation.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+
+                var accountSetting = GetAccountSetting(dependentCancellation.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(dependentCancellation.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendSubmitDependentCancellationByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.SubmitDependentCancellationByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Cancellation of Dependent's Membership by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendSubmitDependentCancellationByCorporateAdminToUrg(DependentCancellation dependentCancellation)
+        {
+            var body = ParseEmailTemplate(Config.SubmitDependentCancellationByCorporateAdminToUrg, new EmailViewModel()
+            {
+                DependentCancellation = dependentCancellation
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - DEPENDENT FOR DELETION", GetCompanyName(dependentCancellation.AccountCode)),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            var sendEmail = false;
+            foreach (var email in GetUnderwriterEmails(dependentCancellation.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail)
+            {
+                var accountSetting = GetAccountSetting(dependentCancellation.AccountCode);
+                if (accountSetting.BypassHRManagerApproval)
+                {
+                    foreach (var email in GetCorporateAdminEmails(dependentCancellation.AccountCode))
+                    {
+                        mailMessage.CC.Add(new MailAddress(email));
+                    }
+                }
+                SendMailMessage(mailMessage);
+            }
+        }
+
+        private static void SendCancelledDependentCancellationByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.CancelledDependentCancellationByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Cancellation of Dependent's Membership by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendDisapproveDependentCancellationByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.DisapproveDependentCancellationByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Cancellation of Dependent's Membership by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Endorsement Listing
+
+        private static void SendCancelMembershipByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.CancelMembershipByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Membership Approval by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        private static void SendApproveMembershipByCorporateAdminToMember(Member member)
+        {
+            if (String.IsNullOrEmpty(member.EmailAddress) || String.IsNullOrWhiteSpace(member.EmailAddress)) return;
+
+            var body = ParseEmailTemplate(Config.ApproveMembershipByCorporateAdminToMember, new EmailViewModel()
+            {
+                Member = member
+            });
+
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = "eMediCard: Notification of Membership Approval by Corporate Administrator to Member",
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(member.EmailAddress));
+            SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #region -- Receiving Entry --
+
+        private static void SendReceivingEntryUrgToUrg(EndorsementBatch endorsementBatch, string email)
+        {
+            if (string.IsNullOrEmpty(email)) return;
+
+            var body = ParseEmailTemplate(Config.ReceiveEntryUrgToUrg, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - {1} Received by URG to Processor", endorsementBatch.CompanyName, endorsementBatch.EndorsementType),
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(new MailAddress(string.Format("{0}@medicardphils.com",email)));
+            SendMailMessage(mailMessage);
+
+        }
+
+        private static void SendReceivingEntryUrgToCorporateAdmin(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ReceiveEntryUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard: Endorsement Received for Review and Processing({0})", endorsementBatch.EndorsementType),
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+            foreach (var email in GetCorporateAdminEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        private static void SendReceivingEntryUrgToAllAccess(EndorsementBatch endorsementBatch)
+        {
+            var body = ParseEmailTemplate(Config.ReceiveEntryUrgToCorporateAdmin, new EmailViewModel()
+            {
+                EndorsementBatch = endorsementBatch
+            });
+            var mailMessage = new MailMessage()
+            {
+                From = new MailAddress(Config.NotificationFromEmail),
+                Subject = string.Format("eMediCard:{0} - Endorsement Received By URG", endorsementBatch.EndorsementType),
+                Body = body,
+                IsBodyHtml = true
+            };
+            var sendEmail = false;
+
+            foreach (var email in GetOtherEmails(endorsementBatch.AccountCode))
+            {
+                mailMessage.To.Add(new MailAddress(email));
+                sendEmail = true;
+            }
+
+            if (sendEmail) SendMailMessage(mailMessage);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region  -- Functions --
+
+        private static string ParseEmailTemplate(string path, object model)
+        {
+            var templateConfig = new TemplateServiceConfiguration();
+            templateConfig.Resolver = new DelegateTemplateResolver(name =>
+            {
+                return System.IO.File.ReadAllText(name);
+            });
+
+            Razor.SetTemplateService(new TemplateService(templateConfig));
+            var template = Razor.Resolve(path, model);
+            var returnValue = template.Run(new ExecuteContext());
+            return returnValue;
+        }
+
+        private static void SendMailMessage(MailMessage mailMessage)
+        {
+            var thread = new Thread(new ParameterizedThreadStart(SendMailMessageAsync));
+            thread.Start(mailMessage);
+
+            //var smtpClient = new SmtpClient(Config.SmtpServer)
+            //{
+            //    Port = Config.SmtpPort,
+            //    Credentials = new NetworkCredential(Config.SmtpUsername, Config.SmtpPassword)
+            //};
+
+            //try
+            //{
+            //    //smtpClient.Timeout = 5;
+            //    smtpClient.Send(mailMessage);
+            //    Thread.Sleep(5000);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(ex.Message);
+            //}
+        }
+
+        private static void SendMailMessageAsync(object parameter)
+        {
+            MailMessage mailMessage = parameter as MailMessage;
+
+            var smtpClient = new SmtpClient(Config.SmtpServer)
+            {
+                Port = Config.SmtpPort,
+                Credentials = new NetworkCredential(Config.SmtpUsername, Config.SmtpPassword)
+            };
+
+            smtpClient.SendMailAsync(mailMessage);
+        }
+
+        private static IEnumerable<string> GetCorporateAdminEmails(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.Accounts.Where(t => t.Code == accountCode && t.IsCorporateAdmin && !string.IsNullOrEmpty(t.ApplicationUser.Email) && t.ApplicationUser.IsActive).Select(t => t.ApplicationUser.Email).ToList();
+            }
+        }
+
+        private static IEnumerable<string> GetUnderwriterEmails(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.Accounts.Where(t => t.Code == accountCode && t.IsUnderWriter && !string.IsNullOrEmpty(t.ApplicationUser.Email) && t.ApplicationUser.IsActive).Select(t => t.ApplicationUser.Email).ToList();
+            }
+        }
+
+        private static IEnumerable<string> GetOtherEmails(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.Accounts.Where(t => t.Code == accountCode && !t.IsCorporateAdmin && !t.IsUnderWriter && !string.IsNullOrEmpty(t.ApplicationUser.Email) && t.ApplicationUser.IsActive).Select(t => t.ApplicationUser.Email).ToList();
+            }
+        }
+
+        private static AccountSetting GetAccountSetting(string accountCode)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                return db.AccountSettings.FirstOrDefault(t => t.AccountCode == accountCode && !t.Deleted) ?? new AccountSetting();
+            }
+        }
+
+        private static string GetCompanyName(string accountCode)
+        {
+            using (var legacyDb = new LegacyDataContext())
+            {
+                var account = legacyDb.LegacyAccounts.FirstOrDefault(t => t.Code == accountCode);
+                return account != null ? account.Name : "";
+            }
+        }
+
+        private static void SetEndOfDayDates(out DateTime from, out DateTime to)
+        {
+            var now = DateTime.Now;
+            from = new DateTime(now.Year, now.Month, now.Day);
+            to = new DateTime(now.Year, now.Month, now.Day, 23, 59, 59);
+        }
+
+        private static string SubjectAmendment(RequestDataType requestDataType)
+        {
+            var simpleAmendment = "Simple amendment";
+
+            if (requestDataType == RequestDataType.LastName ||
+                requestDataType == RequestDataType.LastName ||
+                requestDataType == RequestDataType.MiddleName ||
+                requestDataType == RequestDataType.DateOfBirth ||
+                requestDataType == RequestDataType.Gender ||
+                requestDataType == RequestDataType.Address ||
+                requestDataType == RequestDataType.Telephone)
+            {
+                return simpleAmendment;
+            }
+            else if (requestDataType == RequestDataType.DateResign)
+            {
+                return "";
+            }
+
+            return "Company wide amendment";
+        }
+
+        #endregion
+    }
+}

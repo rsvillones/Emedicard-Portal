@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OfficeOpenXml;
+using Corelib.Models;
+using System.Linq.Expressions;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Mvc.Html;
+
+namespace Corelib.Classes
+{
+    public static class Extension
+    {
+        #region -- Excel Extensions --
+
+        public static string StringValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string propertyName = "")
+        {
+            if (range.Value == null)
+            {
+                switch (propertyName)
+                {
+                    case "Last Name":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                    case "First Name":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                    case "Applied Plan":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                    case "Dependent Applied Plan":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                    case "Member Code":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                    case "Member Type":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                }
+            }
+            return Convert.ToString(range.Value);
+        }
+
+        public static string IntegerValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string propertyName = "")
+        {
+            if (range.Value == null){
+                if (propertyName == "Number of Allowed Dependents") CheckError(range, db, error, model, propertyName, "field is required.");                
+                return Convert.ToString(range.Value);
+            }
+            try{
+                var returnValue = int.Parse(Convert.ToString(range.Value));
+                return Convert.ToString(returnValue);
+            }
+            catch (Exception){
+                CheckError(range, db, error, model, propertyName, "Input value is invalid.");
+                return Convert.ToString(range.Value);
+            }
+        }
+
+        public static string DecimalValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string propertyName = "")
+        {
+            if (range.Value == null)
+            {
+                CheckError(range, db, error, model, propertyName, "field is required.");
+                return Convert.ToString(range.Value);
+            }
+            try
+            {
+                var returnValue = decimal.Parse(Convert.ToString(range.Value));
+                return Convert.ToString(returnValue);
+            }
+            catch (Exception)
+            {
+                CheckError(range, db, error, model, propertyName, "Input value is invalid.");
+                return Convert.ToString(range.Value);
+            }
+        }
+
+        public static string DateValue(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string propertyName = "")
+        {
+            if (range.Value == null)
+            {
+                switch (propertyName)
+                {
+                    case "Date of Birth":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+                    case "Cancelation Date":
+                        CheckError(range, db, error, model, propertyName, "field is required.");
+                        break;
+
+                } 
+                return Convert.ToString(range.Value);
+            }
+            try
+            {
+                var returnValue = DateTime.Parse(Convert.ToString(range.Value));
+                return Convert.ToString(returnValue);
+            }
+            catch (Exception)
+            {
+                CheckError(range, db, error, model, propertyName, "Input value is invalid.");
+                return Convert.ToString(range.Value);
+            }
+        }
+
+        private static void CheckError(this ExcelRange range, IdentityDataContext db, ExcelError error, ApplicationVerification model, string propertyName = "", string errorMessage = "")
+        {
+            error.ErrorMessage = string.Format("{0} field is required.",propertyName);
+            error.Value = Convert.ToString(range.Value);
+            error.Column = propertyName;
+            db.ExcelErrors.Add(error);
+            db.SaveChanges();
+            model.IsError = true;
+            model.ErrorMessage = model.ErrorMessage == null ? string.Format("{1} {0}",errorMessage, propertyName) : string.Format("{1}, {0} {2}", propertyName,model.ErrorMessage, errorMessage);
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,195 @@
+@model PagedList.IPagedList<Amendment>
+
+@{
+    ViewBag.Title = "Amendments";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+    var amendment = new Amendment();
+    IEnumerable<Dependent> dependents = ViewBag.Dependents;
+    IEnumerable<Member> members = ViewBag.Members;
+}
+@Html.Action("AccountInformation", "BaseAccount")
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="title">Amendments</h2>
+    </div>
+    @using (Html.BeginForm("Index", "Amendments", FormMethod.Get, new { accountCode = ViewBag.AccountCode }))
+    {
+        <div class="col-lg-4">
+            <div class="input-group input-group-search">
+                <input type="text" value="@ViewBag.SearchValue" readonly="readonly" id="click" class="form-control space-cr search-filter" placeholder="Search & Filter">
+                <div class="input-group-btn">
+                    <button type="button" class="dropdown-toggle btn-dd btn-default" data-toggle="dropdown" tabindex="-1">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="rightMenu dropdown-menu">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row"><div class="col-sm-11 col-centered"><h4 class="form-title ">Search & Filter</h4></div></div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Request Date:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.RequestDate" name="requestDate" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Member Name:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.MemberName" name="memberName" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Request Reason:</label>
+                                    <div class="col-lg-12">
+                                        <input type="text" value="@ViewBag.RequestReason" name="requestReason" onclick="return false;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12">Request For:</label>
+                                    <div class="col-lg-12">
+                                        @Html.DropDownList("requestForId", (IEnumerable<SelectListItem>)ViewBag.EnumSelectList, "-- Select --", new { @class = "form-control last-input" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-grp btn-search"
+                        tabindex="-1">
+                    Search
+                </button>
+            </div>
+
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">
+        @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && User.IsInRole("CanAddAmendments")))
+        {
+            <p style="float: right">
+                @Html.ActionLink("Add Amendment", "Amendment", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+            </p>
+        }
+    </div>
+</div>
+
+<table class="table table-custom">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(modelItem => amendment.RequestDate)
+        </th>
+        <th>
+            Member Name
+        </th>
+        <th>
+            @Html.DisplayNameFor(modelItem => amendment.RequestFor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(modelItem => amendment.DataType)
+        </th>
+        <th>
+            Request Reason
+        </th>
+        <th>
+            Request Status
+        </th>
+        <th>
+            Document Type
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        var member = members.FirstOrDefault(t => t.Id == item.MemberId);
+        var dependentName = item.DependentId != null ? dependents.FirstOrDefault(t => t.Id == item.DependentId).FullName : "";
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.RequestDate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => member.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.RequestFor)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.DataType)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Reason.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.DocumentType.Name)
+            </td>
+            <td>
+                @*@if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddAmendments") || User.IsInRole("CanEditAmendments"))))
+                {
+                    if (item.Status == Corelib.Enums.RequestStatus.Submitted)
+                    {
+                        @Html.ActionLink("Approve", "ApproveAmendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })
+                        @Html.ActionLink("Disapprove", "DisapproveAmendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-danger btn-xs btn-margin" })
+                        @Html.ActionLink("Cancel", "CancelAmendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-danger btn-xs btn-margin" })
+                    }
+                }
+                @Html.ActionLink("View Data", "Amendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @class = "btn btn-primary btn-xs btn-margin" })*@
+
+
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                    @if (User.IsInRole("SysAd") || (!(bool)ViewBag.IsReadOnlyUser && (User.IsInRole("CanAddAmendments") || User.IsInRole("CanEditAmendments"))))
+                    {
+                        if (item.Status == Corelib.Enums.RequestStatus.Submitted)
+                        {                        
+                            <li>@Html.ActionLink("Approve", "ApproveAmendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                            <li>@Html.ActionLink("Disapprove", "DisapproveAmendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                            <li>@Html.ActionLink("Cancel", "CancelAmendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                        }
+                    }
+                            <li>@Html.ActionLink("View Data", "Amendment", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+            $('input[name="requestDate"]').datepicker();
+            $(function () {
+                $('.dropdown-menu input , .dropdown-menu select').click(function (event) {
+                    event.stopPropagation();
+                });
+            });
+            $(function () {
+                //$(".dropdown-toggle").dropdown('toggle'); // this works
+                $('#click').click(function (e) {
+                    e.stopPropagation();
+                    $(".dropdown-toggle").dropdown('toggle');// this doesn't
+                });
+            });
+        });
+    </script>
+}
+
+

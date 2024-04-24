@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Corelib.Models
+{
+    [Table("SYS_UWPRINCIPAL_ACTIVE_MTBL")]
+    public class LegacyMember
+    {
+        #region -- Properties --
+
+        [Key]
+        [Column("MEM_CODE")]
+        public string Code { get; set; }
+
+        [Column("ACCOUNT_CODE")]
+        public string AccountCode { get; set; }
+
+        [Column("MEM_LNAME")]
+        public string LastName { get; set; }
+
+        [Column("MEM_FNAME")]
+        public string FirstName { get; set; }
+
+        [Column("MEM_MI")]
+        public string MiddleName { get; set; }
+        
+        public string EmailAddress { get; set; }
+
+        [Column("MEM_BDAY")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateOfBirth { get; set; }
+
+        [Column("MEM_AGE")]
+        public Single Age { get; set; }
+
+        [Column("AREA_DESC")]
+        public string Area { get; set; }
+
+        [Column("COMPANY_ID")]
+        public string EmployeeNumber { get; set; }
+
+        [Column("RSPROOMRATE_ID")]
+        public int AppliedPlan { get; set; }
+
+        [Column("PLAN_DESC")]
+        public string AppliedPlanDescription { get; set; }
+
+        [Column("PRIN_CODE")]
+        public string PrincipalMemberCode { get; set; }
+
+        [NotMapped]
+        public string Type
+        {
+            get
+            {
+                return String.IsNullOrEmpty(this.PrincipalMemberCode) ? "Principal" : "Dependent";
+            }
+        }
+
+        [Column("RELATION_CODE")]
+        public string Relationship { get; set; }
+
+        [Column("DEP_DESCRIPTION")]
+        public string RelationshipDescription { get; set; }
+
+        [Column("SEX_DESC")]
+        public string Gender { get; set; }
+
+        [Column("MEMCSTAT_DESC")]
+        public string CivilStatus { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        [Column("EFF_DATE")]
+        public DateTime? EffectivityDate { get; set; }
+
+        [Column("VAL_DATE")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? ValidityDate { get; set; }
+
+        [Column("PRINCIPAL")]
+        public string Principal { get; set; }
+
+        public ICollection<LegacyDependent> LegacyDependents { get; set; }
+
+        #endregion
+
+        #region -- Not Mapped Properties --
+
+        [NotMapped]
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get
+            {
+                var fullName = string.Format("{0}, {1}", LastName, FirstName); ;
+                if (!string.IsNullOrEmpty(MiddleName))
+                {
+                    fullName = string.Format("{0}, {1} {2}", LastName, FirstName, MiddleName.Substring(0, 1).ToUpper());
+                }
+                return fullName;
+            }
+        }
+        
+        #endregion
+    }
+}

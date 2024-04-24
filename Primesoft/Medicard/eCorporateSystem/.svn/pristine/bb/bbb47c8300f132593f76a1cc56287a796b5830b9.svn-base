@@ -1,0 +1,103 @@
+﻿@model PagedList.IPagedList<Member>
+
+@{
+    ViewBag.Title = "Endorsement Approvals";
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div id="panel-title">Endorsement Listings</div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="panel-container">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-6 pageList-margin">
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+                                <p class="pager-padding" style="float: right">
+                                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                                </p>
+                            </div>
+                            <div class="col-lg-6">&nbsp;</div>
+                        </div>
+
+                        <table class="table table-custom">
+                            <tr>
+                                <th>
+                                    Employee Number
+                                </th>
+                                <th>
+                                    Last Name
+                                </th>
+                                <th>
+                                    First Name
+                                </th>
+                                <th>
+                                    Middle Name
+                                </th>
+                                <th>
+                                    Applied Plan
+                                </th>
+                                <th>
+                                    Enrolled Dependents
+                                </th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(model => item.EmployeeNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.LastName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.FirstName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.MiddleName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.AppliedPlanDescription)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => item.Dependents.Count)
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                                                Actions
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                                                <li>@Html.ActionLink("Submit to Medicard", "Approve", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @onclick = "if(!confirm('Are you sure you want to submit the selected member to medicard for processing?')) return false;" })</li>
+                                                <li>@Html.ActionLink("View Profile", "MemberProfile", new { accountCode = ViewBag.AccountCode, guid = item.Guid })</li>
+                                                <li>@Html.ActionLink("Cancel", "CancelMember", new { accountCode = ViewBag.AccountCode, guid = item.Guid }, new { @onclick = "if(!confirm('Are you sure you want to cancel the selected member?')) return false;" })</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @Html.Partial("_Message")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.location.href.indexOf("name_desc") > -1) {
+                $('.sort-table').find('i').toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+}
+
+

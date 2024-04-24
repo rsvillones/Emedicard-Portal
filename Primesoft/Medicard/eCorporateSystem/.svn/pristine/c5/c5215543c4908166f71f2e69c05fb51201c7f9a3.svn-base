@@ -1,0 +1,44 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit Request For ID Replacement By Member Sent to URG</p>
+<br />
+<p class="greetings">Dear Sir/Ma'am</p>
+<br />
+<p class="details">The following has submitted his/her request for id replacement for your approval:</p>
+<br />
+<table>
+    <thead>
+        <tr>
+            <th>Member Name</th>
+            <th>Request Date</th>
+            <th>Request For</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>@Model.IdReplacement.MemberName</td>
+                <td>@Model.IdReplacement.RequestDate</td>
+                <td>@Model.IdReplacement.RequestFor</td>
+                <td>
+                    @if (Model.IdReplacement.RequestFor == Corelib.Enums.RequestFor.Dependent)
+                    {
+                        @Model.IdReplacement.DependentName
+                    }
+                    else
+                    {
+                        @Model.IdReplacement.MemberName
+                    }
+                </td>
+            </tr>
+    </tbody>
+</table>
+<br />
+<p class="details">
+    You may click on <a href="@(Corelib.Config.BaseUrl)/MembershipEndorsements?referenceNumber=@(Model.IdReplacement.EndorsementBatch.ReferenceNumber)">here</a> to login and view the endorsement.
+</p>
+<br />
+<p class="details">Disclaimer:</p>
+<br />

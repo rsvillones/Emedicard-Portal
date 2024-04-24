@@ -1,0 +1,33 @@
+﻿@using System.Web.UI.WebControls
+@{
+    Layout = "~/Areas/CorporateAdministrator/Views/Shared/_AccountManagerLayout.cshtml";
+    ViewBag.Title = "Utilization Reporting Member All Services";
+}
+@section head{
+    <style>
+        html, body {
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+}
+<div class="row">
+    <iframe id="iFrame" class="col-lg-12" style=" height: 100%;min-height: 400px; width: 100%; border: 0px;" src="@Url.Content("~/Reports/UtilizationReporting/MemberAllService.aspx")?accountCode=@ViewBag.AccountCode"></iframe>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        function pageY(elem) {
+            return elem.offsetParent ? (elem.offsetTop + pageY(elem.offsetParent)) : elem.offsetTop;
+        }
+        var buffer = 10; //scroll bar buffer
+        function resizeIframe() {
+            var height = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
+            height -= pageY(document.getElementById('iFrame')) + buffer;
+            height = (height < 0) ? 0 : height;
+            document.getElementById('iFrame').style.height = height + 'px';
+        }
+        window.onresize = resizeIframe;
+        window.onload = resizeIframe;
+    </script>
+}

@@ -1,0 +1,47 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Additional Member</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">This is to confirm your instruction for Membership Endorsement,</p>
+<p class="details">the details of which are as follows:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Total Count:  @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+@if (Model.EndorsementBatch.BatchType != "Single")
+{
+    <p class="details">Filename: @Model.EndorsementBatch.Filename</p>
+}
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Date: @Model.EndorsementBatch.Date.ToString("MM/dd/yyyy hh:mm tt")</p>
+<br />
+@if (Model.EndorsementBatch.BatchType == "Single")
+{
+    <table border="1" style="border-collapse:collapse;width:70%">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Date of Birth</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var eb in Model.EndorsementBatch.Members)
+            {
+                <tr>
+                    <td>@eb.LastName</td>
+                    <td>@eb.FirstName</td>
+                    <td>@eb.MiddleName</td>
+                    <td>@eb.DateOfBirth.ToString("MM/dd/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+}
+<p class="details">Thank you for using eMedicard!</p>

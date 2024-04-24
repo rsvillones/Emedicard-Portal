@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Mvc.Mailer;
+using System.Net.Mail;
+using Corelib;
+using WebUI.Models;
+using Corelib.Models;
+
+namespace WebUI.Mailers
+{
+    public class UserMailer : MailerBase, IUserMailer
+    {
+        public UserMailer()
+        {
+            MasterName = "_Layout";
+        }
+
+        public virtual MvcMailMessage SendMemberNotification(Member member,string userName,string password)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel()
+                {
+                    Member = member,
+                    Password = password,
+                    UserName = userName,
+                    Url = Helper.AbsoluteAction("Index", "Profile", new { area = "Member" })
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "MembershipEmailNotification",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Membership Email Notification for Member",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/MemberNotification.cshtml")
+                };
+                return returnValue;
+            }
+        }
+
+        public virtual MvcMailMessage SendBatchSummaryNotification(List<Member> members)
+        {
+            using (var db = new IdentityDataContext())
+            {
+                var emailViewModel = new EmailViewModel() { 
+                    Members = members
+                };
+
+                var returnValue = new MvcMailMessage
+                {
+                    ViewName = "BatchSummaryNotification",
+                    From = new MailAddress(Config.NotificationFromEmail),
+                    Subject = "Process Batch Summary Notification",
+                    IsBodyHtml = true,
+                    Body = Helper.SetEmailTemplate(emailViewModel, "~/Views/EmailTemplates/ProcessBatchNotification.cshtml")
+                };
+
+                return returnValue;
+            }
+        }
+    }
+}

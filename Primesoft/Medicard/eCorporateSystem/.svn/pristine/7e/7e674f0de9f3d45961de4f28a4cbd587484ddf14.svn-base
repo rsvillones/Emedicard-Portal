@@ -1,0 +1,108 @@
+﻿@model PagedList.IPagedList<AdditionalDependent>
+@{
+    ViewBag.Title = "Additional Dependents";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="title">Application for Additional Dependents</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 pageList-margin">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+        <p class="pager-padding" style="float: right">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </p>
+    </div>
+    <div class="col-lg-6">
+        <p style="float: right">
+            @Html.ActionLink("Create New", "Create", new { accountCode = ViewBag.AccountCode }, new { @class = "btn btn-primary" })
+        </p>
+    </div>
+</div>
+
+
+<table class="table table-custom">
+    <thead>
+        <tr>
+            <th>
+                Name of Dependent
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Civil Status
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                Date of Birth
+            </th>
+            <th>
+                Relationship
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                &nbsp;
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CivilStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Relationship.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                            Actions
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu-table" role="menu" aria-labelledby="dropdownMenu1">
+                            @if (item.Status == Corelib.Enums.RequestStatus.Saved)
+                            {
+                                <li><a href="javascript:void(0)" onclick="deleteItem('@Url.Action("Delete", "AdditionalDependents", new { area = "Member", guid = item.Guid })')">Delete</a></li>
+                            }
+                            else if (item.Status == Corelib.Enums.RequestStatus.Submitted)
+                            {
+                                <li><a href="javascript:void(0)" onclick="cancelItem('@Url.Action("Cancel", "AdditionalDependents", new { area = "Member", guid = item.Guid })')">Cancel</a></li>
+                            }
+                            <li>@Html.ActionLink("View Data", "Edit", new { guid = item.Guid })</li>
+                            <li>@Html.ActionLink("Medical History", "MedicalHistory", new { guid = item.Guid })</li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Html.Partial("_Message")
+}

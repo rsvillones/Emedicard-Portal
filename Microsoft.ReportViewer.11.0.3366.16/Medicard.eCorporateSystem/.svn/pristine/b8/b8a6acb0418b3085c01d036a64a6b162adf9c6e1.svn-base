@@ -1,0 +1,160 @@
+@model CorporateAdminViewModel
+
+<div class="col-lg-6 form-group">
+    <h4 class="form-title">User Information</h4>
+    @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.MiddleInitial, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.MiddleInitial, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.MiddleInitial, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Fax, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Fax, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-3" })
+    <div class="col-md-9">
+        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group col-lg-6">
+    <h4 class="form-title">Associated Accounts</h4>
+    <table class="table table-fixed">
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Use Email as Login</th>
+                <th>Use Random Generated Password</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (LegacyAccount legacyAccount in ViewBag.LegacyAccounts)
+            {
+                var account = Model.Accounts != null ? Model.Accounts.FirstOrDefault(t => t.Code == legacyAccount.Code) : null;
+                <tr>
+                    <td>
+                        <input type="hidden" name="AccountCode" value="@legacyAccount.Code" />
+                        <input type="hidden" name="UseAccountCode" value="@(account != null ? "true" : "false")" />
+                        <input type="hidden" name="UseEmailAsLogin" value="@(account != null && account.UseEmailAsLogin ? "true" : "false")" />
+                        <input type="hidden" name="UseRandomGeneratedPassword" value="@(account != null && account.UseRandomGeneratedPassword ? "true" : "false")" />
+                        <input onchange="OnAccountCheckChange(this)" type="checkbox" id="LegacyAccount@(legacyAccount.Code)" value="@legacyAccount.Code" @(account != null ? "checked='checked'" : "") />
+                        @legacyAccount.Name
+                    </td>
+
+                    <td class="align-center">
+                        <input onchange="OnUseEmailAsLoginChange(this)" type="checkbox" @(account != null ? "" : "disabled='disabled'") @(account != null && account.UseEmailAsLogin ? "checked='checked'" : "") />
+                    </td>
+                    <td class="align-center">
+                        <input onchange="OnUseRandomGeneratedPasswordChange(this)" type="checkbox" @(account != null ? "" : "disabled='disabled'") @(account != null && account.UseRandomGeneratedPassword ? "checked='checked'" : "") />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    function OnAccountCheckChange(checkbox) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+
+        var accountCode = tr.children('td:nth-child(1)').children('input[name="UseAccountCode"]');
+        var useEmailAsLogin = tr.children('td:nth-child(1)').children('input[name="UseEmailAsLogin"]');
+        var useRandomGeneratedPassword = tr.children('td:nth-child(1)').children('input[name="UseRandomGeneratedPassword"]');
+
+        var useEmailAsLoginCheckbox = tr.children('td:nth-child(3)').children('input:first');
+        var useRandomGeneratedPasswordCheckbox = tr.children('td:nth-child(4)').children('input:first');
+
+        if (checked) {
+            useEmailAsLoginCheckbox.removeAttr('disabled');
+            useRandomGeneratedPasswordCheckbox.removeAttr('disabled');
+
+            accountCode.val('true');
+        }
+        else {
+            if (!useEmailAsLoginCheckbox.attr('disabled')) {
+                useEmailAsLoginCheckbox.attr('disabled', 'disabled');
+            }
+            useEmailAsLoginCheckbox.removeAttr('checked');
+            if (!useRandomGeneratedPasswordCheckbox.attr('disabled')) {
+                useRandomGeneratedPasswordCheckbox.attr('disabled', 'disabled');
+            }
+            useRandomGeneratedPasswordCheckbox.removeAttr('checked');
+
+            accountCode.val('false');
+            useEmailAsLogin.val('false');
+            useRandomGeneratedPassword.val('false');
+        }
+    }
+
+    function OnUseEmailAsLoginChange(checkbox) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+        var useEmailAsLogin = tr.children('td:nth-child(1)').children('input[name="UseEmailAsLogin"]');
+        if (checked) {
+            useEmailAsLogin.val('true');
+        }
+        else {
+            useEmailAsLogin.val('false');
+        }
+    }
+
+    function OnUseRandomGeneratedPasswordChange(checkbox) {
+        var checked = $(checkbox).is(':checked');
+        var tr = $(checkbox).parent().parent();
+        var useRandomGeneratedPassword = tr.children('td:nth-child(1)').children('input[name="UseRandomGeneratedPassword"]');
+        if (checked) {
+            useRandomGeneratedPassword.val('true');
+        }
+        else {
+            useRandomGeneratedPassword.val('false');
+        }
+    }
+</script>

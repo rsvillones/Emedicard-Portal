@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+  </configSections>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
+  </startup>
+  <entityFramework>
+    <defaultConnectionFactory type="System.Data.Entity.Infrastructure.LocalDbConnectionFactory, EntityFramework">
+      <parameters>
+        <parameter value="v11.0" />
+      </parameters>
+    </defaultConnectionFactory>
+    <providers>
+      <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+    </providers>
+  </entityFramework>
+  <connectionStrings>
+    <!--<add name="Medicard.eCorporateSystem" connectionString="Data Source=(local);Initial Catalog=eCorporateSystem;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />-->
+    <add name="Medicard.eCorporateSystem" connectionString="Data Source=emedicard;Initial Catalog=eMEDICARD;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+    <!--<add name="Medicard.LegacySystem" connectionString="Data Source=(local);Initial Catalog=MedicardDb;User Id=sa;Password=P@ssw0rd;" providerName="System.Data.SqlClient" />-->
+    <add name="Medicard.LegacySystem" connectionString="Data Source=emedicard;Initial Catalog=Medicard;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+    <add name="Medicard.UtilizationSystem" connectionString="Data Source=hellion\twilight;Initial Catalog=Claims;User Id=prime_user;Password=prime_user;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  <appSettings>
+    <add key="NotificationFromEmail" value="noreply@medicardphils.com" />
+    <add key="MvcMailer.BaseURL" value="" />
+    <add key="ActionMemoDocumentsPath" value="\\triton\emed_files\AM" />
+    <add key="UrgActionMemoTemplatePath" value="D:\Projects\Medicard\eCorporateSystem\WebUI\Views\EmailTemplates\UrgActionMemo.cshtml" />
+    <add key="UrgActionMemoToMemberTemplatePath" value="D:\Projects\Medicard\eCorporateSystem\WebUI\Views\EmailTemplates\UrgActionMemoToMember.cshtml" />
+
+    <add key="EmailLayout" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\_Layout.cshtml" />
+
+    <add key="NewAccess" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\NewUser\NewAccess.cshtml" />
+
+    <add key="ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessNewEndorsementBatchByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ProcessNewEndorsementBatchByCorporateAdminToMember.cshtml" />
+    <add key="SubmitNewMemberByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\SubmitNewMemberByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitNewMemberByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\SubmitNewMemberByMemberToMember.cshtml" />
+    <add key="SubmitNewMemberByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\SubmitNewMemberByMemberToUrg.cshtml" />
+    <add key="ApproveNewMemberByUrgToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ApproveNewMemberByUrgToCorporateAdmin.cshtml" />
+    <add key="ApproveNewMemberByUrgToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\New\ApproveNewMemberByUrgToMember.cshtml" />
+
+    <add key="ActionMemoByUrgToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoByUrgToCorporateAdmin.cshtml" />
+    <add key="ActionMemoByUrgToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoByUrgToMember.cshtml" />
+    <add key="ActionMemoReplyByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToCorporateAdmin.cshtml" />
+    <add key="ActionMemoReplyByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoReplyByMemberToUrg.cshtml" />
+    <add key="ActionMemoReplyByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\ActionMemo\ActionMemoReplyByCorporateAdminToMember.cshtml" />
+
+    <add key="ProcessRenewalByCorporateAdminToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToCorporateAdmin.cshtml" />
+    <add key="ProcessRenewalByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Renewal\ProcessRenewalByCorporateAdminToMember.cshtml" />
+
+    <add key="ProcessCancelledMemberByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\CancelledMember\ProcessCancelledMemberByCorporateAdminToUrg.cshtml" />
+
+    <add key="SubmitIdReplacementByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToMember.cshtml" />
+    <add key="SubmitIdReplacementByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitIdReplacementByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByMemberToUrg.cshtml" />
+    <add key="SubmitIdReplacementByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToMember.cshtml" />
+    <add key="SubmitIdReplacementByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\SubmitIdReplacementByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledIdReplacementByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\CancelledIdReplacementByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveIdReplacementByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\IdReplacement\DisapproveIdReplacementByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitAmendmentByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByMemberToMember.cshtml" />
+    <add key="SubmitAmendmentByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitAmendmentByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByMemberToUrg.cshtml" />
+    <add key="SubmitAmendmentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToMember.cshtml" />
+    <add key="SubmitAmendmentByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\SubmitAmendmentByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledAmendmentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\CancelledAmendmentByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveAmendmentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\Amendment\DisapproveAmendmentByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitAdditionalDependentByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToMember.cshtml" />
+    <add key="SubmitAdditionalDependentByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitAdditionalDependentByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByMemberToUrg.cshtml" />
+    <add key="SubmitAdditionalDependentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <add key="SubmitAdditionalDependentByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\SubmitAdditionalDependentByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledAdditionalDependentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\CancelledAdditionalDependentByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveAdditionalDependentByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\AdditionalDependent\CancelledAdditionalDependentByCorporateAdminToMember.cshtml" />
+
+    <add key="SubmitDependentCancellationByMemberToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToMember.cshtml" />
+    <add key="SubmitDependentCancellationByMemberToCorporateAdmin" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToCorporateAdmin.cshtml" />
+    <add key="SubmitDependentCancellationByMemberToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\SubmitDependentCancellationByMemberToUrg.cshtml" />
+    <add key="SubmitDependentCancellationByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\SubmitDependentCancellationByCorporateAdminToMember.cshtml" />
+    <add key="SubmitDependentCancellationByCorporateAdminToUrg" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\SubmitDependentCancellationByCorporateAdminToUrg.cshtml" />
+    <add key="CancelledDependentCancellationByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\CancelledDependentCancellationByCorporateAdminToMember.cshtml" />
+    <add key="DisapproveDependentCancellationByCorporateAdminToMember" value="D:\Project\Medicard\eCorporateSystem\Emailer\EmailTemplates\DependentCancellation\DisapproveDependentCancellationByCorporateAdminToMember.cshtml" />
+
+    <add key="SmtpServer" value="owa.medicardphils.com" />
+    <add key="SmtpUsername" value="noreply@medicardphils.com" />
+    <add key="SmtpPassword" value="medicard123" />
+    <add key="SmtpPort" value="25" />
+    <!--<add key="SmtpServer" value="mail.primesoft.com" />
+    <add key="SmtpUsername" value="edcarandang@primesoft.com" />
+    <add key="SmtpPassword" value="ys@0319" />
+    <add key="SmtpPort" value="26" />-->
+
+    <add key="CheckActionMemoMinutes" value="10" />
+    <add key="CheckNewCorporateAccountsMinutes" value="10" />
+    <add key="CheckMemberProcessMinutes" value="10" />
+    <add key="SendEmailNotificationTime" value="11:59 PM" />
+  </appSettings>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin.Security" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin.Security.Cookies" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Owin.Security.OAuth" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-5.1.0.0" newVersion="5.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-1.5.2.14234" newVersion="1.5.2.14234" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <system.net>
+    <mailSettings>
+      <smtp deliveryMethod="Network">
+        <!--<network host="owa.medicardphils.com" userName="noreply@medicardphils.com" password="medicard123" port="25" />-->
+        <network host="mail.primesoft.com" userName="edcarandang@primesoft.com" password="ys@0319" port="26" />
+      </smtp>
+    </mailSettings>
+  </system.net>
+</configuration>

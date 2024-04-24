@@ -1,0 +1,56 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Submit New Member By Member Sent to Corporate Admin</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+@if (Model.BypassCorporateAdminApproval)
+{
+  <p class="details">The following was enrolled with the following details:</p>  
+}
+else
+{
+     <p class="details">The following has submitted his/her membership application for your approval:</p>  
+}
+<br />
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Number or Records:  @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<br />
+<table border="1" style="border-collapse:collapse;width:70%">
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Birthday</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model.EndorsementBatch.Members)
+        {
+            if (!(member.DateSubmittedToCorporateAdmin >= Model.From && member.DateSubmittedToCorporateAdmin <= Model.To)) { continue; }
+
+            <tr>
+                <td>@member.LastName</td>
+                <td>@member.FirstName</td>
+                <td>@member.MiddleName</td>
+                <td>@member.DateOfBirth.ToString("MM/dd/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+@if (!Model.BypassCorporateAdminApproval)
+{
+    <p class="details">
+        You may click on <a href="@(Corelib.Config.BaseUrl)/CorporateAdministrator/Endorsement/Index/@Model.EndorsementBatch.AccountCode">here</a> to login and approve their application.
+    </p>
+    <br />
+}
+
+<p class="details">Disclaimer:</p>
+<br />

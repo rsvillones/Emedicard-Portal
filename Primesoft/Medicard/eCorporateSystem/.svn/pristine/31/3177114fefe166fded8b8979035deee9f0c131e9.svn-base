@@ -1,0 +1,123 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using OfficeOpenXml;
+using System.IO;
+using System.Data.Entity;
+using Corelib.Classes;
+using System.Threading.Tasks;
+
+namespace WebUI.Areas.CorporateAdministrator.Controllers
+{
+    [Authorize(Roles = "SysAd, CanViewAmendments")]
+    public class RequestManagementController : BaseAccountController
+    {
+        public ActionResult Index(string accountCode, string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.MemberRequests.Include(t=>t.Reason).Include(t=>t.DocumentType).Where(t => t.AccountCode == this.LegacyAccount.Code && !t.Deleted).ToList();
+
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).ToList();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult Amendments(string accountCode,Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            MemberRequest memberRequest;
+            if (guid != null && db.MemberRequests.Any(t => t.Guid == guid && !t.Deleted)){
+                memberRequest = db.MemberRequests.FirstOrDefault(t=>t.Guid == guid);
+            }
+            else{
+                memberRequest = new MemberRequest() { 
+                    AccountCode = accountCode,
+                    EffectivityDate = DateTime.Now,
+                    RequestType = Corelib.Enums.RequestType.Amendment,
+                    EndorsementBatchId = 1,
+                    MemberId = 1
+                };
+            }
+
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+
+            return View(memberRequest);
+        }
+
+        [HttpPost]
+        public ActionResult Amendments(MemberRequest memberRequest, string accountCode)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+            
+            byte[] fileData = null;
+            using (var binaryReader = new BinaryReader(memberRequest.FileWrapper.InputStream))
+            {
+                fileData = binaryReader.ReadBytes(memberRequest.FileWrapper.ContentLength);
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (memberRequest.Id == 0)
+                {
+                    memberRequest.DocumentFile = fileData;
+                    db.MemberRequests.Add(memberRequest);
+                }
+                else
+                {
+                    memberRequest.DocumentFile = fileData;
+                    db.Entry(memberRequest).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { accountCode = accountCode });
+            }
+
+
+            ViewBag.ReasonId = new SelectList(db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder), "Id", "Description", memberRequest.ReasonId);
+            ViewBag.DependentId = new SelectList(db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName), "Id", "FullName", memberRequest.DependentId);
+            ViewBag.DocumentTypeId = new SelectList(db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder), "Id", "Name", memberRequest.DocumentTypeId);
+
+            return View(memberRequest);
+        }
+
+        public ActionResult IdReplacement(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateAccountCode(accountCode);
+            if (returnValue != null) return returnValue;
+
+            MemberRequest memberRequest;
+            if (guid != null && db.MemberRequests.Any(t => t.Guid == guid && !t.Deleted))
+            {
+                memberRequest = db.MemberRequests.FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                memberRequest = new MemberRequest()
+                {
+                    AccountCode = accountCode,
+                    EffectivityDate = DateTime.Now,
+                    RequestType = Corelib.Enums.RequestType.IdReplacement
+                };
+            }
+
+            ViewBag.ReasonId = new SelectList(db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder), "Id", "Description", memberRequest.ReasonId);
+            ViewBag.DependentId = new SelectList(db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName), "Id", "FullName", memberRequest.DependentId);
+
+            return View(memberRequest);
+        }
+    }
+}

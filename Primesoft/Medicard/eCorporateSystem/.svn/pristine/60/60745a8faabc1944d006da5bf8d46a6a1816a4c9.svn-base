@@ -1,0 +1,7 @@
+﻿
+@{
+    ViewBag.Title = "_NewApplicationVerification";
+}
+
+<h2>_NewApplicationVerification</h2>
+

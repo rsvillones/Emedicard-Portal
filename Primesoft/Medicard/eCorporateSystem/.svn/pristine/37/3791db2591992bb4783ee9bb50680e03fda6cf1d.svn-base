@@ -1,0 +1,23 @@
+﻿@{
+    Layout = Corelib.Config.EmailLayout;
+}
+
+<p class="title">Approve New Member by Urg to Corporate Admin</p>
+<br />
+<p class="details">Dear Sir/Ma'am,</p>
+<br />
+<p class="details">This is to confirm your instruction for Membership Endorsement,</p>
+<p class="details">the details of which are as follows:</p>
+<p class="details">Endorsement Type: @Model.EndorsementBatch.EndorsementType</p>
+<p class="details">Endorsement Method: @Model.EndorsementBatch.BatchType</p>
+<p class="details">Number or Records:  @Model.EndorsementBatch.EndorsementCount</p>
+<p class="details">Company Name: @Model.EndorsementBatch.CompanyName</p>
+<p class="details">Filename: @Model.EndorsementBatch.Filename</p>
+<p class="details">Reference ID: @Model.EndorsementBatch.ReferenceNumber</p>
+<p class="details">Date: @Model.EndorsementBatch.Date.ToString("MM/dd/yyyy hh:mm tt")</p>
+
+<br />
+<p class="details">Thank you for using eMedicard!</p>
+<br />
+<p class="details">Disclaimer:</p>
+<br />

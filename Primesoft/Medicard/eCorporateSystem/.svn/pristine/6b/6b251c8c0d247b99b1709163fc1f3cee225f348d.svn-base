@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.Web;
+using System.Web.Mvc;
+using WebUI.Areas.Member.Models;
+using PagedList;
+using Corelib;
+using Corelib.Models;
+using Corelib.Enums;
+
+namespace WebUI.Areas.Member.Controllers
+{
+    [Authorize(Roles = "Member")]
+    public class AmendmentsController : BaseMemberController
+    {
+        // GET: Member/Amendments
+        [Authorize(Roles = "Member")]
+        public ActionResult Index(string accountCode, string sortOrder, string currentFilter, int? page, string messageType, string message)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+
+            ViewBag.MessageType = messageType;
+            ViewBag.Message = message;
+
+            var model = db.Amendments
+                .Include(t => t.EndorsementBatch)
+                .Include(t => t.Reason)
+                .Include(t => t.DocumentType)
+                .Where(t => !t.Deleted && t.MemberId == this.Member.Id)
+                .OrderByDescending(t => t.RequestDate).ToList();
+
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).ToList();
+
+            return View(model.ToPagedList(page ?? 1, Config.RecordCountPerPage));
+        }
+
+        public ActionResult Amendment(string accountCode, Guid? guid)
+        {
+            var returnValue = base.ValidateUser();
+            if (returnValue != null) return returnValue;
+                        
+            Amendment model;
+            if (guid != null && db.Amendments.Any(t => t.Guid == guid))
+            {
+                model = db.Amendments.Include(t => t.EndorsementBatch).FirstOrDefault(t => t.Guid == guid);
+            }
+            else
+            {
+                model = new Amendment()
+                {
+                    MemberId = this.Member.Id,
+                    Status = Corelib.Enums.RequestStatus.Saved
+                };
+            }
+            
+            ViewBag.Reasons = db.Reasons.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Dependents = db.Dependents.Where(t => !t.Deleted).OrderBy(t => t.LastName);
+            ViewBag.DocumentTypes = db.DocumentTypes.Where(t => !t.Deleted).OrderBy(t => t.DisplayOrder);
+            ViewBag.Members = db.Members.Where(t => !t.Deleted && t.AccountCode == accountCode).OrderBy(t => t.LastName);
+
+            return View(model);
+        }
+            
+    }
+}

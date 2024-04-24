@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "emedicard", "emedicard.vbproj", "{405D8518-7ECC-432C-820F-A5748EC624D2}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "emedicard_DAL", "..\emedicard_DAL\emedicard_DAL.vbproj", "{7B682506-D8AC-43E2-8E4B-80AAD94D5809}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "emedicardBLL", "..\emedicardBLL\emedicardBLL.vbproj", "{86EE3090-B078-471B-801B-BB71B19855F9}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EncryptDecrypt", "..\..\RxCardOnline\RxCardOnline_1\EncryptDecrypt\EncryptDecrypt.vbproj", "{03FEF964-2258-4986-BF19-45416301400B}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Mailhelper", "..\..\RxCardOnline\RxCardOnline_1\Mailhelper\Mailhelper.vbproj", "{724D2EB5-ACB3-4515-BDA3-E905A51C8B2F}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 6
+		SccProjectUniqueName0 = emedicard.vbproj
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\emedicard_DAL\\emedicard_DAL.vbproj
+		SccLocalPath1 = ..\\emedicard_DAL
+		SccLocalPath2 = .
+		SccProjectUniqueName3 = ..\\emedicardBLL\\emedicardBLL.vbproj
+		SccLocalPath3 = ..\\emedicardBLL
+		SccProjectUniqueName4 = ..\\..\\RxCardOnline\\RxCardOnline_1\\EncryptDecrypt\\EncryptDecrypt.vbproj
+		SccProjectName4 = \u0022$/EncryptDecrypt\u0022,\u0020CAAAAAAA
+		SccLocalPath4 = ..\\..\\RxCardOnline\\RxCardOnline_1\\EncryptDecrypt
+		SccProjectUniqueName5 = ..\\..\\RxCardOnline\\RxCardOnline_1\\Mailhelper\\Mailhelper.vbproj
+		SccProjectName5 = \u0022$/MailHelper\u0022,\u0020DAAAAAAA
+		SccLocalPath5 = ..\\..\\RxCardOnline\\RxCardOnline_1\\Mailhelper
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{405D8518-7ECC-432C-820F-A5748EC624D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{405D8518-7ECC-432C-820F-A5748EC624D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{405D8518-7ECC-432C-820F-A5748EC624D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{405D8518-7ECC-432C-820F-A5748EC624D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B682506-D8AC-43E2-8E4B-80AAD94D5809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B682506-D8AC-43E2-8E4B-80AAD94D5809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B682506-D8AC-43E2-8E4B-80AAD94D5809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B682506-D8AC-43E2-8E4B-80AAD94D5809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86EE3090-B078-471B-801B-BB71B19855F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86EE3090-B078-471B-801B-BB71B19855F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86EE3090-B078-471B-801B-BB71B19855F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86EE3090-B078-471B-801B-BB71B19855F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03FEF964-2258-4986-BF19-45416301400B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03FEF964-2258-4986-BF19-45416301400B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03FEF964-2258-4986-BF19-45416301400B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03FEF964-2258-4986-BF19-45416301400B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{724D2EB5-ACB3-4515-BDA3-E905A51C8B2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{724D2EB5-ACB3-4515-BDA3-E905A51C8B2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{724D2EB5-ACB3-4515-BDA3-E905A51C8B2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{724D2EB5-ACB3-4515-BDA3-E905A51C8B2F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
