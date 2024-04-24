@@ -22,6 +22,7 @@ Public Class Login
             lblAlert.Text = ""
             CustomValidator1.Validate()
         Catch ex As Exception
+            'comment: 04242024
             'CustomValidator1.ErrorMessage = ex.Message
         End Try
     End Sub
